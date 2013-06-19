@@ -1,6 +1,5 @@
 package com.btxtech.game.services.common;
 
-import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
@@ -10,7 +9,7 @@ import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
-import com.btxtech.game.services.user.AllianceService;
+import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -29,7 +28,7 @@ public class TestGlobalServices implements ServerGlobalServices {
     private StatisticsService statisticsService;
     private UserService userService;
     private UserTrackingService userTrackingService;
-    private AllianceService allianceService;
+    private GuildService guildService;
     private GlobalInventoryService globalInventoryService;
     private PlanetSystemService planetSystemService;
     private TerrainImageService terrainImageService;
@@ -78,12 +77,12 @@ public class TestGlobalServices implements ServerGlobalServices {
     }
 
     @Override
-    public AllianceService getAllianceService() {
-        return allianceService;
+    public GuildService getGuildService() {
+        return guildService;
     }
 
-    public void setAllianceService(AllianceService allianceService) {
-        this.allianceService = allianceService;
+    public void setGuildService(GuildService guildService) {
+        this.guildService = guildService;
     }
 
     @Override

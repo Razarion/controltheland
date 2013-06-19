@@ -82,6 +82,32 @@ public interface ClientI18nConstants extends Messages {
 
     String abort();
 
+    String date();
+
+    String time();
+
+    String event();
+
+    String level();
+
+    String save();
+
+    String dismiss();
+
+    String nameToShort();
+
+    String nameAlreadyUsed();
+
+    String unknownErrorReceived();
+
+    String name();
+
+    String send();
+
+    String noSuchUser(String userName);
+
+    String change();
+
     // Login logout
     String login();
 
@@ -129,7 +155,7 @@ public interface ClientI18nConstants extends Messages {
     String radarNoRadarBuilding();
 
     // Dialogs
-    String message();
+    String messageDialog();
 
     String inventory();
 
@@ -216,8 +242,6 @@ public interface ClientI18nConstants extends Messages {
     String multiplayer();
 
     String tooltipLevel();
-
-    String level();
 
     String tooltipXp();
 
@@ -372,6 +396,8 @@ public interface ClientI18nConstants extends Messages {
 
     String created();
 
+    String create();
+
     // Inventory
     String useItem();
 
@@ -518,11 +544,120 @@ public interface ClientI18nConstants extends Messages {
 
     String menuTooltipHistoryOnlyRealGame();
 
+    String menuTooltipHistoryOnlyRegisteredVerified();
+
+    String menuTooltipGuildsMission();
+
+    String menuTooltipGuildsOnlyRegisteredVerified();
+
+    String menuTooltipGuildsOnlyRegistered();
+
+    String menuTooltipMyGuild();
+
+    String menuTooltipGuilds();
+
+    String menuMyGuild();
+
+    String menuGuilds();
+
+    String menuSearchGuilds();
+
+    String menuCreateGuild();
+
+    String menuGuildInvitations();
+
     // News Dialog
     String newsDialogTitle();
 
     // History Dialog
     String historyDialogTitle();
 
-    String menuTooltipHistoryOnlyRegisteredVerified();
+    // Guild dialogs
+    String createGuildDialogTitle();
+
+    String createGuildDialog();
+
+    String myGuildDialogTitle();
+
+    String searchGuildDialogTitle();
+
+    String member();
+
+    String guildRank();
+
+    String kick();
+
+    String guildKickMember();
+
+    String guildKickMemberMessage(String name);
+
+    String guildPresident();
+
+    String guildManagement();
+
+    String guildMember();
+
+    String changeRank();
+
+    String gildMemberInvited();
+
+    String gildMemberInvitedMessage(String userName);
+
+    String inviteMember();
+
+    String createGuildInsufficientRazarion(int cost, int available);
+
+    String createGuildRazarionCost(int cost);
+
+    String guildText();
+
+    String guildMembers();
+
+    String guildMembershipRequestTitle();
+
+    String guildMembershipRequest();
+
+    String guildMembershipRequestSent(String name);
+
+    String joinGuild();
+
+    String joinGuildMessage(String name);
+
+    String dismissGuildMessage(String name);
+
+    String guildTab();
+
+    String guildMemberTab();
+
+    String guildRecruitingTab();
+
+    String guildInviteMessage();
+
+    String guildMembershipRequestText();
+
+    String leaveGuild();
+
+    String closeGuild();
+
+    String leaveGuildMessage();
+
+    String closeGuildMessage();
+
+    String guildNameFilter();
+
+    String guildInvitations();
+
+    String guildInvitationsMessage();
+
+    String changeRankText(String name);
+
+    String noGuildRequests();
+
+    String noGuildInvitations();
+
+    String noGuilds();
+
+    String guildToSendRequest();
+
+    String guildTextShort();
 }

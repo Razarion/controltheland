@@ -38,8 +38,21 @@
     <context:property-placeholder location="classpath:/spring.properties,classpath:/springconstants.properties"/>
 
     <!-- Database -->
-    <bean
-            class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan" value="com.btxtech.game.services"/>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+            </props>
+        </property>
+    </bean>
 
     <bean id="sessionFactory"
           class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">

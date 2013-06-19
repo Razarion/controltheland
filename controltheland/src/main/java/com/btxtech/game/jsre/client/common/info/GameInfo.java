@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client.common.info;
 
-import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.TerrainInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -23,7 +22,6 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 
 import java.io.Serializable;

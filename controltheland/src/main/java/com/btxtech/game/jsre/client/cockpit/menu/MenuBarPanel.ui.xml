@@ -20,6 +20,14 @@
         <g:MenuItem text="{msg.newBase}" ui:field="newBase"/>
         <g:MenuItem text="{msg.menuNews}" ui:field="news" title="{msg.menuTooltipNews}"/>
         <g:MenuItem text="{msg.menuHistory}" ui:field="history"/>
+        <g:MenuItem text="{msg.menuMyGuild}" ui:field="myGuild"/>
+        <g:MenuItem text="{msg.menuGuilds}" ui:field="guilds">
+        	<g:MenuBar vertical="true">
+        		<g:MenuItem text="{msg.menuSearchGuilds}" ui:field="searchGuild"/>
+        		<g:MenuItem text="{msg.menuCreateGuild}" ui:field="createGuild"/>
+        		<g:MenuItem text="{msg.menuGuildInvitations}" ui:field="guildInvitation"/>
+        	</g:MenuBar>
+        </g:MenuItem>
     </g:MenuBar>
     <!-- /g:HTMLPanel -->
 </ui:UiBinder> 

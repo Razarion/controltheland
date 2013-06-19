@@ -14,8 +14,15 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildDetailedInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
@@ -24,6 +31,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
+import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
@@ -40,6 +48,7 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.SuggestOracle;
 
 import java.util.Collection;
 import java.util.Date;
@@ -74,7 +83,7 @@ public interface MovableServiceAsync {
 
     void isFacebookUserRegistered(String signedRequestParameter, AsyncCallback<Boolean> async);
 
-    void isNickNameValid(String nickname, AsyncCallback<InvalidNickName> async);
+    void isNickNameValid(String nickname, AsyncCallback<VerificationRequestCallback.ErrorResult> async);
 
     void sendChatMessage(ChatMessage chatMessage, AsyncCallback<Void> asyncCallback);
 
@@ -141,4 +150,38 @@ public interface MovableServiceAsync {
     void getHistoryElements(int start, int length, 	AsyncCallback<HistoryElementInfo> callback);
 
     void getNewsEntry(int index, AsyncCallback<NewsEntryInfo> callback);
+
+    void saveGuildText(String text, AsyncCallback<FullGuildInfo> asyncCallback);
+
+    void kickGuildMember(int userId, AsyncCallback<FullGuildInfo> asyncCallback);
+
+    void changeGuildMemberRank(int userId, GuildMemberInfo.Rank rank, AsyncCallback<FullGuildInfo> asyncCallback);
+
+    void getSuggestedUserName(String query, int limit, AsyncCallback<SuggestOracle.Response> asyncCallback);
+
+    void inviteUserToGuild(String userName, AsyncCallback<FullGuildInfo> asyncCallback);
+
+    void dismissGuildMemberRequest(int userId, AsyncCallback<FullGuildInfo> asyncCallback);
+
+    void getFullGuildInfo(int guildId, AsyncCallback<FullGuildInfo> asyncCallback);
+
+    void getCreateGuildRazarionCost(AsyncCallback<RazarionCostInfo> asyncCallback);
+
+    void createGuild(String guildName, AsyncCallback<SimpleGuild> asyncCallback);
+
+    void isGuildNameValid(String guildName, AsyncCallback<VerificationRequestCallback.ErrorResult> asyncCallback);
+
+    void guildMembershipRequest(int guildId, String text, AsyncCallback<Void> asyncCallback);
+
+    void searchGuilds(int start, int length, String guildNameQuery, AsyncCallback<SearchGuildsResult> asyncCallback);
+
+    void joinGuild(int guildId, AsyncCallback<SimpleGuild> asyncCallback);
+
+    void dismissGuild(int guildId, AsyncCallback<List<GuildDetailedInfo>> asyncCallback);
+
+    void getGuildInvitations(AsyncCallback<List<GuildDetailedInfo>> getGuildInitations);
+
+    void leaveGuild(AsyncCallback<Void> asyncCallback);
+
+    void closeGuild(AsyncCallback<Void> asyncCallback);
 }

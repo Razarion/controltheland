@@ -13,7 +13,8 @@
 
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.DetailedUser;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
@@ -149,11 +150,15 @@ public class User implements UserDetails, Serializable, CrudParent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
 
         User that = (User) o;
-        return id != null && id.equals(that.id);
+        return id != null && id.equals(that.getId());
     }
 
     @Override
@@ -177,6 +182,10 @@ public class User implements UserDetails, Serializable, CrudParent {
     @Override
     public boolean isAccountNonExpired() {
         return accountNonExpired;
+    }
+
+    public boolean isRegistrationComplete() {
+        return isAccountNonLocked();
     }
 
     @Override

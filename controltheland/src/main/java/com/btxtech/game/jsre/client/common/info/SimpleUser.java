@@ -1,4 +1,4 @@
-package com.btxtech.game.jsre.client;
+package com.btxtech.game.jsre.client.common.info;
 
 import java.io.Serializable;
 

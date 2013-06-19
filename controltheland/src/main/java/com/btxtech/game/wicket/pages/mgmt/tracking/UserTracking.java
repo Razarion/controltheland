@@ -13,10 +13,12 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
+import com.btxtech.game.jsre.client.common.info.Suggestion;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserNameSuggestionFilter;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.SessionOverviewDto;
@@ -143,7 +145,7 @@ public class UserTracking extends MgmtWebPage {
                     List<String> emptyList = Collections.emptyList();
                     return emptyList.iterator();
                 }
-                return userService.getSimilarUserName(input).iterator();
+                return Suggestion.createStringList(userService.getSuggestedUserName(input, UserNameSuggestionFilter.USER_TRACKING_SEARCH, 0)).iterator();
             }
         };
         form.add(field);

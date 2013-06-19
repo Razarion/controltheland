@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+        .text {
+    height:100%;
+    width:100%;
+    display: table-cell;
+        	padding: 10px 20px;
+        	vertical-align: middle;
+        	text-align: center;
+        }
+	</ui:style>
+	<g:HTMLPanel>
+		<g:Label styleName="{style.text}" ui:field="text"/>
+	</g:HTMLPanel>
+</ui:UiBinder> 

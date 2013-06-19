@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.history;
 
+import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
@@ -20,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.user.DbGuild;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
@@ -73,7 +75,19 @@ public class DbHistoryElement implements Serializable {
         BOT_ENRAGE_UP,
         UNLOCKED_ITEM,
         UNLOCKED_QUEST,
-        UNLOCKED_PLANET
+        UNLOCKED_PLANET,
+        GUILD_CREATED,
+        GUILD_USER_INVITED,
+        GUILD_JOINED,
+        GUILD_DISMISSED,
+        GUILD_MEMBERSHIP_REQUEST,
+        GUILD_MEMBERSHIP_REQUEST_DISMISSED,
+        GUILD_MEMBER_KICKED,
+        GUILD_MEMBER_CHANGED,
+        GUILD_TEXT_CHANGED,
+        GUILD_LEFT,
+        GUILD_CLOSED,
+        GUILD_CLOSED_MEMBER_KICKED
     }
 
     public enum Source {
@@ -115,8 +129,12 @@ public class DbHistoryElement implements Serializable {
     private String inventory;
     private String botName;
     private String botInfo;
+    private String text;
     private Integer planetId;
     private String planetName;
+    private Integer guildId;
+    private String guildName;
+    private String rank;
 
     /**
      * Used by hibernate
@@ -124,12 +142,13 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, PlanetSystemService planetSystemService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory, String botName, String botInfo, ItemType itemType, PlanetLiteInfo planetLiteInfo) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, PlanetSystemService planetSystemService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory, String botName, String botInfo, ItemType itemType, PlanetLiteInfo planetLiteInfo, DbGuild dbGuild, GuildMemberInfo.Rank rank, String text) {
         this.sessionId = sessionId;
         this.deltaRazarion = deltaRazarion;
         this.razarion = razarion;
         this.botName = botName;
         this.botInfo = botInfo;
+        this.text = text;
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
         this.type = type;
@@ -162,6 +181,13 @@ public class DbHistoryElement implements Serializable {
             PlanetInfo planetInfo = planetSystemService.getServerPlanetServices(actorBase).getPlanetInfo();
             planetName = planetInfo.getName();
             planetId = planetInfo.getPlanetId();
+        }
+        if (dbGuild != null) {
+            guildId = dbGuild.getId();
+            guildName = dbGuild.getName();
+        }
+        if (rank != null) {
+            this.rank = rank.name();
         }
     }
 
@@ -263,6 +289,22 @@ public class DbHistoryElement implements Serializable {
 
     public String getPlanetName() {
         return planetName;
+    }
+
+    public Integer getGuildId() {
+        return guildId;
+    }
+
+    public String getGuildName() {
+        return guildName;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public String getText() {
+        return text;
     }
 
     @Override

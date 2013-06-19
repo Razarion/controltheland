@@ -21,6 +21,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -30,6 +31,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public abstract class Dialog extends DialogBox {
     private boolean showCloseButton = true;
+    private ClickHandler yesButtonClickHandler;
+    private String yesButtonText;
+    private Button yesButton;
 
     protected Dialog(String title) {
         super(false, false);
@@ -41,23 +45,59 @@ public abstract class Dialog extends DialogBox {
         this.showCloseButton = showCloseButton;
     }
 
+    public void setShowYesButton(ClickHandler yesButtonClickHandler, String buttonText) {
+        this.yesButtonClickHandler = yesButtonClickHandler;
+        yesButtonText = buttonText;
+    }
+
     protected void setupDialog() {
         VerticalPanel dialogVPanel = new VerticalPanel();
+        if (yesButtonClickHandler != null) {
+            yesButton = new Button(yesButtonText, new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    close();
+                    yesButtonClickHandler.onClick(event);
+                }
+            });
+            yesButton.getElement().getStyle().setMarginTop(20, Style.Unit.PX);
+        }
         setupPanel(dialogVPanel);
         dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
         setWidget(dialogVPanel);
-        if (showCloseButton) {
-            Button button = new Button(ClientI18nHelper.CONSTANTS.close(), new ClickHandler() {
+        if (showCloseButton && yesButtonClickHandler != null) {
+            HorizontalPanel horizontalPanel = new HorizontalPanel();
+            horizontalPanel.setWidth("100%");
+            dialogVPanel.add(horizontalPanel);
+            horizontalPanel.add(yesButton);
+            horizontalPanel.setCellHorizontalAlignment(yesButton, HasHorizontalAlignment.ALIGN_CENTER);
+            Button noButton = new Button(ClientI18nHelper.CONSTANTS.close(), new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     close();
                 }
             });
-            button.getElement().getStyle().setMarginTop(20, Style.Unit.PX);
-            button.setTitle(ClientI18nHelper.CONSTANTS.tooltipCloseDialog());
-            dialogVPanel.add(button);
-            dialogVPanel.setCellHorizontalAlignment(button, HasHorizontalAlignment.ALIGN_CENTER);
-            button.setFocus(true);
+            noButton.getElement().getStyle().setMarginTop(20, Style.Unit.PX);
+            noButton.setTitle(ClientI18nHelper.CONSTANTS.tooltipCloseDialog());
+            horizontalPanel.add(noButton);
+            horizontalPanel.setCellHorizontalAlignment(noButton, HasHorizontalAlignment.ALIGN_CENTER);
+            noButton.setFocus(true);
+        } else if (!showCloseButton && yesButtonClickHandler != null) {
+            dialogVPanel.add(yesButton);
+            dialogVPanel.setCellHorizontalAlignment(yesButton, HasHorizontalAlignment.ALIGN_CENTER);
+            yesButton.setFocus(true);
+        } else if (showCloseButton) {
+            Button noButton = new Button(ClientI18nHelper.CONSTANTS.close(), new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    close();
+                }
+            });
+            noButton.getElement().getStyle().setMarginTop(20, Style.Unit.PX);
+            noButton.setTitle(ClientI18nHelper.CONSTANTS.tooltipCloseDialog());
+            dialogVPanel.add(noButton);
+            dialogVPanel.setCellHorizontalAlignment(noButton, HasHorizontalAlignment.ALIGN_CENTER);
+            noButton.setFocus(true);
         }
         center();
         getElement().getStyle().setZIndex(getZIndex());
@@ -67,9 +107,25 @@ public abstract class Dialog extends DialogBox {
         return Constants.Z_INDEX_DIALOG;
     }
 
-
     public void close() {
         hide(true);
+    }
+
+    public void setYesButtonEnabled(boolean enabled) {
+        if (yesButton != null) {
+            yesButton.setEnabled(enabled);
+        }
+    }
+
+    /**
+     * Does not make the dialog really bigger
+     * Put the size in the root-panel in the UiBinder
+     * See HistoryPanel
+     * @param em
+     */
+    @Deprecated
+    protected void setDialogWidth(int em) {
+        getElement().getStyle().setWidth(em, Style.Unit.EM);
     }
 
     abstract protected void setupPanel(VerticalPanel dialogVPanel);

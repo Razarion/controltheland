@@ -47,6 +47,7 @@ public class RealGameInfo extends GameInfo {
     private List<PlanetLiteInfo> allPlanets;
     private UnlockContainer unlockContainer;
     private StartPointInfo startPointInfo;
+    private SimpleGuild mySimpleGuild;
 
     public SimpleBase getBase() {
         return base;
@@ -163,5 +164,13 @@ public class RealGameInfo extends GameInfo {
 
     public void setStartPointInfo(StartPointInfo startPointInfo) {
         this.startPointInfo = startPointInfo;
+    }
+
+    public SimpleGuild getMySimpleGuild() {
+        return mySimpleGuild;
+    }
+
+    public void setMySimpleGuild(SimpleGuild mySimpleGuild) {
+        this.mySimpleGuild = mySimpleGuild;
     }
 }

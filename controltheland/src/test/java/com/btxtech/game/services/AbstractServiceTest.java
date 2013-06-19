@@ -1,26 +1,52 @@
 package com.btxtech.game.services;
 
 import com.btxtech.game.jsre.client.MovableService;
-import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
-import com.btxtech.game.jsre.common.gameengine.itemType.*;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
+import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.*;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.*;
-import com.btxtech.game.jsre.common.packets.*;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.EnergyPacket;
+import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
+import com.btxtech.game.jsre.common.packets.LevelPacket;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.Message;
+import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.UnlockContainerPacket;
+import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
+import com.btxtech.game.jsre.common.packets.UserPacket;
+import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
@@ -34,7 +60,20 @@ import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
 import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.item.ServerItemTypeService;
-import com.btxtech.game.services.item.itemType.*;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemType;
+import com.btxtech.game.services.item.itemType.DbBuilderType;
+import com.btxtech.game.services.item.itemType.DbConsumerType;
+import com.btxtech.game.services.item.itemType.DbFactoryType;
+import com.btxtech.game.services.item.itemType.DbGeneratorType;
+import com.btxtech.game.services.item.itemType.DbHarvesterType;
+import com.btxtech.game.services.item.itemType.DbHouseType;
+import com.btxtech.game.services.item.itemType.DbItemContainerType;
+import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.item.itemType.DbItemTypeImage;
+import com.btxtech.game.services.item.itemType.DbMovableType;
+import com.btxtech.game.services.item.itemType.DbResourceItemType;
+import com.btxtech.game.services.item.itemType.DbWeaponType;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.planet.Base;
@@ -46,14 +85,32 @@ import com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation;
 import com.btxtech.game.services.planet.db.DbRegionResource;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.playback.impl.PlaybackServiceImpl;
-import com.btxtech.game.services.terrain.*;
+import com.btxtech.game.services.terrain.DbRegion;
+import com.btxtech.game.services.terrain.DbSurfaceImage;
+import com.btxtech.game.services.terrain.DbSurfaceRect;
+import com.btxtech.game.services.terrain.DbTerrainImage;
+import com.btxtech.game.services.terrain.DbTerrainImageGroup;
+import com.btxtech.game.services.terrain.DbTerrainImagePosition;
+import com.btxtech.game.services.terrain.DbTerrainSetting;
+import com.btxtech.game.services.terrain.RegionService;
+import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.*;
-import com.btxtech.game.services.utg.condition.*;
+import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelItemTypeLimitation;
+import com.btxtech.game.services.utg.DbLevelTask;
+import com.btxtech.game.services.utg.LevelActivationException;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.XpService;
+import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
@@ -71,6 +128,7 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.util.tester.WicketTester;
 import org.apache.wicket.util.value.ValueMap;
 import org.easymock.EasyMock;
+import org.easymock.IArgumentMatcher;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
@@ -103,12 +161,22 @@ import org.subethamail.wiser.Wiser;
 
 import javax.servlet.ServletRequest;
 import javax.sql.DataSource;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -2494,6 +2562,62 @@ abstract public class AbstractServiceTest {
                 sessionFactory.getCurrentSession().saveOrUpdate(object);
             }
         });
+    }
+
+    public <T> List<T> loadAll(Class<T> theClass) {
+        return HibernateUtil.loadAll(getSessionFactory(), theClass);
+    }
+
+    public <T> T get(Class<T> theClass, Serializable id) {
+        return HibernateUtil.get(getSessionFactory(), theClass, id);
+    }
+
+    public void assertDbEntryCount(int count, Class theClass) {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        int actualCount = HibernateUtil.loadAll(getSessionFactory(), theClass).size();
+        Assert.assertEquals("Unexpected entries in DB of class: " + theClass + " Expected count: " + count + " Actual count: " + actualCount, count, actualCount);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    public void assertNoDbEntry(Class theClass) {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertTrue("Unexpected entry in DB of class: " + theClass, HibernateUtil.loadAll(getSessionFactory(), theClass).isEmpty());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    // ------------------- EasyMock Helpers --------------------
+    public static User createUserMatcher(String userName) {
+        EasyMock.reportMatcher(new UserNameMatcher(userName));
+        return null;
+    }
+
+    public static class UserNameMatcher implements IArgumentMatcher {
+        private String userName;
+        private String errorString;
+
+        public UserNameMatcher(String userName) {
+            this.userName = userName;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            User user = (User) o;
+            if (user.getUsername().equals(userName)) {
+                return true;
+            } else {
+                errorString = "Invalid user. Expected user name '" + userName + "' actual user '" + user.getUsername() + "'";
+                return false;
+            }
+        }
+
+        @Override
+        public void appendTo(StringBuffer stringBuffer) {
+            stringBuffer.append(errorString);
+        }
     }
 
 }

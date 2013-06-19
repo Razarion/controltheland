@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.common.packets;
 
 
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 
 /**
  * User: beat

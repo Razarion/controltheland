@@ -1,0 +1,20 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .text {
+            padding-bottom: 10px;
+        }
+    </ui:style>
+
+    <ui:with field='msg' type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:VerticalPanel width="300px">
+        <g:Label ui:field="textLabel" styleName="{style.text}"/>
+        <g:Cell horizontalAlignment="ALIGN_CENTER">
+            <g:VerticalPanel>
+                <g:RadioButton name="rankGroup" text="{msg.guildManagement}" ui:field="managementRadioButton"/>
+                <g:RadioButton name="rankGroup" text="{msg.guildMember}" ui:field="memberRadioButton"/>
+            </g:VerticalPanel>
+        </g:Cell>
+    </g:VerticalPanel>
+</ui:UiBinder>

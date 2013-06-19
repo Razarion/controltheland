@@ -1,7 +1,6 @@
 package com.btxtech.game.services.common;
 
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
-import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
@@ -10,7 +9,7 @@ import com.btxtech.game.services.mgmt.ServerI18nHelper;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.terrain.TerrainImageService;
-import com.btxtech.game.services.user.AllianceService;
+import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -31,7 +30,7 @@ public interface ServerGlobalServices extends GlobalServices {
 
     UserTrackingService getUserTrackingService();
 
-    AllianceService getAllianceService();
+    GuildService getGuildService();
 
     GlobalInventoryService getGlobalInventoryService();
 

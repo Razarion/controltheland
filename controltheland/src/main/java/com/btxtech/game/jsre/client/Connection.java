@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupProgressListener;
@@ -34,6 +35,10 @@ import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
+import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildMembershipRequest;
+import com.btxtech.game.jsre.client.dialogs.guild.MyGuildDialog;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.HighscoreDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
@@ -55,10 +60,29 @@ import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
+import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.packets.*;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.BaseLostPacket;
+import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.EnergyPacket;
+import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
+import com.btxtech.game.jsre.common.packets.LevelPacket;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.Message;
+import com.btxtech.game.jsre.common.packets.MessageIdPacket;
+import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.UnlockContainerPacket;
+import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
+import com.btxtech.game.jsre.common.packets.UserPacket;
+import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
@@ -75,6 +99,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
+import com.google.gwt.user.client.ui.SuggestOracle;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -268,7 +293,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     syncItemInfos.add((SyncItemInfo) packet);
                 } else if (packet instanceof Message) {
                     Message message = (Message) packet;
-                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.message(), message.getMessage(), message.isShowRegisterDialog()), DialogManager.Type.QUEUE_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.messageDialog(), message.getMessage(), message.isShowRegisterDialog()), DialogManager.Type.QUEUE_ABLE);
                 } else if (packet instanceof AccountBalancePacket) {
                     AccountBalancePacket balancePacket = (AccountBalancePacket) packet;
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
@@ -304,16 +329,16 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     StartPointMode.getInstance().onBaseLost((BaseLostPacket) packet);
                 } else if (packet instanceof UserPacket) {
                     SimpleUser oldSimpleUser = Connection.getInstance().getSimpleUser();
-                    SimpleUser simpleUser = ((UserPacket)packet).getSimpleUser();
+                    SimpleUser simpleUser = ((UserPacket) packet).getSimpleUser();
                     Connection.getInstance().setSimpleUser(simpleUser);
                     MenuBarCockpit.getInstance().setSimpleUser(simpleUser);
-                    if((oldSimpleUser == null || !oldSimpleUser.isVerified()) && simpleUser.isVerified()) {
+                    if ((oldSimpleUser == null || !oldSimpleUser.isVerified()) && simpleUser.isVerified()) {
                         DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registerThanks(),
                                 ClientI18nHelper.CONSTANTS.registerThanksLong()
-                                ), DialogManager.Type.QUEUE_ABLE);
+                        ), DialogManager.Type.QUEUE_ABLE);
                     }
                 } else if (packet instanceof UserAttentionPacket) {
-                   MenuBarCockpit.getInstance().onUserAttentionPacket((UserAttentionPacket)packet);
+                    MenuBarCockpit.getInstance().onUserAttentionPacket((UserAttentionPacket) packet);
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -908,9 +933,93 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void logout() {
+    public void saveGuildText(String guildTextRwHTML) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.logout(new VoidAsyncCallback("logout"));
+            movableServiceAsync.saveGuildText(guildTextRwHTML, new AsyncCallback<FullGuildInfo>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    ClientExceptionHandler.handleException("MovableServiceAsync.saveGuildText()", caught);
+                }
+
+                @Override
+                public void onSuccess(FullGuildInfo fullGuildInfo) {
+                    MyGuildDialog.updateIfShowing(fullGuildInfo);
+                }
+            });
+        }
+    }
+
+    public void saveGuildMemberRank(int userId, GuildMemberInfo.Rank rank) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.changeGuildMemberRank(userId, rank, new AsyncCallback<FullGuildInfo>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    ClientExceptionHandler.handleException("MovableServiceAsync.changeGuildMemberRank()", caught);
+                }
+
+                @Override
+                public void onSuccess(FullGuildInfo fullGuildInfo) {
+                    MyGuildDialog.updateIfShowing(fullGuildInfo);
+                }
+            });
+        }
+    }
+
+    public void getSuggestedUserName(final SuggestOracle.Request request, final SuggestOracle.Callback callback) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.getSuggestedUserName(request.getQuery(), request.getLimit(), new AsyncCallback<SuggestOracle.Response>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection("getSuggestedUserName", caught);
+                }
+
+                @Override
+                public void onSuccess(SuggestOracle.Response response) {
+                    callback.onSuggestionsReady(request, response);
+                }
+            });
+        }
+    }
+
+
+    public void inviteGuildMember(final String userName) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.inviteUserToGuild(userName, new AsyncCallback<FullGuildInfo>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    if (caught instanceof NoSuchUserException) {
+                        DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(),
+                                ClientI18nHelper.CONSTANTS.noSuchUser(((NoSuchUserException) caught).getUserName())),
+                                DialogManager.Type.STACK_ABLE);
+                    } else {
+                        handleDisconnection("inviteUserToGuild", caught);
+                    }
+                }
+
+                @Override
+                public void onSuccess(FullGuildInfo fullGuildInfo) {
+                    MyGuildDialog.updateIfShowing(fullGuildInfo);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.gildMemberInvitedMessage(userName)), DialogManager.Type.STACK_ABLE);
+                }
+            });
+        }
+    }
+
+    public void dismissGuildMemberRequest(SimpleUser simpleUser) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.dismissGuildMemberRequest(simpleUser.getId(), new AsyncCallback<FullGuildInfo>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    ClientExceptionHandler.handleException("MovableServiceAsync.dismissGuildMemberRequest()", caught);
+                }
+
+                @Override
+                public void onSuccess(FullGuildInfo fullGuildInfo) {
+                    MyGuildDialog.updateIfShowing(fullGuildInfo);
+                }
+            });
         }
     }
 }

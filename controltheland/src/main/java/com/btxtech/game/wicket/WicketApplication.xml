@@ -47,4 +47,7 @@
     <entry key="emailForgotPasswordSubjectMain1">You're receiving this email because you requested a password reset for your Razarion account. If you did not request this change, you can safely ignore this email.</entry>
     <entry key="emailForgotPasswordSubjectMain2">To choose a new password and complete your request, please follow the link below:</entry>
     <entry key="play">Play</entry>
+    <entry key="nameToShort">Name must have at least 3 characters</entry>
+    <entry key="nameAlreadyUsed">Name has already been taken</entry>
+    <entry key="unknownErrorReceived">Unknown error</entry>
 </properties>

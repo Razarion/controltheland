@@ -114,7 +114,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         syncBaseItem.getSyncItemArea().setCosmeticsAngel();
         if (userState.isRegistered()) {
             serverGlobalServices.getUserTrackingService().onBaseCreated(serverGlobalServices.getUserService().getUser(userState), setupBaseName(base));
-            serverGlobalServices.getAllianceService().onBaseCreatedOrDeleted(userState.getUser());
+            serverGlobalServices.getGuildService().onBaseCreatedOrDeleted(userState.getUser());
         }
         base.setAccountBalance(startMoney);
         sendAccountBaseUpdate(base.getSimpleBase());
@@ -122,7 +122,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     private void checkPosition(UserState userState, BaseItemType startItem, final Index startPoint, final int startItemFreeRange) throws PositionInBotException {
-        final Set<SimpleBase> friendlyBases = serverGlobalServices.getAllianceService().getAllianceBases(userState, planetServices.getPlanetInfo());
+        final Set<SimpleBase> friendlyBases = serverGlobalServices.getGuildService().getAllianceBases(userState, planetServices.getPlanetInfo());
         StartPointItemPlacerChecker startPointItemPlacerChecker = new StartPointItemPlacerChecker(startItem, startItemFreeRange, planetServices) {
 
             @Override
@@ -172,8 +172,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         userState.setSendResurrectionMessage();
         makeBaseAbandoned(base);
         if (userState.isRegistered()) {
-            serverGlobalServices.getAllianceService().onMakeBaseAbandoned(base.getSimpleBase());
-            serverGlobalServices.getAllianceService().onBaseCreatedOrDeleted(userState.getUser());
+            serverGlobalServices.getGuildService().onMakeBaseAbandoned(base.getSimpleBase());
+            serverGlobalServices.getGuildService().onBaseCreatedOrDeleted(userState.getUser());
         }
         askForStartPosition(userState);
     }
@@ -318,7 +318,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 base.getUserState().setSendResurrectionMessage(); // TODO needed?
             }
             if (userId != null) {
-                serverGlobalServices.getAllianceService().onBaseCreatedOrDeleted(userId);
+                serverGlobalServices.getGuildService().onBaseCreatedOrDeleted(userId);
             }
             askForStartPosition(userState);
         } else {
@@ -576,7 +576,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
         BaseAttributes ownFakeBseAttributes = new BaseAttributes(fakeBase, setupFakeBaseName(uSerState), false);
         allFakeBaseAttributes.put(fakeBase, ownFakeBseAttributes);
-        serverGlobalServices.getAllianceService().fillAlliancesForFakeBases(ownFakeBseAttributes, allFakeBaseAttributes, uSerState, planetId);
+        serverGlobalServices.getGuildService().fillAlliancesForFakeBases(ownFakeBseAttributes, allFakeBaseAttributes, uSerState, planetId);
         return new ArrayList<>(allFakeBaseAttributes.values());
     }
 
@@ -591,7 +591,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
         BaseAttributes ownFakeBseAttributes = new BaseAttributes(fakeBase, setupFakeBaseName(uSerState), false);
         allFakeBaseAttributes.put(fakeBase, ownFakeBseAttributes);
-        serverGlobalServices.getAllianceService().fillAlliancesForFakeBases(ownFakeBseAttributes, allFakeBaseAttributes, uSerState, planetServices.getPlanetInfo().getPlanetId());
+        serverGlobalServices.getGuildService().fillAlliancesForFakeBases(ownFakeBseAttributes, allFakeBaseAttributes, uSerState, planetServices.getPlanetInfo().getPlanetId());
         BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
         baseChangedPacket.setType(BaseChangedPacket.Type.CHANGED);
         baseChangedPacket.setBaseAttributes(ownFakeBseAttributes);

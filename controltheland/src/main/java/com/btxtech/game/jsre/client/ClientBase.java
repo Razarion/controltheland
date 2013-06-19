@@ -14,8 +14,10 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
@@ -67,6 +69,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     private Map<BaseItemType, Integer> myItemTypeCount = new HashMap<BaseItemType, Integer>();
     private int ownItemCount = 0;
     private Logger log = Logger.getLogger(ClientBase.class.getName());
+    private SimpleGuild mySimpleGuild;
 
     /**
      * Singleton
@@ -451,4 +454,18 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     public boolean isBaseDead() {
         return ownItemCount <= 0;
     }
+
+    public SimpleGuild getMySimpleGuild() {
+        return mySimpleGuild;
+    }
+
+    public void setMySimpleGuild(SimpleGuild mySimpleGuild) {
+        this.mySimpleGuild = mySimpleGuild;
+    }
+
+    public void updateMySimpleGuild(SimpleGuild mySimpleGuild) {
+        setMySimpleGuild(mySimpleGuild);
+        MenuBarCockpit.getInstance().updateGuild(mySimpleGuild);
+    }
+
 }

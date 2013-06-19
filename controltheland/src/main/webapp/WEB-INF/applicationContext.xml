@@ -35,6 +35,20 @@
     <!-- Database -->
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
 
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan" value="com.btxtech.game.services"/>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+            </props>
+        </property>
+    </bean>
+
     <bean id="sessionFactory"
           class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
@@ -88,7 +102,7 @@
 
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="classpath:com/btxtech/game/wicket/WicketApplication"/>
-        <property name="fallbackToSystemLocale" value="false" />
+        <property name="fallbackToSystemLocale" value="false"/>
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
 </beans>

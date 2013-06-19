@@ -26,7 +26,7 @@ import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.unlock.ServerUnlockService;
-import com.btxtech.game.services.user.AllianceService;
+import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
@@ -62,7 +62,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private AllianceService allianceService;
+    private GuildService guildService;
     @Autowired
     private GlobalInventoryService globalInventoryService;
     @Autowired
@@ -486,23 +486,23 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U2");
         SimpleBase simpleBase2 = createBase(new Index(2000, 2000));
-        allianceService.proposeAlliance(simpleBase1);
+        guildService.proposeAlliance(simpleBase1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        allianceService.acceptAllianceOffer("U2");
-        allianceService.breakAlliance("U2");
-        allianceService.proposeAlliance(simpleBase2);
+        guildService.acceptAllianceOffer("U2");
+        guildService.breakAlliance("U2");
+        guildService.proposeAlliance(simpleBase2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2", "test");
-        allianceService.rejectAllianceOffer("U1");
+        guildService.rejectAllianceOffer("U1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

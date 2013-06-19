@@ -16,8 +16,7 @@ package com.btxtech.game.jsre.client.dialogs;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.SimpleUser;
-import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.FacebookUtils;
@@ -53,7 +52,7 @@ public class RegisterDialog extends PeriodicDialog {
     public RegisterDialog() {
         super(ClientI18nHelper.CONSTANTS.register());
         setShowCloseButton(false);
-        getElement().getStyle().setWidth(350, Style.Unit.PX);
+        getElement().getStyle().setWidth(400, Style.Unit.PX);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.btxtech.game.jsre.client.dialogs;
 import com.btxtech.game.jsre.client.AdCellHelper;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.user.client.ui.Label;

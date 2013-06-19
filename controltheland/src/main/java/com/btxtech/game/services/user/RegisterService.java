@@ -1,10 +1,9 @@
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created with IntelliJ IDEA.

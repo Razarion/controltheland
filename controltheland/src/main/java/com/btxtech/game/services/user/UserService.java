@@ -14,8 +14,10 @@
 package com.btxtech.game.services.user;
 
 
-import com.btxtech.game.jsre.client.InvalidNickName;
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.VerificationRequestCallback;
+import com.btxtech.game.jsre.client.common.info.DetailedUser;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
+import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
@@ -25,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.services.common.NameErrorPair;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -66,7 +69,7 @@ public interface UserService extends UserDetailsService {
 
     List<User> getAllUsers();
 
-    List<String> getSimilarUserName(String string);
+    SuggestOracle.Response getSuggestedUserName(String nameQuery, UserNameSuggestionFilter filter, int limit);
 
     void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, AlreadyLoggedInException;
 
@@ -106,7 +109,7 @@ public interface UserService extends UserDetailsService {
 
     Collection<DbPageAccessControl> getDbPageAccessControls();
 
-    InvalidNickName isNickNameValid(String nickName);
+    VerificationRequestCallback.ErrorResult isNickNameValid(String nickName);
 
     UserState createUserState(User user);
 
@@ -123,4 +126,6 @@ public interface UserService extends UserDetailsService {
     List<User> getUsersWithEmail(String usersAsString);
 
     User loadUserFromDb(String name);
+
+    DetailedUser createDetailedUser(User user);
 }
