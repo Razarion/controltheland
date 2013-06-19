@@ -10,7 +10,7 @@ import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
-import com.btxtech.game.services.user.AllianceService;
+import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -35,7 +35,7 @@ public class ServerGlobalServicesImpl implements ServerGlobalServices {
     @Autowired
     private UserTrackingService userTrackingService;
     @Autowired
-    private AllianceService allianceService;
+    private GuildService guildService;
     @Autowired
     private GlobalInventoryService globalInventoryService;
     @Autowired
@@ -78,8 +78,8 @@ public class ServerGlobalServicesImpl implements ServerGlobalServices {
     }
 
     @Override
-    public AllianceService getAllianceService() {
-        return allianceService;
+    public GuildService getGuildService() {
+        return guildService;
     }
 
     @Override

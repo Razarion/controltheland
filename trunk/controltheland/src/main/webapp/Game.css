@@ -235,7 +235,7 @@ td.box {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.dialogBox input {
+.dialogBox input[type="text"], .dialogBox input[type="password"]{
     padding: 2px 3px;
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0d2238), color-stop(1, #4095eb));
     background: -moz-linear-gradient(center top, #0d2238 5%, #4095eb 100%);
@@ -251,12 +251,12 @@ td.box {
     text-shadow: 1px 1px 0px #0a131c;
 }
 
-.dialogBox input:hover {
+.dialogBox input[type="text"]:hover,.dialogBox input[type="password"]:hover {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb');
     background-color: #0d2238;
 }
 
-.dialogBox input:active {
+.dialogBox input[type="text"]:active, .dialogBox input[type="password"]:active {
     position: relative;
     top: 1px;
 }

@@ -17,14 +17,12 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
-import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
@@ -214,7 +212,7 @@ public class GenericItemConverter {
         userGuidanceService.restoreBackup(userStates);
         statisticsService.restoreBackup(userStates);
         planetSystemService.restore(dbBases.values(), syncBaseObject.values());
-        serverGlobalServices.getAllianceService().restoreAlliances();
+        serverGlobalServices.getGuildService().restoreAlliances();
         planetSystemService.afterRestore();
     }
 

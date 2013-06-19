@@ -62,6 +62,9 @@ public class TerrainKeyHandler implements KeyDownHandler, BlurHandler {
                             if (type.equalsIgnoreCase("password")) {
                                 return;
                             }
+                            if (type.equalsIgnoreCase("textarea")) {
+                                return;
+                            }
                         }
                     }
                 }

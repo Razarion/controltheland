@@ -1,6 +1,6 @@
 package com.btxtech.game.services.user.impl;
 
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
@@ -170,7 +170,7 @@ public class RegisterServiceImpl implements RegisterService {
             ExceptionHandler.handleException("More then one user have this email: " + email);
         }
         User user = users.get(0);
-        if (!user.isAccountNonLocked()) {
+        if (!user.isRegistrationComplete()) {
             throw new UserIsNotConfirmedException();
         }
         String uuid = UUID.randomUUID().toString().toUpperCase();

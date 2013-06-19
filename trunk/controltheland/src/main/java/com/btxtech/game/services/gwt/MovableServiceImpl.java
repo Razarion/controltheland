@@ -14,12 +14,22 @@
 package com.btxtech.game.services.gwt;
 
 
-import com.btxtech.game.jsre.client.*;
+import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.PositionInBotException;
+import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
+import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildDetailedInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
@@ -29,7 +39,12 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
-import com.btxtech.game.jsre.common.gameengine.services.user.*;
+import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
+import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
+import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
+import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
@@ -39,7 +54,12 @@ import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.jsre.common.utg.tracking.*;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.cms.ContentService;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerPlanetServices;
@@ -62,17 +82,23 @@ import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
-import com.btxtech.game.services.user.AllianceService;
+import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.user.RegisterService;
+import com.btxtech.game.services.user.UserNameSuggestionFilter;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements MovableService {
     @Autowired
@@ -96,7 +122,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Autowired
     private CmsUiService cmsUiService;
     @Autowired
-    private AllianceService allianceService;
+    private GuildService guildService;
     @Autowired
     private GlobalInventoryService globalInventoryService;
     @Autowired
@@ -182,7 +208,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             } else {
                 askForStartPosition(serverPlanetServices, userState, realGameInfo, planetSystemService, false);
             }
-            realGameInfo.setAllianceOffers(allianceService.getPendingAllianceOffers());
+            realGameInfo.setMySimpleGuild(guildService.getSimpleGuild());
+            realGameInfo.setAllianceOffers(guildService.getPendingAllianceOffers());
             terrainImageService.setupTerrainImages(realGameInfo);
             serverPlanetServices.getTerrainService().setupTerrainRealGame(realGameInfo);
             realGameInfo.setPlanetInfo(serverPlanetServices.getPlanetInfo());
@@ -350,12 +377,12 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public InvalidNickName isNickNameValid(String nickname) {
+    public VerificationRequestCallback.ErrorResult isNickNameValid(String nickname) {
         try {
             return userService.isNickNameValid(nickname);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
-            return InvalidNickName.UNKNOWN_ERROR;
+            return VerificationRequestCallback.ErrorResult.UNKNOWN_ERROR;
         }
     }
 
@@ -428,7 +455,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void proposeAlliance(SimpleBase partner) {
         try {
-            allianceService.proposeAlliance(partner);
+            guildService.proposeAlliance(partner);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }
@@ -437,7 +464,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void acceptAllianceOffer(String partnerUserName) {
         try {
-            allianceService.acceptAllianceOffer(partnerUserName);
+            guildService.acceptAllianceOffer(partnerUserName);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }
@@ -446,7 +473,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void rejectAllianceOffer(String partnerUserName) {
         try {
-            allianceService.rejectAllianceOffer(partnerUserName);
+            guildService.rejectAllianceOffer(partnerUserName);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }
@@ -455,7 +482,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void breakAlliance(String partnerUserName) {
         try {
-            allianceService.breakAlliance(partnerUserName);
+            guildService.breakAlliance(partnerUserName);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }
@@ -464,7 +491,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public Collection<String> getAllAlliances() {
         try {
-            return allianceService.getAllAlliances();
+            return guildService.getAllAlliances();
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return new ArrayList<>();
@@ -647,4 +674,178 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             return null;
         }
     }
+
+    @Override
+    public SimpleGuild createGuild(String guildName) {
+        try {
+            return guildService.createGuild(guildName);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public FullGuildInfo getFullGuildInfo(int guildId) {
+        try {
+            return guildService.getFullGuildInfo(guildId);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public FullGuildInfo inviteUserToGuild(String userName) throws NoSuchUserException {
+        try {
+            guildService.inviteUserToGuild(userName);
+            //FullGuildInfo is created before the DbGuildInvitations has been removed from the DB (transaction not committed)
+            return guildService.getFullGuildInfo(guildService.getSimpleGuild().getId());
+        } catch (NoSuchUserException e) {
+            throw e;
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public SimpleGuild joinGuild(int guildId) {
+        try {
+            return guildService.joinGuild(guildId);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public List<GuildDetailedInfo> dismissGuild(int guildId) {
+        try {
+            return guildService.dismissGuild(guildId);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+
+    @Override
+    public List<GuildDetailedInfo> getGuildInvitations() {
+        try {
+            return guildService.getGuildInvitations();
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public RazarionCostInfo getCreateGuildRazarionCost() {
+        try {
+            return guildService.getCreateGuildRazarionCost();
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public void guildMembershipRequest(int guildId, String text) {
+        try {
+            guildService.guildMembershipRequest(guildId, text);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+        }
+    }
+
+    @Override
+    public FullGuildInfo dismissGuildMemberRequest(int userId) {
+        try {
+            return guildService.dismissGuildMemberRequest(userId);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public FullGuildInfo kickGuildMember(int userId) {
+        try {
+            return guildService.kickGuildMember(userId);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public FullGuildInfo changeGuildMemberRank(int userId, GuildMemberInfo.Rank rank) {
+        try {
+            return guildService.changeGuildMemberRank(userId, rank);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public FullGuildInfo saveGuildText(String text) {
+        try {
+            return guildService.saveGuildText(text);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public VerificationRequestCallback.ErrorResult isGuildNameValid(String guildName) {
+        try {
+            return guildService.isGuildNameValid(guildName);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return VerificationRequestCallback.ErrorResult.UNKNOWN_ERROR;
+        }
+    }
+
+    @Override
+    public SuggestOracle.Response getSuggestedUserName(String query, int limit) {
+        try {
+            return userService.getSuggestedUserName(query, UserNameSuggestionFilter.USER_GILD_SEARCH, limit);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public SearchGuildsResult searchGuilds(int start, int length, String guildNameQuery) {
+        try {
+            return guildService.searchGuilds(start, length, guildNameQuery);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+
+    @Override
+    public void leaveGuild() {
+        try {
+            guildService.leaveGuild();
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+        }
+    }
+
+    @Override
+    public void closeGuild() {
+        try {
+            guildService.closeGuild();
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+        }
+    }
+
 }

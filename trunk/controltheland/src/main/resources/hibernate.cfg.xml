@@ -153,7 +153,13 @@
         <mapping class="com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation"/>
         <!-- Common -->
         <mapping class="com.btxtech.game.services.common.db.DbI18nString"/>
+        <mapping class="com.btxtech.game.services.common.db.DbProperty"/>
         <!-- Finance -->
         <mapping class="com.btxtech.game.services.finance.DbPayPalTransaction"/>
+        <!-- Guild -->
+        <mapping class="com.btxtech.game.services.user.DbGuild"/>
+        <mapping class="com.btxtech.game.services.user.DbGuildMember"/>
+        <mapping class="com.btxtech.game.services.user.DbGuildInvitation"/>
+        <mapping class="com.btxtech.game.services.user.DbGuildMembershipRequest"/>
     </session-factory>
 </hibernate-configuration>

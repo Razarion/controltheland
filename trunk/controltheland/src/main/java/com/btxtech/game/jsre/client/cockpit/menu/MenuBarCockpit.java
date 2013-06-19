@@ -1,6 +1,8 @@
 package com.btxtech.game.jsre.client.cockpit.menu;
 
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
@@ -32,9 +34,9 @@ public class MenuBarCockpit {
         menuBarPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT);
     }
 
-    public void initRealGame(GameInfo gameInfo) {
+    public void initRealGame(RealGameInfo gameInfo) {
         setSimpleUser(gameInfo.getSimpleUser());
-        menuBarPanel.initRealGame();
+        menuBarPanel.initRealGame(gameInfo);
         onUserAttentionPacket(gameInfo.getUserAttentionPacket());
     }
 
@@ -56,5 +58,9 @@ public class MenuBarCockpit {
         if (userAttentionPacket.isNews()) {
             menuBarPanel.blinkNews(userAttentionPacket.getNews() == UserAttentionPacket.Type.RAISE);
         }
+    }
+
+    public void updateGuild(SimpleGuild mySimpleGuild) {
+        menuBarPanel.updateGuild(mySimpleGuild);
     }
 }

@@ -40,7 +40,7 @@ public class LoginFailed extends Panel {
         if (user == null) {
             add(new Label("text", new StringResourceModel("loginFailed", this, null)));
             add(new BookmarkablePageLink<CmsPage>("forgotPassword", CmsPage.class, cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_REQUEST)));
-        } else if (!user.isAccountNonLocked()) {
+        } else if (!user.isRegistrationComplete()) {
             add(new Label("text", new StringResourceModel("userEmailNoConfirmed", this, null)));
             add(new BookmarkablePageLink<CmsPage>("forgotPassword", CmsPage.class, null).setVisible(false));
         } else {

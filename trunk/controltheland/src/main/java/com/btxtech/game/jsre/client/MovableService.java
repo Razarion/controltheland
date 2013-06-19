@@ -15,8 +15,15 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
+import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildDetailedInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
@@ -29,6 +36,7 @@ import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContai
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
+import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -46,9 +54,9 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.google.gwt.user.client.ui.SuggestOracle;
 
 import java.util.Collection;
 import java.util.Date;
@@ -86,7 +94,7 @@ public interface MovableService extends RemoteService {
 
     boolean isFacebookUserRegistered(String signedRequestParameter);
 
-    InvalidNickName isNickNameValid(String nickname) throws UserAlreadyExistsException, PasswordNotMatchException;
+    VerificationRequestCallback.ErrorResult isNickNameValid(String nickname) throws UserAlreadyExistsException, PasswordNotMatchException;
 
     void sendChatMessage(ChatMessage chatMessage);
 
@@ -150,4 +158,38 @@ public interface MovableService extends RemoteService {
     HistoryElementInfo getHistoryElements(int start, int length);
 
     NewsEntryInfo getNewsEntry(int index);
+
+    FullGuildInfo saveGuildText(String text);
+
+    FullGuildInfo kickGuildMember(int userId);
+
+    FullGuildInfo changeGuildMemberRank(int userId, GuildMemberInfo.Rank rank);
+
+    SuggestOracle.Response getSuggestedUserName(String query, int limit);
+
+    FullGuildInfo inviteUserToGuild(String userName) throws NoSuchUserException;
+
+    FullGuildInfo dismissGuildMemberRequest(int userId);
+
+    FullGuildInfo getFullGuildInfo(int guildId);
+
+    RazarionCostInfo getCreateGuildRazarionCost();
+
+    SimpleGuild createGuild(String guildName);
+
+    VerificationRequestCallback.ErrorResult isGuildNameValid(String guildName);
+
+    void guildMembershipRequest(int guildId, String text);
+
+    SearchGuildsResult searchGuilds(int start, int length, String guildNameQuery);
+
+    SimpleGuild joinGuild(int guildId);
+
+    List<GuildDetailedInfo> dismissGuild(int guildId);
+
+    List<GuildDetailedInfo> getGuildInvitations();
+
+    void leaveGuild();
+
+    void closeGuild();
 }

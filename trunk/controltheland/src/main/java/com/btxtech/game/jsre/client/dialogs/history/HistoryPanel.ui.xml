@@ -8,17 +8,21 @@
             border-top: 2px solid #6f7277;
             color: black;
         }
+
+        .tablePanel {
+            background: #FFFFFF;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
     </ui:style>
-    <g:VerticalPanel>
-        <g:Cell horizontalAlignment="ALIGN_CENTER">
-            <g:SimplePanel width="40em" height="45em">
-                <p1:CellTable ui:field="cellTable" width="100%" height="100%"/>
-            </g:SimplePanel>
-        </g:Cell>
+    <g:VerticalPanel width="40em">
+        <g:SimplePanel width="100%" height="25em" styleName="{style.tablePanel}">
+            <p1:CellTable ui:field="cellTable" width="100%"/>
+        </g:SimplePanel>
         <g:Cell horizontalAlignment="ALIGN_CENTER">
             <g:SimplePanel styleName="{style.simplepager}">
                 <p1:SimplePager location="CENTER" ui:field="simplePager"/>
             </g:SimplePanel>
         </g:Cell>
     </g:VerticalPanel>
-</ui:UiBinder> 
+</ui:UiBinder>

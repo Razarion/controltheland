@@ -417,6 +417,7 @@
 
     .gwt-MenuBarPopup {
         margin: 0px 0px 0px 3px;
+        border-top: 1px solid #91948d;
         border-left: 1px solid #91948d;
         border-right: 1px solid #91948d;
         border-bottom: 1px solid #91948d;

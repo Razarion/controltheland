@@ -1,6 +1,6 @@
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -68,7 +68,7 @@ public class TestRegisterService extends AbstractServiceTest {
         Assert.assertNotNull(user.getAwaitingVerificationDate());
         Assert.assertTrue(user.getAwaitingVerificationDate().getTime() >= dateBefore.getTime());
         Assert.assertTrue(user.getAwaitingVerificationDate().getTime() <= dateAfter.getTime());
-        Assert.assertFalse(user.isAccountNonLocked());
+        Assert.assertFalse(user.isRegistrationComplete());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -259,7 +259,7 @@ public class TestRegisterService extends AbstractServiceTest {
         Assert.assertNotNull(user.getVerificationId());
         Assert.assertEquals(verificationId, user.getVerificationId());
         Assert.assertNull(user.getAwaitingVerificationDate());
-        Assert.assertTrue(user.isAccountNonLocked());
+        Assert.assertTrue(user.isRegistrationComplete());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

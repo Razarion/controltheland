@@ -14,6 +14,7 @@
 package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -22,6 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.BotEnragementStateCo
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
+import com.btxtech.game.services.user.DbGuild;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
@@ -90,6 +92,30 @@ public interface HistoryService {
     void addQuestUnlocked(UserState userState, DbLevelTask dbLevelTask);
 
     void addPlanetUnlocked(UserState userState, PlanetLiteInfo planetLiteInfo);
+
+    void addGuildCreated(User user, int razarionCost, DbGuild dbGuild);
+
+    void addGuildInvitation(User invitingUser, User invitee, DbGuild hostGuild);
+
+    void addGuildJoined(User user, DbGuild dbGuild);
+
+    void addGuildDismiss(User user, DbGuild dbGuild);
+
+    void addGuildMembershipRequest(User user, DbGuild dbGuild);
+
+    void addDismissGuildMemberRequest(User user, User dismissUser, DbGuild dbGuild);
+
+    void addChangeGuildMemberRank(User user, User userToChange, GuildMemberInfo.Rank rank, DbGuild dbGuild);
+
+    void addGuildTextChanged(User user, String text, DbGuild dbGuild);
+
+    void addGuildMemberKicked(User user, User userToKick, DbGuild dbGuild);
+
+    void addGuildLeft(User user, DbGuild dbGuild);
+
+    void addGuildClosed(User user, DbGuild dbGuild);
+
+    void addKickedGuildClosed(User actorUser, User targetUser, DbGuild dbGuild);
 
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int start, int count);
 

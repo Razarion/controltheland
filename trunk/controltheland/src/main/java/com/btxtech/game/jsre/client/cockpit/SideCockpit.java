@@ -9,7 +9,6 @@ import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.StartPointMode;
 import com.btxtech.game.jsre.client.WebBrowserCustomButton;

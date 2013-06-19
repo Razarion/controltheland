@@ -2,7 +2,6 @@ package com.btxtech.game.jsre.client.dialogs.history;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.GameEngineMode;
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -36,8 +35,8 @@ public class HistoryPanel extends Composite {
     interface HistoryPanelUiBinder extends UiBinder<Widget, HistoryPanel> {
     }
 
-    interface TableRes extends CellTable.Resources {
-        @Source({CellTable.Style.DEFAULT_CSS, "com/btxtech/game/jsre/client/dialogs/history/table.css"})
+    public interface TableRes extends CellTable.Resources {
+        @Source({"com/btxtech/game/jsre/client/dialogs/history/table.css"})
         TableStyle cellTableStyle();
 
         interface TableStyle extends CellTable.Style {
@@ -59,7 +58,7 @@ public class HistoryPanel extends Composite {
                 return historyElement.getDate();
             }
         };
-        cellTable.addColumn(dateColumn, "Date");
+        cellTable.addColumn(dateColumn, ClientI18nHelper.CONSTANTS.date());
 
         // Create time column
         Column<HistoryElement, Date> timeColumn = new Column<HistoryElement, Date>(
@@ -70,7 +69,7 @@ public class HistoryPanel extends Composite {
                 return historyElement.getDate();
             }
         };
-        cellTable.addColumn(timeColumn, "Time");
+        cellTable.addColumn(timeColumn, ClientI18nHelper.CONSTANTS.time());
 
         // Create message column
         TextColumn<HistoryElement> messageColumn = new TextColumn<HistoryElement>() {
@@ -79,7 +78,7 @@ public class HistoryPanel extends Composite {
                 return historyElement.getMessage();
             }
         };
-        cellTable.addColumn(messageColumn, "Message");
+        cellTable.addColumn(messageColumn, ClientI18nHelper.CONSTANTS.event());
 
         // Create a data provider.
         AsyncDataProvider<HistoryElement> dataProvider = new AsyncDataProvider<HistoryElement>() {

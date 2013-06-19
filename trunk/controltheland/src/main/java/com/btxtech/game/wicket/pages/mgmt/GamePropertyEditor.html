@@ -1,0 +1,50 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC>
+<html xmlns:wicket>
+<head>
+    <link rel="stylesheet" type="text/css" href="GameEditor.css">
+    <title>Game Properties Editor</title>
+</head>
+<body>
+
+<h1>Game Properties Editor</h1>
+
+<form wicket:id="propertyForm">
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Property</th>
+            <th bgcolor="#dadada">Value</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+
+        <tr wicket:id="properties">
+            <td wicket:id="id"/>
+            <td><select wicket:id="propertyServiceEnum" size="1"></select></td>
+            <td><input wicket:id="valueAsString" type="text" size="20"></td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" wicket:id="add" value="Add">
+    <input type="submit" wicket:id="save" value="Save">
+    <br>
+    <input type="submit" wicket:id="back" value="Back">
+
+</form>
+
+</body>
+</html>

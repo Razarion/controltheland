@@ -1,10 +1,15 @@
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.jsre.client.InvalidNickName;
+import com.btxtech.game.jsre.client.VerificationRequestCallback;
+import com.btxtech.game.jsre.client.common.info.Suggestion;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.NameErrorPair;
+import com.btxtech.game.services.common.PropertyService;
+import com.btxtech.game.services.common.PropertyServiceEnum;
+import com.btxtech.game.services.common.db.DbProperty;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +28,10 @@ public class TestUserService extends AbstractServiceTest {
     private UserService userService;
     @Autowired
     private RegisterService registerService;
+    @Autowired
+    private GuildService guildService;
+    @Autowired
+    private PropertyService propertyService;
 
     @Test
     @DirtiesContext
@@ -349,10 +358,10 @@ public class TestUserService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(InvalidNickName.TO_SHORT, userService.isNickNameValid(""));
-        Assert.assertEquals(InvalidNickName.TO_SHORT, userService.isNickNameValid("a"));
-        Assert.assertEquals(InvalidNickName.TO_SHORT, userService.isNickNameValid("aa"));
-        Assert.assertEquals(InvalidNickName.ALREADY_USED, userService.isNickNameValid("test"));
+        Assert.assertEquals(VerificationRequestCallback.ErrorResult.TO_SHORT, userService.isNickNameValid(""));
+        Assert.assertEquals(VerificationRequestCallback.ErrorResult.TO_SHORT, userService.isNickNameValid("a"));
+        Assert.assertEquals(VerificationRequestCallback.ErrorResult.TO_SHORT, userService.isNickNameValid("aa"));
+        Assert.assertEquals(VerificationRequestCallback.ErrorResult.ALREADY_USED, userService.isNickNameValid("test"));
         Assert.assertNull(userService.isNickNameValid("test33"));
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -479,7 +488,7 @@ public class TestUserService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void getSimilarUserName() throws Exception {
+    public void getSuggestedUserNameTracking() throws Exception {
         // HSQLDB does not support ilike
         configureSimplePlanetNoResources();
 
@@ -493,30 +502,44 @@ public class TestUserService extends AbstractServiceTest {
         createUser("BZ52", "xxx");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+        // createGuilds
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        loginUser("ABCED", "xxx");
+        guildService.createGuild("xxxx1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("FBLXY", "xxx");
+        guildService.createGuild("xxxx2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<String> names = userService.getSimilarUserName("");
+        List<String> names = Suggestion.createStringList(userService.getSuggestedUserName("", UserNameSuggestionFilter.USER_TRACKING_SEARCH, 10));
         Assert.assertTrue(names.isEmpty());
-        names = userService.getSimilarUserName("a");
+        names = Suggestion.createStringList(userService.getSuggestedUserName("a", UserNameSuggestionFilter.USER_TRACKING_SEARCH, 10));
         Assert.assertEquals(2, names.size());
         Assert.assertEquals("ABCED", names.get(0));
         Assert.assertEquals("ABQU", names.get(1));
-        names = userService.getSimilarUserName("ab");
+        names = Suggestion.createStringList(userService.getSuggestedUserName("ab", UserNameSuggestionFilter.USER_TRACKING_SEARCH, 10));
         Assert.assertEquals(2, names.size());
         Assert.assertEquals("ABCED", names.get(0));
         Assert.assertEquals("ABQU", names.get(1));
-        names = userService.getSimilarUserName("abc");
+        names = Suggestion.createStringList(userService.getSuggestedUserName("abc", UserNameSuggestionFilter.USER_TRACKING_SEARCH, 10));
         Assert.assertEquals(1, names.size());
         Assert.assertEquals("ABCED", names.get(0));
-        names = userService.getSimilarUserName("abqu");
+        names = Suggestion.createStringList(userService.getSuggestedUserName("abqu", UserNameSuggestionFilter.USER_TRACKING_SEARCH, 10));
         Assert.assertEquals(1, names.size());
         Assert.assertEquals("ABQU", names.get(0));
-        names = userService.getSimilarUserName("%z");
+        names = Suggestion.createStringList(userService.getSuggestedUserName("%z", UserNameSuggestionFilter.USER_TRACKING_SEARCH, 10));
         Assert.assertEquals(2, names.size());
         Assert.assertEquals("BZ51", names.get(0));
         Assert.assertEquals("BZ52", names.get(1));
-        names = userService.getSimilarUserName("%z5");
+        names = Suggestion.createStringList(userService.getSuggestedUserName("%z5", UserNameSuggestionFilter.USER_TRACKING_SEARCH, 10));
         Assert.assertEquals(2, names.size());
         Assert.assertEquals("BZ51", names.get(0));
         Assert.assertEquals("BZ52", names.get(1));
@@ -526,7 +549,7 @@ public class TestUserService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void getSimilarUserNameSize() throws Exception {
+    public void getSuggestedUserNameSize() throws Exception {
         // HSQLDB does not support ilike
         configureSimplePlanetNoResources();
 
@@ -540,8 +563,104 @@ public class TestUserService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<String> names = userService.getSimilarUserName("abcd");
+        List<String> names = Suggestion.createStringList(userService.getSuggestedUserName("abcd", UserNameSuggestionFilter.USER_TRACKING_SEARCH, 20));
         Assert.assertEquals(20, names.size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getSuggestedUserNameGuild() throws Exception {
+        // HSQLDB does not support ilike
+        configureSimplePlanetNoResources();
+        // Create users
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("ABCED", "xxx");
+        createUser("ABQU", "xxx");
+        createUser("FBRD", "xxx");
+        createUser("FBLXY", "xxx");
+        createUser("BZ51", "xxx");
+        createUser("BZ52", "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // createGuilds
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        loginUser("ABCED", "xxx");
+        guildService.createGuild("xxxx1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("FBLXY", "xxx");
+        guildService.createGuild("xxxx2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<String> names = Suggestion.createStringList(userService.getSuggestedUserName("", UserNameSuggestionFilter.USER_GILD_SEARCH, 10));
+        Assert.assertTrue(names.isEmpty());
+        names = Suggestion.createStringList(userService.getSuggestedUserName("a", UserNameSuggestionFilter.USER_GILD_SEARCH, 10));
+        Assert.assertEquals(1, names.size());
+        Assert.assertEquals("ABQU", names.get(0));
+        names = Suggestion.createStringList(userService.getSuggestedUserName("ab", UserNameSuggestionFilter.USER_GILD_SEARCH, 10));
+        Assert.assertEquals(1, names.size());
+        Assert.assertEquals("ABQU", names.get(0));
+        names = Suggestion.createStringList(userService.getSuggestedUserName("abc", UserNameSuggestionFilter.USER_GILD_SEARCH, 10));
+        Assert.assertEquals(0, names.size());
+        names = Suggestion.createStringList(userService.getSuggestedUserName("abqu", UserNameSuggestionFilter.USER_GILD_SEARCH, 10));
+        Assert.assertEquals(1, names.size());
+        Assert.assertEquals("ABQU", names.get(0));
+        names = Suggestion.createStringList(userService.getSuggestedUserName("%z", UserNameSuggestionFilter.USER_GILD_SEARCH, 10));
+        Assert.assertEquals(2, names.size());
+        Assert.assertEquals("BZ51", names.get(0));
+        Assert.assertEquals("BZ52", names.get(1));
+        names = Suggestion.createStringList(userService.getSuggestedUserName("%z5", UserNameSuggestionFilter.USER_GILD_SEARCH, 10));
+        Assert.assertEquals(2, names.size());
+        Assert.assertEquals("BZ51", names.get(0));
+        Assert.assertEquals("BZ52", names.get(1));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getSuggestedUserNameGuildRemaining() throws Exception {
+        // HSQLDB does not support ilike
+        configureSimplePlanetNoResources();
+        // Create users
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("ABCED", "xxx");
+        createUser("ABCED1", "xxx");
+        createUser("ABCED2", "xxx");
+        createUser("ABCED3", "xxx");
+        createUser("ABCED4", "xxx");
+        createUser("ABCED5", "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // createGuilds
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        loginUser("ABCED", "xxx");
+        guildService.createGuild("xxxx1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        SuggestOracle.Response response = userService.getSuggestedUserName("A", UserNameSuggestionFilter.USER_GILD_SEARCH, 3);
+        Assert.assertEquals(2, response.getMoreSuggestionsCount());
+        List<String> names = Suggestion.createStringList(response);
+        Assert.assertEquals(3, names.size());
+        Assert.assertEquals("ABCED1", names.get(0));
+        Assert.assertEquals("ABCED2", names.get(1));
+        Assert.assertEquals("ABCED3", names.get(2));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

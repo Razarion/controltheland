@@ -1,6 +1,6 @@
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.services.AbstractServiceTest;
 import junit.framework.Assert;
 import org.junit.Test;

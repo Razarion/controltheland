@@ -1,6 +1,6 @@
 package com.btxtech.game.services.gwt;
 
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;

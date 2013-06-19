@@ -1,16 +1,22 @@
 package com.btxtech.game.mockservlet;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.InvalidNickName;
+import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.PositionInBotException;
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildDetailedInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
+import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
@@ -51,7 +57,7 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.common.ExceptionHandler;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import junit.framework.Assert;
 
@@ -202,7 +208,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public InvalidNickName isNickNameValid(String nickname) throws UserAlreadyExistsException, PasswordNotMatchException {
+    public VerificationRequestCallback.ErrorResult isNickNameValid(String nickname) throws UserAlreadyExistsException, PasswordNotMatchException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -359,5 +365,90 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     @Override
     public NewsEntryInfo getNewsEntry(int index) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public FullGuildInfo saveGuildText(String text) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public FullGuildInfo kickGuildMember(int userId) {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public FullGuildInfo changeGuildMemberRank(int userId, GuildMemberInfo.Rank rank) {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public SuggestOracle.Response getSuggestedUserName(String query, int limit) {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public FullGuildInfo inviteUserToGuild(String userName) {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public FullGuildInfo dismissGuildMemberRequest(int userId) {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public FullGuildInfo getFullGuildInfo(int guildId) {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public RazarionCostInfo getCreateGuildRazarionCost() {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public SimpleGuild createGuild(String guildName) {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public VerificationRequestCallback.ErrorResult isGuildNameValid(String guildName) {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void guildMembershipRequest(int guildId, String text) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public SearchGuildsResult searchGuilds(int start, int length, String guildNameQuery) {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public SimpleGuild joinGuild(int guildId) {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public List<GuildDetailedInfo> dismissGuild(int guildId) {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public List<GuildDetailedInfo> getGuildInvitations() {
+        return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void leaveGuild() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void closeGuild() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

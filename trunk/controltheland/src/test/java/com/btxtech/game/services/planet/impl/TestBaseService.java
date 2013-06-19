@@ -20,7 +20,7 @@ import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.user.AllianceService;
+import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -54,7 +54,7 @@ public class TestBaseService extends AbstractServiceTest {
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private AllianceService allianceService;
+    private GuildService guildService;
 
     @Test
     @DirtiesContext
@@ -159,19 +159,19 @@ public class TestBaseService extends AbstractServiceTest {
         SimpleBase simpleBase = getOrCreateBase();
         waitForActionServiceDone(TEST_PLANET_1_ID);
 
-        AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);
-        allianceServiceMock.fillAlliancesForFakeBases(EasyMock.<BaseAttributes>anyObject(),
+        GuildService guildServiceMock = EasyMock.createStrictMock(GuildService.class);
+        guildServiceMock.fillAlliancesForFakeBases(EasyMock.<BaseAttributes>anyObject(),
                 EasyMock.<HashMap<SimpleBase, BaseAttributes>>anyObject(),
                 EasyMock.<UserState>anyObject(),
                 EasyMock.anyInt());
-        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "allianceService", allianceServiceMock);
-        EasyMock.replay(allianceServiceMock);
+        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "guildService", guildServiceMock);
+        EasyMock.replay(guildServiceMock);
 
         baseService.surrenderBase(baseService.getBase(simpleBase));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        EasyMock.verify(allianceServiceMock);
+        EasyMock.verify(guildServiceMock);
     }
 
     @Test
@@ -186,21 +186,21 @@ public class TestBaseService extends AbstractServiceTest {
         SimpleBase simpleBase = getOrCreateBase(); // Setup connection
         waitForActionServiceDone();
 
-        AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);
-        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "allianceService", allianceServiceMock);
-        allianceServiceMock.onMakeBaseAbandoned(new SimpleBase(1, TEST_PLANET_1_ID));
-        allianceServiceMock.onBaseCreatedOrDeleted(1);
-        allianceServiceMock.fillAlliancesForFakeBases(EasyMock.<BaseAttributes>anyObject(),
+        GuildService guildServiceMock = EasyMock.createStrictMock(GuildService.class);
+        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "guildService", guildServiceMock);
+        guildServiceMock.onMakeBaseAbandoned(new SimpleBase(1, TEST_PLANET_1_ID));
+        guildServiceMock.onBaseCreatedOrDeleted(1);
+        guildServiceMock.fillAlliancesForFakeBases(EasyMock.<BaseAttributes>anyObject(),
                 EasyMock.<HashMap<SimpleBase, BaseAttributes>>anyObject(),
                 EasyMock.<UserState>anyObject(),
                 EasyMock.anyInt());
-        EasyMock.replay(allianceServiceMock);
+        EasyMock.replay(guildServiceMock);
 
         baseService.surrenderBase(baseService.getBase(simpleBase));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        EasyMock.verify(allianceServiceMock);
+        EasyMock.verify(guildServiceMock);
     }
 
     @Test
@@ -580,7 +580,7 @@ public class TestBaseService extends AbstractServiceTest {
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
         createBase(startPoint);
         if (makeAllianceTo != null) {
-            allianceService.proposeAlliance(makeAllianceTo);
+            guildService.proposeAlliance(makeAllianceTo);
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -589,7 +589,7 @@ public class TestBaseService extends AbstractServiceTest {
             beginHttpSession();
             beginHttpRequestAndOpenSessionInViewFilter();
             loginUser(allianceUser);
-            allianceService.acceptAllianceOffer(userName);
+            guildService.acceptAllianceOffer(userName);
             endHttpRequestAndOpenSessionInViewFilter();
             endHttpSession();
         }

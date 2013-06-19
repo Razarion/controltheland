@@ -13,8 +13,10 @@
 
 package com.btxtech.game.services.user.impl;
 
-import com.btxtech.game.jsre.client.InvalidNickName;
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.VerificationRequestCallback;
+import com.btxtech.game.jsre.client.common.info.DetailedUser;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.Suggestion;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
@@ -24,6 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.NameErrorPair;
+import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
@@ -34,14 +37,17 @@ import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
+import com.btxtech.game.services.user.DbGuildMember;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.NotAuthorizedException;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserNameSuggestionFilter;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.hibernate.Criteria;
@@ -50,6 +56,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
@@ -388,16 +395,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public InvalidNickName isNickNameValid(String nickName) {
+    public VerificationRequestCallback.ErrorResult isNickNameValid(String nickName) {
         if (nickName == null || nickName.isEmpty()) {
-            return InvalidNickName.TO_SHORT;
+            return VerificationRequestCallback.ErrorResult.TO_SHORT;
         }
 
         if (nickName.length() < 3) {
-            return InvalidNickName.TO_SHORT;
+            return VerificationRequestCallback.ErrorResult.TO_SHORT;
         }
         if (!isNicknameFree(nickName)) {
-            return InvalidNickName.ALREADY_USED;
+            return VerificationRequestCallback.ErrorResult.ALREADY_USED;
         }
 
         return null;
@@ -405,7 +412,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isRegistered() {
-        return hasUserState() && getUserState().isRegistered() && getUser().isAccountNonLocked();
+        return hasUserState() && getUserState().isRegistered() && getUser().isRegistrationComplete();
     }
 
     @Override
@@ -649,21 +656,52 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<String> getSimilarUserName(String string) {
-        if (StringUtils.isEmpty(string)) {
-            return Collections.emptyList();
+    public SuggestOracle.Response getSuggestedUserName(String nameQuery, UserNameSuggestionFilter filter, int limit) {
+        if (StringUtils.isEmpty(nameQuery)) {
+            return new SuggestOracle.Response();
         }
-        string = string.toUpperCase();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
-        criteria.add(Restrictions.ilike("name", string + "%"));
-        criteria.setProjection(Projections.property("name"));
-        criteria.addOrder(Order.asc("name"));
-        criteria.setMaxResults(20);
-        List<String> usersName = criteria.list();
-        if (usersName != null) {
-            return usersName;
+        nameQuery = nameQuery.toUpperCase();
+        Criteria criteria = createUserSuggestionCriteria(nameQuery, filter, true);
+        criteria.setMaxResults(limit);
+        List<String> usersNames = criteria.list();
+        if (usersNames != null) {
+            Criteria countCriteria = createUserSuggestionCriteria(nameQuery, filter, false);
+            countCriteria.setProjection(Projections.rowCount());
+            int remaining = Math.max(0, ((Number) countCriteria.uniqueResult()).intValue() - usersNames.size());
+            SuggestOracle.Response response = new SuggestOracle.Response(Suggestion.createSuggestionCollection(usersNames));
+            response.setMoreSuggestionsCount(remaining);
+            return response;
         } else {
-            return Collections.emptyList();
+            return new SuggestOracle.Response();
+        }
+    }
+
+    private Criteria createUserSuggestionCriteria(String nameQuery, UserNameSuggestionFilter filter, boolean order) {
+        switch (filter) {
+            case USER_GILD_SEARCH: {
+                Criteria guildMemberCriteria = sessionFactory.getCurrentSession().createCriteria(DbGuildMember.class);
+                guildMemberCriteria.add(Restrictions.isNull("id"));
+                Criteria userCriteria = guildMemberCriteria.createCriteria("user", "userAlias", JoinType.RIGHT_OUTER_JOIN);
+                userCriteria.add(Restrictions.ilike("name", nameQuery + "%"));
+                userCriteria.add(Restrictions.eq("accountNonLocked", true));
+                userCriteria.setProjection(Projections.property("userAlias.name"));
+                if (order) {
+                    userCriteria.addOrder(Order.asc("name"));
+                }
+                return guildMemberCriteria;
+            }
+            case USER_TRACKING_SEARCH: {
+                Criteria userCriteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+                userCriteria.add(Restrictions.ilike("name", nameQuery + "%"));
+                userCriteria.add(Restrictions.eq("accountNonLocked", true));
+                userCriteria.setProjection(Projections.property("name"));
+                if (order) {
+                    userCriteria.addOrder(Order.asc("name"));
+                }
+                return userCriteria;
+            }
+            default:
+                throw new IllegalArgumentException("Unknown filter: " + filter);
         }
     }
 
@@ -856,4 +894,14 @@ public class UserServiceImpl implements UserService {
         }
         return result;
     }
+
+    @Override
+    public DetailedUser createDetailedUser(User user) {
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(user);
+        return new DetailedUser(user.createSimpleUser(),
+                userGuidanceService.getDbLevel(getUserState(user)).getNumber(),
+                serverPlanetServices != null ? serverPlanetServices.getPlanetInfo().getName() : null);
+    }
+
+
 }

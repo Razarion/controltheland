@@ -3,7 +3,9 @@ package com.btxtech.game.jsre.client.dialogs;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,7 @@ public class DialogManager implements CloseHandler<PopupPanel> {
 
     public enum Type {
         PROMPTLY,
-        STACK_ABLE, 
+        STACK_ABLE,
         QUEUE_ABLE,
         UNIMPORTANT
     }
@@ -29,6 +31,17 @@ public class DialogManager implements CloseHandler<PopupPanel> {
 
     public static void showDialog(Dialog dialog, Type type) {
         INSTANCE.showDialogPrivate(dialog, type);
+    }
+
+    public static void showDialog(final DialogUiBinderWrapper dialogUiBinderWrapper, Type type) {
+        Dialog dialog = new Dialog(dialogUiBinderWrapper.getDialogTitle()) {
+            @Override
+            protected void setupPanel(VerticalPanel dialogVPanel) {
+                dialogVPanel.add(dialogUiBinderWrapper);
+            }
+        };
+        dialogUiBinderWrapper.init(dialog);
+        showDialog(dialog, type);
     }
 
     public void showDialogPrivate(Dialog dialog, Type type) {
@@ -64,7 +77,7 @@ public class DialogManager implements CloseHandler<PopupPanel> {
         dialog.addCloseHandler(this);
         stackedDialogs.add(dialog);
         dialog.setupDialog();
-        ClientUserTracker.getInstance().onDialogAppears(dialog, "Dialog");        
+        ClientUserTracker.getInstance().onDialogAppears(dialog, "Dialog");
     }
 
     @Override
@@ -80,7 +93,7 @@ public class DialogManager implements CloseHandler<PopupPanel> {
         } else if (stackedDialogs.contains(dialog)) {
             stackedDialogs.remove(dialog);
         }
-        ClientUserTracker.getInstance().onDialogDisappears(dialog);        
+        ClientUserTracker.getInstance().onDialogDisappears(dialog);
     }
 
     private void removeAllStackedDialogs() {

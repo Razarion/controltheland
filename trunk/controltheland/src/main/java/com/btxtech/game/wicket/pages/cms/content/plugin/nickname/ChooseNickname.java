@@ -13,12 +13,14 @@
 
 package com.btxtech.game.wicket.pages.cms.content.plugin.nickname;
 
+import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.form.AjaxFormValidatingBehavior;
@@ -29,6 +31,7 @@ import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.validation.IValidatable;
@@ -42,6 +45,7 @@ public class ChooseNickname extends Panel {
     private CmsUiService cmsUiService;
     @SpringBean
     private UserGuidanceService userGuidanceService;
+    private Log log = LogFactory.getLog(ChooseNickname.class);
 
     /**
      * Constructor
@@ -63,11 +67,11 @@ public class ChooseNickname extends Panel {
 
             @Override
             protected void onValidate(IValidatable<String> validatable) {
-                InvalidNickName invalidNickName = userService.isNickNameValid(validatable.getValue());
-                if (invalidNickName != null) {
+                VerificationRequestCallback.ErrorResult errorResult = userService.isNickNameValid(validatable.getValue());
+                if (errorResult != null) {
                     ValidationError error = new ValidationError();
                     error.addMessageKey("NickNameError");
-                    error.setVariable("error", invalidNickName.getErrorMsg());
+                    error.setVariable("error", getLocalizedErrorText(errorResult));
                     validatable.error(error);
                 }
             }
@@ -78,8 +82,8 @@ public class ChooseNickname extends Panel {
             @Override
             public void onSubmit() {
                 Bean bean = form.getModelObject();
-                InvalidNickName invalidNickName = userService.isNickNameValid(bean.getName());
-                if (invalidNickName == null) {
+                VerificationRequestCallback.ErrorResult errorResult = userService.isNickNameValid(bean.getName());
+                if (errorResult == null) {
                     try {
                         userService.createAndLoginFacebookUser(cmsUiService.getAndClearFacebookSignedRequest(), bean.getName());
                     } catch (UserAlreadyExistsException e) {
@@ -91,7 +95,7 @@ public class ChooseNickname extends Panel {
                     }
                     setResponsePage(Game.class, gamePageParameters);
                 } else {
-                    error("Invalid nick name: " + invalidNickName.getErrorMsg());
+                    error("Invalid nick name: " + getLocalizedErrorText(errorResult));
                 }
             }
         });
@@ -99,6 +103,20 @@ public class ChooseNickname extends Panel {
         // attach an ajax validation behavior to all form component's onkeydown
         // event and throttle it down to once per second
         AjaxFormValidatingBehavior.addToAllFormComponents(form, "onkeyup", Duration.milliseconds(250));
+    }
+
+    private String getLocalizedErrorText(VerificationRequestCallback.ErrorResult errorResult) {
+        switch (errorResult) {
+            case TO_SHORT:
+                return new StringResourceModel("nameToShort", this, null).getString();
+            case ALREADY_USED:
+                return new StringResourceModel("nameAlreadyUsed", this, null).getString();
+            case UNKNOWN_ERROR:
+                return new StringResourceModel("unknownErrorReceived", this, null).getString();
+            default:
+                log.warn("ChooseNickname: unknown errorResult: " + errorResult);
+                return "???";
+        }
     }
 
     /**

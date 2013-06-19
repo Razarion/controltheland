@@ -14,6 +14,7 @@
 package com.btxtech.game.services.history.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElement;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -26,6 +27,7 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.history.*;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.user.DbGuild;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
@@ -85,7 +87,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 planetSystemService,
                 getSessionId(simpleBase),
-                determineSource(simpleBase, null), null, null, null, null, null, null, null, null));
+                determineSource(simpleBase, null), null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -101,7 +103,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 planetSystemService,
                 getSessionId(actor),
-                determineSource(actor, target), null, null, null, null, null, null, null, null));
+                determineSource(actor, target), null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -117,7 +119,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 planetSystemService,
                 getSessionId(simpleBase),
-                determineSource(simpleBase, null), null, null, null, null, null, null, null, null));
+                determineSource(simpleBase, null), null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -133,7 +135,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 planetSystemService,
                 getSessionId(syncBaseItem.getBase()),
-                determineSource(syncBaseItem.getBase(), null), null, null, null, null, null, null, null, null));
+                determineSource(syncBaseItem.getBase(), null), null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -149,7 +151,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 planetSystemService,
                 getSessionId(actor),
-                determineSource(actor, target.getBase()), null, null, null, null, null, null, null, null));
+                determineSource(actor, target.getBase()), null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -165,7 +167,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 planetSystemService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -181,7 +183,7 @@ public class HistoryServiceImpl implements HistoryService {
                 levelTask,
                 planetSystemService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -196,7 +198,7 @@ public class HistoryServiceImpl implements HistoryService {
                 dbLevelTask,
                 planetSystemService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -211,7 +213,7 @@ public class HistoryServiceImpl implements HistoryService {
                 dbLevelTask,
                 planetSystemService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -226,7 +228,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -241,7 +243,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -256,7 +258,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -271,7 +273,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -288,7 +290,7 @@ public class HistoryServiceImpl implements HistoryService {
                     null,
                     null,
                     DbHistoryElement.Source.BOT,
-                    boxItem.getSyncItemArea().getPosition(), null, null, null, null, null, null, null));
+                    boxItem.getSyncItemArea().getPosition(), null, null, null, null, null, null, null, null, null, null));
         } else {
             HibernateUtil.openSession4InternalCall(sessionFactory);
             try {
@@ -303,7 +305,7 @@ public class HistoryServiceImpl implements HistoryService {
                         null,
                         null,
                         DbHistoryElement.Source.BOT,
-                        boxItem.getSyncItemArea().getPosition(), null, null, null, null, null, null, null));
+                        boxItem.getSyncItemArea().getPosition(), null, null, null, null, null, null, null, null, null, null));
             } finally {
                 HibernateUtil.closeSession4InternalCall(sessionFactory);
             }
@@ -328,7 +330,7 @@ public class HistoryServiceImpl implements HistoryService {
                     planetSystemService,
                     null,
                     DbHistoryElement.Source.BOT,
-                    position, null, null, null, null, null, null, null));
+                    position, null, null, null, null, null, null, null, null, null, null));
         } else {
             HibernateUtil.openSession4InternalCall(sessionFactory);
             try {
@@ -343,7 +345,7 @@ public class HistoryServiceImpl implements HistoryService {
                         planetSystemService,
                         null,
                         DbHistoryElement.Source.BOT,
-                        position, null, null, null, null, null, null, null));
+                        position, null, null, null, null, null, null, null, null, null, null));
             } finally {
                 HibernateUtil.closeSession4InternalCall(sessionFactory);
             }
@@ -363,7 +365,7 @@ public class HistoryServiceImpl implements HistoryService {
                 planetSystemService,
                 getSessionId(picker.getBase()),
                 DbHistoryElement.Source.BOT,
-                boxItem.getSyncItemArea().getPosition(), null, null, null, null, null, null, null));
+                boxItem.getSyncItemArea().getPosition(), null, null, null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -381,7 +383,7 @@ public class HistoryServiceImpl implements HistoryService {
                 DbHistoryElement.Source.HUMAN,
                 null,
                 razarion,
-                userState.getRazarion(), null, null, null, null, null));
+                userState.getRazarion(), null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -399,7 +401,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 razarionBought,
-                userState.getRazarion(), null, null, null, null, null));
+                userState.getRazarion(), null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -418,7 +420,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userState.getRazarion(),
-                inventoryItemName, null, null, null, null));
+                inventoryItemName, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -437,7 +439,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userState.getRazarion(),
-                inventoryArtifactName, null, null, null, null));
+                inventoryArtifactName, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -456,7 +458,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 null,
-                inventoryItemName, null, null, null, null));
+                inventoryItemName, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -475,7 +477,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 razarion,
                 userState.getRazarion(),
-                inventoryItemName, null, null, null, null));
+                inventoryItemName, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -494,7 +496,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 razarion,
                 userState.getRazarion(),
-                inventoryArtifactName, null, null, null, null));
+                inventoryArtifactName, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -518,7 +520,7 @@ public class HistoryServiceImpl implements HistoryService {
                     null,
                     null,
                     botName,
-                    botEnragementState.getName(), null, null));
+                    botEnragementState.getName(), null, null, null, null, null));
         } finally {
             HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
@@ -544,7 +546,7 @@ public class HistoryServiceImpl implements HistoryService {
                     null,
                     null,
                     botName,
-                    botEnragementState.getName(), null, null));
+                    botEnragementState.getName(), null, null, null, null, null));
         } finally {
             HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
@@ -569,7 +571,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 null,
-                baseItemType, null));
+                baseItemType, null, null, null, null));
     }
 
     @Override
@@ -591,7 +593,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 null,
-                null, null));
+                null, null, null, null, null));
     }
 
     @Override
@@ -614,7 +616,304 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 null,
-                planetLiteInfo));
+                planetLiteInfo, null, null, null));
+    }
+
+    @Override
+    public void addGuildCreated(User user, int razarionCost, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_CREATED,
+                user,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                razarionCost,
+                userService.getUserState(user).getRazarion(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                dbGuild, null, null));
+    }
+
+    @Override
+    public void addGuildInvitation(User invitingUser, User invitee, DbGuild hostGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_USER_INVITED,
+                invitingUser,
+                invitee,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(invitingUser).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                hostGuild, null, null));
+    }
+
+    @Override
+    public void addGuildJoined(User user, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_JOINED,
+                user,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dbGuild, null, null));
+    }
+
+    @Override
+    public void addGuildDismiss(User user, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_DISMISSED,
+                user,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dbGuild, null, null));
+    }
+
+    @Override
+    public void addGuildMembershipRequest(User user, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_MEMBERSHIP_REQUEST,
+                user,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dbGuild, null, null));
+    }
+
+    @Override
+    public void addDismissGuildMemberRequest(User user, User dismissUser, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_MEMBERSHIP_REQUEST_DISMISSED,
+                user,
+                dismissUser,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dbGuild, null, null));
+    }
+
+    @Override
+    public void addGuildMemberKicked(User user, User userToKick, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_MEMBER_KICKED,
+                user,
+                userToKick,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dbGuild, null, null));
+    }
+
+    @Override
+    public void addChangeGuildMemberRank(User user, User userToChange, GuildMemberInfo.Rank rank, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_MEMBER_CHANGED,
+                user,
+                userToChange,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dbGuild,
+                rank, null));
+    }
+
+    @Override
+    public void addGuildTextChanged(User user, String text, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_TEXT_CHANGED,
+                user,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dbGuild,
+                null,
+                text));
+    }
+
+    @Override
+    public void addGuildLeft(User user, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_LEFT,
+                user,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dbGuild,
+                null,
+                null));
+    }
+
+    @Override
+    public void addGuildClosed(User user, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_CLOSED,
+                user,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dbGuild,
+                null,
+                null));
+    }
+
+    @Override
+    public void addKickedGuildClosed(User actorUser, User targetUser, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_CLOSED_MEMBER_KICKED,
+                actorUser,
+                targetUser,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(actorUser).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dbGuild,
+                null,
+                null));
     }
 
     private String getSessionId(SimpleBase simpleBase) {
@@ -669,7 +968,6 @@ public class HistoryServiceImpl implements HistoryService {
         } else {
             criteria.add(Restrictions.eq("sessionId", gameHistoryFrame.getSessionId()));
         }
-
 
         if (gameHistoryFrame.hasStartTime()) {
             criteria.add(Restrictions.ge("timeStampMs", gameHistoryFrame.getStartTime()));
