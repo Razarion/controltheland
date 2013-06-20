@@ -127,10 +127,9 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public UserAttentionPacket createUserAttentionPacket(User user) {
-        UserAttentionPacket userAttentionPacket = new UserAttentionPacket();
+    public void fillUserAttentionPacket(User user, UserAttentionPacket userAttentionPacket) {
         if (user == null) {
-            return userAttentionPacket;
+            return;
         }
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbBlogEntry.class);
         if (user.getLastNews() != null) {
@@ -140,7 +139,6 @@ public class ContentServiceImpl implements ContentService {
         if (((Number) criteria.list().get(0)).intValue() >= 1) {
             userAttentionPacket.setNews(UserAttentionPacket.Type.RAISE);
         }
-        return userAttentionPacket;
     }
 
     @Override

@@ -660,4 +660,12 @@ public interface ClientI18nConstants extends Messages {
     String guildToSendRequest();
 
     String guildTextShort();
+
+    String guildInvitationNotification();
+
+    String openGuildInvitation();
+
+    String guildMembershipRequestNotification();
+
+    String openGuildMembershipRequest();
 }

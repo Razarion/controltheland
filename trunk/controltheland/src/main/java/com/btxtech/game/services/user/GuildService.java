@@ -12,6 +12,7 @@ import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
+import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.common.NoSuchPropertyException;
 import com.btxtech.game.services.common.WrongPropertyTypeException;
 
@@ -59,6 +60,8 @@ public interface GuildService {
     void leaveGuild();
 
     void closeGuild();
+
+    void fillUserAttentionPacket(User user, UserAttentionPacket userAttentionPacket);
 
     /*------------------------------------------------------*/
     void proposeAlliance(SimpleBase partner);

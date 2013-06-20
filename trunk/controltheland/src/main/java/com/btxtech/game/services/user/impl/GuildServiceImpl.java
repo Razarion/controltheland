@@ -12,6 +12,7 @@ import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
+import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.NoSuchPropertyException;
 import com.btxtech.game.services.common.PropertyService;
@@ -147,7 +148,9 @@ public class GuildServiceImpl implements GuildService {
             dbGuildInvitation.setDbGuild(hostGuild);
             sessionFactory.getCurrentSession().save(dbGuildInvitation);
             historyService.addGuildInvitation(invitingUser, invitee, hostGuild);
-            // TODO fire on user invited
+            UserAttentionPacket userAttentionPacket = new UserAttentionPacket();
+            userAttentionPacket.setGuildInvitation(UserAttentionPacket.Type.RAISE);
+            planetSystemService.sendPacket(userService.getUserState(invitee), userAttentionPacket);
         }
         removeMembershipRequests(invitee, hostGuild);
     }
@@ -254,7 +257,15 @@ public class GuildServiceImpl implements GuildService {
             dbGuildMembershipRequest.setText(text);
             sessionFactory.getCurrentSession().save(dbGuildMembershipRequest);
             historyService.addGuildMembershipRequest(user, dbGuild);
-            // TODO fire onRequest
+            sendRequestUserAttentionPacket(dbGuild);
+        }
+    }
+
+    private void sendRequestUserAttentionPacket(DbGuild dbGuild) {
+        UserAttentionPacket userAttentionPacket = new UserAttentionPacket();
+        userAttentionPacket.setGuildMembershipRequest(UserAttentionPacket.Type.RAISE);
+        for (DbGuildMember dbGuildMember : dbGuild.getGuildMembers()) {
+            planetSystemService.sendPacket(userService.getUserState(dbGuildMember.getUser()), userAttentionPacket);
         }
     }
 
@@ -479,6 +490,36 @@ public class GuildServiceImpl implements GuildService {
         historyService.addGuildClosed(user, dbGuild);
         sessionFactory.getCurrentSession().delete(dbGuild);
         onGuildChanged(dbGuild);
+    }
+
+    @Override
+    public void fillUserAttentionPacket(User user, UserAttentionPacket userAttentionPacket) {
+        CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        // Query for total row count in invitations
+        CriteriaQuery<Long> longQuery = criteriaBuilder.createQuery(Long.class);
+        Root<DbGuildInvitation> fromInvitation = longQuery.from(DbGuildInvitation.class);
+        Predicate predicateUser = criteriaBuilder.equal(fromInvitation.<String>get("user"), user);
+        longQuery.where(predicateUser);
+        CriteriaQuery<Long> longSelect = longQuery.select(criteriaBuilder.count(fromInvitation));
+        TypedQuery<Long> typedLongQuery = entityManagerFactory.createEntityManager().createQuery(longSelect);
+        Long totalRowCount = typedLongQuery.getSingleResult();
+        if (totalRowCount > 0) {
+            userAttentionPacket.setGuildInvitation(UserAttentionPacket.Type.RAISE);
+        }
+        // Query for total row count in membership requests
+        DbGuild dbGuild = getGuild(user);
+        if (dbGuild != null) {
+            longQuery = criteriaBuilder.createQuery(Long.class);
+            Root<DbGuildMembershipRequest> fromRequests = longQuery.from(DbGuildMembershipRequest.class);
+            Predicate predicateGuild = criteriaBuilder.equal(fromRequests.<String>get("dbGuild"), dbGuild);
+            longQuery.where(predicateGuild);
+            longSelect = longQuery.select(criteriaBuilder.count(fromRequests));
+            typedLongQuery = entityManagerFactory.createEntityManager().createQuery(longSelect);
+            totalRowCount = typedLongQuery.getSingleResult();
+            if (totalRowCount > 0) {
+                userAttentionPacket.setGuildMembershipRequest(UserAttentionPacket.Type.RAISE);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

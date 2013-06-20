@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedExceptio
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.common.NameErrorPair;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
@@ -128,4 +129,6 @@ public interface UserService extends UserDetailsService {
     User loadUserFromDb(String name);
 
     DetailedUser createDetailedUser(User user);
+
+    UserAttentionPacket createUserAttentionPacket();
 }

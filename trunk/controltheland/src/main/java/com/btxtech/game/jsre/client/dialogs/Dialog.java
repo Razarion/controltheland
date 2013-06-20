@@ -123,7 +123,6 @@ public abstract class Dialog extends DialogBox {
      * See HistoryPanel
      * @param em
      */
-    @Deprecated
     protected void setDialogWidth(int em) {
         getElement().getStyle().setWidth(em, Style.Unit.EM);
     }
