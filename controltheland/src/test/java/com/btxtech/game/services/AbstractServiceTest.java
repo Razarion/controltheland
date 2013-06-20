@@ -2620,4 +2620,79 @@ abstract public class AbstractServiceTest {
         }
     }
 
+    public UserState createUserStateMatcher(String userName) {
+        EasyMock.reportMatcher(new UserStateMatcher(userName));
+        return null;
+    }
+
+    public class UserStateMatcher implements IArgumentMatcher {
+        private String userName;
+        private String errorString;
+
+        public UserStateMatcher(String userName) {
+            this.userName = userName;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            User user = userService.getUser(userName);
+            if (user == null) {
+                errorString = "User does not exist: " + userName;
+                return false;
+            }
+            UserState userState = (UserState) o;
+            if (user.getId().equals(userState.getUser())) {
+                return true;
+            } else {
+                errorString = "Invalid UserState. Expected User '" + user + "' actual UserState '" + userState + "'";
+                return false;
+            }
+        }
+
+        @Override
+        public void appendTo(StringBuffer stringBuffer) {
+            stringBuffer.append(errorString);
+        }
+    }
+
+    public static UserAttentionPacket createUserAttentionPacketMatcher(UserAttentionPacket.Type news, UserAttentionPacket.Type guildMembershipRequest, UserAttentionPacket.Type guildInvitation) {
+        EasyMock.reportMatcher(new UserAttentionPacketMatcher(news, guildMembershipRequest, guildInvitation));
+        return null;
+    }
+
+    public static class UserAttentionPacketMatcher implements IArgumentMatcher {
+        private UserAttentionPacket expected;
+        private String errorString;
+
+        public UserAttentionPacketMatcher(UserAttentionPacket.Type news, UserAttentionPacket.Type guildMembershipRequest, UserAttentionPacket.Type guildInvitation) {
+            expected = new UserAttentionPacket();
+            expected.setNews(news);
+            expected.setGuildMembershipRequest(guildMembershipRequest);
+            expected.setGuildInvitation(guildInvitation);
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            UserAttentionPacket actual = (UserAttentionPacket) o;
+            if (expected.getNews() != actual.getNews()) {
+                errorString = "Invalid UserAttentionPacket. Expected '" + expected + "' actual '" + actual + "'";
+                return false;
+            }
+            if (expected.getGuildMembershipRequest() != actual.getGuildMembershipRequest()) {
+                errorString = "Invalid UserAttentionPacket. Expected '" + expected + "' actual '" + actual + "'";
+                return false;
+            }
+            if (expected.getGuildInvitation() != actual.getGuildInvitation()) {
+                errorString = "Invalid UserAttentionPacket. Expected '" + expected + "' actual '" + actual + "'";
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public void appendTo(StringBuffer stringBuffer) {
+            stringBuffer.append(errorString);
+        }
+    }
+
 }

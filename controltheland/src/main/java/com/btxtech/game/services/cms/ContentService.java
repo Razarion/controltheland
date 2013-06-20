@@ -25,5 +25,5 @@ public interface ContentService {
 
     void createNewsEntryAndSendUserAttentionPacket(String title, String content);
 
-    UserAttentionPacket createUserAttentionPacket(User user);
+    void fillUserAttentionPacket(User user, UserAttentionPacket userAttentionPacket);
 }

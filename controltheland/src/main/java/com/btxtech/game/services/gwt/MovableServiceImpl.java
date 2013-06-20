@@ -199,7 +199,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             UserState userState = userService.getUserState();
             ServerPlanetServices serverPlanetServices = planetSystemService.getUnlockedServerPlanetServices(userState);
             RealGameInfo realGameInfo = new RealGameInfo();
-            setCommonInfo(realGameInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService, contentService);
+            setCommonInfo(realGameInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
             if (userState == null) {
                 throw new IllegalStateException("No UserState available: " + userState);
             }
@@ -257,7 +257,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             SimulationInfo simulationInfo = new SimulationInfo();
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig(levelTaskId);
             // Common
-            setCommonInfo(simulationInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService, contentService);
+            setCommonInfo(simulationInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
             simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService, request.getLocale()));
             simulationInfo.setLevelTaskId(levelTaskId);
             simulationInfo.setLevelNumber(userGuidanceService.getDbLevel().getNumber());
@@ -284,7 +284,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         }
     }
 
-    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ServerItemTypeService serverItemTypeService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService, ClipService clipService, ContentService contentService) {
+    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ServerItemTypeService serverItemTypeService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService, ClipService clipService) {
         gameInfo.setSimpleUser(userService.getSimpleUser());
         gameInfo.setItemTypes(serverItemTypeService.getItemTypes());
         StartupData startupData = mgmtService.getStartupData();
@@ -294,7 +294,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         gameInfo.setImageSpriteMapLibrary(clipService.getImageSpriteMapLibrary());
         gameInfo.setClipLibrary(clipService.getClipLibrary());
         gameInfo.setPreloadedImageSpriteMapInfo(clipService.getPreloadedImageSpriteMapInfo());
-        gameInfo.setUserAttentionPacket(contentService.createUserAttentionPacket(userService.getUser()));
+        gameInfo.setUserAttentionPacket(userService.createUserAttentionPacket());
     }
 
     @Override

@@ -207,7 +207,8 @@ public class TestContentService extends AbstractServiceTest {
         // Verify no user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        UserAttentionPacket userAttentionPacket = contentService.createUserAttentionPacket(null);
+        UserAttentionPacket userAttentionPacket = new UserAttentionPacket();
+        contentService.fillUserAttentionPacket(null, userAttentionPacket);
         Assert.assertNull(userAttentionPacket.getNews());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -230,7 +231,8 @@ public class TestContentService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        UserAttentionPacket userAttentionPacket = contentService.createUserAttentionPacket(userService.getUser());
+        UserAttentionPacket userAttentionPacket = new UserAttentionPacket();
+        contentService.fillUserAttentionPacket(userService.getUser(), userAttentionPacket);
         Assert.assertNull(userAttentionPacket.getNews());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -248,7 +250,8 @@ public class TestContentService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        userAttentionPacket = contentService.createUserAttentionPacket(userService.getUser());
+        userAttentionPacket = new UserAttentionPacket();
+        contentService.fillUserAttentionPacket(userService.getUser(), userAttentionPacket);
         Assert.assertEquals(UserAttentionPacket.Type.RAISE, userAttentionPacket.getNews());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -263,7 +266,8 @@ public class TestContentService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        UserAttentionPacket userAttentionPacket = contentService.createUserAttentionPacket(userService.getUser());
+        UserAttentionPacket userAttentionPacket = new UserAttentionPacket();
+        contentService.fillUserAttentionPacket(userService.getUser(), userAttentionPacket);
         Assert.assertNull(userAttentionPacket.getNews());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -281,10 +285,12 @@ public class TestContentService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        userAttentionPacket = contentService.createUserAttentionPacket(userService.getUser());
+        userAttentionPacket = new UserAttentionPacket();
+        contentService.fillUserAttentionPacket(userService.getUser(), userAttentionPacket);
         Assert.assertEquals(UserAttentionPacket.Type.RAISE, userAttentionPacket.getNews());
         contentService.getNewsEntry(0);
-        userAttentionPacket = contentService.createUserAttentionPacket(userService.getUser());
+        userAttentionPacket = new UserAttentionPacket();
+        contentService.fillUserAttentionPacket(userService.getUser(), userAttentionPacket);
         Assert.assertNull(userAttentionPacket.getNews());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

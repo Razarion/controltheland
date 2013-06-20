@@ -12,11 +12,11 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildMembershipRequest;
 import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
+import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.history.HistoryService;
-import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.impl.GuildServiceImpl;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -506,6 +506,41 @@ public class TestGuildService extends AbstractServiceTest {
         endHttpSession();
 
         EasyMock.verify(historyServiceMock);
+    }
+
+
+    @Test
+    @DirtiesContext
+    public void inviteUserToGuildSendPackage() throws Exception {
+        configureSimplePlanetNoResources();
+        // Prepare
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        PlanetSystemService planetSystemServiceMock = EasyMock.createStrictMock(PlanetSystemService.class);
+        planetSystemServiceMock.sendPacket(createUserStateMatcher("U2"), createUserAttentionPacketMatcher(null, null, UserAttentionPacket.Type.RAISE));
+        EasyMock.replay(planetSystemServiceMock);
+        setPrivateField(GuildServiceImpl.class, guildService, "planetSystemService", planetSystemServiceMock);
+        // Test
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        createAndLoginUser("U1");
+        guildService.createGuild("Hallo");
+        guildService.inviteUserToGuild("U2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Second invite no package sent
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        guildService.inviteUserToGuild("U2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        EasyMock.verify(planetSystemServiceMock);
     }
 
     @Test
@@ -1390,6 +1425,67 @@ public class TestGuildService extends AbstractServiceTest {
         Assert.assertEquals("U2", dbGuildMembershipRequest.getUser().getUsername());
         Assert.assertEquals(guildId, (int) dbGuildMembershipRequest.getDbGuild().getId());
         Assert.assertEquals("asdfgasdgsad asgdfadsgds", dbGuildMembershipRequest.getText());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void guildMembershipRequestSendPacket() throws Exception {
+        configureSimplePlanetNoResources();
+        // Prepare
+        // Generate users
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Generate Guild
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        createAndLoginUser("Manager");
+        int guildId = guildService.createGuild("AAAAAA").getId();
+        guildService.inviteUserToGuild("U1");
+        guildService.inviteUserToGuild("U2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Add user to guild
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        guildService.joinGuild(guildId);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        guildService.joinGuild(guildId);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        PlanetSystemService planetSystemServiceMock = EasyMock.createStrictMock(PlanetSystemService.class);
+        planetSystemServiceMock.sendPacket(createUserStateMatcher("Manager"), createUserAttentionPacketMatcher(null, UserAttentionPacket.Type.RAISE, null));
+        planetSystemServiceMock.sendPacket(createUserStateMatcher("U1"), createUserAttentionPacketMatcher(null, UserAttentionPacket.Type.RAISE, null));
+        planetSystemServiceMock.sendPacket(createUserStateMatcher("U2"), createUserAttentionPacketMatcher(null, UserAttentionPacket.Type.RAISE, null));
+        EasyMock.replay(planetSystemServiceMock);
+        setPrivateField(GuildServiceImpl.class, guildService, "planetSystemService", planetSystemServiceMock);
+        // Generate request
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("Actor");
+        guildService.guildMembershipRequest(guildId, "asdfgasdgsad asgdfadsgds");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Make double request -> no packet send expected
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("Actor");
+        guildService.guildMembershipRequest(guildId, "aaa sss");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -2703,7 +2799,7 @@ public class TestGuildService extends AbstractServiceTest {
         historyServiceMock.addGuildCreated(EasyMock.<User>anyObject(), EasyMock.anyInt(), EasyMock.<DbGuild>anyObject());
         historyServiceMock.addGuildInvitation(EasyMock.<User>anyObject(), EasyMock.<User>anyObject(), EasyMock.<DbGuild>anyObject());
         historyServiceMock.addGuildJoined(EasyMock.<User>anyObject(), EasyMock.<DbGuild>anyObject());
-        historyServiceMock.addChangeGuildMemberRank(EasyMock.<User>anyObject(), EasyMock.<User>anyObject(), EasyMock.<GuildMemberInfo.Rank>anyObject(),EasyMock.<DbGuild>anyObject());
+        historyServiceMock.addChangeGuildMemberRank(EasyMock.<User>anyObject(), EasyMock.<User>anyObject(), EasyMock.<GuildMemberInfo.Rank>anyObject(), EasyMock.<DbGuild>anyObject());
         EasyMock.expectLastCall().anyTimes();
         EasyMock.replay(historyServiceMock);
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
@@ -2849,8 +2945,8 @@ public class TestGuildService extends AbstractServiceTest {
         endHttpSession();
         // Mock
         HistoryService historyServiceMock = EasyMock.createStrictMock(HistoryService.class);
-        historyServiceMock.addKickedGuildClosed(createUserMatcher("presi"),createUserMatcher("member"), EasyMock.<DbGuild>anyObject());
-        historyServiceMock.addKickedGuildClosed(createUserMatcher("presi"),createUserMatcher("manager"), EasyMock.<DbGuild>anyObject());
+        historyServiceMock.addKickedGuildClosed(createUserMatcher("presi"), createUserMatcher("member"), EasyMock.<DbGuild>anyObject());
+        historyServiceMock.addKickedGuildClosed(createUserMatcher("presi"), createUserMatcher("manager"), EasyMock.<DbGuild>anyObject());
         historyServiceMock.addGuildClosed(createUserMatcher("presi"), EasyMock.<DbGuild>anyObject());
         EasyMock.replay(historyServiceMock);
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
@@ -2869,6 +2965,97 @@ public class TestGuildService extends AbstractServiceTest {
 
         EasyMock.verify(historyServiceMock);
     }
+
+    @Test
+    @DirtiesContext
+    public void fillUserAttentionPacket() throws Exception {
+        configureSimplePlanetNoResources();
+        // Test
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        UserAttentionPacket userAttentionPacket = new UserAttentionPacket();
+        guildService.fillUserAttentionPacket(userService.getUser(), userAttentionPacket);
+        Assert.assertNull(userAttentionPacket.getGuildInvitation());
+        Assert.assertNull(userAttentionPacket.getGuildMembershipRequest());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Make guild and invite
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("presi");
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        int guildId = guildService.createGuild("xxxx").getId();
+        guildService.inviteUserToGuild("U1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Test U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        userAttentionPacket = new UserAttentionPacket();
+        guildService.fillUserAttentionPacket(userService.getUser(), userAttentionPacket);
+        Assert.assertEquals(UserAttentionPacket.Type.RAISE, userAttentionPacket.getGuildInvitation());
+        Assert.assertNull(userAttentionPacket.getGuildMembershipRequest());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Make 2 guild and invite
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("presi2");
+        guildService.createGuild("yyyy");
+        guildService.inviteUserToGuild("U1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Test U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        userAttentionPacket = new UserAttentionPacket();
+        guildService.fillUserAttentionPacket(userService.getUser(), userAttentionPacket);
+        Assert.assertEquals(UserAttentionPacket.Type.RAISE, userAttentionPacket.getGuildInvitation());
+        Assert.assertNull(userAttentionPacket.getGuildMembershipRequest());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Test presi
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("presi");
+        userAttentionPacket = new UserAttentionPacket();
+        guildService.fillUserAttentionPacket(userService.getUser(), userAttentionPacket);
+        Assert.assertNull(userAttentionPacket.getGuildInvitation());
+        Assert.assertNull(userAttentionPacket.getGuildMembershipRequest());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Make user and request
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U2");
+        guildService.guildMembershipRequest(guildId, "");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Test U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        userAttentionPacket = new UserAttentionPacket();
+        guildService.fillUserAttentionPacket(userService.getUser(), userAttentionPacket);
+        Assert.assertEquals(UserAttentionPacket.Type.RAISE, userAttentionPacket.getGuildInvitation());
+        Assert.assertNull(userAttentionPacket.getGuildMembershipRequest());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Test presi
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("presi");
+        userAttentionPacket = new UserAttentionPacket();
+        guildService.fillUserAttentionPacket(userService.getUser(), userAttentionPacket);
+        Assert.assertNull(userAttentionPacket.getGuildInvitation());
+        Assert.assertEquals(UserAttentionPacket.Type.RAISE, userAttentionPacket.getGuildMembershipRequest());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
     /*----------------------------------------------------------*/
 
     /*

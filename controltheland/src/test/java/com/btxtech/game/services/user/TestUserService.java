@@ -4,13 +4,17 @@ import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.client.common.info.Suggestion;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
+import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.cms.ContentService;
 import com.btxtech.game.services.common.NameErrorPair;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.common.db.DbProperty;
+import com.btxtech.game.services.user.impl.UserServiceImpl;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import junit.framework.Assert;
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -721,6 +725,38 @@ public class TestUserService extends AbstractServiceTest {
         assertNotLoggedIn();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+
+    @Test
+    @DirtiesContext
+    public void createUserAttentionPacket() throws Exception {
+        configureSimplePlanetNoResources();
+        // Mock content service
+        ContentService contentServiceMock = EasyMock.createStrictMock(ContentService.class);
+        contentServiceMock.fillUserAttentionPacket(createUserMatcher("U1"), EasyMock.<UserAttentionPacket>anyObject());
+        EasyMock.replay(contentServiceMock);
+        setPrivateField(UserServiceImpl.class, userService, "contentService", contentServiceMock);
+        // Mock guild service
+        GuildService guildServiceMock = EasyMock.createStrictMock(GuildService.class);
+        guildServiceMock.fillUserAttentionPacket(createUserMatcher("U1"), EasyMock.<UserAttentionPacket>anyObject());
+        EasyMock.replay(guildServiceMock);
+        setPrivateField(UserServiceImpl.class, userService, "guildService", guildServiceMock);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUserAttentionPacket();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        userService.createUserAttentionPacket();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        EasyMock.verify(contentServiceMock, guildServiceMock);
     }
 
 }

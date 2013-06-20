@@ -12,6 +12,8 @@ public class UserAttentionPacket extends Packet {
     }
 
     private Type news;
+    private Type guildMembershipRequest;
+    private Type guildInvitation;
 
     public Type getNews() {
         return news;
@@ -23,5 +25,30 @@ public class UserAttentionPacket extends Packet {
 
     public boolean isNews() {
         return news != null;
+    }
+
+    public Type getGuildMembershipRequest() {
+        return guildMembershipRequest;
+    }
+
+    public void setGuildMembershipRequest(Type guildMembershipRequest) {
+        this.guildMembershipRequest = guildMembershipRequest;
+    }
+
+    public Type getGuildInvitation() {
+        return guildInvitation;
+    }
+
+    public void setGuildInvitation(Type guildInvitation) {
+        this.guildInvitation = guildInvitation;
+    }
+
+    @Override
+    public String toString() {
+        return "UserAttentionPacket{" +
+                "news=" + news +
+                ", guildMembershipRequest=" + guildMembershipRequest +
+                ", guildInvitation=" + guildInvitation +
+                '}';
     }
 }

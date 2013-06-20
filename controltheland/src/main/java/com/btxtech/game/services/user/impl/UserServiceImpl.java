@@ -23,6 +23,8 @@ import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedExceptio
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
+import com.btxtech.game.services.cms.ContentService;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.NameErrorPair;
@@ -39,6 +41,7 @@ import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbGuildMember;
 import com.btxtech.game.services.user.DbPageAccessControl;
+import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.user.NotAuthorizedException;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserNameSuggestionFilter;
@@ -108,7 +111,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ServerUnlockService serverUnlockService;
     @Autowired
+    private ContentService contentService;
+    @Autowired
     private ServerGlobalConnectionService serverGlobalConnectionService;
+    @Autowired
+    private GuildService guildService;
     @Value(value = "${security.md5salt}")
     private String md5HashSalt;
     private final Collection<UserState> userStates = new ArrayList<>();
@@ -901,6 +908,17 @@ public class UserServiceImpl implements UserService {
         return new DetailedUser(user.createSimpleUser(),
                 userGuidanceService.getDbLevel(getUserState(user)).getNumber(),
                 serverPlanetServices != null ? serverPlanetServices.getPlanetInfo().getName() : null);
+    }
+
+    @Override
+    public UserAttentionPacket createUserAttentionPacket() {
+        UserAttentionPacket userAttentionPacket = new UserAttentionPacket();
+        User user = getUser();
+        if(user != null) {
+            contentService.fillUserAttentionPacket(user, userAttentionPacket);
+            guildService.fillUserAttentionPacket(user, userAttentionPacket);
+        }
+        return userAttentionPacket;
     }
 
 
