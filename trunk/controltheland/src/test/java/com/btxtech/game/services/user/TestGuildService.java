@@ -796,7 +796,7 @@ public class TestGuildService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
-            guildService.dismissGuild(99);
+            guildService.dismissGuildInvitation(99);
             Assert.fail("IllegalStateException expected");
         } catch (IllegalStateException e) {
             Assert.assertEquals("User is not registered", e.getMessage());
@@ -828,7 +828,7 @@ public class TestGuildService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U2");
         try {
-            guildService.dismissGuild(guildId);
+            guildService.dismissGuildInvitation(guildId);
             Assert.fail("IllegalStateException expected");
         } catch (IllegalStateException e) {
             Assert.assertEquals("User does not have an invitation to guild. User: User: 'U2' id: 2 Guild: DbGuild{name='Hallo', id=1}", e.getMessage());
@@ -853,7 +853,7 @@ public class TestGuildService extends AbstractServiceTest {
         HistoryService historyServiceMock = EasyMock.createStrictMock(HistoryService.class);
         historyServiceMock.addGuildCreated(createUserMatcher("U1"), EasyMock.eq(0), EasyMock.<DbGuild>anyObject());
         historyServiceMock.addGuildInvitation(createUserMatcher("U1"), createUserMatcher("U2"), EasyMock.<DbGuild>anyObject());
-        historyServiceMock.addGuildDismiss(createUserMatcher("U2"), EasyMock.<DbGuild>anyObject());
+        historyServiceMock.addGuildDismissInvitation(createUserMatcher("U2"), EasyMock.<DbGuild>anyObject());
         EasyMock.replay(historyServiceMock);
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
@@ -868,7 +868,7 @@ public class TestGuildService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2");
-        List<GuildDetailedInfo> openInvitations = guildService.dismissGuild(guildId);
+        List<GuildDetailedInfo> openInvitations = guildService.dismissGuildInvitation(guildId);
         Assert.assertTrue(openInvitations.isEmpty());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -965,7 +965,7 @@ public class TestGuildService extends AbstractServiceTest {
         Assert.assertEquals("Ccc", openInvitations.get(1).getName());
         Assert.assertEquals(guildId2, openInvitations.get(2).getId());
         Assert.assertEquals("Zzz", openInvitations.get(2).getName());
-        openInvitations = guildService.dismissGuild(guildId1);
+        openInvitations = guildService.dismissGuildInvitation(guildId1);
         Assert.assertEquals(2, openInvitations.size());
         Assert.assertEquals(guildId3, openInvitations.get(0).getId());
         Assert.assertEquals("Ccc", openInvitations.get(0).getName());
@@ -977,7 +977,7 @@ public class TestGuildService extends AbstractServiceTest {
         Assert.assertEquals("Ccc", openInvitations.get(0).getName());
         Assert.assertEquals(guildId2, openInvitations.get(1).getId());
         Assert.assertEquals("Zzz", openInvitations.get(1).getName());
-        openInvitations = guildService.dismissGuild(guildId3);
+        openInvitations = guildService.dismissGuildInvitation(guildId3);
         Assert.assertEquals(1, openInvitations.size());
         Assert.assertEquals(guildId2, openInvitations.get(0).getId());
         Assert.assertEquals("Zzz", openInvitations.get(0).getName());
@@ -985,7 +985,7 @@ public class TestGuildService extends AbstractServiceTest {
         Assert.assertEquals(1, openInvitations.size());
         Assert.assertEquals(guildId2, openInvitations.get(0).getId());
         Assert.assertEquals("Zzz", openInvitations.get(0).getName());
-        openInvitations = guildService.dismissGuild(guildId2);
+        openInvitations = guildService.dismissGuildInvitation(guildId2);
         Assert.assertTrue(openInvitations.isEmpty());
         openInvitations = guildService.getGuildInvitations();
         Assert.assertTrue(openInvitations.isEmpty());

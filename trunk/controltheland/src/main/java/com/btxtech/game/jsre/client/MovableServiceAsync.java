@@ -25,6 +25,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryFilter;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
@@ -147,7 +148,7 @@ public interface MovableServiceAsync {
 
     void logout(AsyncCallback<Void> async);
 
-    void getHistoryElements(int start, int length, 	AsyncCallback<HistoryElementInfo> callback);
+    void getHistoryElements(HistoryFilter historyFilter, 	AsyncCallback<HistoryElementInfo> callback);
 
     void getNewsEntry(int index, AsyncCallback<NewsEntryInfo> callback);
 
@@ -177,7 +178,7 @@ public interface MovableServiceAsync {
 
     void joinGuild(int guildId, AsyncCallback<SimpleGuild> asyncCallback);
 
-    void dismissGuild(int guildId, AsyncCallback<List<GuildDetailedInfo>> asyncCallback);
+    void dismissGuildInvitation(int guildId, AsyncCallback<List<GuildDetailedInfo>> asyncCallback);
 
     void getGuildInvitations(AsyncCallback<List<GuildDetailedInfo>> getGuildInitations);
 

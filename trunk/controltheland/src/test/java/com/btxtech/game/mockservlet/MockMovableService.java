@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryFilter;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
@@ -358,7 +359,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public HistoryElementInfo getHistoryElements(int start, int length) {
+    public HistoryElementInfo getHistoryElements(HistoryFilter historyFilter) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -433,7 +434,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public List<GuildDetailedInfo> dismissGuild(int guildId) {
+    public List<GuildDetailedInfo> dismissGuildInvitation(int guildId) {
         return null; //To change body of implemented methods use File | Settings | File Templates.
     }
 

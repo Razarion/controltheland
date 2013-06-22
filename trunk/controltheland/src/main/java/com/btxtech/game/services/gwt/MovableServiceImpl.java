@@ -32,6 +32,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryFilter;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
@@ -656,9 +657,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public HistoryElementInfo getHistoryElements(int start, int length) {
+    public HistoryElementInfo getHistoryElements(HistoryFilter historyFilter) {
         try {
-            return historyService.getHistoryElements(start, length);
+            return historyService.getHistoryElements(historyFilter);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;
@@ -720,9 +721,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public List<GuildDetailedInfo> dismissGuild(int guildId) {
+    public List<GuildDetailedInfo> dismissGuildInvitation(int guildId) {
         try {
-            return guildService.dismissGuild(guildId);
+            return guildService.dismissGuildInvitation(guildId);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;

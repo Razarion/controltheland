@@ -8,7 +8,10 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryElement;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryFilter;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryPanel;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryPanelFacade;
 import com.btxtech.game.jsre.client.widget.AutoHideButtonCell;
 import com.btxtech.game.jsre.client.widget.EmptyTableWidget;
 import com.google.gwt.cell.client.ButtonCell;
@@ -21,6 +24,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -44,7 +48,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class MyGuildPanel extends Composite {
-
+    private static final int HISTORY_PAGE_SIZE = 8;
     private static MyGuildPanelUiBinder uiBinder = GWT.create(MyGuildPanelUiBinder.class);
     @UiField
     TabPanel tabPanel;
@@ -52,8 +56,6 @@ public class MyGuildPanel extends Composite {
     Label guildName;
     @UiField
     HTML guildTextRo;
-    @UiField
-    SimplePanel historyPanel;
     @UiField
     HorizontalPanel guildTextPanelRw;
     @UiField
@@ -73,6 +75,10 @@ public class MyGuildPanel extends Composite {
     Button leaveGuildBtn;
     @UiField
     Button closeGuildBtn;
+    @UiField(provided = true)
+    CellTable<HistoryElement> historyTable = new CellTable<HistoryElement>(HISTORY_PAGE_SIZE, tableRes);
+    @UiField
+    SimplePager historyPager;
     private Logger log = Logger.getLogger(MyGuildPanel.class.getName());
     private GuildMemberInfo.Rank myRank;
     private Dialog dialog;
@@ -99,7 +105,8 @@ public class MyGuildPanel extends Composite {
                 }
         );
         initWidget(uiBinder.createAndBindUi(this));
-        historyPanel.setWidget(new HistoryPanel());
+        HistoryPanelFacade historyPanelFacade = new HistoryPanelFacade(historyTable, historyPager, HistoryFilter.createGuildFilter(ClientBase.getInstance().getMySimpleGuild().getId()));
+        historyPanelFacade.setupCellTable();
         setupRequestTable();
         tabPanel.selectTab(0);
         if (Connection.getMovableServiceAsync() != null) {

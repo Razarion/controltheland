@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElement;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryFilter;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
@@ -25,7 +26,11 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
-import com.btxtech.game.services.history.*;
+import com.btxtech.game.services.history.DbHistoryElement;
+import com.btxtech.game.services.history.DisplayHistoryElement;
+import com.btxtech.game.services.history.GameHistoryFilter;
+import com.btxtech.game.services.history.GameHistoryFrame;
+import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.DbGuild;
 import com.btxtech.game.services.user.User;
@@ -44,7 +49,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * User: beat
@@ -63,6 +78,8 @@ public class HistoryServiceImpl implements HistoryService {
     private PlanetSystemService planetSystemService;
     @Autowired
     private com.btxtech.game.services.connection.Session session;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     private DbHistoryElement.Source determineSource(SimpleBase actor, SimpleBase target) {
         if (actor != null && !planetSystemService.getServerPlanetServices(actor).getBaseService().isBot(actor)) {
@@ -692,8 +709,8 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public void addGuildDismiss(User user, DbGuild dbGuild) {
-        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_DISMISSED,
+    public void addGuildDismissInvitation(User user, DbGuild dbGuild) {
+        save(new DbHistoryElement(DbHistoryElement.Type.GUILD_DISMISSED_INVITATION,
                 user,
                 null,
                 null,
@@ -942,16 +959,9 @@ public class HistoryServiceImpl implements HistoryService {
         criteria.addOrder(Property.forName("timeStampMs").desc());
         criteria.addOrder(Property.forName("id").desc()); // If Timestamp is equals, assume id is in ascending form
         for (DbHistoryElement dbHistoryElement : (Collection<DbHistoryElement>) criteria.list()) {
-            displayHistoryElements.add(convert(user, null, dbHistoryElement));
+            displayHistoryElements.add(convert2DisplayHistoryElement(user, null, dbHistoryElement));
         }
         return displayHistoryElements;
-    }
-
-    private int getHistoryElementCount(User user) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbHistoryElement.class);
-        criteria.add(Restrictions.or(Restrictions.eq("actorUserId", user.getId()), Restrictions.eq("targetUserId", user.getId())));
-        criteria.setProjection(Projections.rowCount());
-        return ((Number) criteria.list().get(0)).intValue();
     }
 
     @Override
@@ -980,7 +990,7 @@ public class HistoryServiceImpl implements HistoryService {
 
         criteria.addOrder(Property.forName("id").desc()); // If Timestamp is equals, assume id is in ascending form
         for (DbHistoryElement dbHistoryElement : (Collection<DbHistoryElement>) criteria.list()) {
-            displayHistoryElements.add(convert(null, gameHistoryFrame.getBaseId(), dbHistoryElement));
+            displayHistoryElements.add(convert2DisplayHistoryElement(null, gameHistoryFrame.getBaseId(), dbHistoryElement));
         }
         return displayHistoryElements;
     }
@@ -994,193 +1004,164 @@ public class HistoryServiceImpl implements HistoryService {
         return ((Number) criteria.list().get(0)).intValue();
     }
 
-    private DisplayHistoryElement convert(User user, Integer baseId, DbHistoryElement dbHistoryElement) {
-        DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(dbHistoryElement.getTimeStampMs(), dbHistoryElement.getId());
-        Integer userId = null;
-        String userName = null;
-        if (user != null) {
-            userId = user.getId();
-            userName = user.getUsername();
-        }
+    private String convert(User user, Integer baseId, DbHistoryElement dbHistoryElement) {
+        Integer userId = (user != null ? user.getId() : null);
         switch (dbHistoryElement.getType()) {
             case BASE_STARTED:
-                displayHistoryElement.setMessage("Base created: " + dbHistoryElement.getActorBaseName());
-                break;
+                return "Base created: " + dbHistoryElement.getActorBaseName();
             case BASE_DEFEATED:
                 if (userId != null) {
                     if (userId.equals(dbHistoryElement.getActorUserId())) {
-                        displayHistoryElement.setMessage("Base destroyed: " + dbHistoryElement.getTargetBaseName());
-                    } else if (userName.equals(dbHistoryElement.getTargetBaseName())) {
+                        return "You destroyed: " + dbHistoryElement.getTargetBaseName() + " base";
+                    } else {
                         if (dbHistoryElement.getActorBaseName() != null) {
-                            displayHistoryElement.setMessage("Your base has been destroyed by " + dbHistoryElement.getActorBaseName());
+                            return "Your base has been destroyed by " + dbHistoryElement.getActorBaseName();
                         } else {
-                            displayHistoryElement.setMessage("Your base has been destroyed");
+                            return "Your base has been destroyed";
                         }
-                    } else {
-                        displayHistoryElement.setMessage("Internal error 1");
-                        log.error("Unknown state 1: " + userId + " " + dbHistoryElement.getActorUserId() + " " + dbHistoryElement.getTargetBaseName());
-                    }
-                } else if (baseId != null) {
-                    if (baseId.equals(dbHistoryElement.getActorBaseId())) {
-                        displayHistoryElement.setMessage("Base destroyed: " + dbHistoryElement.getTargetBaseName());
-                    } else if (baseId.equals(dbHistoryElement.getTargetBaseId())) {
-                        displayHistoryElement.setMessage("Base was destroyed by: " + dbHistoryElement.getActorBaseName());
-                    } else {
-                        displayHistoryElement.setMessage("Internal error 2");
-                        log.error("Unknown state 2: " + baseId + " " + dbHistoryElement.getActorBaseId() + " " + dbHistoryElement.getTargetBaseId());
                     }
                 } else {
-                    displayHistoryElement.setMessage("Internal error 5/1");
-                    log.warn("HistoryServiceImpl.convert() " + dbHistoryElement + " user and baseId are null (1)");
+                    return dbHistoryElement.getActorBaseName() + " destroyed the base from " + dbHistoryElement.getTargetBaseName();
                 }
-                break;
             case BASE_SURRENDERED:
-                displayHistoryElement.setMessage("Base surrendered");
-                break;
+                return "Base surrendered";
             case ITEM_CREATED:
-                displayHistoryElement.setMessage("Item created: " + dbHistoryElement.getItemTypeName());
-                break;
+                return "Item created: " + dbHistoryElement.getItemTypeName();
             case ITEM_DESTROYED:
                 if (userId != null) {
                     if (userId.equals(dbHistoryElement.getActorUserId())) {
-                        displayHistoryElement.setMessage("Destroyed a " + dbHistoryElement.getItemTypeName() + " from " + dbHistoryElement.getTargetBaseName());
-                    } else if (userName.equals(dbHistoryElement.getTargetBaseName())) {
-                        if (dbHistoryElement.getActorBaseName() != null) {
-                            displayHistoryElement.setMessage(dbHistoryElement.getActorBaseName() + " destroyed your " + dbHistoryElement.getItemTypeName());
-                        } else {
-                            displayHistoryElement.setMessage(dbHistoryElement.getItemTypeName() + " has been sold");
-                        }
+                        return "Destroyed a " + dbHistoryElement.getItemTypeName() + " from " + dbHistoryElement.getTargetBaseName();
                     } else {
-                        displayHistoryElement.setMessage("Internal error 3");
-                        log.error("Unknown state 3: " + userId + " " + dbHistoryElement.getActorUserId() + " " + dbHistoryElement.getTargetBaseName());
-                    }
-                } else if (baseId != null) {
-                    if (baseId.equals(dbHistoryElement.getActorBaseId())) {
-                        displayHistoryElement.setMessage("Destroyed a " + dbHistoryElement.getItemTypeName() + " from " + dbHistoryElement.getTargetBaseName());
-                    } else if (baseId.equals(dbHistoryElement.getTargetBaseId())) {
                         if (dbHistoryElement.getActorBaseName() != null) {
-                            displayHistoryElement.setMessage(dbHistoryElement.getActorBaseName() + " destroyed a " + dbHistoryElement.getItemTypeName());
+                            return dbHistoryElement.getActorBaseName() + " destroyed your " + dbHistoryElement.getItemTypeName();
                         } else {
-                            displayHistoryElement.setMessage(dbHistoryElement.getItemTypeName() + " has been sold");
+                            return dbHistoryElement.getItemTypeName() + " has been sold";
                         }
-                    } else {
-                        displayHistoryElement.setMessage("Internal error 4");
-                        log.error("Unknown state 4: " + baseId + " " + dbHistoryElement.getActorBaseId() + " " + dbHistoryElement.getTargetBaseId());
                     }
                 } else {
-                    displayHistoryElement.setMessage("Internal error 5/2");
-                    log.warn("HistoryServiceImpl.convert() " + dbHistoryElement + " user and baseId are null (2)");
+                    if (dbHistoryElement.getActorBaseName() != null) {
+                        return dbHistoryElement.getActorBaseName() + " destroyed a " + dbHistoryElement.getItemTypeName() + " from " + dbHistoryElement.getTargetBaseName();
+                    } else {
+                        return dbHistoryElement.getTargetBaseName() + " sold a " + dbHistoryElement.getItemTypeName();
+                    }
                 }
-                break;
             case LEVEL_PROMOTION:
-                displayHistoryElement.setMessage("Level reached: " + dbHistoryElement.getLevelName());
-                break;
+                return "Level reached: " + dbHistoryElement.getLevelName();
             case LEVEL_TASK_COMPLETED:
-                displayHistoryElement.setMessage("Level Task competed: " + dbHistoryElement.getLevelTaskName());
-                break;
+                return "Level Task competed: " + dbHistoryElement.getLevelTaskName();
             case LEVEL_TASK_ACTIVATED:
-                displayHistoryElement.setMessage("Level Task activated: " + dbHistoryElement.getLevelTaskName());
-                break;
+                return "Level Task activated: " + dbHistoryElement.getLevelTaskName();
             case LEVEL_TASK_DEACTIVATED:
-                displayHistoryElement.setMessage("Level Task deactivated: " + dbHistoryElement.getLevelTaskName());
-                break;
+                return "Level Task deactivated: " + dbHistoryElement.getLevelTaskName();
             case ALLIANCE_OFFERED:
                 if (userId != null) {
                     if (userId.equals(dbHistoryElement.getActorUserId())) {
-                        displayHistoryElement.setMessage("You offered " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername() + " an alliance");
+                        return "You offered " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername() + " an alliance";
                     } else if (userId.equals(dbHistoryElement.getTargetUserId())) {
-                        displayHistoryElement.setMessage(userService.getUser(dbHistoryElement.getActorUserId()).getUsername() + " offered you an alliance");
+                        return userService.getUser(dbHistoryElement.getActorUserId()).getUsername() + " offered you an alliance";
                     } else {
-                        displayHistoryElement.setMessage("Internal error 6");
                         log.error("Unknown state 6: " + userId + " " + dbHistoryElement.getActorUserId() + " " + dbHistoryElement.getTargetUserId());
+                        return "Internal error 6";
                     }
                 } else {
-                    displayHistoryElement.setMessage("Alliance offered. From " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername() + " to " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername());
+                    return "Alliance offered. From " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername() + " to " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername();
                 }
-                break;
             case ALLIANCE_OFFER_ACCEPTED:
                 if (userId != null) {
                     if (userId.equals(dbHistoryElement.getActorUserId())) {
-                        displayHistoryElement.setMessage("You accepted an alliance with " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername());
+                        return "You accepted an alliance with " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername();
                     } else if (userId.equals(dbHistoryElement.getTargetUserId())) {
-                        displayHistoryElement.setMessage("Your alliance offer has been accepted by " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername());
+                        return "Your alliance offer has been accepted by " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername();
                     } else {
-                        displayHistoryElement.setMessage("Internal error 7");
                         log.error("Unknown state 7: " + userId + " " + dbHistoryElement.getActorUserId() + " " + dbHistoryElement.getTargetUserId());
+                        return "Internal error 7";
                     }
                 } else {
-                    displayHistoryElement.setMessage("Alliance offer accepted by " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername() + " offered by " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername());
+                    return "Alliance offer accepted by " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername() + " offered by " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername();
                 }
-
-                break;
             case ALLIANCE_OFFER_REJECTED:
                 if (userId != null) {
                     if (userId.equals(dbHistoryElement.getActorUserId())) {
-                        displayHistoryElement.setMessage("You rejected an alliance with " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername());
+                        return "You rejected an alliance with " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername();
                     } else if (userId.equals(dbHistoryElement.getTargetUserId())) {
-                        displayHistoryElement.setMessage("Your alliance offer has been rejected by " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername());
+                        return "Your alliance offer has been rejected by " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername();
                     } else {
-                        displayHistoryElement.setMessage("Internal error 8");
                         log.error("Unknown state 8: " + userId + " " + dbHistoryElement.getActorUserId() + " " + dbHistoryElement.getTargetUserId());
+                        return "Internal error 8";
                     }
                 } else {
-                    displayHistoryElement.setMessage("Alliance offer rejected by " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername() + " offered by " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername());
+                    return "Alliance offer rejected by " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername() + " offered by " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername();
                 }
-                break;
             case ALLIANCE_BROKEN:
                 if (userId != null) {
                     if (userId.equals(dbHistoryElement.getActorUserId())) {
-                        displayHistoryElement.setMessage("You broke the alliance with " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername());
+                        return "You broke the alliance with " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername();
                     } else if (userId.equals(dbHistoryElement.getTargetUserId())) {
-                        displayHistoryElement.setMessage("Your alliance has been broken by " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername());
+                        return "Your alliance has been broken by " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername();
                     } else {
-                        displayHistoryElement.setMessage("Internal error 9");
                         log.error("Unknown state 9: " + userId + " " + userService.getUser(dbHistoryElement.getActorUserId()).getUsername() + " " + userService.getUser(dbHistoryElement.getTargetUserId()).getUsername());
+                        return "Internal error 9";
                     }
                 } else {
-                    displayHistoryElement.setMessage("Alliance broken by " + dbHistoryElement.getActorUserId() + " ex partner " + dbHistoryElement.getTargetUserId());
+                    return "Alliance broken by " + dbHistoryElement.getActorUserId() + " ex partner " + dbHistoryElement.getTargetUserId();
                 }
-                break;
             case INVENTORY_ITEM_USED:
-                displayHistoryElement.setMessage("Inventory used " + dbHistoryElement.getInventory());
-                break;
+                return "Inventory used " + dbHistoryElement.getInventory();
             case INVENTORY_ARTIFACT_FROM_BOX:
-                displayHistoryElement.setMessage("Found inventory artifact " + dbHistoryElement.getInventory());
-                break;
+                return "Found inventory artifact " + dbHistoryElement.getInventory();
             case INVENTORY_ITEM_FROM_BOX:
-                displayHistoryElement.setMessage("Found inventory item " + dbHistoryElement.getInventory());
-                break;
+                return "Found inventory item " + dbHistoryElement.getInventory();
             case RAZARION_FROM_BOX:
-                displayHistoryElement.setMessage("Found razarion " + dbHistoryElement.getDeltaRazarion());
-                break;
+                return "Found razarion " + dbHistoryElement.getDeltaRazarion();
             case BOX_PICKED:
-                displayHistoryElement.setMessage("Box picked");
-                break;
+                return "Box picked";
             case INVENTORY_ITEM_BOUGHT:
-                displayHistoryElement.setMessage("Inventory item bought: " + dbHistoryElement.getInventory());
-                break;
+                return "Inventory item bought: " + dbHistoryElement.getInventory();
             case INVENTORY_ARTIFACT_BOUGHT:
-                displayHistoryElement.setMessage("Inventory artifact bought: " + dbHistoryElement.getInventory());
-                break;
+                return "Inventory artifact bought: " + dbHistoryElement.getInventory();
             case BOT_ENRAGE_UP:
-                displayHistoryElement.setMessage("You have angered " + dbHistoryElement.getBotName() + ": " + dbHistoryElement.getBotInfo());
-                break;
+                return "You have angered " + dbHistoryElement.getBotName() + ": " + dbHistoryElement.getBotInfo();
             case RAZARION_BOUGHT:
-                displayHistoryElement.setMessage("Bought Razarion " + dbHistoryElement.getDeltaRazarion() + " via PayPal");
-                break;
+                return "Bought Razarion " + dbHistoryElement.getDeltaRazarion() + " via PayPal";
             case UNLOCKED_ITEM:
-                displayHistoryElement.setMessage("Item unlocked " + dbHistoryElement.getItemTypeName());
-                break;
+                return "Item unlocked " + dbHistoryElement.getItemTypeName();
             case UNLOCKED_QUEST:
-                displayHistoryElement.setMessage("Quest unlocked " + dbHistoryElement.getLevelTaskName());
-                break;
+                return "Quest unlocked " + dbHistoryElement.getLevelTaskName();
             case UNLOCKED_PLANET:
-                displayHistoryElement.setMessage("Planet unlocked " + dbHistoryElement.getPlanetName());
-                break;
+                return "Planet unlocked " + dbHistoryElement.getPlanetName();
+            case GUILD_CREATED:
+                return dbHistoryElement.getActorUserName() + " created " + dbHistoryElement.getGuildName() + " guild";
+            case GUILD_USER_INVITED:
+                return dbHistoryElement.getActorUserName() + " invited " + dbHistoryElement.getTargetUserName() + " to the " + dbHistoryElement.getGuildName() + " guild";
+            case GUILD_JOINED:
+                return dbHistoryElement.getActorUserName() + " joined the " + dbHistoryElement.getGuildName() + " guild";
+            case GUILD_DISMISSED_INVITATION:
+                return dbHistoryElement.getActorUserName() + " dismissed the " + dbHistoryElement.getGuildName() + " guild invitation";
+            case GUILD_MEMBERSHIP_REQUEST:
+                return dbHistoryElement.getActorUserName() + " asked the " + dbHistoryElement.getGuildName() + " for a membership request";
+            case GUILD_MEMBERSHIP_REQUEST_DISMISSED:
+                return dbHistoryElement.getActorUserName() + " dismissed " + dbHistoryElement.getTargetUserName() + " membership request to the " + dbHistoryElement.getGuildName() + " guild";
+            case GUILD_MEMBER_KICKED:
+                return dbHistoryElement.getActorUserName() + " kicked " + dbHistoryElement.getTargetUserName() + " from the " + dbHistoryElement.getGuildName() + " guild";
+            case GUILD_MEMBER_CHANGED:
+                return dbHistoryElement.getActorUserName() + " changed " + dbHistoryElement.getTargetUserName() + " rank in the " + dbHistoryElement.getGuildName() + " guild";
+            case GUILD_TEXT_CHANGED:
+                return dbHistoryElement.getActorUserName() + " changed the text from the " + dbHistoryElement.getGuildName() + " guild";
+            case GUILD_LEFT:
+                return dbHistoryElement.getActorUserName() + " left the " + dbHistoryElement.getGuildName() + " guild";
+            case GUILD_CLOSED:
+                return dbHistoryElement.getActorUserName() + " closed the " + dbHistoryElement.getGuildName() + " guild";
+            case GUILD_CLOSED_MEMBER_KICKED:
+                return dbHistoryElement.getActorUserName() + " kicked " + dbHistoryElement.getTargetUserName() + " from the " + dbHistoryElement.getGuildName() + " guild. The guild will be closed";
             default:
-                displayHistoryElement.setMessage("Internal error 10");
                 log.warn("HistoryServiceImpl.convert() " + dbHistoryElement + " Unknown type: " + dbHistoryElement.getType());
+                return "Internal error 999999";
         }
+    }
+
+    private DisplayHistoryElement convert2DisplayHistoryElement(User user, Integer baseId, DbHistoryElement dbHistoryElement) {
+        DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(dbHistoryElement.getTimeStampMs(), dbHistoryElement.getId());
+        displayHistoryElement.setMessage(convert(user, baseId, dbHistoryElement));
         return displayHistoryElement;
     }
 
@@ -1205,19 +1186,65 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public HistoryElementInfo getHistoryElements(int start, int length) {
+    public HistoryElementInfo getHistoryElements(HistoryFilter historyFilter) {
         User user = userService.getUser();
         if (user == null) {
             throw new IllegalStateException("User is not registered");
         }
-        int total = getHistoryElementCount(user);
+        if (historyFilter.getType() == HistoryFilter.Type.USER) {
+            historyFilter.setUserId(user.getId());
+        }
+
+        int total = getTotalDbHistoryElementCount(historyFilter);
         List<HistoryElement> historyElements = new ArrayList<>();
-        if (start < total) {
-            int fixedLength = Math.min(length, total - start);
-            for (DisplayHistoryElement displayHistoryElement : getNewestHistoryElements(user, start, fixedLength)) {
-                historyElements.add(new HistoryElement(new Date(displayHistoryElement.getTimeStamp()), displayHistoryElement.getMessage()));
+        if (historyFilter.getStart() < total) {
+            List<DbHistoryElement> dbHistoryElements = getDbHistoryElement(historyFilter);
+            for (DbHistoryElement dbHistoryElement : dbHistoryElements) {
+                historyElements.add(new HistoryElement(dbHistoryElement.getTimeStamp(), convert(user, 0, dbHistoryElement)));
             }
         }
-        return new HistoryElementInfo(historyElements, start, total);
+        return new HistoryElementInfo(historyElements, historyFilter.getStart(), total);
     }
+
+    private Predicate createPredicate(HistoryFilter historyFilter, CriteriaBuilder criteriaBuilder, Root<DbHistoryElement> from) {
+        switch (historyFilter.getType()) {
+            case USER: {
+                Predicate predicateActor = criteriaBuilder.equal(from.<String>get("actorUserId"), historyFilter.getUserId());
+                Predicate predicateTarget = criteriaBuilder.equal(from.<String>get("targetUserId"), historyFilter.getUserId());
+                return criteriaBuilder.or(predicateActor, predicateTarget);
+            }
+            case GUILD: {
+                Expression<String> exp = from.get("type");
+                Predicate predicateGuildType = exp.in(DbHistoryElement.ALL_GUILD_TYPES);
+                Predicate predicateGuildId = criteriaBuilder.equal(from.<String>get("guildId"), historyFilter.getGuildId());
+                return criteriaBuilder.and(predicateGuildType, predicateGuildId);
+            }
+            default:
+                throw new IllegalArgumentException("Unknown Type: " + historyFilter.getType());
+        }
+    }
+
+    private List<DbHistoryElement> getDbHistoryElement(HistoryFilter historyFilter) {
+        CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        CriteriaQuery<DbHistoryElement> dbHistoryElementQuery = criteriaBuilder.createQuery(DbHistoryElement.class);
+        Root<DbHistoryElement> from = dbHistoryElementQuery.from(DbHistoryElement.class);
+        CriteriaQuery<DbHistoryElement> select = dbHistoryElementQuery.select(from);
+        select.where(createPredicate(historyFilter, criteriaBuilder, from));
+        dbHistoryElementQuery.orderBy(criteriaBuilder.desc(from.<String>get("timeStampMs")), criteriaBuilder.desc(from.<String>get("id")));
+        TypedQuery<DbHistoryElement> typedDbHistoryElementQuery = entityManagerFactory.createEntityManager().createQuery(select);
+        typedDbHistoryElementQuery.setMaxResults(historyFilter.getLength());
+        typedDbHistoryElementQuery.setFirstResult(historyFilter.getStart());
+        return typedDbHistoryElementQuery.getResultList();
+    }
+
+    private int getTotalDbHistoryElementCount(HistoryFilter historyFilter) {
+        CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+        Root<DbHistoryElement> from = countQuery.from(DbHistoryElement.class);
+        CriteriaQuery<Long> select = countQuery.select(criteriaBuilder.count(from));
+        select.where(createPredicate(historyFilter, criteriaBuilder, from));
+        TypedQuery<Long> typedDbHistoryElementQuery = entityManagerFactory.createEntityManager().createQuery(select);
+        return typedDbHistoryElementQuery.getSingleResult().intValue();
+    }
+
 }

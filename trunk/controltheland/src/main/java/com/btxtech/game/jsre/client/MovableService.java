@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryFilter;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
@@ -155,7 +156,7 @@ public interface MovableService extends RemoteService {
 
     RealGameInfo createBase(Index position) throws PositionInBotException;
 
-    HistoryElementInfo getHistoryElements(int start, int length);
+    HistoryElementInfo getHistoryElements(HistoryFilter historyFilter);
 
     NewsEntryInfo getNewsEntry(int index);
 
@@ -185,7 +186,7 @@ public interface MovableService extends RemoteService {
 
     SimpleGuild joinGuild(int guildId);
 
-    List<GuildDetailedInfo> dismissGuild(int guildId);
+    List<GuildDetailedInfo> dismissGuildInvitation(int guildId);
 
     List<GuildDetailedInfo> getGuildInvitations();
 

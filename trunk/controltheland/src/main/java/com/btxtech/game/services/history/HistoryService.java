@@ -16,6 +16,7 @@ package com.btxtech.game.services.history;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryFilter;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
@@ -99,7 +100,7 @@ public interface HistoryService {
 
     void addGuildJoined(User user, DbGuild dbGuild);
 
-    void addGuildDismiss(User user, DbGuild dbGuild);
+    void addGuildDismissInvitation(User user, DbGuild dbGuild);
 
     void addGuildMembershipRequest(User user, DbGuild dbGuild);
 
@@ -125,5 +126,5 @@ public interface HistoryService {
 
     ReadonlyListContentProvider<DisplayHistoryElement> getNewestHistoryElements();
 
-    HistoryElementInfo getHistoryElements(int start, int length);
+    HistoryElementInfo getHistoryElements(HistoryFilter historyFilter);
 }

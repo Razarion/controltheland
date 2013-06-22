@@ -120,10 +120,10 @@ public class GuildInvitationsPanel extends Composite {
                     @Override
                     public void onClick(ClickEvent event) {
                         if (Connection.getMovableServiceAsync() != null) {
-                            Connection.getMovableServiceAsync().dismissGuild(guildDetailedInfo.getId(), new AsyncCallback<List<GuildDetailedInfo>>() {
+                            Connection.getMovableServiceAsync().dismissGuildInvitation(guildDetailedInfo.getId(), new AsyncCallback<List<GuildDetailedInfo>>() {
                                 @Override
                                 public void onFailure(Throwable caught) {
-                                    ClientExceptionHandler.handleException("MovableServiceAsync.dismissGuild()", caught);
+                                    ClientExceptionHandler.handleException("MovableServiceAsync.dismissGuildInvitation()", caught);
                                 }
 
                                 @Override
