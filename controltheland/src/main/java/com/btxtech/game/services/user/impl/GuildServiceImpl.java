@@ -184,7 +184,7 @@ public class GuildServiceImpl implements GuildService {
 
     @Override
     @Transactional
-    public List<GuildDetailedInfo> dismissGuild(int guildId) {
+    public List<GuildDetailedInfo> dismissGuildInvitation(int guildId) {
         User user = userService.getUser();
         if (user == null || !user.isRegistrationComplete()) {
             throw new IllegalStateException("User is not registered");
@@ -198,7 +198,7 @@ public class GuildServiceImpl implements GuildService {
             throw new IllegalStateException("User does not have an invitation to guild. User: " + user + " Guild: " + dbGuild);
         }
         sessionFactory.getCurrentSession().delete(dbGuildInvitation);
-        historyService.addGuildDismiss(user, dbGuild);
+        historyService.addGuildDismissInvitation(user, dbGuild);
         return getGuildInvitations();
     }
 
@@ -410,6 +410,7 @@ public class GuildServiceImpl implements GuildService {
         dbGuildQuery.orderBy(criteriaBuilder.asc(from.<String>get("name")));
         TypedQuery<DbGuild> typedDbGuildQuery = entityManagerFactory.createEntityManager().createQuery(dbGuildSelect);
         typedDbGuildQuery.setMaxResults(length);
+        typedDbGuildQuery.setFirstResult(start);
         List<DbGuild> dbGuilds = typedDbGuildQuery.getResultList();
         // Query for total row count
         CriteriaQuery<Long> longQuery = criteriaBuilder.createQuery(Long.class);

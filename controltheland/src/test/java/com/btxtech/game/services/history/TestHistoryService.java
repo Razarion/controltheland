@@ -1,7 +1,9 @@
 package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryFilter;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
@@ -13,6 +15,8 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.bot.DbBotEnragementStateConfig;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.PropertyService;
+import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.finance.FinanceService;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryArtifactCount;
@@ -26,7 +30,9 @@ import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.unlock.ServerUnlockService;
+import com.btxtech.game.services.user.DbGuild;
 import com.btxtech.game.services.user.GuildService;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
@@ -73,6 +79,8 @@ public class TestHistoryService extends AbstractServiceTest {
     private ServerUnlockService unlockService;
     @Autowired
     private ServerItemTypeService itemTypeService;
+    @Autowired
+    private PropertyService propertyService;
 
     @Test
     @DirtiesContext
@@ -846,7 +854,7 @@ public class TestHistoryService extends AbstractServiceTest {
         historyService.addRazarionBought(getUserState(), 9);
         historyService.addRazarionBought(getUserState(), 10);
         // Verify 1
-        HistoryElementInfo historyElementInfo = historyService.getHistoryElements(0, 10);
+        HistoryElementInfo historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(0, 10));
         Assert.assertEquals(0, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(10, historyElementInfo.getHistoryElements().size());
@@ -861,7 +869,7 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals("Bought Razarion 2 via PayPal", historyElementInfo.getHistoryElements().get(8).getMessage());
         Assert.assertEquals("Bought Razarion 1 via PayPal", historyElementInfo.getHistoryElements().get(9).getMessage());
         // Verify 2
-        historyElementInfo = historyService.getHistoryElements(2, 5);
+        historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(2, 5));
         Assert.assertEquals(2, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(5, historyElementInfo.getHistoryElements().size());
@@ -871,25 +879,25 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals("Bought Razarion 5 via PayPal", historyElementInfo.getHistoryElements().get(3).getMessage());
         Assert.assertEquals("Bought Razarion 4 via PayPal", historyElementInfo.getHistoryElements().get(4).getMessage());
         // Verify 3
-        historyElementInfo = historyService.getHistoryElements(8, 2);
+        historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(8, 2));
         Assert.assertEquals(8, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(2, historyElementInfo.getHistoryElements().size());
         Assert.assertEquals("Bought Razarion 2 via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
         Assert.assertEquals("Bought Razarion 1 via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
         // Verify 4
-        historyElementInfo = historyService.getHistoryElements(8, 4);
+        historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(8, 4));
         Assert.assertEquals(8, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(2, historyElementInfo.getHistoryElements().size());
         Assert.assertEquals("Bought Razarion 2 via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
         Assert.assertEquals("Bought Razarion 1 via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
         // Verify 5
-        historyElementInfo = historyService.getHistoryElements(10, 6);
+        historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(10, 6));
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(0, historyElementInfo.getHistoryElements().size());
         // Verify 6
-        historyElementInfo = historyService.getHistoryElements(100, 6);
+        historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(100, 6));
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(0, historyElementInfo.getHistoryElements().size());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -904,7 +912,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U2");
         // Verify 1
-        HistoryElementInfo historyElementInfo = historyService.getHistoryElements(0, 10);
+        HistoryElementInfo historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(0, 10));
         Assert.assertEquals(0, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(0, historyElementInfo.getHistoryElements().size());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -919,13 +927,218 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
-            historyService.getHistoryElements(0, 10);
+            historyService.getHistoryElements(createUserHistoryFilter(0, 10));
             Assert.fail("IllegalStateException expected");
         } catch (IllegalStateException e) {
             Assert.assertEquals("User is not registered", e.getMessage());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    private HistoryFilter createUserHistoryFilter(int start, int length) {
+        HistoryFilter historyFilter = HistoryFilter.createUserFilter();
+        historyFilter.setStart(start);
+        historyFilter.setLength(length);
+        return historyFilter;
+    }
+
+    @Test
+    @DirtiesContext
+    public void guildServiceOverall() throws Exception {
+        configureSimplePlanetNoResources();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Prepare
+        createAndLoginUser("master");
+        createBase(new Index(300, 300));
+        historyService.addRazarionBought(getUserState(), 100);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        int guildId = guildService.createGuild("xxGUILD").getId();
+        // Test
+        HistoryElementInfo historyElementInfo = historyService.getHistoryElements(createGuildHistoryFilter(0, 12, guildId));
+        Assert.assertEquals(0, historyElementInfo.getStartRow());
+        Assert.assertEquals(1, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals("master created xxGUILD guild", historyElementInfo.getHistoryElements().get(0).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // second user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        createBase(new Index(600, 600));
+        historyService.addRazarionBought(getUserState(), 100);
+        guildService.guildMembershipRequest(guildId, "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Invite
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("master");
+        guildService.inviteUserToGuild("U1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Join
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        guildService.joinGuild(guildId);
+        // Test
+        historyElementInfo = historyService.getHistoryElements(createGuildHistoryFilter(0, 12, guildId));
+        Assert.assertEquals(0, historyElementInfo.getStartRow());
+        Assert.assertEquals(4, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals("U1 joined the xxGUILD guild", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("master invited U1 to the xxGUILD guild", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("U1 asked the xxGUILD for a membership request", historyElementInfo.getHistoryElements().get(2).getMessage());
+        Assert.assertEquals("master created xxGUILD guild", historyElementInfo.getHistoryElements().get(3).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void guildServiceConvert() throws Exception {
+        configureSimplePlanetNoResources();
+
+        DbGuild dbGuild = new DbGuild();
+        dbGuild.setName("THE GUILD");
+        setPrivateField(DbGuild.class, dbGuild, "id", 1);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("Member");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("Master");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        User master = userService.getUser("Master");
+        User member = userService.getUser("Member");
+        historyService.addGuildCreated(master, 10, dbGuild);
+        historyService.addGuildInvitation(master, member, dbGuild);
+        historyService.addGuildJoined(member, dbGuild);
+        historyService.addGuildDismissInvitation(member, dbGuild);
+        historyService.addGuildMembershipRequest(member, dbGuild);
+        historyService.addDismissGuildMemberRequest(master, member, dbGuild);
+        historyService.addChangeGuildMemberRank(master, member, GuildMemberInfo.Rank.MANAGEMENT, dbGuild);
+        historyService.addGuildTextChanged(master, "xxx", dbGuild);
+        historyService.addGuildMemberKicked(master, member, dbGuild);
+        historyService.addGuildLeft(member, dbGuild);
+        historyService.addGuildClosed(master, dbGuild);
+        historyService.addKickedGuildClosed(master, member, dbGuild);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("Member");
+        HistoryElementInfo historyElementInfo = historyService.getHistoryElements(createGuildHistoryFilter(0, 12, 1));
+        Assert.assertEquals(0, historyElementInfo.getStartRow());
+        Assert.assertEquals(12, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals("Master kicked Member from the THE GUILD guild. The guild will be closed", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Master closed the THE GUILD guild", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Member left the THE GUILD guild", historyElementInfo.getHistoryElements().get(2).getMessage());
+        Assert.assertEquals("Master kicked Member from the THE GUILD guild", historyElementInfo.getHistoryElements().get(3).getMessage());
+        Assert.assertEquals("Master changed the text from the THE GUILD guild", historyElementInfo.getHistoryElements().get(4).getMessage());
+        Assert.assertEquals("Master changed Member rank in the THE GUILD guild", historyElementInfo.getHistoryElements().get(5).getMessage());
+        Assert.assertEquals("Master dismissed Member membership request to the THE GUILD guild", historyElementInfo.getHistoryElements().get(6).getMessage());
+        Assert.assertEquals("Member asked the THE GUILD for a membership request", historyElementInfo.getHistoryElements().get(7).getMessage());
+        Assert.assertEquals("Member dismissed the THE GUILD guild invitation", historyElementInfo.getHistoryElements().get(8).getMessage());
+        Assert.assertEquals("Member joined the THE GUILD guild", historyElementInfo.getHistoryElements().get(9).getMessage());
+        Assert.assertEquals("Master invited Member to the THE GUILD guild", historyElementInfo.getHistoryElements().get(10).getMessage());
+        Assert.assertEquals("Master created THE GUILD guild", historyElementInfo.getHistoryElements().get(11).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void guildRelatedHistoryAccess() throws Exception {
+        configureSimplePlanetNoResources();
+
+        DbGuild dbGuild = new DbGuild();
+        dbGuild.setName("THE GUILD");
+        setPrivateField(DbGuild.class, dbGuild, "id", 1);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("Member");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("Master");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        User master = userService.getUser("Master");
+        User member = userService.getUser("Member");
+        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addGuildCreated(master, 10, dbGuild);
+        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addGuildInvitation(master, member, dbGuild);
+        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addRazarionBought(userService.getUserState(master), 99);
+        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addGuildJoined(member, dbGuild);
+        historyService.addGuildDismissInvitation(member, dbGuild);
+        historyService.addRazarionBought(userService.getUserState(master), 99);
+        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addGuildMembershipRequest(member, dbGuild);
+        historyService.addRazarionBought(userService.getUserState(master), 99);
+        historyService.addDismissGuildMemberRequest(master, member, dbGuild);
+        historyService.addChangeGuildMemberRank(master, member, GuildMemberInfo.Rank.MANAGEMENT, dbGuild);
+        historyService.addRazarionBought(userService.getUserState(master), 99);
+        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addGuildTextChanged(master, "xxx", dbGuild);
+        historyService.addRazarionBought(userService.getUserState(master), 99);
+        historyService.addGuildMemberKicked(master, member, dbGuild);
+        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addGuildLeft(member, dbGuild);
+        historyService.addRazarionBought(userService.getUserState(master), 99);
+        historyService.addGuildClosed(master, dbGuild);
+        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addRazarionBought(userService.getUserState(master), 99);
+        historyService.addKickedGuildClosed(master, member, dbGuild);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("Member");
+        HistoryElementInfo historyElementInfo = historyService.getHistoryElements(createGuildHistoryFilter(0, 3, 1));
+        Assert.assertEquals(0, historyElementInfo.getStartRow());
+        Assert.assertEquals(12, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals(3, historyElementInfo.getHistoryElements().size());
+        Assert.assertEquals("Master kicked Member from the THE GUILD guild. The guild will be closed", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Master closed the THE GUILD guild", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Member left the THE GUILD guild", historyElementInfo.getHistoryElements().get(2).getMessage());
+        historyElementInfo = historyService.getHistoryElements(createGuildHistoryFilter(4, 2, 1));
+        Assert.assertEquals(4, historyElementInfo.getStartRow());
+        Assert.assertEquals(12, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals(2, historyElementInfo.getHistoryElements().size());
+        Assert.assertEquals("Master changed the text from the THE GUILD guild", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Master changed Member rank in the THE GUILD guild", historyElementInfo.getHistoryElements().get(1).getMessage());
+        historyElementInfo = historyService.getHistoryElements(createGuildHistoryFilter(4, 2, 2));
+        Assert.assertEquals(4, historyElementInfo.getStartRow());
+        Assert.assertEquals(0, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals(0, historyElementInfo.getHistoryElements().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private HistoryFilter createGuildHistoryFilter(int start, int length, int guildId) {
+        HistoryFilter historyFilter = HistoryFilter.createGuildFilter(guildId);
+        historyFilter.setStart(start);
+        historyFilter.setLength(length);
+        return historyFilter;
     }
 
 }

@@ -36,6 +36,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -56,9 +58,13 @@ public class DbHistoryElement implements Serializable {
         LEVEL_TASK_COMPLETED,
         LEVEL_TASK_ACTIVATED,
         LEVEL_TASK_DEACTIVATED,
+        @Deprecated
         ALLIANCE_OFFERED,
+        @Deprecated
         ALLIANCE_OFFER_ACCEPTED,
+        @Deprecated
         ALLIANCE_OFFER_REJECTED,
+        @Deprecated
         ALLIANCE_BROKEN,
         BOX_DROPPED,
         BOX_EXPIRED,
@@ -79,7 +85,7 @@ public class DbHistoryElement implements Serializable {
         GUILD_CREATED,
         GUILD_USER_INVITED,
         GUILD_JOINED,
-        GUILD_DISMISSED,
+        GUILD_DISMISSED_INVITATION,
         GUILD_MEMBERSHIP_REQUEST,
         GUILD_MEMBERSHIP_REQUEST_DISMISSED,
         GUILD_MEMBER_KICKED,
@@ -89,6 +95,20 @@ public class DbHistoryElement implements Serializable {
         GUILD_CLOSED,
         GUILD_CLOSED_MEMBER_KICKED
     }
+
+    public static final Collection<?> ALL_GUILD_TYPES = Arrays.asList(Type.GUILD_CREATED,
+            Type.GUILD_USER_INVITED,
+            Type.GUILD_JOINED,
+            Type.GUILD_DISMISSED_INVITATION,
+            Type.GUILD_MEMBERSHIP_REQUEST,
+            Type.GUILD_MEMBERSHIP_REQUEST_DISMISSED,
+            Type.GUILD_MEMBER_KICKED,
+            Type.GUILD_MEMBER_CHANGED,
+            Type.GUILD_TEXT_CHANGED,
+            Type.GUILD_LEFT,
+            Type.GUILD_CLOSED,
+            Type.GUILD_CLOSED_MEMBER_KICKED);
+
 
     public enum Source {
         HUMAN,
@@ -101,13 +121,16 @@ public class DbHistoryElement implements Serializable {
     @Column(nullable = false)
     private Date timeStamp;
     private long timeStampMs;
+    @Index(name = "GAME_HISTORY_INDEX_TYPE")
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Type type;
     @Index(name = "GAME_HISTORY_INDEX_ACTOR_USER")
     private Integer actorUserId;
+    private String actorUserName;
     @Index(name = "GAME_HISTORY_INDEX_TARGET_USER")
     private Integer targetUserId;
+    private String targetUserName;
     private Integer actorBaseId;
     private String actorBaseName;
     private Integer targetBaseId;
@@ -132,6 +155,7 @@ public class DbHistoryElement implements Serializable {
     private String text;
     private Integer planetId;
     private String planetName;
+    @Index(name = "GAME_HISTORY_INDEX_GUILD_ID")
     private Integer guildId;
     private String guildName;
     private String rank;
@@ -152,12 +176,22 @@ public class DbHistoryElement implements Serializable {
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
         this.type = type;
-        actorUserId = actorUser != null ? actorUser.getId() : null;
-        targetUserId = targetUser != null ? targetUser.getId() : null;
-        actorBaseId = actorBase != null ? actorBase.getBaseId() : null;
-        actorBaseName = actorBase != null ? planetSystemService.getServerPlanetServices(actorBase).getBaseService().getBaseName(actorBase) : null;
-        targetBaseId = targetBase != null ? targetBase.getBaseId() : null;
-        targetBaseName = targetBase != null ? planetSystemService.getServerPlanetServices(targetBase).getBaseService().getBaseName(targetBase) : null;
+        if (actorUser != null) {
+            actorUserId = actorUser.getId();
+            actorUserName = actorUser.getUsername();
+        }
+        if (targetUser != null) {
+            targetUserId = targetUser.getId();
+            targetUserName = targetUser.getUsername();
+        }
+        if (actorBase != null) {
+            actorBaseId = actorBase.getBaseId();
+            actorBaseName = planetSystemService.getServerPlanetServices(actorBase).getBaseService().getBaseName(actorBase);
+        }
+        if (targetBase != null) {
+            targetBaseId = targetBase.getBaseId();
+            targetBaseName = planetSystemService.getServerPlanetServices(targetBase).getBaseService().getBaseName(targetBase);
+        }
         if (syncItem != null) {
             itemTypeName = syncItem.getItemType().getName();
             itemTypeId = syncItem.getItemType().getId();
@@ -305,6 +339,18 @@ public class DbHistoryElement implements Serializable {
 
     public String getText() {
         return text;
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getActorUserName() {
+        return actorUserName;
+    }
+
+    public String getTargetUserName() {
+        return targetUserName;
     }
 
     @Override

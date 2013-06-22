@@ -35,7 +35,7 @@ public interface GuildService {
 
     SimpleGuild joinGuild(int guildId);
 
-    List<GuildDetailedInfo> dismissGuild(int guildId);
+    List<GuildDetailedInfo> dismissGuildInvitation(int guildId);
 
     List<GuildDetailedInfo> getGuildInvitations();
 
