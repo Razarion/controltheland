@@ -43,5 +43,5 @@ public interface ActionService extends CommonActionService, SyncItemListener {
 
     void deactivate();
 
-    void onAllianceBroken(Collection<SyncBaseItem> idleAttackItems);
+    void onGuildChanged(Collection<SyncBaseItem> idleAttackItems);
 }

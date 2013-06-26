@@ -63,6 +63,14 @@ public interface GuildService {
 
     void fillUserAttentionPacket(User user, UserAttentionPacket userAttentionPacket);
 
+    Integer getGuildId(UserState userState);
+
+    void onMakeBaseAbandoned(User user, SimpleBase simpleBase);
+
+    void onMakeBaseAbandonedHandleEnemies(User user, SimpleBase simpleBase);
+
+    Set<SimpleBase> getGuildBases(UserState userState, int planetId);
+
     /*------------------------------------------------------*/
     void proposeAlliance(SimpleBase partner);
 
@@ -78,11 +86,7 @@ public interface GuildService {
 
     Collection<String> getAllAlliances();
 
-    void onBaseCreatedOrDeleted(int userId);
+//    void onBaseCreatedOrDeleted(int userId);
 
-    void onMakeBaseAbandoned(SimpleBase simpleBase);
-
-    void fillAlliancesForFakeBases(BaseAttributes fakeBaseAttributes, HashMap<SimpleBase, BaseAttributes> allFakeBaseAttributes, UserState userState, int planetId);
-
-    Set<SimpleBase> getAllianceBases(UserState userState, PlanetInfo planetInfo);
+//    void fillAlliancesForFakeBases(BaseAttributes fakeBaseAttributes, HashMap<SimpleBase, BaseAttributes> allFakeBaseAttributes, UserState userState, int planetId);
 }

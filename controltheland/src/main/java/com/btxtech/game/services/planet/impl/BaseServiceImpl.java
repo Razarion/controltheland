@@ -103,7 +103,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         synchronized (bases) {
             lastBaseId++;
             base = new Base(userState, planet, lastBaseId);
-            createBase(base.getSimpleBase(), setupBaseName(base), false);
+            createBase(base.getSimpleBase(), setupBaseName(base), false, serverGlobalServices.getGuildService().getGuildId(userState));
             log.debug("Base created: " + base);
             bases.put(base.getSimpleBase(), base);
         }
@@ -114,7 +114,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         syncBaseItem.getSyncItemArea().setCosmeticsAngel();
         if (userState.isRegistered()) {
             serverGlobalServices.getUserTrackingService().onBaseCreated(serverGlobalServices.getUserService().getUser(userState), setupBaseName(base));
-            serverGlobalServices.getGuildService().onBaseCreatedOrDeleted(userState.getUser());
         }
         base.setAccountBalance(startMoney);
         sendAccountBaseUpdate(base.getSimpleBase());
@@ -122,7 +121,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     private void checkPosition(UserState userState, BaseItemType startItem, final Index startPoint, final int startItemFreeRange) throws PositionInBotException {
-        final Set<SimpleBase> friendlyBases = serverGlobalServices.getGuildService().getAllianceBases(userState, planetServices.getPlanetInfo());
+        final Set<SimpleBase> friendlyBases = serverGlobalServices.getGuildService().getGuildBases(userState, planetServices.getPlanetInfo().getPlanetId());
         StartPointItemPlacerChecker startPointItemPlacerChecker = new StartPointItemPlacerChecker(startItem, startItemFreeRange, planetServices) {
 
             @Override
@@ -151,7 +150,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         synchronized (bases) {
             lastBaseId++;
             Base base = new Base(planet, lastBaseId);
-            createBase(base.getSimpleBase(), botConfig.getName(), false);
+            createBase(base.getSimpleBase(), botConfig.getName(), false, null);
             log.debug("Bot Base created: " + botConfig.getName() + " " + " (" + base + ")");
             serverGlobalServices.getHistoryService().addBaseStartEntry(base.getSimpleBase());
             bases.put(base.getSimpleBase(), base);
@@ -167,13 +166,13 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         User user = serverGlobalServices.getUserService().getUser();
         if (user != null) {
             serverGlobalServices.getUserTrackingService().onBaseSurrender(user, base);
+            serverGlobalServices.getGuildService().onMakeBaseAbandoned(user, base.getSimpleBase());
         }
         UserState userState = getUserState(base.getSimpleBase());
         userState.setSendResurrectionMessage();
         makeBaseAbandoned(base);
-        if (userState.isRegistered()) {
-            serverGlobalServices.getGuildService().onMakeBaseAbandoned(base.getSimpleBase());
-            serverGlobalServices.getGuildService().onBaseCreatedOrDeleted(userState.getUser());
+        if (user != null) {
+            serverGlobalServices.getGuildService().onMakeBaseAbandonedHandleEnemies(user, base.getSimpleBase());
         }
         askForStartPosition(userState);
     }
@@ -306,9 +305,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             if (actor != null) {
                 sendDefeatedMessage(syncItem, actor);
             }
-            Integer userId = null;
             if (userState != null && userState.isRegistered()) {
-                userId = userState.getUser();
                 serverGlobalServices.getUserTrackingService().onBaseDefeated(serverGlobalServices.getUserService().getUser(userState), base);
             }
             serverGlobalServices.getStatisticsService().onBaseKilled(base.getSimpleBase(), actor);
@@ -316,9 +313,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             if (!base.isAbandoned() && userState != null) {
                 base.getUserState().setBase(null);
                 base.getUserState().setSendResurrectionMessage(); // TODO needed?
-            }
-            if (userId != null) {
-                serverGlobalServices.getGuildService().onBaseCreatedOrDeleted(userId);
             }
             askForStartPosition(userState);
         } else {
@@ -388,7 +382,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             clear();
             for (Base newBase : newBases) {
                 bases.put(newBase.getSimpleBase(), newBase);
-                createBase(newBase.getSimpleBase(), setupBaseName(newBase), newBase.isAbandoned());
+                createBase(newBase.getSimpleBase(), setupBaseName(newBase), newBase.isAbandoned(), serverGlobalServices.getGuildService().getGuildId(newBase.getUserState()));
                 if (newBase.getBaseId() > lastBaseId) {
                     lastBaseId = newBase.getBaseId();
                 }
@@ -468,7 +462,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void sendAlliancesChanged(SimpleBase simpleBase) {
+    public void sendGuildChanged(SimpleBase simpleBase) {
         BaseAttributes baseAttributes = getBaseAttributes(simpleBase);
         if (baseAttributes != null) {
             BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
@@ -552,8 +546,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void setAlliances(SimpleBase simpleBase, Collection<SimpleBase> alliances) {
-        updateBaseAlliance(simpleBase, alliances);
+    public void setGuild(SimpleBase simpleBase, Integer guildId) {
+        updateGuild(simpleBase, guildId);
     }
 
     @Override
@@ -567,34 +561,18 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Collection<BaseAttributes> createAllBaseAttributes4FakeBase(SimpleBase fakeBase, UserState uSerState, int planetId) {
-        HashMap<SimpleBase, BaseAttributes> allFakeBaseAttributes = new HashMap<>();
-        for (BaseAttributes baseAttribute : getAllBaseAttributes()) {
-            BaseAttributes otherBaseAttribute = new BaseAttributes(baseAttribute.getSimpleBase(), baseAttribute.getName(), baseAttribute.isAbandoned());
-            otherBaseAttribute.setBot(baseAttribute.isBot());
-            allFakeBaseAttributes.put(baseAttribute.getSimpleBase(), otherBaseAttribute);
-        }
-        BaseAttributes ownFakeBseAttributes = new BaseAttributes(fakeBase, setupFakeBaseName(uSerState), false);
-        allFakeBaseAttributes.put(fakeBase, ownFakeBseAttributes);
-        serverGlobalServices.getGuildService().fillAlliancesForFakeBases(ownFakeBseAttributes, allFakeBaseAttributes, uSerState, planetId);
-        return new ArrayList<>(allFakeBaseAttributes.values());
+    public Collection<BaseAttributes> createAllBaseAttributes4FakeBase(SimpleBase fakeBase, UserState userState, int planetId) {
+        Collection<BaseAttributes> allBaseAttributes = getAllBaseAttributes();
+        allBaseAttributes.add(new BaseAttributes(fakeBase, setupFakeBaseName(userState), false, serverGlobalServices.getGuildService().getGuildId(userState)));
+        return allBaseAttributes;
     }
 
-
     @Override
-    public void sendAlliancesChanged4FakeBase(UserState uSerState) {
+    public void sendGuildChanged4FakeBase(UserState userState, Integer guildId) {
         SimpleBase fakeBase = SimpleBase.createFakeUser(planetServices.getPlanetInfo().getPlanetId());
-
-        HashMap<SimpleBase, BaseAttributes> allFakeBaseAttributes = new HashMap<>();
-        for (BaseAttributes baseAttribute : getAllBaseAttributes()) {
-            allFakeBaseAttributes.put(baseAttribute.getSimpleBase(), new BaseAttributes(baseAttribute.getSimpleBase(), baseAttribute.getName(), baseAttribute.isAbandoned()));
-        }
-        BaseAttributes ownFakeBseAttributes = new BaseAttributes(fakeBase, setupFakeBaseName(uSerState), false);
-        allFakeBaseAttributes.put(fakeBase, ownFakeBseAttributes);
-        serverGlobalServices.getGuildService().fillAlliancesForFakeBases(ownFakeBseAttributes, allFakeBaseAttributes, uSerState, planetServices.getPlanetInfo().getPlanetId());
         BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
         baseChangedPacket.setType(BaseChangedPacket.Type.CHANGED);
-        baseChangedPacket.setBaseAttributes(ownFakeBseAttributes);
-        planetServices.getConnectionService().sendPacket(uSerState, baseChangedPacket);
+        baseChangedPacket.setBaseAttributes(new BaseAttributes(fakeBase, setupFakeBaseName(userState), false, guildId));
+        planetServices.getConnectionService().sendPacket(userState, baseChangedPacket);
     }
 }

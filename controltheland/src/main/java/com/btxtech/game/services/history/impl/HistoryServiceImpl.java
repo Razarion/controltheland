@@ -1012,7 +1012,7 @@ public class HistoryServiceImpl implements HistoryService {
             case BASE_DEFEATED:
                 if (userId != null) {
                     if (userId.equals(dbHistoryElement.getActorUserId())) {
-                        return "You destroyed: " + dbHistoryElement.getTargetBaseName() + " base";
+                        return "You destroyed the base from " + dbHistoryElement.getTargetBaseName();
                     } else {
                         if (dbHistoryElement.getActorBaseName() != null) {
                             return "Your base has been destroyed by " + dbHistoryElement.getActorBaseName();

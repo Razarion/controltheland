@@ -9,7 +9,6 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
@@ -54,6 +53,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -105,7 +105,7 @@ public class GuildServiceImpl implements GuildService {
         removeGuildInvitations(user);
         removeMembershipRequests(user, null);
         historyService.addGuildCreated(user, razarionCost, dbGuild);
-        onGuildChanged(dbGuild);
+        updateBaseService(dbGuild, user);
         return dbGuild.createSimpleGuild();
     }
 
@@ -178,7 +178,7 @@ public class GuildServiceImpl implements GuildService {
         removeGuildInvitations(user);
         removeMembershipRequests(user, null);
         historyService.addGuildJoined(user, dbGuild);
-        onGuildChanged(dbGuild);
+        updateBaseService(dbGuild, user);
         return dbGuild.createSimpleGuild();
     }
 
@@ -324,7 +324,9 @@ public class GuildServiceImpl implements GuildService {
 
         dbGuild.removeMember(userToKick);
         sessionFactory.getCurrentSession().save(dbGuild);
-        onGuildChanged(dbGuild);
+        updateBaseService(null, userToKick);
+        handleNewEnemies(dbGuild, userToKick);
+        // TODO fire user removed if online
         historyService.addGuildMemberKicked(user, userToKick, dbGuild);
         return getFullGuildInfo(dbGuild.getId());
     }
@@ -464,7 +466,8 @@ public class GuildServiceImpl implements GuildService {
         dbGuild.removeMember(user);
         historyService.addGuildLeft(user, dbGuild);
         sessionFactory.getCurrentSession().save(dbGuild);
-        onGuildChanged(dbGuild);
+        updateBaseService(null, user);
+        handleNewEnemies(dbGuild, user);
     }
 
     @Override
@@ -483,14 +486,18 @@ public class GuildServiceImpl implements GuildService {
         }
         removeMembershipRequests(null, dbGuild);
         removeGuildInvitations(dbGuild);
+        Collection<User> exMembers = new ArrayList<>();
         for (DbGuildMember dbGuildMember : dbGuild.getGuildMembers()) {
+            exMembers.add(dbGuildMember.getUser());
             if (!user.equals(dbGuildMember.getUser())) {
                 historyService.addKickedGuildClosed(user, dbGuildMember.getUser(), dbGuild);
+                // TODO fire user removed if online
             }
+            updateBaseService(null, dbGuildMember.getUser());
         }
         historyService.addGuildClosed(user, dbGuild);
         sessionFactory.getCurrentSession().delete(dbGuild);
-        onGuildChanged(dbGuild);
+        handleNewEnemies(exMembers);
     }
 
     @Override
@@ -521,6 +528,74 @@ public class GuildServiceImpl implements GuildService {
                 userAttentionPacket.setGuildMembershipRequest(UserAttentionPacket.Type.RAISE);
             }
         }
+    }
+
+    @Override
+    public Integer getGuildId(UserState userState) {
+        if (userState == null) {
+            return null;
+        }
+        if (HibernateUtil.hasOpenSession(sessionFactory)) {
+            return getGuildIdInSession(userState);
+        } else {
+            HibernateUtil.openSession4InternalCall(sessionFactory);
+            try {
+                return getGuildIdInSession(userState);
+            } finally {
+                HibernateUtil.closeSession4InternalCall(sessionFactory);
+            }
+        }
+    }
+
+    @Override
+    public void onMakeBaseAbandoned(User user, SimpleBase simpleBase) {
+        DbGuild dbGuild = getGuild(user);
+        if (dbGuild == null) {
+            return;
+        }
+        planetSystemService.getServerPlanetServices(simpleBase).getBaseService().setGuild(simpleBase, null);
+    }
+
+    @Override
+    public void onMakeBaseAbandonedHandleEnemies(User user, SimpleBase simpleBase) {
+        DbGuild dbGuild = getGuild(user);
+        if (dbGuild == null) {
+            return;
+        }
+        Set<SimpleBase> simpleBases = new HashSet<>();
+        simpleBases.add(simpleBase);
+        for (DbGuildMember dbGuildMember : dbGuild.getGuildMembers()) {
+            if (user.equals(dbGuildMember.getUser())) {
+                continue;
+            }
+            SimpleBase guildMemberBase = getSimpleBase(dbGuildMember.getUser());
+            if (guildMemberBase != null && simpleBase.getPlanetId() == guildMemberBase.getPlanetId()) {
+                simpleBases.add(guildMemberBase);
+            }
+        }
+        if (simpleBases.size() > 1) {
+            planetSystemService.getServerPlanetServices(simpleBase).getItemService().onGuildChanged(simpleBases);
+        }
+    }
+
+    @Override
+    public Set<SimpleBase> getGuildBases(UserState userState, int planetId) {
+        User user = userService.getUser(userState);
+        if (user == null) {
+            return Collections.emptySet();
+        }
+        DbGuild dbGuild = getGuild(user);
+        if (dbGuild == null) {
+            return Collections.emptySet();
+        }
+        Set<SimpleBase> guildBases = new HashSet<>();
+        for (DbGuildMember member : dbGuild.getGuildMembers()) {
+            SimpleBase simpleBase = getSimpleBase(member.getUser());
+            if (simpleBase != null && simpleBase.getPlanetId() == planetId) {
+                guildBases.add(simpleBase);
+            }
+        }
+        return guildBases;
     }
 
     @SuppressWarnings("unchecked")
@@ -585,6 +660,18 @@ public class GuildServiceImpl implements GuildService {
         }
     }
 
+    private Integer getGuildIdInSession(UserState userState) {
+        User user = userService.getUser(userState);
+        if (user == null) {
+            return null;
+        }
+        DbGuild dbGuild = getGuild(user);
+        if (dbGuild == null) {
+            return null;
+        }
+        return dbGuild.getId();
+    }
+
     private void removeGuildInvitations(User user) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbGuildInvitation.class);
         criteria.add(Restrictions.eq("user", user));
@@ -617,8 +704,70 @@ public class GuildServiceImpl implements GuildService {
         }
     }
 
-    private void onGuildChanged(DbGuild dbGuild) {
-        // TODO
+    private void updateBaseService(DbGuild dbGuild, User user) {
+        Integer guildId = null;
+        if (dbGuild != null) {
+            guildId = dbGuild.getId();
+        }
+        SimpleBase simpleBase = getSimpleBase(user);
+        if (simpleBase == null) {
+            // User has no base
+            UserState userState = userService.getUserState(user);
+            ServerPlanetServices serverPlanetServices = planetSystemService.getPlanet4BaselessConnection(userState);
+            if (serverPlanetServices != null) {
+                serverPlanetServices.getBaseService().sendGuildChanged4FakeBase(userState, guildId);
+            }
+        } else {
+            planetSystemService.getServerPlanetServices(simpleBase).getBaseService().setGuild(simpleBase, guildId);
+            planetSystemService.getServerPlanetServices(simpleBase).getBaseService().sendGuildChanged(simpleBase);
+        }
+    }
+
+    private void handleNewEnemies(DbGuild dbGuild, User newGuildEnemy) {
+        Set<SimpleBase> simpleBases = new HashSet<>();
+        SimpleBase simpleBase = getSimpleBase(newGuildEnemy);
+        if (simpleBase == null) {
+            return;
+        }
+        simpleBases.add(simpleBase);
+        for (DbGuildMember dbGuildMember : dbGuild.getGuildMembers()) {
+            SimpleBase guildMemberBase = getSimpleBase(dbGuildMember.getUser());
+            if (guildMemberBase != null && simpleBase.getPlanetId() == guildMemberBase.getPlanetId()) {
+                simpleBases.add(guildMemberBase);
+            }
+        }
+        if (simpleBases.size() > 1) {
+            planetSystemService.getServerPlanetServices(simpleBase).getItemService().onGuildChanged(simpleBases);
+        }
+    }
+
+    private void handleNewEnemies(Collection<User> newEnemies) {
+        Map<Integer, Set<SimpleBase>> allBases = new HashMap<>();
+        for (User newEnemy : newEnemies) {
+            SimpleBase simpleBase = getSimpleBase(newEnemy);
+            if (simpleBase != null) {
+                Set<SimpleBase> planetBases = allBases.get(simpleBase.getPlanetId());
+                if (planetBases == null) {
+                    planetBases = new HashSet<>();
+                    allBases.put(simpleBase.getPlanetId(), planetBases);
+                }
+                planetBases.add(simpleBase);
+            }
+        }
+
+        for (Map.Entry<Integer, Set<SimpleBase>> entry : allBases.entrySet()) {
+            if (entry.getValue().size() > 1) {
+                planetSystemService.getServerPlanetServices(entry.getKey()).getItemService().onGuildChanged(entry.getValue());
+            }
+        }
+    }
+
+    private SimpleBase getSimpleBase(User user) {
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(user);
+        if (serverPlanetServices == null) {
+            return null;
+        }
+        return serverPlanetServices.getBaseService().getSimpleBase(user);
     }
 
     /*--------------------------------------*/
@@ -672,8 +821,8 @@ public class GuildServiceImpl implements GuildService {
         historyService.addAllianceOfferAccepted(user, partnerUser);
         updateBaseService(user);
         updateBaseService(partnerUser);
-        sendAllianceChanged(user);
-        sendAllianceChanged(partnerUser);
+        // sendGuildChanged(user);
+        //  sendGuildChanged(partnerUser);
         sendMessage(partnerUser, "alliancesAccepted", user.getUsername(), false);
     }
 
@@ -713,63 +862,10 @@ public class GuildServiceImpl implements GuildService {
         historyService.addAllianceBroken(user, partnerUser);
         updateBaseService(user);
         updateBaseService(partnerUser);
-        sendAllianceChanged(user);
-        sendAllianceChanged(partnerUser);
-        handleNewEnemies(user, partnerUser);
+        //sendGuildChanged(user);
+        //sendGuildChanged(partnerUser);
+        // handleNewEnemies(user, partnerUser);
         sendMessage(partnerUser, "alliancesBroken", user.getUsername(), false);
-    }
-
-    @Override
-    public Set<SimpleBase> getAllianceBases(UserState userState, PlanetInfo planetInfo) {
-        User user = userService.getUser(userState);
-        if (user == null) {
-            return Collections.emptySet();
-        }
-        Set<SimpleBase> allianceBases = new HashSet<>();
-        for (User allianceUser : user.getAlliances()) {
-            SimpleBase allianceBase = getSimpleBase(allianceUser, planetInfo.getPlanetId());
-            if (allianceBase == null) {
-                continue;
-            }
-            allianceBases.add(allianceBase);
-        }
-        return allianceBases;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public void fillAlliancesForFakeBases(BaseAttributes fakeBaseAttributes, HashMap<SimpleBase, BaseAttributes> allFakeBaseAttributes, UserState userState, int planetId) {
-        Set<SimpleBase> ownAllianceBases = new HashSet<>();
-        User user = userService.getUser(userState);
-        if (user == null) {
-            return;
-        }
-        for (User allianceUser : user.getAlliances()) {
-            SimpleBase allianceBase = getSimpleBase(allianceUser, planetId);
-            if (allianceBase == null) {
-                continue;
-            }
-            ownAllianceBases.add(allFakeBaseAttributes.get(allianceBase).getSimpleBase());
-            Set<SimpleBase> otherAlliances = new HashSet<>();
-            otherAlliances.add(fakeBaseAttributes.getSimpleBase());
-            allFakeBaseAttributes.get(allianceBase).setAlliances(otherAlliances);
-        }
-        fakeBaseAttributes.setAlliances(ownAllianceBases);
-    }
-
-    private void handleNewEnemies(User user1, User user2) {
-        SimpleBase simpleBase1 = getSimpleBase(user1);
-        if (simpleBase1 == null) {
-            return;
-        }
-        SimpleBase simpleBase2 = getSimpleBase(user2);
-        if (simpleBase2 == null) {
-            return;
-        }
-        if (simpleBase1.getPlanetId() != simpleBase2.getPlanetId()) {
-            return;
-        }
-        planetSystemService.getServerPlanetServices(simpleBase1).getItemService().onAllianceBroken(simpleBase1, simpleBase2);
     }
 
     @Override
@@ -793,26 +889,6 @@ public class GuildServiceImpl implements GuildService {
     }
 
     @Override
-    public void onBaseCreatedOrDeleted(int userId) {
-        if (HibernateUtil.hasOpenSession(sessionFactory)) {
-            onBaseCreatedOrDeletedInSession(userService.getUser(userId));
-        } else {
-            HibernateUtil.openSession4InternalCall(sessionFactory);
-            try {
-                onBaseCreatedOrDeletedInSession(userService.getUser(userId));
-            } finally {
-                HibernateUtil.closeSession4InternalCall(sessionFactory);
-            }
-        }
-    }
-
-    @Override
-    public void onMakeBaseAbandoned(SimpleBase simpleBase) {
-        planetSystemService.getServerPlanetServices(simpleBase).getBaseService().setAlliances(simpleBase, new ArrayList<SimpleBase>());
-        planetSystemService.getServerPlanetServices(simpleBase).getBaseService().sendAlliancesChanged(simpleBase);
-    }
-
-    @Override
     public Collection<String> getAllAlliances() {
         User user = userService.getUser();
         if (user == null) {
@@ -823,15 +899,6 @@ public class GuildServiceImpl implements GuildService {
             alliances.add(allianceUser.getUsername());
         }
         return alliances;
-    }
-
-    private void onBaseCreatedOrDeletedInSession(User user) {
-        updateBaseService(user);
-        sendAllianceChanged(user);
-        for (User alliance : user.getAlliances()) {
-            updateBaseService(alliance);
-            sendAllianceChanged(alliance);
-        }
     }
 
     private void updateBaseService(User user) {
@@ -848,20 +915,7 @@ public class GuildServiceImpl implements GuildService {
             }
             allianceBases.add(allianceBase);
         }
-        planetSystemService.getServerPlanetServices(simpleBase).getBaseService().setAlliances(simpleBase, allianceBases);
-    }
-
-    private void sendAllianceChanged(User user) {
-        SimpleBase simpleBase = getSimpleBase(user);
-        if (simpleBase != null) {
-            planetSystemService.getServerPlanetServices(simpleBase).getBaseService().sendAlliancesChanged(simpleBase);
-        } else {
-            UserState userState = userService.getUserState(user);
-            ServerPlanetServices serverPlanetServices = planetSystemService.getPlanet4BaselessConnection(userState);
-            if (serverPlanetServices != null) {
-                serverPlanetServices.getBaseService().sendAlliancesChanged4FakeBase(userState);
-            }
-        }
+        //planetSystemService.getServerPlanetServices(simpleBase).getBaseService().setAlliances(simpleBase, allianceBases);
     }
 
     private void sendMessage(User user, String key, String arg, boolean showRegisterDialog) {
@@ -880,14 +934,6 @@ public class GuildServiceImpl implements GuildService {
         AllianceOfferPacket allianceOfferPacket = new AllianceOfferPacket();
         allianceOfferPacket.setActorUserName(user.getUsername());
         return allianceOfferPacket;
-    }
-
-    private SimpleBase getSimpleBase(User user) {
-        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(user);
-        if (serverPlanetServices == null) {
-            return null;
-        }
-        return serverPlanetServices.getBaseService().getSimpleBase(user);
     }
 
     private SimpleBase getSimpleBase(User user, int planetId) {

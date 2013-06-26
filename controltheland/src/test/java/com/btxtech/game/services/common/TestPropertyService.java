@@ -37,7 +37,7 @@ public class TestPropertyService extends AbstractServiceTest {
             propertyService.getIntProperty(PropertyServiceEnum.GUILD_RAZARION_COST);
             Assert.fail("NoSuchPropertyException expected");
         } catch (NoSuchPropertyException e) {
-            Assert.assertEquals("No such property: PropertyServiceEnum{internalName='guild.create.razarion.cost', displayName='Razarion cost for creating a guild', type=class java.lang.Integer}", e.getMessage());
+            Assert.assertEquals("No such property: PropertyServiceEnum{displayName='Razarion cost for creating a guild', type=class java.lang.Integer}", e.getMessage());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -68,7 +68,7 @@ public class TestPropertyService extends AbstractServiceTest {
             propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, "Hallo");
             Assert.fail("WrongPropertyTypeException expected");
         } catch (WrongPropertyTypeException e) {
-            Assert.assertEquals("Wrong property type exception. Expected: class java.lang.String Property: PropertyServiceEnum{internalName='guild.create.razarion.cost', displayName='Razarion cost for creating a guild', type=class java.lang.Integer}", e.getMessage());
+            Assert.assertEquals("Wrong property type exception. Expected: class java.lang.String Property: PropertyServiceEnum{displayName='Razarion cost for creating a guild', type=class java.lang.Integer}", e.getMessage());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

@@ -224,7 +224,7 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
         Assert.assertEquals("Destroyed a " + TEST_START_BUILDER_ITEM + " from Target", displayHistoryElements.get(1).getMessage());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
-        Assert.assertEquals("Base destroyed: Target", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("You destroyed the base from Target", displayHistoryElements.get(0).getMessage());
 
 
         displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Target"), 0, 1000);
@@ -283,7 +283,7 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
         Assert.assertEquals("Destroyed a " + TEST_START_BUILDER_ITEM + " from Base 1", displayHistoryElements.get(1).getMessage());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
-        Assert.assertEquals("Base destroyed: Base 1", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("You destroyed the base from Base 1", displayHistoryElements.get(0).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

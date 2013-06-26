@@ -16,8 +16,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * User: beat
@@ -30,39 +28,26 @@ public class TestAbstractBaseService {
     public void isEnemy() {
         Collection<BaseAttributes> allBaseAttributes = new ArrayList<>();
         SimpleBase bot1 = new SimpleBase(1, 1);
-        BaseAttributes baseAttributesBot1 = new BaseAttributes(bot1, "bot1", false);
+        BaseAttributes baseAttributesBot1 = new BaseAttributes(bot1, "bot1", false, null);
         baseAttributesBot1.setBot(true);
         allBaseAttributes.add(baseAttributesBot1);
 
         SimpleBase bot2 = new SimpleBase(2, 1);
-        BaseAttributes baseAttributesBot2 = new BaseAttributes(bot2, "bot2", false);
+        BaseAttributes baseAttributesBot2 = new BaseAttributes(bot2, "bot2", false, null);
         baseAttributesBot2.setBot(true);
         allBaseAttributes.add(baseAttributesBot2);
 
         SimpleBase base1 = new SimpleBase(3, 1);
-        BaseAttributes baseAttributes1 = new BaseAttributes(base1, "base1", false);
+        BaseAttributes baseAttributes1 = new BaseAttributes(base1, "base1", false, 1);
         allBaseAttributes.add(baseAttributes1);
 
         SimpleBase base2 = new SimpleBase(4, 1);
-        BaseAttributes baseAttributes2 = new BaseAttributes(base2, "base2", false);
+        BaseAttributes baseAttributes2 = new BaseAttributes(base2, "base2", false, 1);
         allBaseAttributes.add(baseAttributes2);
 
         SimpleBase base3 = new SimpleBase(5, 1);
-        BaseAttributes baseAttributes3 = new BaseAttributes(base3, "base3", false);
+        BaseAttributes baseAttributes3 = new BaseAttributes(base3, "base3", false, null);
         allBaseAttributes.add(baseAttributes3);
-
-        Set<SimpleBase> alliances = new HashSet<>();
-        alliances.add(baseAttributes2.getSimpleBase());
-        alliances.add(baseAttributes3.getSimpleBase());
-        baseAttributes1.setAlliances(alliances);
-
-        alliances = new HashSet<>();
-        alliances.add(baseAttributes1.getSimpleBase());
-        baseAttributes2.setAlliances(alliances);
-
-        alliances = new HashSet<>();
-        alliances.add(baseAttributes1.getSimpleBase());
-        baseAttributes3.setAlliances(alliances);
 
         TestAbstractBaseServiceImpl abstractBaseService = new TestAbstractBaseServiceImpl();
         abstractBaseService.setAllBaseAttributes(allBaseAttributes);
@@ -85,10 +70,10 @@ public class TestAbstractBaseService {
 
         Assert.assertFalse(abstractBaseService.isEnemy(base1, base1));
         Assert.assertFalse(abstractBaseService.isEnemy(base1, base2));
-        Assert.assertFalse(abstractBaseService.isEnemy(base1, base3));
+        Assert.assertTrue(abstractBaseService.isEnemy(base1, base3));
         Assert.assertFalse(abstractBaseService.isEnemy(base1, base1));
         Assert.assertFalse(abstractBaseService.isEnemy(base2, base1));
-        Assert.assertFalse(abstractBaseService.isEnemy(base3, base1));
+        Assert.assertTrue(abstractBaseService.isEnemy(base3, base1));
 
         Assert.assertFalse(abstractBaseService.isEnemy(base2, base1));
         Assert.assertFalse(abstractBaseService.isEnemy(base2, base2));
@@ -97,10 +82,10 @@ public class TestAbstractBaseService {
         Assert.assertFalse(abstractBaseService.isEnemy(base2, base2));
         Assert.assertTrue(abstractBaseService.isEnemy(base3, base2));
 
-        Assert.assertFalse(abstractBaseService.isEnemy(base3, base1));
+        Assert.assertTrue(abstractBaseService.isEnemy(base3, base1));
         Assert.assertTrue(abstractBaseService.isEnemy(base3, base2));
         Assert.assertFalse(abstractBaseService.isEnemy(base3, base3));
-        Assert.assertFalse(abstractBaseService.isEnemy(base1, base3));
+        Assert.assertTrue(abstractBaseService.isEnemy(base1, base3));
         Assert.assertTrue(abstractBaseService.isEnemy(base2, base3));
         Assert.assertFalse(abstractBaseService.isEnemy(base3, base3));
     }

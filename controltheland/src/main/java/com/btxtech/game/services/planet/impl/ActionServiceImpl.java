@@ -319,7 +319,7 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
     }
 
     @Override
-    public void onAllianceBroken(Collection<SyncBaseItem> idleAttackItems) {
+    public void onGuildChanged(Collection<SyncBaseItem> idleAttackItems) {
         for (SyncBaseItem idleAttackItem : idleAttackItems) {
             checkGuardingItemHasEnemiesInRange(idleAttackItem);
         }

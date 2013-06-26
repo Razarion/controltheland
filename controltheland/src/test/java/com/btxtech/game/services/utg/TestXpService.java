@@ -49,7 +49,6 @@ public class TestXpService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-
         // Create target
         Collection<Id> targets = createTargets(20);
 

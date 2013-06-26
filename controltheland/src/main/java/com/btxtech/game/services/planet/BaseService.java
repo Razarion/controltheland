@@ -79,13 +79,13 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     void onUserStateRemoved(UserState userState);
 
-    void setAlliances(SimpleBase simpleBase, Collection<SimpleBase> alliances);
+    void setGuild(SimpleBase simpleBase, Integer guildId);
 
-    void sendAlliancesChanged(SimpleBase simpleBase);
+    void sendGuildChanged(SimpleBase simpleBase);
 
     void surrenderBase(Base base);
 
     Collection<BaseAttributes> createAllBaseAttributes4FakeBase(SimpleBase fakeBase, UserState uSerState, int planetId);
 
-    void sendAlliancesChanged4FakeBase(UserState uSerState);
+    void sendGuildChanged4FakeBase(UserState uSerState, Integer guildId);
 }
