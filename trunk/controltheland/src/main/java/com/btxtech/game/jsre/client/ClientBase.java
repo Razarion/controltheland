@@ -85,7 +85,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         if (simpleBase == null) {
             int baseId = getFreeBaseId();
             simpleBase = new SimpleBase(baseId, PlanetInfo.MISSION_PLANET_ID.getPlanetId());
-            createBase(simpleBase, onwBaseName, false);
+            createBase(simpleBase, onwBaseName, false, null);
         }
     }
 
@@ -340,7 +340,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     public SimpleBase createBotBase(BotConfig botConfig) {
         int baseId = getFreeBaseId();
         SimpleBase simpleBase = new SimpleBase(baseId, PlanetInfo.MISSION_PLANET_ID.getPlanetId());
-        createBase(simpleBase, botConfig.getName(), false);
+        createBase(simpleBase, botConfig.getName(), false, null);
         setBot(simpleBase, true);
         return simpleBase;
     }

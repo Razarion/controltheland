@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
+import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
@@ -396,6 +397,26 @@ abstract public class AbstractServiceTest {
 
     protected void assertBaseCount(int planetId, int count) {
         Assert.assertEquals(count, planetSystemService.getServerPlanetServices(planetId).getBaseService().getAllBaseAttributes().size());
+    }
+
+    protected BaseAttributes getBaseAttributes(int planetId, String baseName) {
+        BaseService baseService = planetSystemService.getServerPlanetServices(planetId).getBaseService();
+        for (BaseAttributes baseAttributes : baseService.getAllBaseAttributes()) {
+            if (baseAttributes.getName().equals(baseName)) {
+                return baseAttributes;
+            }
+        }
+        throw new IllegalArgumentException("No such base: " + baseName);
+    }
+
+    protected BaseAttributes getBaseAttributes(int planetId, SimpleBase simpleBase) {
+        BaseService baseService = planetSystemService.getServerPlanetServices(planetId).getBaseService();
+        for (BaseAttributes baseAttributes : baseService.getAllBaseAttributes()) {
+            if (baseAttributes.getSimpleBase().equals(simpleBase)) {
+                return baseAttributes;
+            }
+        }
+        throw new IllegalArgumentException("No such base: " + simpleBase);
     }
 
     // ------------------- DbItemType helpers --------------------
@@ -779,16 +800,12 @@ abstract public class AbstractServiceTest {
         } else if (expectedPacket instanceof BaseChangedPacket) {
             BaseChangedPacket expected = (BaseChangedPacket) expectedPacket;
             BaseChangedPacket received = (BaseChangedPacket) receivedPacket;
-            List<SimpleBase> alliances1 = new ArrayList<>(expected.getBaseAttributes().getAlliances());
-            List<SimpleBase> alliances2 = new ArrayList<>(received.getBaseAttributes().getAlliances());
-            alliances1.removeAll(alliances2);
             return expected.getType() == received.getType()
                     && expected.getBaseAttributes().getSimpleBase().equals(received.getBaseAttributes().getSimpleBase())
                     && expected.getBaseAttributes().getName().equals(received.getBaseAttributes().getName())
                     && expected.getBaseAttributes().isBot() == received.getBaseAttributes().isBot()
                     && expected.getBaseAttributes().isAbandoned() == received.getBaseAttributes().isAbandoned()
-                    && expected.getBaseAttributes().getAlliances().size() == received.getBaseAttributes().getAlliances().size()
-                    && alliances1.isEmpty();
+                    && ObjectUtils.equals(expected.getBaseAttributes().getGuildId(), received.getBaseAttributes().getGuildId());
         } else if (expectedPacket instanceof ChatMessage) {
             ChatMessage expected = (ChatMessage) expectedPacket;
             ChatMessage received = (ChatMessage) receivedPacket;
@@ -2684,6 +2701,108 @@ abstract public class AbstractServiceTest {
             }
             if (expected.getGuildInvitation() != actual.getGuildInvitation()) {
                 errorString = "Invalid UserAttentionPacket. Expected '" + expected + "' actual '" + actual + "'";
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public void appendTo(StringBuffer stringBuffer) {
+            stringBuffer.append(errorString);
+        }
+    }
+
+    public Packet createBaseChangedPacketMatcher(BaseChangedPacket.Type type, String name, boolean bot, Integer guildId) {
+        EasyMock.reportMatcher(new BaseChangedPacketMatcher(type, name, bot, guildId));
+        return null;
+    }
+
+    private class BaseChangedPacketMatcher implements IArgumentMatcher {
+        private String errorString;
+        private BaseChangedPacket.Type type;
+        private String name;
+        private boolean bot;
+        private Integer guildId;
+
+        public BaseChangedPacketMatcher(BaseChangedPacket.Type type, String name, boolean bot, Integer guildId) {
+            this.type = type;
+            this.name = name;
+            this.bot = bot;
+            this.guildId = guildId;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            BaseChangedPacket actual = (BaseChangedPacket) o;
+            if (type != actual.getType()) {
+                errorString = "Invalid BaseChangedPacket type. Expected '" + type + "' actual '" + actual.getType() + "'";
+                return false;
+            }
+            BaseAttributes baseAttributes = actual.getBaseAttributes();
+            if (!(name.equals(baseAttributes.getName()))) {
+                errorString = "Invalid BaseChangedPacket. Expected baseAttributes name '" + name + "' actual '" + baseAttributes.getName() + "'";
+                return false;
+            }
+            if (bot != baseAttributes.isBot()) {
+                errorString = "Invalid BaseChangedPacket. Expected baseAttributes bot '" + bot + "' actual '" + baseAttributes.isBot() + "'";
+                return false;
+            }
+            if (!ObjectUtils.equals(guildId, baseAttributes.getGuildId())) {
+                errorString = "Invalid BaseChangedPacket. Expected baseAttributes guildId '" + guildId + "' actual '" + baseAttributes.getGuildId() + "'";
+                return false;
+            }
+            if (baseAttributes.isAbandoned()) {
+                errorString = "Invalid BaseChangedPacket. Expected baseAttributes isAbandoned should be false";
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public void appendTo(StringBuffer stringBuffer) {
+            stringBuffer.append(errorString);
+        }
+    }
+
+    public Packet createUnregisteredBaseChangedPacketMatcher(BaseChangedPacket.Type type, SimpleBase simpleBase, boolean abandoned) {
+        EasyMock.reportMatcher(new UnregisteredBaseChangedPacketMatcher(type, simpleBase, abandoned));
+        return null;
+    }
+
+    private class UnregisteredBaseChangedPacketMatcher implements IArgumentMatcher {
+        private String errorString;
+        private BaseChangedPacket.Type type;
+        private SimpleBase simpleBase;
+        private boolean abandoned;
+
+        public UnregisteredBaseChangedPacketMatcher(BaseChangedPacket.Type type, SimpleBase simpleBase, boolean abandoned) {
+            this.type = type;
+            this.simpleBase = simpleBase;
+            this.abandoned = abandoned;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            BaseChangedPacket actual = (BaseChangedPacket) o;
+            if (type != actual.getType()) {
+                errorString = "Invalid BaseChangedPacket type. Expected '" + type + "' actual '" + actual.getType() + "'";
+                return false;
+            }
+            BaseAttributes baseAttributes = actual.getBaseAttributes();
+            if (!(simpleBase.equals(baseAttributes.getSimpleBase()))) {
+                errorString = "Invalid BaseChangedPacket. Expected baseAttributes simpleBase '" + simpleBase + "' actual '" + baseAttributes.getName() + "'";
+                return false;
+            }
+            if (baseAttributes.isBot()) {
+                errorString = "Invalid BaseChangedPacket. Actural baseAttributes is bot";
+                return false;
+            }
+            if (baseAttributes.getGuildId() != null) {
+                errorString = "Invalid BaseChangedPacket. Expected baseAttributes has guild set" + baseAttributes.getGuildId();
+                return false;
+            }
+            if (abandoned != baseAttributes.isAbandoned()) {
+                errorString = "Invalid BaseChangedPacket. Expected baseAttributes abandoned '" + abandoned + "' actual '" + baseAttributes.isAbandoned() + "'";
                 return false;
             }
             return true;

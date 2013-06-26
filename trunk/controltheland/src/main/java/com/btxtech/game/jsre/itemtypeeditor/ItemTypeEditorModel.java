@@ -503,8 +503,8 @@ public class ItemTypeEditorModel {
                     // /--- Setup Base
                     ClientBase.getInstance().setBase(MY_BASE);
                     Collection<BaseAttributes> allBaseAttributes = new ArrayList<BaseAttributes>();
-                    allBaseAttributes.add(new BaseAttributes(MY_BASE, "MyBase", false));
-                    allBaseAttributes.add(new BaseAttributes(ENEMY_BASE, "Enemy", false));
+                    allBaseAttributes.add(new BaseAttributes(MY_BASE, "MyBase", false, null));
+                    allBaseAttributes.add(new BaseAttributes(ENEMY_BASE, "Enemy", false, null));
                     ClientBase.getInstance().setAllBaseAttributes(allBaseAttributes);
                     // /--- Setup div
                     TerrainView.uglySuppressRadar = true;

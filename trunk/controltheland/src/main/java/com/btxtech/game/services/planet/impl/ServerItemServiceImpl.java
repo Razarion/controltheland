@@ -305,7 +305,7 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
     }
 
     @Override
-    public void onAllianceBroken(final SimpleBase simpleBase1, final SimpleBase simpleBase2) {
+    public void onGuildChanged(final Set<SimpleBase> simpleBases) {
         final Collection<SyncBaseItem> idleAttackItems = new ArrayList<>();
         iterateOverItems(false, false, null, new ItemHandler<Void>() {
             @Override
@@ -323,11 +323,7 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
                     return null;
                 }
 
-                if(syncBaseItem.getBase().equals(simpleBase1)) {
-                    idleAttackItems.add(syncBaseItem);
-                }
-
-                if(syncBaseItem.getBase().equals(simpleBase2)) {
+                if(simpleBases.contains(syncBaseItem.getBase())) {
                     idleAttackItems.add(syncBaseItem);
                 }
 
@@ -335,7 +331,7 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
             }
         });
 
-        serverPlanetServices.getActionService().onAllianceBroken(idleAttackItems);
+        serverPlanetServices.getActionService().onGuildChanged(idleAttackItems);
     }
 
     @Override

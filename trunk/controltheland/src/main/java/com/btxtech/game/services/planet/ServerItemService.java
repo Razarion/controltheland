@@ -40,7 +40,7 @@ public interface ServerItemService extends com.btxtech.game.jsre.common.gameengi
 
     void restore(Collection<SyncBaseObject> syncBaseObjects);
 
-    void onAllianceBroken(SimpleBase simpleBase1, SimpleBase simpleBase2);
+    void onGuildChanged(final Set<SimpleBase> simpleBases);
 
     boolean hasEnemyInRange(Set<SimpleBase> friendlyBases, Index middlePoint, int range);
 }

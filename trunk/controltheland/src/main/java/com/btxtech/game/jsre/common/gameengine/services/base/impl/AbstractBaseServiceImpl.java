@@ -98,8 +98,8 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         throw new IllegalArgumentException("No such base: " + baseId);
     }
 
-    protected void createBase(SimpleBase simpleBase, String name, boolean abandoned) {
-        createBase(new BaseAttributes(simpleBase, name, abandoned));
+    protected void createBase(SimpleBase simpleBase, String name, boolean abandoned, Integer guildId) {
+        createBase(new BaseAttributes(simpleBase, name, abandoned, guildId));
     }
 
     protected void clear() {
@@ -137,12 +137,12 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         bases.put(baseAttributes.getSimpleBase(), baseAttributes);
     }
 
-    protected void updateBaseAlliance(SimpleBase simpleBase, Collection<SimpleBase> alliances) {
+    protected void updateGuild(SimpleBase simpleBase, Integer guildId) {
         BaseAttributes baseAttributes = getBaseAttributes(simpleBase);
         if (baseAttributes == null) {
             throw new IllegalArgumentException(this + " base does not exits " + simpleBase);
         }
-        baseAttributes.setAlliances(new HashSet<SimpleBase>(alliances));
+        baseAttributes.setGuildId(guildId);
     }
 
     protected void setBaseAbandoned(SimpleBase simpleBase, boolean abandoned) {
@@ -234,6 +234,6 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         }
 
         return !(baseAttributes1.isBot() && baseAttributes2.isBot())
-                && (baseAttributes1.isBot() != baseAttributes2.isBot() || !baseAttributes1.isAlliance(baseAttributes2.getSimpleBase()));
+                && (baseAttributes1.isBot() != baseAttributes2.isBot() || !baseAttributes1.isGuildMember(baseAttributes2));
     }
 }

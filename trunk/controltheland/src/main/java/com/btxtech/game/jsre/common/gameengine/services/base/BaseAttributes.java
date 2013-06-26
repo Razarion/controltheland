@@ -34,17 +34,18 @@ public class BaseAttributes implements Serializable {
     private String name;
     private boolean bot = false;
     private boolean abandoned;
-    private Set<SimpleBase> alliances = new HashSet<SimpleBase>();
+    private Integer guildId;
     /**
      * Used by GWT
      */
     BaseAttributes() {
     }
 
-    public BaseAttributes(SimpleBase simpleBase, String name, boolean abandoned) {
+    public BaseAttributes(SimpleBase simpleBase, String name, boolean abandoned, Integer guildId) {
         this.simpleBase = simpleBase;
         this.name = name;
         this.abandoned = abandoned;
+        this.guildId = guildId;
     }
 
     public String getName() {
@@ -75,33 +76,27 @@ public class BaseAttributes implements Serializable {
         this.abandoned = abandoned;
     }
 
-    public boolean isAlliance(SimpleBase other) {
-        return alliances.contains(other);
+    public boolean isGuildMember(BaseAttributes other) {
+        return guildId != null && other.guildId != null && guildId.equals(other.guildId);
+
     }
 
-    public void setAlliances(Set<SimpleBase> alliances) {
-        this.alliances = alliances;
+    public Integer getGuildId() {
+        return guildId;
     }
 
-    public Set<SimpleBase> getAlliances() {
-        return alliances;
+    public void setGuildId(Integer guildId) {
+        this.guildId = guildId;
     }
 
     @Override
     public String toString() {
-        StringBuilder allianceString = new StringBuilder();
-        if (alliances != null) {
-            for (SimpleBase alliance : alliances) {
-                allianceString.append(alliance.getBaseId());
-                allianceString.append(";");
-            }
-        }
         return "BaseAttributes{" +
                 "simpleBase=" + simpleBase +
                 ", name='" + name + '\'' +
                 ", bot=" + bot +
                 ", abandoned=" + abandoned +
-                ", alliances=" + allianceString +
+                ", guild=" + guildId +
                 '}';
     }
 }

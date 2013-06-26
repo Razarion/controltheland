@@ -59,36 +59,35 @@ public class TestSyncBaseItem extends AbstractServiceTest {
         Base base2 = createBase(planetServices, new Index(2000, 2000));
         Base base3 = createBase(planetServices, new Index(3000, 3000));
         Base base4 = createBase(planetServices, new Index(4000, 4000));
+        Base base5 = createBase(planetServices, new Index(5000, 5000));
         SimpleBase botBase1 = createBotBase(planetServices);
         SimpleBase botBase2 = createBotBase(planetServices);
         SyncBaseItem syncBaseItem1 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base1.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
         SyncBaseItem syncBaseItem2 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base2.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
         SyncBaseItem syncBaseItem3 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base3.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
         SyncBaseItem syncBaseItem4 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base4.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
+        SyncBaseItem syncBaseItem5 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base5.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
         SyncBaseItem botSyncBaseItem1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(100, 0), globalServices, planetServices, botBase1);
         SyncBaseItem botSyncBaseItem2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1100, 1100), new Id(101, 0), globalServices, planetServices, botBase2);
 
-        Collection<SimpleBase> alliancesBase1 = new HashSet<>();
-        alliancesBase1.add(base2.getSimpleBase());
-        alliancesBase1.add(base3.getSimpleBase());
-        planetServices.getBaseService().setAlliances(base1.getSimpleBase(), alliancesBase1);
-
-        Collection<SimpleBase> alliancesBase2 = new HashSet<>();
-        alliancesBase2.add(base1.getSimpleBase());
-        planetServices.getBaseService().setAlliances(base2.getSimpleBase(), alliancesBase2);
-
-        Collection<SimpleBase> alliancesBase3 = new HashSet<>();
-        alliancesBase3.add(base1.getSimpleBase());
-        planetServices.getBaseService().setAlliances(base3.getSimpleBase(), alliancesBase3);
+        // Setup guild
+        int guild12 = 1;
+        planetServices.getBaseService().setGuild(base1.getSimpleBase(), guild12);
+        planetServices.getBaseService().setGuild(base2.getSimpleBase(), guild12);
+        int guild34 = 2;
+        planetServices.getBaseService().setGuild(base3.getSimpleBase(), guild34);
+        planetServices.getBaseService().setGuild(base4.getSimpleBase(), guild34);
 
         Assert.assertFalse(syncBaseItem1.isEnemy(syncBaseItem1));
         Assert.assertFalse(syncBaseItem1.isEnemy(base1.getSimpleBase()));
         Assert.assertFalse(syncBaseItem1.isEnemy(syncBaseItem2));
         Assert.assertFalse(syncBaseItem1.isEnemy(base2.getSimpleBase()));
-        Assert.assertFalse(syncBaseItem1.isEnemy(syncBaseItem3));
-        Assert.assertFalse(syncBaseItem1.isEnemy(base3.getSimpleBase()));
+        Assert.assertTrue(syncBaseItem1.isEnemy(syncBaseItem3));
+        Assert.assertTrue(syncBaseItem1.isEnemy(base3.getSimpleBase()));
         Assert.assertTrue(syncBaseItem1.isEnemy(syncBaseItem4));
         Assert.assertTrue(syncBaseItem1.isEnemy(base4.getSimpleBase()));
+        Assert.assertTrue(syncBaseItem1.isEnemy(syncBaseItem5));
+        Assert.assertTrue(syncBaseItem1.isEnemy(base5.getSimpleBase()));
         Assert.assertTrue(syncBaseItem1.isEnemy(botSyncBaseItem1));
         Assert.assertTrue(syncBaseItem1.isEnemy(botBase1));
         Assert.assertTrue(syncBaseItem1.isEnemy(botSyncBaseItem2));
@@ -102,19 +101,23 @@ public class TestSyncBaseItem extends AbstractServiceTest {
         Assert.assertTrue(syncBaseItem2.isEnemy(base3.getSimpleBase()));
         Assert.assertTrue(syncBaseItem2.isEnemy(syncBaseItem4));
         Assert.assertTrue(syncBaseItem2.isEnemy(base4.getSimpleBase()));
+        Assert.assertTrue(syncBaseItem2.isEnemy(syncBaseItem5));
+        Assert.assertTrue(syncBaseItem2.isEnemy(base5.getSimpleBase()));
         Assert.assertTrue(syncBaseItem2.isEnemy(botSyncBaseItem1));
         Assert.assertTrue(syncBaseItem2.isEnemy(botBase1));
         Assert.assertTrue(syncBaseItem2.isEnemy(botSyncBaseItem2));
         Assert.assertTrue(syncBaseItem2.isEnemy(botBase2));
 
-        Assert.assertFalse(syncBaseItem3.isEnemy(syncBaseItem1));
-        Assert.assertFalse(syncBaseItem3.isEnemy(base1.getSimpleBase()));
+        Assert.assertTrue(syncBaseItem3.isEnemy(syncBaseItem1));
+        Assert.assertTrue(syncBaseItem3.isEnemy(base1.getSimpleBase()));
         Assert.assertTrue(syncBaseItem3.isEnemy(syncBaseItem2));
         Assert.assertTrue(syncBaseItem3.isEnemy(base2.getSimpleBase()));
         Assert.assertFalse(syncBaseItem3.isEnemy(syncBaseItem3));
         Assert.assertFalse(syncBaseItem3.isEnemy(base3.getSimpleBase()));
-        Assert.assertTrue(syncBaseItem3.isEnemy(syncBaseItem4));
-        Assert.assertTrue(syncBaseItem3.isEnemy(base4.getSimpleBase()));
+        Assert.assertFalse(syncBaseItem3.isEnemy(syncBaseItem4));
+        Assert.assertFalse(syncBaseItem3.isEnemy(base4.getSimpleBase()));
+        Assert.assertTrue(syncBaseItem3.isEnemy(syncBaseItem5));
+        Assert.assertTrue(syncBaseItem3.isEnemy(base5.getSimpleBase()));
         Assert.assertTrue(syncBaseItem3.isEnemy(botSyncBaseItem1));
         Assert.assertTrue(syncBaseItem3.isEnemy(botBase1));
         Assert.assertTrue(syncBaseItem3.isEnemy(botSyncBaseItem2));
@@ -124,14 +127,31 @@ public class TestSyncBaseItem extends AbstractServiceTest {
         Assert.assertTrue(syncBaseItem4.isEnemy(base1.getSimpleBase()));
         Assert.assertTrue(syncBaseItem4.isEnemy(syncBaseItem2));
         Assert.assertTrue(syncBaseItem4.isEnemy(base2.getSimpleBase()));
-        Assert.assertTrue(syncBaseItem4.isEnemy(syncBaseItem3));
-        Assert.assertTrue(syncBaseItem4.isEnemy(base3.getSimpleBase()));
+        Assert.assertFalse(syncBaseItem4.isEnemy(syncBaseItem3));
+        Assert.assertFalse(syncBaseItem4.isEnemy(base3.getSimpleBase()));
         Assert.assertFalse(syncBaseItem4.isEnemy(syncBaseItem4));
         Assert.assertFalse(syncBaseItem4.isEnemy(base4.getSimpleBase()));
+        Assert.assertTrue(syncBaseItem4.isEnemy(syncBaseItem5));
+        Assert.assertTrue(syncBaseItem4.isEnemy(base5.getSimpleBase()));
         Assert.assertTrue(syncBaseItem4.isEnemy(botSyncBaseItem1));
         Assert.assertTrue(syncBaseItem4.isEnemy(botBase1));
         Assert.assertTrue(syncBaseItem4.isEnemy(botSyncBaseItem2));
         Assert.assertTrue(syncBaseItem4.isEnemy(botBase2));
+
+        Assert.assertTrue(syncBaseItem5.isEnemy(syncBaseItem1));
+        Assert.assertTrue(syncBaseItem5.isEnemy(base1.getSimpleBase()));
+        Assert.assertTrue(syncBaseItem5.isEnemy(syncBaseItem2));
+        Assert.assertTrue(syncBaseItem5.isEnemy(base2.getSimpleBase()));
+        Assert.assertTrue(syncBaseItem5.isEnemy(syncBaseItem3));
+        Assert.assertTrue(syncBaseItem5.isEnemy(base3.getSimpleBase()));
+        Assert.assertTrue(syncBaseItem5.isEnemy(syncBaseItem4));
+        Assert.assertTrue(syncBaseItem5.isEnemy(base4.getSimpleBase()));
+        Assert.assertFalse(syncBaseItem5.isEnemy(syncBaseItem5));
+        Assert.assertFalse(syncBaseItem5.isEnemy(base5.getSimpleBase()));
+        Assert.assertTrue(syncBaseItem5.isEnemy(botSyncBaseItem1));
+        Assert.assertTrue(syncBaseItem5.isEnemy(botBase1));
+        Assert.assertTrue(syncBaseItem5.isEnemy(botSyncBaseItem2));
+        Assert.assertTrue(syncBaseItem5.isEnemy(botBase2));
 
         Assert.assertTrue(botSyncBaseItem1.isEnemy(syncBaseItem1));
         Assert.assertTrue(botSyncBaseItem1.isEnemy(base1.getSimpleBase()));
@@ -141,6 +161,8 @@ public class TestSyncBaseItem extends AbstractServiceTest {
         Assert.assertTrue(botSyncBaseItem1.isEnemy(base3.getSimpleBase()));
         Assert.assertTrue(botSyncBaseItem1.isEnemy(syncBaseItem4));
         Assert.assertTrue(botSyncBaseItem1.isEnemy(base4.getSimpleBase()));
+        Assert.assertTrue(botSyncBaseItem1.isEnemy(syncBaseItem5));
+        Assert.assertTrue(botSyncBaseItem1.isEnemy(base5.getSimpleBase()));
         Assert.assertFalse(botSyncBaseItem1.isEnemy(botSyncBaseItem1));
         Assert.assertFalse(botSyncBaseItem1.isEnemy(botBase1));
         Assert.assertFalse(botSyncBaseItem1.isEnemy(botSyncBaseItem2));
@@ -154,6 +176,8 @@ public class TestSyncBaseItem extends AbstractServiceTest {
         Assert.assertTrue(botSyncBaseItem2.isEnemy(base3.getSimpleBase()));
         Assert.assertTrue(botSyncBaseItem2.isEnemy(syncBaseItem4));
         Assert.assertTrue(botSyncBaseItem2.isEnemy(base4.getSimpleBase()));
+        Assert.assertTrue(botSyncBaseItem2.isEnemy(syncBaseItem5));
+        Assert.assertTrue(botSyncBaseItem2.isEnemy(base5.getSimpleBase()));
         Assert.assertFalse(botSyncBaseItem2.isEnemy(botSyncBaseItem1));
         Assert.assertFalse(botSyncBaseItem2.isEnemy(botBase1));
         Assert.assertFalse(botSyncBaseItem2.isEnemy(botSyncBaseItem2));

@@ -7,11 +7,14 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
+import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.TestPlanetHelper;
 import com.btxtech.game.services.bot.DbBotConfig;
+import com.btxtech.game.services.common.PropertyService;
+import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.TestGlobalServices;
 import com.btxtech.game.services.common.impl.ServerGlobalServicesImpl;
@@ -21,6 +24,7 @@ import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.GuildService;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -33,7 +37,6 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * User: beat
@@ -46,8 +49,6 @@ public class TestBaseService extends AbstractServiceTest {
     @Autowired
     private PlanetSystemService planetSystemService;
     @Autowired
-    private ServerGlobalServices serverGlobalServices;
-    @Autowired
     private ServerItemTypeService serverItemTypeService;
     @Autowired
     private MgmtService mgmtService;
@@ -55,6 +56,8 @@ public class TestBaseService extends AbstractServiceTest {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private GuildService guildService;
+    @Autowired
+    private PropertyService propertyService;
 
     @Test
     @DirtiesContext
@@ -147,60 +150,6 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertNull(userService.getUserState().getBase());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void surrenderBaseAllianceUnregistered() throws Exception {
-        configureSimplePlanetNoResources();
-        BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase simpleBase = getOrCreateBase();
-        waitForActionServiceDone(TEST_PLANET_1_ID);
-
-        GuildService guildServiceMock = EasyMock.createStrictMock(GuildService.class);
-        guildServiceMock.fillAlliancesForFakeBases(EasyMock.<BaseAttributes>anyObject(),
-                EasyMock.<HashMap<SimpleBase, BaseAttributes>>anyObject(),
-                EasyMock.<UserState>anyObject(),
-                EasyMock.anyInt());
-        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "guildService", guildServiceMock);
-        EasyMock.replay(guildServiceMock);
-
-        baseService.surrenderBase(baseService.getBase(simpleBase));
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        EasyMock.verify(guildServiceMock);
-    }
-
-    @Test
-    @DirtiesContext
-    public void surrenderBaseAllianceRegistered() throws Exception {
-        configureSimplePlanetNoResources();
-        BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        createAndLoginUser("U1");
-        SimpleBase simpleBase = getOrCreateBase(); // Setup connection
-        waitForActionServiceDone();
-
-        GuildService guildServiceMock = EasyMock.createStrictMock(GuildService.class);
-        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "guildService", guildServiceMock);
-        guildServiceMock.onMakeBaseAbandoned(new SimpleBase(1, TEST_PLANET_1_ID));
-        guildServiceMock.onBaseCreatedOrDeleted(1);
-        guildServiceMock.fillAlliancesForFakeBases(EasyMock.<BaseAttributes>anyObject(),
-                EasyMock.<HashMap<SimpleBase, BaseAttributes>>anyObject(),
-                EasyMock.<UserState>anyObject(),
-                EasyMock.anyInt());
-        EasyMock.replay(guildServiceMock);
-
-        baseService.surrenderBase(baseService.getBase(simpleBase));
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        EasyMock.verify(guildServiceMock);
     }
 
     @Test
@@ -339,13 +288,14 @@ public class TestBaseService extends AbstractServiceTest {
         serverPlanetServices.setPlanetInfo(planetInfo);
         testPlanetHelper.setServerPlanetServices(serverPlanetServices);
 
-        Base testBase = new Base(testPlanetHelper, 1);
+        Base testBase = new Base(new UserState(), testPlanetHelper, 1);
 
         ServerConditionService serverConditionServiceMock = EasyMock.createNiceMock(ServerConditionService.class);
         EasyMock.replay(serverConditionServiceMock);
 
         TestGlobalServices testGlobalServices = new TestGlobalServices();
         testGlobalServices.setServerConditionService(serverConditionServiceMock);
+        testGlobalServices.setGuildService(guildService);
 
         BaseServiceImpl baseService = new BaseServiceImpl(testPlanetHelper);
         baseService.init(serverPlanetServices, testGlobalServices);
@@ -375,7 +325,7 @@ public class TestBaseService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void fillAlliancesForFakeBasesAloneUnreg() throws Exception {
+    public void fillGuildForFakeBasesAloneUnreg() throws Exception {
         configureMultiplePlanetsAndLevels();
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -387,14 +337,14 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
         Assert.assertEquals("Your Base", baseAttributes.getName());
         Assert.assertFalse(baseAttributes.isBot());
-        Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+        Assert.assertNull(baseAttributes.getGuildId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
     @Test
     @DirtiesContext
-    public void fillAlliancesForFakeBasesAloneReg() throws Exception {
+    public void fillGuildForFakeBasesAloneReg() throws Exception {
         configureMultiplePlanetsAndLevels();
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -407,14 +357,14 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
         Assert.assertEquals("U1", baseAttributes.getName());
         Assert.assertFalse(baseAttributes.isBot());
-        Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+        Assert.assertNull(baseAttributes.getGuildId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
     @Test
     @DirtiesContext
-    public void fillAlliancesForFakeBasesAloneRegBot() throws Exception {
+    public void fillGuildForFakeBasesAloneRegBot() throws Exception {
         configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
@@ -432,13 +382,13 @@ public class TestBaseService extends AbstractServiceTest {
         Collection<BaseAttributes> allBaseAttributes = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().createAllBaseAttributes4FakeBase(ownFakeBase, getUserState(), TEST_PLANET_1_ID);
         Assert.assertEquals(2, allBaseAttributes.size());
         for (BaseAttributes baseAttributes : allBaseAttributes) {
-            if(baseAttributes.getSimpleBase().equals(ownFakeBase)) {
+            if (baseAttributes.getSimpleBase().equals(ownFakeBase)) {
                 Assert.assertEquals("U1", baseAttributes.getName());
                 Assert.assertFalse(baseAttributes.isBot());
-                Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+                Assert.assertNull(baseAttributes.getGuildId());
             } else {
                 Assert.assertTrue(baseAttributes.isBot());
-                Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+                Assert.assertNull(baseAttributes.getGuildId());
             }
         }
         endHttpRequestAndOpenSessionInViewFilter();
@@ -447,15 +397,15 @@ public class TestBaseService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void fillAlliancesForFakeBasesUnreg() throws Exception {
+    public void fillGuildForFakeBasesUnreg() throws Exception {
         configureMultiplePlanetsAndLevels();
 
         for (int i = 0; i < 10; i++) {
-            createOtherBase(new Index(500, 500 * (i + 1)), "user" + i, null, null);
+            createOtherBase(new Index(500, 500 * (i + 1)), "user" + i, null);
         }
 
         for (int i = 0; i < 10; i++) {
-            createOtherBase(new Index(1000, 500 * (i + 1)), null, null, null);
+            createOtherBase(new Index(1000, 500 * (i + 1)), null, null);
         }
 
         beginHttpSession();
@@ -468,22 +418,22 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
         Assert.assertEquals("Your Base", baseAttributes.getName());
         Assert.assertFalse(baseAttributes.isBot());
-        Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+        Assert.assertNull(baseAttributes.getGuildId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
     @Test
     @DirtiesContext
-    public void fillAlliancesForFakeBasesReg() throws Exception {
+    public void fillGuildForFakeBasesReg() throws Exception {
         configureMultiplePlanetsAndLevels();
 
         for (int i = 0; i < 10; i++) {
-            createOtherBase(new Index(500, 500 * (i + 1)), "user" + i, null, null);
+            createOtherBase(new Index(500, 500 * (i + 1)), "user" + i, null);
         }
 
         for (int i = 0; i < 10; i++) {
-            createOtherBase(new Index(1000, 500 * (i + 1)), null, null, null);
+            createOtherBase(new Index(1000, 500 * (i + 1)), null, null);
         }
 
         beginHttpSession();
@@ -497,69 +447,73 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
         Assert.assertEquals("U1", baseAttributes.getName());
         Assert.assertFalse(baseAttributes.isBot());
-        Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+        Assert.assertNull(baseAttributes.getGuildId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
     @Test
     @DirtiesContext
-    public void fillAlliancesForFakeBasesRegAlliances() throws Exception {
+    public void fillGuildForFakeBasesRegGuilds() throws Exception {
         configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        createAndLoginUser("U1");
+        createAndLoginUser("president");
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        SimpleBase myBase = createBase(new Index(3000, 1000));
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        Integer guildId = guildService.createGuild("xxxx").getId();
+        createBase(new Index(3000, 1000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         for (int i = 0; i < 10; i++) {
-            createOtherBase(new Index(500, 500 * (i + 1)), "user" + i, null, null);
+            createOtherBase(new Index(500, 500 * (i + 1)), "user" + i, null);
         }
 
         for (int i = 0; i < 10; i++) {
-            createOtherBase(new Index(1000, 500 * (i + 1)), null, null, null);
+            createOtherBase(new Index(1000, 500 * (i + 1)), null, null);
         }
 
         for (int i = 0; i < 10; i++) {
-            createOtherBase(new Index(1500, 500 * (i + 1)), "user1" + i, myBase, "U1");
+            createOtherBase(new Index(1500, 500 * (i + 1)), "user1" + i, guildId);
         }
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        loginUser("U1");
+        loginUser("president");
         getMovableService().surrenderBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        loginUser("U1");
+        loginUser("president");
         SimpleBase ownFakeBase = new SimpleBase(SimpleBase.FAKE_BASE_START_POINT, TEST_PLANET_1_ID);
         Collection<BaseAttributes> allBaseAttributes = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().createAllBaseAttributes4FakeBase(ownFakeBase, getUserState(), TEST_PLANET_1_ID);
         Assert.assertEquals(32, allBaseAttributes.size());
         BaseAttributes baseAttributes = getOwnBase(allBaseAttributes, ownFakeBase);
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
-        Assert.assertEquals("U1", baseAttributes.getName());
+        Assert.assertEquals("president", baseAttributes.getName());
         Assert.assertFalse(baseAttributes.isBot());
-        Assert.assertEquals(10, baseAttributes.getAlliances().size());
-        checkAlliances(baseAttributes, allBaseAttributes);
+        Assert.assertEquals(guildId, baseAttributes.getGuildId());
+        checkGuild(baseAttributes, allBaseAttributes);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
-    private void checkAlliances(BaseAttributes myBaseAttributes, Collection<BaseAttributes> allBaseAttributes) {
+    private void checkGuild(BaseAttributes myBaseAttributes, Collection<BaseAttributes> allBaseAttributes) {
+        int count = 0;
         for (BaseAttributes baseAttributes : allBaseAttributes) {
             if (baseAttributes.getSimpleBase().equals(myBaseAttributes.getSimpleBase())) {
                 continue;
             }
-            if (!baseAttributes.getAlliances().isEmpty()) {
-                baseAttributes.getAlliances().contains(myBaseAttributes.getSimpleBase());
-                myBaseAttributes.getAlliances().contains(baseAttributes.getSimpleBase());
+            if (baseAttributes.getGuildId() != null) {
+                Assert.assertEquals(myBaseAttributes.getGuildId(), baseAttributes.getGuildId());
+                count++;
             }
         }
+        Assert.assertEquals(10, count);
     }
 
     private BaseAttributes getOwnBase(Collection<BaseAttributes> allBaseAttributes, SimpleBase ownFakeBase) {
@@ -571,7 +525,7 @@ public class TestBaseService extends AbstractServiceTest {
         throw new IllegalArgumentException("Own base not found: " + ownFakeBase);
     }
 
-    private void createOtherBase(Index startPoint, String userName, SimpleBase makeAllianceTo, String allianceUser) {
+    private void createOtherBase(Index startPoint, String userName, Integer guildId) throws NoSuchUserException {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         if (userName != null) {
@@ -579,17 +533,20 @@ public class TestBaseService extends AbstractServiceTest {
         }
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
         createBase(startPoint);
-        if (makeAllianceTo != null) {
-            guildService.proposeAlliance(makeAllianceTo);
-        }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        if (allianceUser != null) {
+        if (guildId != null) {
             beginHttpSession();
             beginHttpRequestAndOpenSessionInViewFilter();
-            loginUser(allianceUser);
-            guildService.acceptAllianceOffer(userName);
+            loginUser("president");
+            guildService.inviteUserToGuild(userName);
+            endHttpRequestAndOpenSessionInViewFilter();
+            endHttpSession();
+            beginHttpSession();
+            beginHttpRequestAndOpenSessionInViewFilter();
+            loginUser(userName);
+            guildService.joinGuild(guildId);
             endHttpRequestAndOpenSessionInViewFilter();
             endHttpSession();
         }

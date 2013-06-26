@@ -6,6 +6,7 @@ import com.btxtech.game.services.common.TestGlobalServices;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.impl.BaseServiceImpl;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
+import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import junit.framework.Assert;
 import org.easymock.EasyMock;
@@ -40,8 +41,12 @@ public class TestConditionServiceTrigger {
         serverConditionServiceMock.onMoneyIncrease(testBase.getSimpleBase(), 5.0);
         EasyMock.replay(serverConditionServiceMock);
 
+        GuildService guildServiceMock = EasyMock.createNiceMock(GuildService.class);
+        EasyMock.replay(guildServiceMock);
+
         TestGlobalServices testGlobalServices = new TestGlobalServices();
         testGlobalServices.setServerConditionService(serverConditionServiceMock);
+        testGlobalServices.setGuildService(guildServiceMock);
 
         BaseServiceImpl baseService = new BaseServiceImpl(testPlanetHelper);
         baseService.init(serverPlanetServices, testGlobalServices);

@@ -72,7 +72,7 @@ public class TestClientChatHandler extends AbstractGwtTest implements GlobalComm
                                 pollChatMessagesCalled = 0;
                                 // TODO gameEngineMode = GameEngineMode.SLAVE;
                                 SimpleBase simpleBase = new SimpleBase(1, 1);
-                                ClientBase.getInstance().setAllBaseAttributes(Arrays.asList(new BaseAttributes(simpleBase, "test", false)));
+                                ClientBase.getInstance().setAllBaseAttributes(Arrays.asList(new BaseAttributes(simpleBase, "test", false, null)));
                                 ClientBase.getInstance().setBase(simpleBase);
                                 lastMessageId = null;
                                 assertEquals(0, sentMessages.size());
