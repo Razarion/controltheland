@@ -6,8 +6,10 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
+import com.btxtech.game.jsre.client.dialogs.guild.MembershipRequestPanel;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -37,8 +39,6 @@ public class OtherInfoPanel extends Composite {
     @UiField
     Label type;
     @UiField
-    Button offerAlliance;
-    @UiField
     HTML itemTypeDescr;
     @UiField
     Label baseName;
@@ -46,7 +46,15 @@ public class OtherInfoPanel extends Composite {
     Image friendImage;
     @UiField
     Image enemyImage;
+    @UiField
+    Label guildName;
+    @UiField
+    Button inviteGuildButton;
+    @UiField
+    Button requestMembership;
     private SimpleBase simpleBase;
+    private SimpleGuild simpleGuild;
+    private String enemyName;
 
     interface OwnInfoPanelUiBinder extends UiBinder<Widget, OtherInfoPanel> {
     }
@@ -61,19 +69,33 @@ public class OtherInfoPanel extends Composite {
             itemTypeName.setText(ClientI18nHelper.getLocalizedString(syncItem.getItemType().getI18Name()));
         }
         itemTypeDescr.setHTML(ClientI18nHelper.getLocalizedString(syncItem.getItemType().getDescription()));
-        offerAlliance.setVisible(false);
         friendImage.setVisible(false);
         enemyImage.setVisible(false);
+        inviteGuildButton.setVisible(false);
+        requestMembership.setVisible(false);
+        guildName.setVisible(false);
         if (syncItem instanceof SyncBaseItem) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
             if (ClientBase.getInstance().isBot(syncBaseItem.getBase())) {
                 type.setText(ClientI18nHelper.CONSTANTS.botEnemy());
                 enemyImage.setVisible(true);
             } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
+                enemyName = ClientBase.getInstance().getBaseName(syncBaseItem.getBase());
                 simpleBase = syncBaseItem.getBase();
                 type.setText(ClientI18nHelper.CONSTANTS.playerEnemy());
-                offerAlliance.setVisible(true);
                 enemyImage.setVisible(true);
+                simpleGuild = ClientBase.getInstance().getGuild(simpleBase);
+                if (simpleGuild != null) {
+                    if (!ClientBase.getInstance().isGuildMember()) {
+                        requestMembership.setVisible(true);
+                    }
+                    guildName.setVisible(true);
+                    guildName.setText(simpleGuild.getName());
+                } else {
+                    if (ClientBase.getInstance().isGuildMember()) {
+                        inviteGuildButton.setVisible(true);
+                    }
+                }
             } else {
                 type.setText(ClientI18nHelper.CONSTANTS.allianceMember());
                 friendImage.setVisible(true);
@@ -88,14 +110,30 @@ public class OtherInfoPanel extends Composite {
         }
     }
 
-    @UiHandler("offerAlliance")
-    void onButtonClick(ClickEvent event) {
+    @UiHandler("inviteGuildButton")
+    void onInviteGuildButtonClick(ClickEvent event) {
         if (Connection.getInstance().isRegisteredAndVerified()) {
-            Connection.getInstance().proposeAlliance(simpleBase);
+            if (ClientBase.getInstance().isAbandoned(simpleBase)) {
+                DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.guildInvitationBaseAbandoned(enemyName)), DialogManager.Type.QUEUE_ABLE);
+            } else {
+                Connection.getInstance().inviteGuildMember(simpleBase, enemyName);
+            }
         } else if (Connection.getInstance().isRegistered()) {
-            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.alliances(), ClientI18nHelper.CONSTANTS.alliancesOnlyRegisteredVerified()), DialogManager.Type.QUEUE_ABLE);
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.guildsOnlyRegisteredVerified()), DialogManager.Type.QUEUE_ABLE);
         } else {
-            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.alliances(), ClientI18nHelper.CONSTANTS.alliancesOnlyRegistered()), DialogManager.Type.QUEUE_ABLE);
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.guildsOnlyRegistered()), DialogManager.Type.QUEUE_ABLE);
+        }
+
+    }
+
+    @UiHandler("requestMembership")
+    void onRequestMembershipClick(ClickEvent event) {
+        if (Connection.getInstance().isRegisteredAndVerified()) {
+            DialogManager.showDialog(new MembershipRequestPanel(simpleGuild.getId(), simpleGuild.getName()), DialogManager.Type.STACK_ABLE);
+        } else if (Connection.getInstance().isRegistered()) {
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.guildsOnlyRegisteredVerified()), DialogManager.Type.QUEUE_ABLE);
+        } else {
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.guildsOnlyRegistered()), DialogManager.Type.QUEUE_ABLE);
         }
     }
 

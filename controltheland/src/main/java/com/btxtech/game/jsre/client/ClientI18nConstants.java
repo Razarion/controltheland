@@ -349,7 +349,7 @@ public interface ClientI18nConstants extends Messages {
     String startNewBase();
 
     // Item cockpit
-    String offerAlliance();
+    String guildMembershipRequestItemCockpit();
 
     String tooltipUnloadContainer();
 
@@ -548,9 +548,9 @@ public interface ClientI18nConstants extends Messages {
 
     String menuTooltipGuildsMission();
 
-    String menuTooltipGuildsOnlyRegisteredVerified();
+    String guildsOnlyRegisteredVerified();
 
-    String menuTooltipGuildsOnlyRegistered();
+    String guildsOnlyRegistered();
 
     String menuTooltipMyGuild();
 
@@ -668,4 +668,8 @@ public interface ClientI18nConstants extends Messages {
     String guildMembershipRequestNotification();
 
     String openGuildMembershipRequest();
+
+    String guildInvitationNotRegistered(String playerName);
+
+    String guildInvitationBaseAbandoned(String playerName);
 }

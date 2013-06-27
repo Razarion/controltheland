@@ -19,7 +19,7 @@ public class MyGuildDialog extends Dialog {
         if (!Connection.getInstance().isRegisteredAndVerified()) {
             throw new IllegalStateException("MyGuildDialog user is not registered");
         }
-        if (ClientBase.getInstance().getMySimpleGuild() == null) {
+        if (!ClientBase.getInstance().isGuildMember()) {
             throw new IllegalStateException("MyGuildDialog user is not member of a guild");
         }
         showingInstance = this;

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
@@ -169,6 +170,8 @@ public interface MovableService extends RemoteService {
     SuggestOracle.Response getSuggestedUserName(String query, int limit);
 
     FullGuildInfo inviteUserToGuild(String userName) throws NoSuchUserException;
+
+    void inviteUserToGuild(SimpleBase simpleBase) throws InvitingUnregisteredBaseException;
 
     FullGuildInfo dismissGuildMemberRequest(int userId);
 

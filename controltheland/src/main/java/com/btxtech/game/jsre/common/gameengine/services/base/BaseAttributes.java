@@ -13,39 +13,38 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.base;
 
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.common.SimpleBase;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * User: beat
  * Date: 24.08.2010
  * Time: 22:05:59
- *
- *
+ * <p/>
+ * <p/>
  * See
  * http://code.google.com/p/google-web-toolkit/issues/detail?id=3577
- *
  */
 public class BaseAttributes implements Serializable {
     private SimpleBase simpleBase;
     private String name;
     private boolean bot = false;
     private boolean abandoned;
-    private Integer guildId;
+    private SimpleGuild simpleGuild;
+
     /**
      * Used by GWT
      */
     BaseAttributes() {
     }
 
-    public BaseAttributes(SimpleBase simpleBase, String name, boolean abandoned, Integer guildId) {
+    public BaseAttributes(SimpleBase simpleBase, String name, boolean abandoned, SimpleGuild simpleGuild) {
         this.simpleBase = simpleBase;
         this.name = name;
         this.abandoned = abandoned;
-        this.guildId = guildId;
+        this.simpleGuild = simpleGuild;
     }
 
     public String getName() {
@@ -76,17 +75,17 @@ public class BaseAttributes implements Serializable {
         this.abandoned = abandoned;
     }
 
-    public boolean isGuildMember(BaseAttributes other) {
-        return guildId != null && other.guildId != null && guildId.equals(other.guildId);
+    public boolean isSameGuild(BaseAttributes other) {
+        return simpleGuild != null && other.simpleGuild != null && simpleGuild.equals(other.simpleGuild);
 
     }
 
-    public Integer getGuildId() {
-        return guildId;
+    public void setSimpleGuild(SimpleGuild simpleGuild) {
+        this.simpleGuild = simpleGuild;
     }
 
-    public void setGuildId(Integer guildId) {
-        this.guildId = guildId;
+    public SimpleGuild getSimpleGuild() {
+        return simpleGuild;
     }
 
     @Override
@@ -96,7 +95,7 @@ public class BaseAttributes implements Serializable {
                 ", name='" + name + '\'' +
                 ", bot=" + bot +
                 ", abandoned=" + abandoned +
-                ", guild=" + guildId +
+                ", simpleGuild=" + simpleGuild +
                 '}';
     }
 }

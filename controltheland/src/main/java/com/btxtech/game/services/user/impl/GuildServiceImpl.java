@@ -1,6 +1,7 @@
 package com.btxtech.game.services.user.impl;
 
 import com.btxtech.game.jsre.client.VerificationRequestCallback;
+import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
@@ -8,7 +9,6 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildDetailedInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
@@ -153,6 +153,24 @@ public class GuildServiceImpl implements GuildService {
             planetSystemService.sendPacket(userService.getUserState(invitee), userAttentionPacket);
         }
         removeMembershipRequests(invitee, hostGuild);
+    }
+
+    @Override
+    public void inviteUserToGuild(SimpleBase simpleBase) throws NoSuchUserException, InvitingUnregisteredBaseException {
+        User invitingUser = userService.getUser();
+        if (invitingUser == null || !invitingUser.isRegistrationComplete()) {
+            throw new IllegalArgumentException("User is not registered");
+        }
+        User partnerUser = userService.getUser(simpleBase);
+        if (partnerUser == null || !partnerUser.isRegistrationComplete()) {
+            if (planetSystemService.getServerPlanetServices(simpleBase).getBaseService().isAbandoned(simpleBase)) {
+                throw new IllegalArgumentException("Base is isAbandoned: " + simpleBase);
+            } else {
+                sendMessage(planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getUserState(simpleBase), "guildOfferedOnlyRegistered", invitingUser.getUsername(), partnerUser == null);
+                throw new InvitingUnregisteredBaseException();
+            }
+        }
+        inviteUserToGuild(partnerUser.getUsername());
     }
 
     @Override
@@ -531,7 +549,7 @@ public class GuildServiceImpl implements GuildService {
     }
 
     @Override
-    public Integer getGuildId(UserState userState) {
+    public SimpleGuild getGuildId(UserState userState) {
         if (userState == null) {
             return null;
         }
@@ -660,7 +678,7 @@ public class GuildServiceImpl implements GuildService {
         }
     }
 
-    private Integer getGuildIdInSession(UserState userState) {
+    private SimpleGuild getGuildIdInSession(UserState userState) {
         User user = userService.getUser(userState);
         if (user == null) {
             return null;
@@ -669,7 +687,7 @@ public class GuildServiceImpl implements GuildService {
         if (dbGuild == null) {
             return null;
         }
-        return dbGuild.getId();
+        return dbGuild.createSimpleGuild();
     }
 
     private void removeGuildInvitations(User user) {
@@ -705,9 +723,9 @@ public class GuildServiceImpl implements GuildService {
     }
 
     private void updateBaseService(DbGuild dbGuild, User user) {
-        Integer guildId = null;
+        SimpleGuild simpleGuild = null;
         if (dbGuild != null) {
-            guildId = dbGuild.getId();
+            simpleGuild = dbGuild.createSimpleGuild();
         }
         SimpleBase simpleBase = getSimpleBase(user);
         if (simpleBase == null) {
@@ -715,10 +733,10 @@ public class GuildServiceImpl implements GuildService {
             UserState userState = userService.getUserState(user);
             ServerPlanetServices serverPlanetServices = planetSystemService.getPlanet4BaselessConnection(userState);
             if (serverPlanetServices != null) {
-                serverPlanetServices.getBaseService().sendGuildChanged4FakeBase(userState, guildId);
+                serverPlanetServices.getBaseService().sendGuildChanged4FakeBase(userState, simpleGuild);
             }
         } else {
-            planetSystemService.getServerPlanetServices(simpleBase).getBaseService().setGuild(simpleBase, guildId);
+            planetSystemService.getServerPlanetServices(simpleBase).getBaseService().setGuild(simpleBase, simpleGuild);
             planetSystemService.getServerPlanetServices(simpleBase).getBaseService().sendGuildChanged(simpleBase);
         }
     }

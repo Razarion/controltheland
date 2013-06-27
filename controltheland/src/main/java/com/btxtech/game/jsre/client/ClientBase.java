@@ -459,6 +459,10 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         return mySimpleGuild;
     }
 
+    public boolean isGuildMember() {
+        return mySimpleGuild != null;
+    }
+
     public void setMySimpleGuild(SimpleGuild mySimpleGuild) {
         this.mySimpleGuild = mySimpleGuild;
     }

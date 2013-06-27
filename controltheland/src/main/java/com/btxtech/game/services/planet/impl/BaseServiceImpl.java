@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.StartPointItemPlacerChecker;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -546,8 +547,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void setGuild(SimpleBase simpleBase, Integer guildId) {
-        updateGuild(simpleBase, guildId);
+    public void setGuild(SimpleBase simpleBase, SimpleGuild simpleGuild) {
+        updateGuild(simpleBase, simpleGuild);
     }
 
     @Override
@@ -568,11 +569,11 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void sendGuildChanged4FakeBase(UserState userState, Integer guildId) {
+    public void sendGuildChanged4FakeBase(UserState userState, SimpleGuild simpleGuild) {
         SimpleBase fakeBase = SimpleBase.createFakeUser(planetServices.getPlanetInfo().getPlanetId());
         BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
         baseChangedPacket.setType(BaseChangedPacket.Type.CHANGED);
-        baseChangedPacket.setBaseAttributes(new BaseAttributes(fakeBase, setupFakeBaseName(userState), false, guildId));
+        baseChangedPacket.setBaseAttributes(new BaseAttributes(fakeBase, setupFakeBaseName(userState), false, simpleGuild));
         planetServices.getConnectionService().sendPacket(userState, baseChangedPacket);
     }
 }

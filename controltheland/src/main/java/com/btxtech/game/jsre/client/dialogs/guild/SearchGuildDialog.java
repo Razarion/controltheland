@@ -17,7 +17,7 @@ public class SearchGuildDialog extends Dialog {
         if (!Connection.getInstance().isRegisteredAndVerified()) {
             throw new IllegalStateException("SearchGuildDialog user is not registered");
         }
-        if (ClientBase.getInstance().getMySimpleGuild() != null) {
+        if (ClientBase.getInstance().isGuildMember()) {
             throw new IllegalStateException("SearchGuildDialog user is already member of a guild");
         }
     }

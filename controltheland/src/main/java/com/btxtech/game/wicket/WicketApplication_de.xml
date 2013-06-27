@@ -32,9 +32,7 @@
     <entry key="registerConfirmationInvalid">Dieser Bestätigungslink Link ist ungültig. Bitte erneut registrieren.</entry>
     <entry key="error">Fehler: {0}</entry>
     <entry key="loadingGame">Lade Spiel...</entry>
-    <entry key="alliancesOfferedNotRegistered">Der Spieler {0} ist nicht registriert. Nur registrierte Spieler können Allianzen eingehen. Benutze den Chat um den Spieler zum Registrieren zu überreden!</entry>
-    <entry key="alliancesOfferedBaseAbandoned">Die Basis {0} ist verlassen.</entry>
-    <entry key="alliancesOfferedOnlyRegistered">{0} hat eine Allianz vorgeschlagen. Nur registrierte Benutzer können Allianzen eingehen.</entry>
+    <entry key="guildOfferedOnlyRegistered">{0} hat dich in seine Gilde eingeladen. Nur registrierte Benutzer können Gilden beitreten.</entry>
     <entry key="registerNoMatch">Passwort und bestätigungs Passwort sind nicht gleich</entry>
     <entry key="alliancesRejected">Der Spieler {0}  hat die Allianz abgelehnt.</entry>
     <entry key="emailSubject">Razarion - Bestätige deine E-Mail-Adresse</entry>

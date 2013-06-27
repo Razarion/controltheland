@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.Region;
@@ -805,7 +806,7 @@ abstract public class AbstractServiceTest {
                     && expected.getBaseAttributes().getName().equals(received.getBaseAttributes().getName())
                     && expected.getBaseAttributes().isBot() == received.getBaseAttributes().isBot()
                     && expected.getBaseAttributes().isAbandoned() == received.getBaseAttributes().isAbandoned()
-                    && ObjectUtils.equals(expected.getBaseAttributes().getGuildId(), received.getBaseAttributes().getGuildId());
+                    && ObjectUtils.equals(expected.getBaseAttributes().getSimpleGuild(), received.getBaseAttributes().getSimpleGuild());
         } else if (expectedPacket instanceof ChatMessage) {
             ChatMessage expected = (ChatMessage) expectedPacket;
             ChatMessage received = (ChatMessage) receivedPacket;
@@ -2342,6 +2343,17 @@ abstract public class AbstractServiceTest {
         });
     }
 
+    // ------------------- Guild --------------------
+    public static boolean equalsGuildId(SimpleGuild simpleGuild, Integer guildId) {
+        if (simpleGuild == null && guildId == null) {
+            return true;
+        } else if (simpleGuild != null) {
+            return ObjectUtils.equals(simpleGuild.getId(), guildId);
+        } else {
+            return false;
+        }
+    }
+
     // ------------------- Wicket --------------------
 
     /**
@@ -2747,8 +2759,8 @@ abstract public class AbstractServiceTest {
                 errorString = "Invalid BaseChangedPacket. Expected baseAttributes bot '" + bot + "' actual '" + baseAttributes.isBot() + "'";
                 return false;
             }
-            if (!ObjectUtils.equals(guildId, baseAttributes.getGuildId())) {
-                errorString = "Invalid BaseChangedPacket. Expected baseAttributes guildId '" + guildId + "' actual '" + baseAttributes.getGuildId() + "'";
+            if (!equalsGuildId(baseAttributes.getSimpleGuild(), guildId)) {
+                errorString = "Invalid BaseChangedPacket. Expected baseAttributes guildId '" + guildId + "' actual '" + baseAttributes.getSimpleGuild() + "'";
                 return false;
             }
             if (baseAttributes.isAbandoned()) {
@@ -2797,8 +2809,8 @@ abstract public class AbstractServiceTest {
                 errorString = "Invalid BaseChangedPacket. Actural baseAttributes is bot";
                 return false;
             }
-            if (baseAttributes.getGuildId() != null) {
-                errorString = "Invalid BaseChangedPacket. Expected baseAttributes has guild set" + baseAttributes.getGuildId();
+            if (baseAttributes.getSimpleGuild() != null) {
+                errorString = "Invalid BaseChangedPacket. Expected baseAttributes has guild set: " + baseAttributes.getSimpleGuild();
                 return false;
             }
             if (abandoned != baseAttributes.isAbandoned()) {

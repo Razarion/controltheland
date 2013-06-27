@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.PositionInBotException;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -72,11 +73,11 @@ public class TestSyncBaseItem extends AbstractServiceTest {
 
         // Setup guild
         int guild12 = 1;
-        planetServices.getBaseService().setGuild(base1.getSimpleBase(), guild12);
-        planetServices.getBaseService().setGuild(base2.getSimpleBase(), guild12);
+        planetServices.getBaseService().setGuild(base1.getSimpleBase(), new SimpleGuild(guild12, null));
+        planetServices.getBaseService().setGuild(base2.getSimpleBase(), new SimpleGuild(guild12, null));
         int guild34 = 2;
-        planetServices.getBaseService().setGuild(base3.getSimpleBase(), guild34);
-        planetServices.getBaseService().setGuild(base4.getSimpleBase(), guild34);
+        planetServices.getBaseService().setGuild(base3.getSimpleBase(), new SimpleGuild(guild34, null));
+        planetServices.getBaseService().setGuild(base4.getSimpleBase(), new SimpleGuild(guild34, null));
 
         Assert.assertFalse(syncBaseItem1.isEnemy(syncBaseItem1));
         Assert.assertFalse(syncBaseItem1.isEnemy(base1.getSimpleBase()));
