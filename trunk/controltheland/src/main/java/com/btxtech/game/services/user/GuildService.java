@@ -1,6 +1,7 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.client.VerificationRequestCallback;
+import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
@@ -33,6 +34,8 @@ public interface GuildService {
 
     void inviteUserToGuild(String userName) throws NoSuchUserException;
 
+    void inviteUserToGuild(SimpleBase simpleBase) throws NoSuchUserException, InvitingUnregisteredBaseException;
+
     SimpleGuild joinGuild(int guildId);
 
     List<GuildDetailedInfo> dismissGuildInvitation(int guildId);
@@ -63,7 +66,7 @@ public interface GuildService {
 
     void fillUserAttentionPacket(User user, UserAttentionPacket userAttentionPacket);
 
-    Integer getGuildId(UserState userState);
+    SimpleGuild getGuildId(UserState userState);
 
     void onMakeBaseAbandoned(User user, SimpleBase simpleBase);
 

@@ -231,12 +231,12 @@ public class MenuBarPanel extends Composite {
             history.setTitle(ClientI18nHelper.CONSTANTS.menuTooltipHistoryOnlyRegisteredVerified());
             myGuild.setVisible(false);
             guilds.setVisible(true);
-            guilds.setTitle(ClientI18nHelper.CONSTANTS.menuTooltipGuildsOnlyRegisteredVerified());
+            guilds.setTitle(ClientI18nHelper.CONSTANTS.guildsOnlyRegisteredVerified());
         } else {
             history.setTitle(ClientI18nHelper.CONSTANTS.menuTooltipHistoryOnlyRegistered());
             myGuild.setVisible(false);
             guilds.setVisible(true);
-            guilds.setTitle(ClientI18nHelper.CONSTANTS.menuTooltipGuildsOnlyRegistered());
+            guilds.setTitle(ClientI18nHelper.CONSTANTS.guildsOnlyRegistered());
         }
     }
 

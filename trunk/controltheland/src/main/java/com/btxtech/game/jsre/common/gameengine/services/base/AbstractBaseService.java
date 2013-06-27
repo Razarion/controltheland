@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.services.base;
 
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -39,6 +40,8 @@ public interface AbstractBaseService {
     boolean isBot(SimpleBase simpleBase);
 
     boolean isAbandoned(SimpleBase simpleBase);
+
+    SimpleGuild getGuild(SimpleBase simpleBase);
 
     Collection<BaseAttributes> getAllBaseAttributes();
 

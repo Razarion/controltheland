@@ -25,7 +25,7 @@ public class CreateGuildDialog extends Dialog {
         if (!Connection.getInstance().isRegisteredAndVerified()) {
             throw new IllegalStateException("CreateGuildDialog user is not registered");
         }
-        if (ClientBase.getInstance().getMySimpleGuild() != null) {
+        if (ClientBase.getInstance().isGuildMember()) {
             throw new IllegalStateException("CreateGuildDialog user is already member of a guild");
         }
         if (Connection.getMovableServiceAsync() != null) {

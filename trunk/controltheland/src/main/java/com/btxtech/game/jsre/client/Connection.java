@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
+import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationCockpit;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
@@ -37,7 +38,6 @@ import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
-import com.btxtech.game.jsre.client.dialogs.guild.GuildMembershipRequest;
 import com.btxtech.game.jsre.client.dialogs.guild.MyGuildDialog;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.HighscoreDialog;
@@ -1002,6 +1002,30 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 public void onSuccess(FullGuildInfo fullGuildInfo) {
                     MyGuildDialog.updateIfShowing(fullGuildInfo);
                     DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.gildMemberInvitedMessage(userName)), DialogManager.Type.STACK_ABLE);
+                }
+            });
+        }
+    }
+
+    public void inviteGuildMember(final SimpleBase simpleBase, final String baseName) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.inviteUserToGuild(simpleBase, new AsyncCallback<Void>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    if (caught instanceof InvitingUnregisteredBaseException) {
+                        DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(),
+                                ClientI18nHelper.CONSTANTS.guildInvitationNotRegistered(baseName),
+                                false),
+                                DialogManager.Type.STACK_ABLE);
+                    } else {
+                        handleDisconnection("inviteUserToGuild", caught);
+                    }
+                }
+
+                @Override
+                public void onSuccess(Void aVoid) {
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.gildMemberInvitedMessage(baseName)), DialogManager.Type.STACK_ABLE);
                 }
             });
         }

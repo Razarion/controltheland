@@ -8,6 +8,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildDetailedInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildMembershipRequest;
 import com.btxtech.game.jsre.common.CommonJava;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -577,6 +578,65 @@ public class TestGuildService2 extends AbstractServiceTest {
         endHttpSession();
 
         assertNoDbEntry(DbGuildMembershipRequest.class);
+    }
+
+    @Test
+    @DirtiesContext
+    public void inviteUserToGuildViaBaseErrorCases() throws Exception {
+        configureSimplePlanetNoResources();
+        // Unregistered
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Unregistered
+        try {
+            guildService.inviteUserToGuild(new SimpleBase(-100, -100));
+        } catch(IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "User is not registered");
+        }
+        // Abandoned
+        createAndLoginUser("U1");
+        try {
+            guildService.inviteUserToGuild(new SimpleBase(-100, TEST_PLANET_1_ID));
+        } catch(IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "Base is isAbandoned: Base Id: -100 Planet Id: 1");
+        }
+        // TODO UNregistered user which will be invited, can not be tested
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void inviteUserToGuildVia() throws Exception {
+        configureSimplePlanetNoResources();
+        // Create base to invite
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("member");
+        SimpleBase simpleBase = createBase(new Index(1000,1000));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Unregistered
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("presi");
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        guildService.createGuild("xxxx");
+        guildService.inviteUserToGuild(simpleBase);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify db
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbGuildInvitation> dbGuildInvitations = loadAll(DbGuildInvitation.class);
+        Assert.assertEquals(1, dbGuildInvitations.size());
+        DbGuildInvitation dbGuildInvitation = dbGuildInvitations.get(0);
+        Assert.assertEquals("member", dbGuildInvitation.getUser().getUsername());
+        Assert.assertEquals("xxxx", dbGuildInvitation.getDbGuild().getName());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test

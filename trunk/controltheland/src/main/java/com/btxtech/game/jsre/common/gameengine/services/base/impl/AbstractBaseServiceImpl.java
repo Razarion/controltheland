@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.base.impl;
 
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
@@ -27,7 +28,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * User: beat
@@ -69,6 +69,15 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
     }
 
     @Override
+    public SimpleGuild getGuild(SimpleBase simpleBase) {
+        BaseAttributes baseAttributes = bases.get(simpleBase);
+        if(baseAttributes == null) {
+          return null;
+        }
+        return baseAttributes.getSimpleGuild();
+    }
+
+    @Override
     public Collection<BaseAttributes> getAllBaseAttributes() {
         return new ArrayList<BaseAttributes>(bases.values());
     }
@@ -98,8 +107,8 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         throw new IllegalArgumentException("No such base: " + baseId);
     }
 
-    protected void createBase(SimpleBase simpleBase, String name, boolean abandoned, Integer guildId) {
-        createBase(new BaseAttributes(simpleBase, name, abandoned, guildId));
+    protected void createBase(SimpleBase simpleBase, String name, boolean abandoned, SimpleGuild simpleGuild) {
+        createBase(new BaseAttributes(simpleBase, name, abandoned, simpleGuild));
     }
 
     protected void clear() {
@@ -137,12 +146,12 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         bases.put(baseAttributes.getSimpleBase(), baseAttributes);
     }
 
-    protected void updateGuild(SimpleBase simpleBase, Integer guildId) {
+    protected void updateGuild(SimpleBase simpleBase, SimpleGuild simpleGuild) {
         BaseAttributes baseAttributes = getBaseAttributes(simpleBase);
         if (baseAttributes == null) {
             throw new IllegalArgumentException(this + " base does not exits " + simpleBase);
         }
-        baseAttributes.setGuildId(guildId);
+        baseAttributes.setSimpleGuild(simpleGuild);
     }
 
     protected void setBaseAbandoned(SimpleBase simpleBase, boolean abandoned) {
@@ -234,6 +243,6 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         }
 
         return !(baseAttributes1.isBot() && baseAttributes2.isBot())
-                && (baseAttributes1.isBot() != baseAttributes2.isBot() || !baseAttributes1.isGuildMember(baseAttributes2));
+                && (baseAttributes1.isBot() != baseAttributes2.isBot() || !baseAttributes1.isSameGuild(baseAttributes2));
     }
 }

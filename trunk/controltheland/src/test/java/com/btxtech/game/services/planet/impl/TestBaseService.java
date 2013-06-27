@@ -337,7 +337,7 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
         Assert.assertEquals("Your Base", baseAttributes.getName());
         Assert.assertFalse(baseAttributes.isBot());
-        Assert.assertNull(baseAttributes.getGuildId());
+        Assert.assertNull(baseAttributes.getSimpleGuild());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -357,7 +357,7 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
         Assert.assertEquals("U1", baseAttributes.getName());
         Assert.assertFalse(baseAttributes.isBot());
-        Assert.assertNull(baseAttributes.getGuildId());
+        Assert.assertNull(baseAttributes.getSimpleGuild());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -385,10 +385,10 @@ public class TestBaseService extends AbstractServiceTest {
             if (baseAttributes.getSimpleBase().equals(ownFakeBase)) {
                 Assert.assertEquals("U1", baseAttributes.getName());
                 Assert.assertFalse(baseAttributes.isBot());
-                Assert.assertNull(baseAttributes.getGuildId());
+                Assert.assertNull(baseAttributes.getSimpleGuild());
             } else {
                 Assert.assertTrue(baseAttributes.isBot());
-                Assert.assertNull(baseAttributes.getGuildId());
+                Assert.assertNull(baseAttributes.getSimpleGuild());
             }
         }
         endHttpRequestAndOpenSessionInViewFilter();
@@ -418,7 +418,7 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
         Assert.assertEquals("Your Base", baseAttributes.getName());
         Assert.assertFalse(baseAttributes.isBot());
-        Assert.assertNull(baseAttributes.getGuildId());
+        Assert.assertNull(baseAttributes.getSimpleGuild());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -447,7 +447,7 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
         Assert.assertEquals("U1", baseAttributes.getName());
         Assert.assertFalse(baseAttributes.isBot());
-        Assert.assertNull(baseAttributes.getGuildId());
+        Assert.assertNull(baseAttributes.getSimpleGuild());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -496,7 +496,7 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
         Assert.assertEquals("president", baseAttributes.getName());
         Assert.assertFalse(baseAttributes.isBot());
-        Assert.assertEquals(guildId, baseAttributes.getGuildId());
+        Assert.assertEquals((int)guildId, baseAttributes.getSimpleGuild().getId());
         checkGuild(baseAttributes, allBaseAttributes);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -508,8 +508,8 @@ public class TestBaseService extends AbstractServiceTest {
             if (baseAttributes.getSimpleBase().equals(myBaseAttributes.getSimpleBase())) {
                 continue;
             }
-            if (baseAttributes.getGuildId() != null) {
-                Assert.assertEquals(myBaseAttributes.getGuildId(), baseAttributes.getGuildId());
+            if (baseAttributes.getSimpleGuild() != null) {
+                Assert.assertEquals(myBaseAttributes.getSimpleGuild(), baseAttributes.getSimpleGuild());
                 count++;
             }
         }

@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.PositionInBotException;
 import com.btxtech.game.jsre.client.VerificationRequestCallback;
+import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
@@ -91,6 +92,7 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -709,6 +711,18 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             return null;
         }
     }
+
+    @Override
+    public void inviteUserToGuild(SimpleBase simpleBase) throws InvitingUnregisteredBaseException {
+        try {
+            guildService.inviteUserToGuild(simpleBase);
+        } catch (InvitingUnregisteredBaseException e) {
+            throw e;
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+        }
+    }
+
 
     @Override
     public SimpleGuild joinGuild(int guildId) {

@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.PositionInBotException;
+import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
@@ -391,6 +392,11 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     @Override
     public FullGuildInfo inviteUserToGuild(String userName) {
         return null; //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void inviteUserToGuild(SimpleBase simpleBase) throws InvitingUnregisteredBaseException {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

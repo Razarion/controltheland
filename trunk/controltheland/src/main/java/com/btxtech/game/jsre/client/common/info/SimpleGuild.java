@@ -33,7 +33,9 @@ public class SimpleGuild implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         SimpleGuild that = (SimpleGuild) o;
 
@@ -43,5 +45,13 @@ public class SimpleGuild implements Serializable {
     @Override
     public int hashCode() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleGuild{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

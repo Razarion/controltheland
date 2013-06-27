@@ -17,7 +17,7 @@ public class GuildInvitationsDialog extends Dialog {
         if (!Connection.getInstance().isRegisteredAndVerified()) {
             throw new IllegalStateException("GuildInvitationsDialog user is not registered");
         }
-        if (ClientBase.getInstance().getMySimpleGuild() != null) {
+        if (ClientBase.getInstance().isGuildMember()) {
             throw new IllegalStateException("GuildInvitationsDialog user is already member of a guild");
         }
     }

@@ -15,7 +15,7 @@ package com.btxtech.game.services.planet;
 
 import com.btxtech.game.jsre.client.PositionInBotException;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.Region;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
@@ -79,7 +79,7 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     void onUserStateRemoved(UserState userState);
 
-    void setGuild(SimpleBase simpleBase, Integer guildId);
+    void setGuild(SimpleBase simpleBase, SimpleGuild simpleGuild);
 
     void sendGuildChanged(SimpleBase simpleBase);
 
@@ -87,5 +87,5 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Collection<BaseAttributes> createAllBaseAttributes4FakeBase(SimpleBase fakeBase, UserState uSerState, int planetId);
 
-    void sendGuildChanged4FakeBase(UserState uSerState, Integer guildId);
+    void sendGuildChanged4FakeBase(UserState uSerState, SimpleGuild simpleGuild);
 }

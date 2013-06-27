@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
@@ -161,6 +162,8 @@ public interface MovableServiceAsync {
     void getSuggestedUserName(String query, int limit, AsyncCallback<SuggestOracle.Response> asyncCallback);
 
     void inviteUserToGuild(String userName, AsyncCallback<FullGuildInfo> asyncCallback);
+
+    void inviteUserToGuild(SimpleBase simpleBase, AsyncCallback<Void> asyncCallback);
 
     void dismissGuildMemberRequest(int userId, AsyncCallback<FullGuildInfo> asyncCallback);
 

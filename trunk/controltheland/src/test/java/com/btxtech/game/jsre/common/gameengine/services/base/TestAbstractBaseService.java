@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.common.gameengine.services.base;
 
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -38,11 +39,11 @@ public class TestAbstractBaseService {
         allBaseAttributes.add(baseAttributesBot2);
 
         SimpleBase base1 = new SimpleBase(3, 1);
-        BaseAttributes baseAttributes1 = new BaseAttributes(base1, "base1", false, 1);
+        BaseAttributes baseAttributes1 = new BaseAttributes(base1, "base1", false, new SimpleGuild(1, null));
         allBaseAttributes.add(baseAttributes1);
 
         SimpleBase base2 = new SimpleBase(4, 1);
-        BaseAttributes baseAttributes2 = new BaseAttributes(base2, "base2", false, 1);
+        BaseAttributes baseAttributes2 = new BaseAttributes(base2, "base2", false, new SimpleGuild(1, null));
         allBaseAttributes.add(baseAttributes2);
 
         SimpleBase base3 = new SimpleBase(5, 1);

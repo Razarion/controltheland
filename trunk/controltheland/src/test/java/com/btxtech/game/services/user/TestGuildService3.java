@@ -62,7 +62,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "presi").getGuildId());
+        Assert.assertEquals(guildId, getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
         EasyMock.verify(serverConnectionService);
     }
 
@@ -100,10 +100,10 @@ public class TestGuildService3 extends AbstractServiceTest {
         EasyMock.replay(serverConnectionService);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerConnectionService(serverConnectionService);
         guildService.joinGuild(guildId);
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "presi").getGuildId());
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "member").getGuildId());
+        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
+        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "member").getSimpleGuild().getId());
         guildService.leaveGuild();
-        Assert.assertEquals(null, getBaseAttributes(TEST_PLANET_1_ID, "member").getGuildId());
+        Assert.assertNull(getBaseAttributes(TEST_PLANET_1_ID, "member").getSimpleGuild());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -154,8 +154,8 @@ public class TestGuildService3 extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "presi").getGuildId());
-        Assert.assertEquals(null, getBaseAttributes(TEST_PLANET_1_ID, "member").getGuildId());
+        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
+        Assert.assertNull(getBaseAttributes(TEST_PLANET_1_ID, "member").getSimpleGuild());
 
         EasyMock.verify(serverConnectionService);
     }
@@ -221,9 +221,9 @@ public class TestGuildService3 extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        Assert.assertEquals(null, getBaseAttributes(TEST_PLANET_1_ID, "presi").getGuildId());
-        Assert.assertEquals(null, getBaseAttributes(TEST_PLANET_1_ID, "member1").getGuildId());
-        Assert.assertEquals(null, getBaseAttributes(TEST_PLANET_1_ID, "member2").getGuildId());
+        Assert.assertNull(null, getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild());
+        Assert.assertNull(null, getBaseAttributes(TEST_PLANET_1_ID, "member1").getSimpleGuild());
+        Assert.assertNull(null, getBaseAttributes(TEST_PLANET_1_ID, "member2").getSimpleGuild());
 
         EasyMock.verify(serverConnectionService);
     }
@@ -498,7 +498,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        Assert.assertNull(getBaseAttributes(TEST_PLANET_1_ID, simpleBase).getGuildId());
+        Assert.assertNull(getBaseAttributes(TEST_PLANET_1_ID, simpleBase).getSimpleGuild());
 
         EasyMock.verify(serverConnectionService);
     }
