@@ -373,7 +373,7 @@ public interface ClientI18nConstants extends Messages {
 
     String playerEnemy();
 
-    String allianceMember();
+    String itemCockpitGuildMember();
 
     String tooltipSelect(String itemName);
 
@@ -674,4 +674,6 @@ public interface ClientI18nConstants extends Messages {
     String guildInvitationNotRegistered(String playerName);
 
     String guildInvitationBaseAbandoned(String playerName);
+
+    String userIsAlreadyAGuildMember(String userName);
 }

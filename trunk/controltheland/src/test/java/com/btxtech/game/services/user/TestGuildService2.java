@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildMembershipRequest;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.UserIsAlreadyGuildMemberException;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -392,9 +393,9 @@ public class TestGuildService2 extends AbstractServiceTest {
         loginUser("U1");
         try {
             guildService.inviteUserToGuild("U2");
-            Assert.fail("NoSuchUserException expected");
-        } catch (IllegalArgumentException e) {
-            Assert.assertEquals("User is already member od a guild: User: 'U2' id: 2", e.getMessage());
+            Assert.fail("UserIsAlreadyGuildMemberException expected");
+        } catch (UserIsAlreadyGuildMemberException e) {
+            // Expected
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

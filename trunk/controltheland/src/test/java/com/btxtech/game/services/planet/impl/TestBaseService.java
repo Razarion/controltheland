@@ -525,7 +525,7 @@ public class TestBaseService extends AbstractServiceTest {
         throw new IllegalArgumentException("Own base not found: " + ownFakeBase);
     }
 
-    private void createOtherBase(Index startPoint, String userName, Integer guildId) throws NoSuchUserException {
+    private void createOtherBase(Index startPoint, String userName, Integer guildId) throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         if (userName != null) {

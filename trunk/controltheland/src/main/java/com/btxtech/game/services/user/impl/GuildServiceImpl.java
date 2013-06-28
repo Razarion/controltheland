@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildDetailedInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.UserIsAlreadyGuildMemberException;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
@@ -120,7 +121,7 @@ public class GuildServiceImpl implements GuildService {
 
     @Override
     @Transactional
-    public void inviteUserToGuild(String userName) throws NoSuchUserException {
+    public void inviteUserToGuild(String userName) throws NoSuchUserException, UserIsAlreadyGuildMemberException {
         User invitingUser = userService.getUser();
         if (invitingUser == null || !invitingUser.isRegistrationComplete()) {
             throw new IllegalArgumentException("User is not registered");
@@ -134,7 +135,7 @@ public class GuildServiceImpl implements GuildService {
             throw new NoSuchUserException(userName);
         }
         if (getGuild(invitee) != null) {
-            throw new IllegalArgumentException("User is already member od a guild: " + invitee);
+            throw new UserIsAlreadyGuildMemberException();
         }
         // Ignore double invitation
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbGuildInvitation.class);
@@ -156,7 +157,7 @@ public class GuildServiceImpl implements GuildService {
     }
 
     @Override
-    public void inviteUserToGuild(SimpleBase simpleBase) throws NoSuchUserException, InvitingUnregisteredBaseException {
+    public void inviteUserToGuild(SimpleBase simpleBase) throws NoSuchUserException, InvitingUnregisteredBaseException, UserIsAlreadyGuildMemberException {
         User invitingUser = userService.getUser();
         if (invitingUser == null || !invitingUser.isRegistrationComplete()) {
             throw new IllegalArgumentException("User is not registered");

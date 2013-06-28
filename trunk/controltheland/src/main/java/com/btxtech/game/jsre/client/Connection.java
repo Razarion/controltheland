@@ -57,6 +57,7 @@ import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.UserIsAlreadyGuildMemberException;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
@@ -992,6 +993,10 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     if (caught instanceof NoSuchUserException) {
                         DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(),
                                 ClientI18nHelper.CONSTANTS.noSuchUser(((NoSuchUserException) caught).getUserName())),
+                                DialogManager.Type.STACK_ABLE);
+                    } else if (caught instanceof UserIsAlreadyGuildMemberException) {
+                        DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(),
+                                ClientI18nHelper.CONSTANTS.userIsAlreadyAGuildMember(userName)),
                                 DialogManager.Type.STACK_ABLE);
                     } else {
                         handleDisconnection("inviteUserToGuild", caught);

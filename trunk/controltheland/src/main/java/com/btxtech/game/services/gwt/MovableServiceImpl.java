@@ -40,6 +40,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.UserIsAlreadyGuildMemberException;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
@@ -699,12 +700,12 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public FullGuildInfo inviteUserToGuild(String userName) throws NoSuchUserException {
+    public FullGuildInfo inviteUserToGuild(String userName) throws NoSuchUserException, UserIsAlreadyGuildMemberException {
         try {
             guildService.inviteUserToGuild(userName);
             //FullGuildInfo is created before the DbGuildInvitations has been removed from the DB (transaction not committed)
             return guildService.getFullGuildInfo(guildService.getSimpleGuild().getId());
-        } catch (NoSuchUserException e) {
+        } catch (NoSuchUserException | UserIsAlreadyGuildMemberException e) {
             throw e;
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
