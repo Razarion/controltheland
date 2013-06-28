@@ -34,6 +34,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.UserIsAlreadyGuildMemberException;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
@@ -169,7 +170,7 @@ public interface MovableService extends RemoteService {
 
     SuggestOracle.Response getSuggestedUserName(String query, int limit);
 
-    FullGuildInfo inviteUserToGuild(String userName) throws NoSuchUserException;
+    FullGuildInfo inviteUserToGuild(String userName) throws NoSuchUserException, UserIsAlreadyGuildMemberException;
 
     void inviteUserToGuild(SimpleBase simpleBase) throws InvitingUnregisteredBaseException;
 

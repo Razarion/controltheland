@@ -97,7 +97,7 @@ public class OtherInfoPanel extends Composite {
                     }
                 }
             } else {
-                type.setText(ClientI18nHelper.CONSTANTS.allianceMember());
+                type.setText(ClientI18nHelper.CONSTANTS.itemCockpitGuildMember());
                 friendImage.setVisible(true);
             }
             baseName.setText(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));

@@ -32,6 +32,7 @@ import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.UserIsAlreadyGuildMemberException;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;

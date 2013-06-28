@@ -66,18 +66,17 @@ public class ItemSelectionAndHoverRenderTask extends AbstractRenderTask {
     }
 
     private void showNameAndGuild(SyncBaseItem mouseOverItem, Rectangle viewRect, SyncItemArea syncItemArea) {
-        context2d.setLineWidth(1);
         context2d.setTextAlign(Context2d.TextAlign.CENTER);
         context2d.setFont("12px Arial");
-        context2d.setStrokeStyle(ClientBase.getInstance().getBaseHtmlColor(mouseOverItem.getBase()));
+        context2d.setFillStyle(ClientBase.getInstance().getBaseHtmlColor(mouseOverItem.getBase()));
         int relativeX = syncItemArea.getPosition().getX() - viewRect.getX();
         int relativeY = syncItemArea.getPosition().getY() - viewRect.getY() - syncItemArea.getBoundingBox().getRadius();
         SimpleGuild simpleGuild = ClientBase.getInstance().getGuild(mouseOverItem.getBase());
         if (simpleGuild != null) {
-            context2d.strokeText(ClientBase.getInstance().getBaseName(mouseOverItem.getBase()), relativeX, relativeY - 12);
-            context2d.strokeText(simpleGuild.getName(), relativeX, relativeY);
+            context2d.fillText(ClientBase.getInstance().getBaseName(mouseOverItem.getBase()), relativeX, relativeY - 12);
+            context2d.fillText("[" + simpleGuild.getName() + "]", relativeX, relativeY);
         } else {
-            context2d.strokeText(ClientBase.getInstance().getBaseName(mouseOverItem.getBase()), relativeX, relativeY);
+            context2d.fillText(ClientBase.getInstance().getBaseName(mouseOverItem.getBase()), relativeX, relativeY);
         }
     }
 
