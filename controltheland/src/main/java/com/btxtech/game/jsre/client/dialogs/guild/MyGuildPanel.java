@@ -324,7 +324,7 @@ public class MyGuildPanel extends Composite {
             public String getValue(GuildMembershipRequest guildMembershipRequest) {
                 return guildMembershipRequest.getText();
             }
-        }, ClientI18nHelper.CONSTANTS.planet());
+        }, ClientI18nHelper.CONSTANTS.message());
         // Invite column
         Column<GuildMembershipRequest, String> inviteColumn = new Column<GuildMembershipRequest, String>(new ButtonCell()) {
 
