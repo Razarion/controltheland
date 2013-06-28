@@ -45,6 +45,7 @@ public class Renderer {
         ItemRenderTask itemRenderTask = new ItemRenderTask(TerrainView.getInstance().getContext2d());
         gameRenderTasks.add(itemRenderTask);
         itemRenderTaskIndex = gameRenderTasks.indexOf(itemRenderTask);
+        gameRenderTasks.add(new ItemSelectionAndHoverRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new ItemClipRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new AttackHandlerRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new ExplosionRenderTask(TerrainView.getInstance().getContext2d()));
