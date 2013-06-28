@@ -108,6 +108,8 @@ public interface ClientI18nConstants extends Messages {
 
     String change();
 
+    String message();
+
     // Login logout
     String login();
 
