@@ -103,11 +103,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
-    public void sendResurrectionMessage(UserState userState) {
-        planetSystemService.getServerPlanetServices(userState).getConnectionService().sendMessage(userState, "baseLost", null, false);
-    }
-
-    @Override
     public void promote(UserState userState, int newDbLevelId) {
         promote(userState, getDbLevel(newDbLevelId));
     }

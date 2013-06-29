@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.ClientDateUtil;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -18,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -1420,5 +1422,57 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     public ItemType getRandomItemType() {
         int index = (int) (Math.random() * serverItemTypeService.getItemTypes().size());
         return serverItemTypeService.getItemTypes().get(index);
+    }
+
+    @Test
+    @DirtiesContext
+    public void saveStorablePacket() throws Exception {
+        configureSimplePlanet();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        StorablePacket storablePacketU1 = new StorablePacket();
+        storablePacketU1.setType(StorablePacket.Type.GUILD_LOST);
+        UserState userStateU1 = getUserState();
+        planetSystemService.sendPacket(userStateU1, storablePacketU1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        UserState userStateR1 = getUserState();
+        Assert.assertEquals(1, userStateR1.getStorablePackets().size());
+        StorablePacket storablePacketR1 = CommonJava.getFirst(userStateR1.getStorablePackets());
+        Assert.assertEquals(storablePacketU1.getType(), storablePacketR1.getType());
+        Assert.assertFalse(System.identityHashCode(userStateU1) == System.identityHashCode(userStateR1));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U2");
+        StorablePacket storablePacketU2 = new StorablePacket();
+        storablePacketU2.setType(StorablePacket.Type.GUILD_LOST);
+        UserState userStateU2 = getUserState();
+        planetSystemService.sendPacket(userStateU2, storablePacketU2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        UserState userStateR2 = getUserState();
+        Assert.assertEquals(1, userStateR2.getStorablePackets().size());
+        StorablePacket storablePacketR2 = CommonJava.getFirst(userStateR2.getStorablePackets());
+        Assert.assertEquals(storablePacketU2.getType(), storablePacketR2.getType());
+        Assert.assertFalse(System.identityHashCode(storablePacketU2) == System.identityHashCode(storablePacketR2));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 }

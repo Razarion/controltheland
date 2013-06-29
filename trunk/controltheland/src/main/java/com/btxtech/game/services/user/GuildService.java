@@ -10,8 +10,6 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.UserIsAlreadyGuildMemberException;
-import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
@@ -19,7 +17,6 @@ import com.btxtech.game.services.common.NoSuchPropertyException;
 import com.btxtech.game.services.common.WrongPropertyTypeException;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 

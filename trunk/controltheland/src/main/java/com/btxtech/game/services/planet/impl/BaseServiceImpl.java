@@ -170,7 +170,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             serverGlobalServices.getGuildService().onMakeBaseAbandoned(user, base.getSimpleBase());
         }
         UserState userState = getUserState(base.getSimpleBase());
-        userState.setSendResurrectionMessage();
         makeBaseAbandoned(base);
         if (user != null) {
             serverGlobalServices.getGuildService().onMakeBaseAbandonedHandleEnemies(user, base.getSimpleBase());
@@ -313,7 +312,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             deleteBase(actor, base);
             if (!base.isAbandoned() && userState != null) {
                 base.getUserState().setBase(null);
-                base.getUserState().setSendResurrectionMessage(); // TODO needed?
             }
             askForStartPosition(userState);
         } else {

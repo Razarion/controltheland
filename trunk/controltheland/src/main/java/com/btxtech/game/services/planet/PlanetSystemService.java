@@ -31,8 +31,6 @@ import java.util.List;
  * Time: 02:29
  */
 public interface PlanetSystemService {
-    void handleResurrectionMessage(UserState userState, String startUuid) throws InvalidLevelStateException;
-
     void createBase(UserState userState, Index position) throws InvalidLevelStateException, PositionInBotException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
 
     boolean hasPlanet(UserState userState);

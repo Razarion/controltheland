@@ -18,6 +18,8 @@ import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
@@ -471,5 +473,11 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         setMySimpleGuild(mySimpleGuild);
         MenuBarCockpit.getInstance().updateGuild(mySimpleGuild);
     }
+
+    public void onGuildList() {
+        updateMySimpleGuild(null);
+        DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.guildLostTitle(), ClientI18nHelper.CONSTANTS.guildLostMessage()), DialogManager.Type.STACK_ABLE);
+    }
+
 
 }

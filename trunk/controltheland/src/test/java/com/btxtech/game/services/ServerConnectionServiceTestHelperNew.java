@@ -93,9 +93,10 @@ public class ServerConnectionServiceTestHelperNew implements ServerConnectionSer
     }
 
     @Override
-    public void sendPacket(UserState userState, Packet packet) {
+    public boolean sendPacket(UserState userState, Packet packet) {
         packetEntries.add(new PacketEntry(userState, packet));
         log.error("UserState: " + userState + " Packet: " + packet);
+        return false;
     }
 
     public void clearReceivedPackets() {

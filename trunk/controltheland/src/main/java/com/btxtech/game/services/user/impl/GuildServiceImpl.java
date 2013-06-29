@@ -12,6 +12,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.UserIsAlreadyGuildMemberException;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
+import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.NoSuchPropertyException;
@@ -345,7 +346,7 @@ public class GuildServiceImpl implements GuildService {
         sessionFactory.getCurrentSession().save(dbGuild);
         updateBaseService(null, userToKick);
         handleNewEnemies(dbGuild, userToKick);
-        // TODO fire user removed if online
+        sendGuildNoPackage(userToKick);
         historyService.addGuildMemberKicked(user, userToKick, dbGuild);
         return getFullGuildInfo(dbGuild.getId());
     }
@@ -510,7 +511,7 @@ public class GuildServiceImpl implements GuildService {
             exMembers.add(dbGuildMember.getUser());
             if (!user.equals(dbGuildMember.getUser())) {
                 historyService.addKickedGuildClosed(user, dbGuildMember.getUser(), dbGuild);
-                // TODO fire user removed if online
+                sendGuildNoPackage(dbGuildMember.getUser());
             }
             updateBaseService(null, dbGuildMember.getUser());
         }
@@ -789,6 +790,11 @@ public class GuildServiceImpl implements GuildService {
         return serverPlanetServices.getBaseService().getSimpleBase(user);
     }
 
+    private void sendGuildNoPackage(User user) {
+        StorablePacket storablePacket = new StorablePacket();
+        storablePacket.setType(StorablePacket.Type.GUILD_LOST);
+        planetSystemService.sendPacket(userService.getUserState(user), storablePacket);
+    }
     /*--------------------------------------*/
 
 

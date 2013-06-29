@@ -48,8 +48,8 @@ public class GenericProjectileItem extends GenericItem {
     public GenericProjectileItem() {
     }
 
-    public GenericProjectileItem(BackupEntry backupEntry) {
-        super(backupEntry);
+    public GenericProjectileItem(DbBackupEntry dbBackupEntry) {
+        super(dbBackupEntry);
     }
 
     public DbBase getBase() {

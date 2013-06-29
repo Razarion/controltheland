@@ -32,7 +32,7 @@ import java.util.Set;
  * Time: 6:06:38 PM
  */
 @Entity(name = "BACKUP_ENTRY")
-public class BackupEntry {
+public class DbBackupEntry {
     @Id
     @GeneratedValue
     private Integer id;
@@ -49,7 +49,7 @@ public class BackupEntry {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BackupEntry that = (BackupEntry) o;
+        DbBackupEntry that = (DbBackupEntry) o;
 
         return id.equals(that.id);
     }
@@ -95,8 +95,8 @@ public class BackupEntry {
         if (items != null) {
             HashSet<DbBase> bases = new HashSet<DbBase>();
             for (GenericItem item : items) {
-                if (item instanceof GenericBaseItem) {
-                    bases.add(((GenericBaseItem) item).getBase());
+                if (item instanceof DbGenericBaseItem) {
+                    bases.add(((DbGenericBaseItem) item).getBase());
                 }
             }
             return bases.size();

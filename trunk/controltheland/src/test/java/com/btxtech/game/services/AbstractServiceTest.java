@@ -44,6 +44,7 @@ import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
+import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.packets.UnlockContainerPacket;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
@@ -856,6 +857,10 @@ abstract public class AbstractServiceTest {
             UserAttentionPacket expected = (UserAttentionPacket) expectedPacket;
             UserAttentionPacket received = (UserAttentionPacket) receivedPacket;
             return expected.getNews() == received.getNews();
+        } else if (expectedPacket instanceof StorablePacket) {
+            StorablePacket expected = (StorablePacket) expectedPacket;
+            StorablePacket received = (StorablePacket) receivedPacket;
+            return expected.getType() == received.getType();
         } else {
             Assert.fail("Unknown packet: " + expectedPacket);
             return false;
@@ -2826,4 +2831,32 @@ abstract public class AbstractServiceTest {
         }
     }
 
+    public Packet createStorablePacket(StorablePacket.Type type) {
+        EasyMock.reportMatcher(new StorablePacketMatcher(type));
+        return null;
+    }
+
+    private class StorablePacketMatcher implements IArgumentMatcher {
+        private String errorString;
+        private StorablePacket.Type type;
+
+        public StorablePacketMatcher(StorablePacket.Type type) {
+            this.type = type;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            StorablePacket actual = (StorablePacket) o;
+            if (type != actual.getType()) {
+                errorString = "Invalid StorablePacket type. Expected '" + type + "' actual '" + actual.getType() + "'";
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public void appendTo(StringBuffer stringBuffer) {
+            stringBuffer.append(errorString);
+        }
+    }
 }

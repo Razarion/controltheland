@@ -66,7 +66,7 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
                 try {
                     synchronized (onlineConnection) {
                         Collection<Connection> timedOutConnections = new ArrayList<>();
-                        for (Connection connection: onlineConnection.values()) {
+                        for (Connection connection : onlineConnection.values()) {
                             try {
                                 int tickCount = connection.resetAndGetTickCount();
                                 if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
@@ -160,17 +160,19 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
     }
 
     @Override
-    public void sendPacket(UserState userState, Packet packet) {
+    public boolean sendPacket(UserState userState, Packet packet) {
         try {
             synchronized (onlineConnection) {
                 Connection connection = onlineConnection.get(userState);
                 if (connection != null) {
                     connection.sendPacket(packet);
+                    return true;
                 }
             }
         } catch (Throwable t) {
             log.error("", t);
         }
+        return false;
     }
 
     @Override

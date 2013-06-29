@@ -56,8 +56,6 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     void activateLevels() throws LevelActivationException;
 
-    void sendResurrectionMessage(UserState userState);
-
     LevelScope getLevelScope(UserState userState);
 
     GameFlow onTutorialFinished(int levelTaskId);

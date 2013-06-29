@@ -8,6 +8,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.PropertyService;
@@ -41,6 +42,8 @@ public class TestGuildService extends AbstractServiceTest {
     private PropertyService propertyService;
     @Autowired
     private MgmtService mgmtService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
 
     public static DbGuildMember getMember(DbGuild dbGuild, String userName) {
         for (DbGuildMember dbGuildMember : dbGuild.getGuildMembers()) {
@@ -474,6 +477,9 @@ public class TestGuildService extends AbstractServiceTest {
         EasyMock.expectLastCall().anyTimes();
         EasyMock.replay(historyServiceMock);
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
+        PlanetSystemService planetSystemServiceMock = EasyMock.createStrictMock(PlanetSystemService.class);
+        EasyMock.replay(planetSystemServiceMock);
+        setPrivateField(GuildServiceImpl.class, guildService, "planetSystemService", planetSystemServiceMock);
 
         // Unregistered
         beginHttpSession();
@@ -503,7 +509,9 @@ public class TestGuildService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("master");
         propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        setPrivateField(GuildServiceImpl.class, guildService, "planetSystemService", planetSystemService);
         guildService.createGuild("XXXX");
+        setPrivateField(GuildServiceImpl.class, guildService, "planetSystemService", planetSystemServiceMock);
         try {
             guildService.kickGuildMember(111);
             Assert.fail("IllegalArgumentException expected");
@@ -536,7 +544,9 @@ public class TestGuildService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("kick2");
         int kickUserId2 = userService.getUser().getId();
+        setPrivateField(GuildServiceImpl.class, guildService, "planetSystemService", planetSystemService);
         guildService.createGuild("BBBBBB");
+        setPrivateField(GuildServiceImpl.class, guildService, "planetSystemService", planetSystemServiceMock);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Kick User different Guils
@@ -717,6 +727,55 @@ public class TestGuildService extends AbstractServiceTest {
         endHttpSession();
 
         EasyMock.verify(historyServiceMock);
+    }
+
+    @Test
+    @DirtiesContext
+    public void kickGuildMemberPresiMemberSendNoGuildPacket() throws Exception {
+        configureSimplePlanetNoResources();
+        // Prepare
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("member");
+        int memberId = userService.getUser().getId();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Create guild
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("presi");
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        int guildId = guildService.createGuild("XXXX").getId();
+        guildService.inviteUserToGuild("member");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Join guild
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("member");
+        guildService.joinGuild(guildId);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Success presi kicks user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("presi");
+        PlanetSystemService planetSystemServiceMock = EasyMock.createStrictMock(PlanetSystemService.class);
+        User memberUser = userService.getUser("member");
+        EasyMock.expect(planetSystemServiceMock.getServerPlanetServices(memberUser)).andReturn(planetSystemService.getServerPlanetServices(userService.getUserState(memberUser)));
+        EasyMock.expect(planetSystemServiceMock.getPlanet4BaselessConnection(userService.getUserState(memberUser))).andReturn(null);
+        EasyMock.expect(planetSystemServiceMock.getServerPlanetServices(memberUser)).andReturn(null);
+        planetSystemServiceMock.sendPacket(createUserStateMatcher("member"), createStorablePacket(StorablePacket.Type.GUILD_LOST));
+        EasyMock.replay(planetSystemServiceMock);
+        setPrivateField(GuildServiceImpl.class, guildService, "planetSystemService", planetSystemServiceMock);
+
+        FullGuildInfo fullGuildInfo = guildService.kickGuildMember(memberId);
+        Assert.assertNotNull(fullGuildInfo);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        EasyMock.verify(planetSystemServiceMock);
     }
 
     @Test
@@ -1783,6 +1842,76 @@ public class TestGuildService extends AbstractServiceTest {
         assertNoDbEntry(DbGuildInvitation.class);
 
         EasyMock.verify(historyServiceMock);
+    }
+
+    @Test
+    @DirtiesContext
+    public void closeGuildSendNoGuildPackage() throws Exception {
+        configureSimplePlanetNoResources();
+        // Prepare
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("member1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("member2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Make guild and invite
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("presi");
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        int guildId = guildService.createGuild("xxxx").getId();
+        guildService.inviteUserToGuild("member1");
+        guildService.inviteUserToGuild("member2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Join Guild
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("member1");
+        guildService.joinGuild(guildId);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("member2");
+        guildService.joinGuild(guildId);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Run tests
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("presi");
+        PlanetSystemService planetSystemServiceMock = EasyMock.createStrictMock(PlanetSystemService.class);
+        // Handle presi
+        User presi = userService.getUser("presi");
+        EasyMock.expect(planetSystemServiceMock.getServerPlanetServices(presi)).andReturn(planetSystemService.getServerPlanetServices(userService.getUserState(presi)));
+        EasyMock.expect(planetSystemServiceMock.getPlanet4BaselessConnection(userService.getUserState(presi))).andReturn(null);
+        // Handle member 1
+        User member1 = userService.getUser("member1");
+        planetSystemServiceMock.sendPacket(createUserStateMatcher("member1"), createStorablePacket(StorablePacket.Type.GUILD_LOST));
+        EasyMock.expect(planetSystemServiceMock.getServerPlanetServices(member1)).andReturn(planetSystemService.getServerPlanetServices(userService.getUserState(member1)));
+        EasyMock.expect(planetSystemServiceMock.getPlanet4BaselessConnection(userService.getUserState(member1))).andReturn(null);
+        // Handle member 2
+        User member2 = userService.getUser("member2");
+        planetSystemServiceMock.sendPacket(createUserStateMatcher("member2"), createStorablePacket(StorablePacket.Type.GUILD_LOST));
+        EasyMock.expect(planetSystemServiceMock.getServerPlanetServices(member2)).andReturn(planetSystemService.getServerPlanetServices(userService.getUserState(member2)));
+        EasyMock.expect(planetSystemServiceMock.getPlanet4BaselessConnection(userService.getUserState(member2))).andReturn(null);
+        // Handle enemies
+        EasyMock.expect(planetSystemServiceMock.getServerPlanetServices(presi)).andReturn(null);
+        EasyMock.expect(planetSystemServiceMock.getServerPlanetServices(member1)).andReturn(null);
+        EasyMock.expect(planetSystemServiceMock.getServerPlanetServices(member2)).andReturn(null);
+        EasyMock.replay(planetSystemServiceMock);
+        setPrivateField(GuildServiceImpl.class, guildService, "planetSystemService", planetSystemServiceMock);
+        guildService.closeGuild();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        EasyMock.verify(planetSystemServiceMock);
     }
 
     @Test

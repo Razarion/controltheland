@@ -38,7 +38,7 @@ public interface ServerConnectionService extends CommonConnectionService {
 
     void sendPacket(SimpleBase base, Packet packet);
 
-    void sendPacket(UserState userState, Packet packet);
+    boolean sendPacket(UserState userState, Packet packet);
 
     void sendPacket(Packet packet);
 

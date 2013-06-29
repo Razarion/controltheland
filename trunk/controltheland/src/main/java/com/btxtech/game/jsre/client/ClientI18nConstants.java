@@ -676,4 +676,8 @@ public interface ClientI18nConstants extends Messages {
     String guildInvitationBaseAbandoned(String playerName);
 
     String userIsAlreadyAGuildMember(String userName);
+
+    String guildLostTitle();
+
+    String guildLostMessage();
 }

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.user;
 
+import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.services.planet.Base;
 
 import java.io.Serializable;
@@ -31,10 +32,10 @@ public class UserState implements Serializable {
     private int dbLevelId;
     private int xp;
     private String sessionId;
-    private boolean sendResurrectionMessage = false;
     private int razarion;
     private Collection<Integer> inventoryItemIds = new ArrayList<>();
     private Collection<Integer> inventoryArtifactIds = new ArrayList<>();
+    private Collection<StorablePacket> storablePackets = new ArrayList<>();
     private Locale locale;
 
     public boolean isRegistered() {
@@ -94,18 +95,6 @@ public class UserState implements Serializable {
         return "UserState: user=" + userId;
     }
 
-    public void setSendResurrectionMessage() {
-        sendResurrectionMessage = true;
-    }
-
-    public void clearSendResurrectionMessageAndClear() {
-        sendResurrectionMessage = false;
-    }
-
-    public boolean isSendResurrectionMessage() {
-        return sendResurrectionMessage;
-    }
-
     public int getRazarion() {
         return razarion;
     }
@@ -135,7 +124,8 @@ public class UserState implements Serializable {
     }
 
     public void removeAllInventoryItemId(int inventoryItemId) {
-        while(inventoryItemIds.remove(inventoryItemId)){}
+        while (inventoryItemIds.remove(inventoryItemId)) {
+        }
     }
 
     public void addInventoryArtifact(int inventoryArtifactId) {
@@ -162,7 +152,8 @@ public class UserState implements Serializable {
     }
 
     public void removeAllInventoryArtifactId(int inventoryArtifactId) {
-        while(inventoryArtifactIds.remove(inventoryArtifactId)){}
+        while (inventoryArtifactIds.remove(inventoryArtifactId)) {
+        }
     }
 
     public Locale getLocale() {
@@ -171,5 +162,19 @@ public class UserState implements Serializable {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public void saveStorablePackage(StorablePacket packet) {
+        storablePackets.add(packet);
+    }
+
+    public Collection<StorablePacket> getAndClearStorablePackets() {
+        Collection<StorablePacket> result = new ArrayList<>(storablePackets);
+        storablePackets.clear();
+        return result;
+    }
+
+    public Collection<StorablePacket> getStorablePackets() {
+        return storablePackets;
     }
 }

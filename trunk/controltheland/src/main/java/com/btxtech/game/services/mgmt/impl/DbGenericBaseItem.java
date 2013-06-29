@@ -37,7 +37,7 @@ import java.util.Set;
  */
 @Entity
 @DiscriminatorValue("BASE")
-public class GenericBaseItem extends GenericItem {
+public class DbGenericBaseItem extends GenericItem {
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xPosToBeBuilt"), @Column(name = "yPosToBeBuilt")})
     private Index positionToBeBuilt;
@@ -52,7 +52,7 @@ public class GenericBaseItem extends GenericItem {
     private List<Index> pathToAbsoluteDestination;
     private Double destinationAngel;
     @OneToOne(fetch = FetchType.LAZY)
-    private GenericBaseItem baseTarget;
+    private DbGenericBaseItem baseTarget;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbBase base;
     private double buildup;
@@ -65,11 +65,11 @@ public class GenericBaseItem extends GenericItem {
     @OneToOne(fetch = FetchType.LAZY)
     private DbBaseItemType upgradingItemType;
     @ManyToOne(fetch = FetchType.LAZY)
-    private GenericBaseItem containedIn;
+    private DbGenericBaseItem containedIn;
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "containedIn")
-    private Set<GenericBaseItem> containedItems;
+    private Set<DbGenericBaseItem> containedItems;
     @OneToOne(fetch = FetchType.LAZY)
-    private GenericBaseItem targetContainer;
+    private DbGenericBaseItem targetContainer;
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xUnloadPos"), @Column(name = "yUnloadPos")})
     private Index unloadPos;
@@ -79,11 +79,11 @@ public class GenericBaseItem extends GenericItem {
     /**
      * Used by hibernate
      */
-    public GenericBaseItem() {
+    public DbGenericBaseItem() {
     }
 
-    public GenericBaseItem(BackupEntry backupEntry) {
-        super(backupEntry);
+    public DbGenericBaseItem(DbBackupEntry dbBackupEntry) {
+        super(dbBackupEntry);
     }
 
     public void setPositionToBeBuilt(Index positionToBeBuilt) {
@@ -114,7 +114,7 @@ public class GenericBaseItem extends GenericItem {
         this.destinationAngel = destinationAngel;
     }
 
-    public void setBaseTarget(GenericBaseItem target) {
+    public void setBaseTarget(DbGenericBaseItem target) {
         this.baseTarget = target;
     }
 
@@ -150,7 +150,7 @@ public class GenericBaseItem extends GenericItem {
         return destinationAngel;
     }
 
-    public GenericBaseItem getBaseTarget() {
+    public DbGenericBaseItem getBaseTarget() {
         return baseTarget;
     }
 
@@ -214,15 +214,15 @@ public class GenericBaseItem extends GenericItem {
         this.upgradingItemType = upgradingItemType;
     }
 
-    public GenericBaseItem getContainedIn() {
+    public DbGenericBaseItem getContainedIn() {
         return containedIn;
     }
 
-    public void setContainedIn(GenericBaseItem containedIn) {
+    public void setContainedIn(DbGenericBaseItem containedIn) {
         this.containedIn = containedIn;
     }
 
-    public Set<GenericBaseItem> getContainedItems() {
+    public Set<DbGenericBaseItem> getContainedItems() {
         return containedItems;
     }
 
@@ -234,11 +234,11 @@ public class GenericBaseItem extends GenericItem {
         this.unloadPos = unloadPos;
     }
 
-    public GenericBaseItem getTargetContainer() {
+    public DbGenericBaseItem getTargetContainer() {
         return targetContainer;
     }
 
-    public void setTargetContainer(GenericBaseItem targetContainer) {
+    public void setTargetContainer(DbGenericBaseItem targetContainer) {
         this.targetContainer = targetContainer;
     }
 

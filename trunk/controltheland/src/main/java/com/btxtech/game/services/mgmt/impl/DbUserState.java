@@ -50,9 +50,8 @@ public class DbUserState {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbLevel currentLevel;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private BackupEntry backupEntry;
+    private DbBackupEntry backupEntry;
     private int xp;
-    private boolean sendResurrectionMessage;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "BACKUP_USER_STATUS_LEVEL_TASK_DONE",
             joinColumns = {@JoinColumn(name = "userState")},
@@ -94,6 +93,9 @@ public class DbUserState {
             joinColumns = {@JoinColumn(name = "userState")},
             inverseJoinColumns = {@JoinColumn(name = "unlockedPlanets")})
     private Collection<DbPlanet> unlockedPlanets;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userState", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    private Collection<DbStorablePacket> storablePackets;
 
 
     /**
@@ -102,7 +104,7 @@ public class DbUserState {
     protected DbUserState() {
     }
 
-    public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel, Collection<DbInventoryItem> inventoryItems, Collection<DbInventoryArtifact> inventoryArtifacts, Collection<DbBaseItemType> unlockedItemTypes, Collection<DbLevelTask> unlockedQuests, Collection<DbPlanet> unlockedPlanets) {
+    public DbUserState(DbBackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel, Collection<DbInventoryItem> inventoryItems, Collection<DbInventoryArtifact> inventoryArtifacts, Collection<DbBaseItemType> unlockedItemTypes, Collection<DbLevelTask> unlockedQuests, Collection<DbPlanet> unlockedPlanets) {
         this.backupEntry = backupEntry;
         if (user != null) {
             this.userId = user.getId();
@@ -110,7 +112,6 @@ public class DbUserState {
         xp = userState.getXp();
         razarion = userState.getRazarion();
         currentLevel = dbLevel;
-        sendResurrectionMessage = userState.isSendResurrectionMessage();
         this.inventoryItems = inventoryItems;
         this.inventoryArtifacts = inventoryArtifacts;
         locale = userState.getLocale();
@@ -136,9 +137,6 @@ public class DbUserState {
         userState.setXp(xp);
         userState.setRazarion(razarion);
         userState.setLocale(locale);
-        if (sendResurrectionMessage) {
-            userState.setSendResurrectionMessage();
-        }
         if (currentLevel != null) {
             userState.setDbLevelId(currentLevel.getId());
         }
@@ -147,6 +145,9 @@ public class DbUserState {
         }
         for (DbInventoryArtifact inventoryArtifact : inventoryArtifacts) {
             userState.addInventoryArtifact(inventoryArtifact.getId());
+        }
+        for (DbStorablePacket dbStorablePacket : storablePackets) {
+            userState.saveStorablePackage(dbStorablePacket.createStorablePacket());
         }
         return userState;
     }
@@ -204,6 +205,14 @@ public class DbUserState {
 
     public Collection<DbPlanet> getUnlockedPlanets() {
         return unlockedPlanets;
+    }
+
+    public Collection<DbStorablePacket> getStorablePackets() {
+        return storablePackets;
+    }
+
+    public void setStorablePackets(Collection<DbStorablePacket> storablePackets) {
+        this.storablePackets = storablePackets;
     }
 
     @Override
