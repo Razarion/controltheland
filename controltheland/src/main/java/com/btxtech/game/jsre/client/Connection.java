@@ -79,6 +79,7 @@ import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
+import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.packets.UnlockContainerPacket;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
@@ -340,6 +341,8 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     }
                 } else if (packet instanceof UserAttentionPacket) {
                     MenuBarCockpit.getInstance().onUserAttentionPacket((UserAttentionPacket) packet);
+                } else if (packet instanceof StorablePacket) {
+                    handleStorablePacket((StorablePacket) packet);
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -350,6 +353,24 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         ItemContainer.getInstance().doSynchronize(syncItemInfos);
     }
 
+    public void handleStorablePackets(Collection<StorablePacket> storablePackets) {
+        if(storablePackets == null) {
+            return;
+        }
+        for (StorablePacket storablePacket : storablePackets) {
+            handleStorablePacket(storablePacket);
+        }
+    }
+
+    private void handleStorablePacket(StorablePacket storablePacket) {
+        switch (storablePacket.getType()) {
+            case GUILD_LOST:
+                ClientBase.getInstance().onGuildList();
+                break;
+            default:
+                throw new IllegalArgumentException("Connection.handleStorablePacket() unknown type: " + storablePacket.getType());
+        }
+    }
 
     public void addCommandToQueue(BaseCommand baseCommand) {
         if (movableServiceAsync != null && gameEngineMode == GameEngineMode.SLAVE) {

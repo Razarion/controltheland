@@ -16,6 +16,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
@@ -93,14 +94,6 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
         while (!planetImpls.isEmpty()) {
             Planet planet = CommonJava.getFirst(planetImpls.values());
             destroyPlanet(planet);
-        }
-    }
-
-    @Override
-    public void handleResurrectionMessage(UserState userState, String startUuid) throws InvalidLevelStateException {
-        if (userState.isSendResurrectionMessage()) {
-            userGuidanceService.sendResurrectionMessage(userState);
-            userState.clearSendResurrectionMessageAndClear();
         }
     }
 
@@ -430,8 +423,15 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     @Override
     public void sendPacket(UserState userState, Packet packet) {
         try {
+            boolean sent = false;
             for (PlanetImpl planet : planetImpls.values()) {
-                planet.getPlanetServices().getConnectionService().sendPacket(userState, packet);
+                if(planet.getPlanetServices().getConnectionService().sendPacket(userState, packet)) {
+                    sent = true;
+                    break;
+                }
+            }
+            if(!sent && packet instanceof StorablePacket) {
+                userState.saveStorablePackage((StorablePacket)packet);
             }
         } catch (Exception e) {
             ExceptionHandler.handleException(e);

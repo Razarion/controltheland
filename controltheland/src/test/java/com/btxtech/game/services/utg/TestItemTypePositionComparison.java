@@ -1185,8 +1185,8 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     }
 
     @Override
-    public void sendPacket(UserState userState, Packet packet) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public boolean sendPacket(UserState userState, Packet packet) {
+        return false; //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

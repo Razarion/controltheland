@@ -93,7 +93,6 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -212,6 +211,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             } else {
                 askForStartPosition(serverPlanetServices, userState, realGameInfo, planetSystemService, false);
             }
+            realGameInfo.setStorablePackets(userState.getAndClearStorablePackets());
             realGameInfo.setMySimpleGuild(guildService.getSimpleGuild());
             realGameInfo.setAllianceOffers(guildService.getPendingAllianceOffers());
             terrainImageService.setupTerrainImages(realGameInfo);
@@ -238,7 +238,6 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     private void continueBase(ServerPlanetServices serverPlanetServices, UserState userState, String startUuid, RealGameInfo realGameInfo) throws InvalidLevelStateException {
-        // planetSystemService.handleResurrectionMessage(userState, startUuid); // TODO needed?
         fillRealGameInfo(realGameInfo);
         Base base = serverPlanetServices.getBaseService().getBase();
         realGameInfo.setUnlockContainer(serverUnlockService.getUnlockContainer(base.getSimpleBase()));

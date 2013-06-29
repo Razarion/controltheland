@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
+import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
@@ -76,7 +77,7 @@ public class GenericItemConverter {
     private ServerGlobalServices serverGlobalServices;
     @Autowired
     private ServerUnlockService serverUnlockService;
-    private BackupEntry backupEntry;
+    private DbBackupEntry dbBackupEntry;
     private HashMap<Id, GenericItem> genericItems = new HashMap<>();
     private HashMap<Id, SyncBaseObject> syncBaseObject = new HashMap<>();
     private HashMap<Integer, DbItemType> dbItemTypeCache = new HashMap<>();
@@ -84,17 +85,17 @@ public class GenericItemConverter {
     private Log log = LogFactory.getLog(GenericItemConverter.class);
 
     public void clear() {
-        backupEntry = null;
+        dbBackupEntry = null;
         genericItems.clear();
         syncBaseObject.clear();
         dbItemTypeCache.clear();
         bases.clear();
     }
 
-    public BackupEntry generateBackupEntry() {
-        backupEntry = new BackupEntry();
+    public DbBackupEntry generateBackupEntry() {
+        dbBackupEntry = new DbBackupEntry();
         fillHelperCache();
-        backupEntry.setTimeStamp(new Date());
+        dbBackupEntry.setTimeStamp(new Date());
 
 
         for (Planet planet : planetSystemService.getRunningPlanets()) {
@@ -108,7 +109,7 @@ public class GenericItemConverter {
             }
         }
 
-        backupEntry.setItems(new HashSet<>(genericItems.values()));
+        dbBackupEntry.setItems(new HashSet<>(genericItems.values()));
 
         // User state
         Set<DbUserState> dbUserStates = new HashSet<>();
@@ -126,8 +127,8 @@ public class GenericItemConverter {
             }
         }
 
-        backupEntry.setUserStates(dbUserStates);
-        return backupEntry;
+        dbBackupEntry.setUserStates(dbUserStates);
+        return dbBackupEntry;
     }
 
     private DbUserState createDbUserState(UserState userState) {
@@ -140,7 +141,7 @@ public class GenericItemConverter {
             inventoryArtifacts.add(globalInventoryService.getArtifactCrud().readDbChild(inventoryArtifactId));
         }
 
-        DbUserState dbUserState = new DbUserState(backupEntry,
+        DbUserState dbUserState = new DbUserState(dbBackupEntry,
                 userService.getUser(userState.getUser()),
                 userState,
                 userGuidanceService.getDbLevel(userState),
@@ -149,6 +150,7 @@ public class GenericItemConverter {
                 serverUnlockService.getUnlockDbBaseItemTypes(userState),
                 serverUnlockService.getUnlockQuests(userState),
                 serverUnlockService.getUnlockPlanets(userState));
+        dbUserState.setStorablePackets(createDbStorablePackets(dbUserState, userState));
         if (userState.getBase() != null) {
             DbBase dbBase = bases.get(userState.getBase());
             if (dbBase != null) {
@@ -161,26 +163,34 @@ public class GenericItemConverter {
         return dbUserState;
     }
 
-    public void restoreBackup(BackupEntry backupEntry) throws NoSuchItemTypeException {
+    private Collection<DbStorablePacket> createDbStorablePackets(DbUserState dbUserState, UserState userState) {
+        Collection<DbStorablePacket> dbStorablePackets = new ArrayList<>();
+        for (StorablePacket storablePacket : userState.getStorablePackets()) {
+            dbStorablePackets.add(new DbStorablePacket(dbUserState, storablePacket));
+        }
+        return dbStorablePackets;
+    }
+
+    public void restoreBackup(DbBackupEntry dbBackupEntry) throws NoSuchItemTypeException {
         planetSystemService.beforeRestore();
 
         Map<DbUserState, UserState> userStates = new HashMap<>();
-        for (DbUserState dbUserState : backupEntry.getUserStates()) {
+        for (DbUserState dbUserState : dbBackupEntry.getUserStates()) {
             UserState userState = dbUserState.createUserState(userService);
             if (userState != null) {
                 userStates.put(dbUserState, userState);
             }
         }
 
-        Collection<GenericItem> genericItems = backupEntry.getItems();
+        Collection<GenericItem> genericItems = dbBackupEntry.getItems();
         Collection<UserState> userStateAbandoned = new ArrayList<>();
         Map<DbBase, Base> dbBases = new HashMap<>();
         for (GenericItem genericItem : genericItems) {
             try {
-                if (genericItem instanceof GenericBaseItem) {
-                    DbBase dBbase = ((GenericBaseItem) genericItem).getBase();
+                if (genericItem instanceof DbGenericBaseItem) {
+                    DbBase dBbase = ((DbGenericBaseItem) genericItem).getBase();
                     Base base = getBase(userStates, dbBases, dBbase);
-                    SyncBaseItem syncItem = addSyncBaseItem(base.getPlanet().getPlanetServices(), (GenericBaseItem) genericItem, base);
+                    SyncBaseItem syncItem = addSyncBaseItem(base.getPlanet().getPlanetServices(), (DbGenericBaseItem) genericItem, base);
                     base.addItem(syncItem);
                 } else if (genericItem instanceof GenericProjectileItem) {
                     DbBase dBbase = ((GenericProjectileItem) genericItem).getBase();
@@ -193,13 +203,13 @@ public class GenericItemConverter {
                 log.error("Error restoring GenericItem: " + genericItem.getItemId(), t);
             }
         }
-        backupEntry.getUserStates().removeAll(userStateAbandoned);
+        dbBackupEntry.getUserStates().removeAll(userStateAbandoned);
         // post process
         for (Iterator<GenericItem> iterator = genericItems.iterator(); iterator.hasNext(); ) {
             GenericItem genericItem = iterator.next();
             try {
-                if (genericItem instanceof GenericBaseItem) {
-                    postProcessRestore((GenericBaseItem) genericItem);
+                if (genericItem instanceof DbGenericBaseItem) {
+                    postProcessRestore((DbGenericBaseItem) genericItem);
                 }
             } catch (Throwable t) {
                 log.error("Error post process restore GenericItem: " + genericItem.getItemId(), t);
@@ -249,7 +259,7 @@ public class GenericItemConverter {
         if (!item.isAlive()) {
             return;
         }
-        GenericProjectileItem genericProjectileItem = new GenericProjectileItem(backupEntry);
+        GenericProjectileItem genericProjectileItem = new GenericProjectileItem(dbBackupEntry);
         fillGenericItem(item, genericProjectileItem);
         genericProjectileItem.setBase(getDbBase(item.getBase()));
         genericProjectileItem.setTargetPosition(item.getTarget());
@@ -257,7 +267,7 @@ public class GenericItemConverter {
     }
 
     private void addGenericBaseItem(SyncBaseItem item) {
-        GenericBaseItem genericItem = new GenericBaseItem(backupEntry);
+        DbGenericBaseItem genericItem = new DbGenericBaseItem(dbBackupEntry);
 
         fillGenericItem(item, genericItem);
 
@@ -328,25 +338,25 @@ public class GenericItemConverter {
 
     private void postProcessBackup(ServerPlanetServices serverPlanetServices, SyncItem syncItem) {
         GenericItem genericItem = genericItems.get(syncItem.getId());
-        if (!(genericItem instanceof GenericBaseItem)) {
+        if (!(genericItem instanceof DbGenericBaseItem)) {
             return;
         }
-        GenericBaseItem genericBaseItem = (GenericBaseItem) genericItem;
+        DbGenericBaseItem dbGenericBaseItem = (DbGenericBaseItem) genericItem;
         SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
         if (syncBaseItem.getContainedIn() != null) {
-            GenericBaseItem container = (GenericBaseItem) genericItems.get(syncBaseItem.getContainedIn());
+            DbGenericBaseItem container = (DbGenericBaseItem) genericItems.get(syncBaseItem.getContainedIn());
             if (container == null) {
                 log.error("BACKUP: No container found for: " + syncBaseItem + " container: " + syncBaseItem.getContainedIn());
             }
-            genericBaseItem.setContainedIn(container);
+            dbGenericBaseItem.setContainedIn(container);
         }
         if (syncBaseItem.hasSyncMovable()) {
             if (syncBaseItem.getSyncMovable().getTargetContainer() != null) {
-                GenericBaseItem container = (GenericBaseItem) genericItems.get(syncBaseItem.getSyncMovable().getTargetContainer());
+                DbGenericBaseItem container = (DbGenericBaseItem) genericItems.get(syncBaseItem.getSyncMovable().getTargetContainer());
                 if (container == null) {
                     log.error("BACKUP: No  target container found for: " + syncBaseItem + " taget container: " + syncBaseItem.getSyncMovable().getTargetContainer());
                 }
-                genericBaseItem.setTargetContainer(container);
+                dbGenericBaseItem.setTargetContainer(container);
             }
         }
         if (syncBaseItem.hasSyncWeapon()) {
@@ -354,11 +364,11 @@ public class GenericItemConverter {
                 try {
                     SimpleBase simpleBase = ((SyncBaseItem) serverPlanetServices.getItemService().getItem(syncBaseItem.getSyncWeapon().getTarget())).getBase();
                     if (!planetSystemService.getServerPlanetServices(simpleBase).getBaseService().isBot(simpleBase)) {
-                        GenericBaseItem target = (GenericBaseItem) genericItems.get(syncBaseItem.getSyncWeapon().getTarget());
+                        DbGenericBaseItem target = (DbGenericBaseItem) genericItems.get(syncBaseItem.getSyncWeapon().getTarget());
                         if (target == null) {
                             log.error("BACKUP: No generic syncBaseItem for: " + syncBaseItem.getSyncWeapon().getTarget());
                         }
-                        genericBaseItem.setBaseTarget(target);
+                        dbGenericBaseItem.setBaseTarget(target);
                     }
                 } catch (ItemDoesNotExistException e) {
                     log.error("", e);
@@ -367,16 +377,16 @@ public class GenericItemConverter {
         }
         if (syncBaseItem.hasSyncBuilder()) {
             if (syncBaseItem.getSyncBuilder().getCurrentBuildup() != null) {
-                GenericBaseItem target = (GenericBaseItem) genericItems.get(syncBaseItem.getSyncBuilder().getCurrentBuildup().getId());
+                DbGenericBaseItem target = (DbGenericBaseItem) genericItems.get(syncBaseItem.getSyncBuilder().getCurrentBuildup().getId());
                 if (target == null) {
                     log.error("BACKUP: No generic syncBaseItem for: " + syncBaseItem.getSyncBuilder().getCurrentBuildup());
                 }
-                genericBaseItem.setBaseTarget(target);
+                dbGenericBaseItem.setBaseTarget(target);
             }
         }
     }
 
-    private SyncBaseItem addSyncBaseItem(ServerPlanetServices serverPlanetServices, GenericBaseItem genericItem, Base base) throws NoSuchItemTypeException {
+    private SyncBaseItem addSyncBaseItem(ServerPlanetServices serverPlanetServices, DbGenericBaseItem genericItem, Base base) throws NoSuchItemTypeException {
         SyncBaseItem item = (SyncBaseItem) serverPlanetServices.getItemService().newSyncItem(genericItem.getItemId(), genericItem.getPosition(), genericItem.getDbItemTyp().getId(), base.getSimpleBase(), serverGlobalServices, serverPlanetServices);
 
         item.setHealth(genericItem.getHealth());
@@ -432,10 +442,10 @@ public class GenericItemConverter {
         syncBaseObject.put(genericItem.getItemId(), item);
     }
 
-    private void postProcessRestore(GenericBaseItem genericItem) {
+    private void postProcessRestore(DbGenericBaseItem genericItem) {
         SyncBaseItem syncItem = (SyncBaseItem) syncBaseObject.get(genericItem.getItemId());
         if (syncItem == null) {
-            log.error("Can not restore GenericBaseItem: " + genericItem.getItemId());
+            log.error("Can not restore DbGenericBaseItem: " + genericItem.getItemId());
             return;
         }
         if (syncItem.hasSyncMovable()) {
@@ -465,12 +475,12 @@ public class GenericItemConverter {
         if (syncItem.hasSyncItemContainer()) {
             if (genericItem.getContainedItems() != null && !genericItem.getContainedItems().isEmpty()) {
                 ArrayList<Id> containedItems = new ArrayList<>();
-                for (GenericBaseItem genericBaseItem : genericItem.getContainedItems()) {
-                    SyncBaseItem child = (SyncBaseItem) syncBaseObject.get(genericBaseItem.getItemId());
+                for (DbGenericBaseItem dbGenericBaseItem : genericItem.getContainedItems()) {
+                    SyncBaseItem child = (SyncBaseItem) syncBaseObject.get(dbGenericBaseItem.getItemId());
                     if (child != null) {
                         containedItems.add(child.getId());
                     } else {
-                        log.error("Can not add BaseSyncItem " + genericBaseItem.getItemId() + " to container " + syncItem);
+                        log.error("Can not add BaseSyncItem " + dbGenericBaseItem.getItemId() + " to container " + syncItem);
                     }
                 }
                 syncItem.getSyncItemContainer().setContainedItems(containedItems);

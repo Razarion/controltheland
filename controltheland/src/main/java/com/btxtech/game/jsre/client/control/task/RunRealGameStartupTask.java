@@ -45,6 +45,7 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
     protected void privateStart(DeferredStartup deferredStartup) {
         SideCockpit.getInstance().initRealGame((RealGameInfo) Connection.getInstance().getGameInfo());
         ClientBase.getInstance().setMySimpleGuild(((RealGameInfo)Connection.getInstance().getGameInfo()).getMySimpleGuild());
+        Connection.getInstance().handleStorablePackets(((RealGameInfo)Connection.getInstance().getGameInfo()).getStorablePackets());
         MenuBarCockpit.getInstance().initRealGame((RealGameInfo)Connection.getInstance().getGameInfo());
         QuestVisualisationModel.getInstance().setLevelTask(((RealGameInfo) Connection.getInstance().getGameInfo()).getLevelTaskPacket());
         Connection.getInstance().startSyncInfoPoll();

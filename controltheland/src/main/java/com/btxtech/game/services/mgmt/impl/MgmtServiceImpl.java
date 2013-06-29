@@ -225,10 +225,10 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     @Transactional
     public void backup() {
         long time = System.currentTimeMillis();
-        BackupEntry backupEntry = genericItemConverter.generateBackupEntry();
+        DbBackupEntry dbBackupEntry = genericItemConverter.generateBackupEntry();
         // Save to db
-        sessionFactory.getCurrentSession().save(backupEntry);
-        log.info("Time used for backup: " + (System.currentTimeMillis() - time) + "ms. Items: " + backupEntry.getItemCount() + " Bases: " + backupEntry.getBaseCount() + " UserStates: " + backupEntry.getUserStateCount());
+        sessionFactory.getCurrentSession().save(dbBackupEntry);
+        log.info("Time used for backup: " + (System.currentTimeMillis() - time) + "ms. Items: " + dbBackupEntry.getItemCount() + " Bases: " + dbBackupEntry.getBaseCount() + " UserStates: " + dbBackupEntry.getUserStateCount());
         genericItemConverter.clear();
     }
 
@@ -236,7 +236,7 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     @SuppressWarnings("unchecked")
     public List<BackupSummary> getBackupSummary() {
-        Criteria criteriaEntries = sessionFactory.getCurrentSession().createCriteria(BackupEntry.class);
+        Criteria criteriaEntries = sessionFactory.getCurrentSession().createCriteria(DbBackupEntry.class);
         criteriaEntries.createCriteria("items", "itemAlias", JoinType.LEFT_OUTER_JOIN);
         criteriaEntries.createCriteria("userStates", "userStateAlias", JoinType.LEFT_OUTER_JOIN);
         ProjectionList entryProjectionList = Projections.projectionList();
@@ -260,17 +260,17 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     @SuppressWarnings("unchecked")
     public void restore(final Date date) throws NoSuchItemTypeException {
         long time = System.currentTimeMillis();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(BackupEntry.class);
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbBackupEntry.class);
         criteria.add(Restrictions.eq("timeStamp", date));
-        List<BackupEntry> list = criteria.list();
+        List<DbBackupEntry> list = criteria.list();
         if (list.isEmpty()) {
             throw new IllegalArgumentException("No entry for " + date);
         }
-        BackupEntry backupEntry = list.get(0);
-        genericItemConverter.restoreBackup(backupEntry);
+        DbBackupEntry dbBackupEntry = list.get(0);
+        genericItemConverter.restoreBackup(dbBackupEntry);
 
         log.info("Restored to: " + date);
-        log.info("Time used for restore: " + (System.currentTimeMillis() - time) + "ms. Items: " + backupEntry.getItemCount() + " Bases: " + backupEntry.getBaseCount() + " UserStates: " + backupEntry.getUserStateCount());
+        log.info("Time used for restore: " + (System.currentTimeMillis() - time) + "ms. Items: " + dbBackupEntry.getItemCount() + " Bases: " + dbBackupEntry.getBaseCount() + " UserStates: " + dbBackupEntry.getUserStateCount());
         genericItemConverter.clear();
     }
 
@@ -279,14 +279,14 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     @Transactional
     @SuppressWarnings("unchecked")
     public void deleteBackupEntry(final Date date) throws NoSuchItemTypeException {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(BackupEntry.class);
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbBackupEntry.class);
         criteria.add(Restrictions.eq("timeStamp", date));
-        List<BackupEntry> list = criteria.list();
+        List<DbBackupEntry> list = criteria.list();
         if (list.isEmpty()) {
             throw new IllegalArgumentException("No entry for " + date);
         }
-        BackupEntry backupEntry = list.get(0);
-        sessionFactory.getCurrentSession().delete(backupEntry);
+        DbBackupEntry dbBackupEntry = list.get(0);
+        sessionFactory.getCurrentSession().delete(dbBackupEntry);
         log.info("Backup entry deleted: " + date);
     }
 

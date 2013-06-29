@@ -2,10 +2,12 @@ package com.btxtech.game.services.planet.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.packets.LevelPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.planet.Planet;
@@ -162,4 +164,65 @@ public class TestPlanetSystem extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void sendStorablePacketStore() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        UserState userState = getUserState();
+        Assert.assertTrue(userState.getStorablePackets().isEmpty());
+        // Send first packet
+        StorablePacket storablePacket1 = new StorablePacket();
+        storablePacket1.setType(StorablePacket.Type.GUILD_LOST);
+        planetSystemService.sendPacket(userState, storablePacket1);
+        Assert.assertEquals(1, userState.getStorablePackets().size());
+        Assert.assertTrue(userState.getStorablePackets().contains(storablePacket1));
+        // Send second packet
+        StorablePacket storablePacket2 = new StorablePacket();
+        storablePacket2.setType(StorablePacket.Type.GUILD_LOST);
+        planetSystemService.sendPacket(userState, storablePacket2);
+        Assert.assertEquals(2, userState.getStorablePackets().size());
+        Assert.assertTrue(userState.getStorablePackets().contains(storablePacket1));
+        Assert.assertTrue(userState.getStorablePackets().contains(storablePacket2));
+        // Test Packet remove
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        Assert.assertEquals(2, realGameInfo.getStorablePackets().size());
+        Assert.assertTrue(realGameInfo.getStorablePackets().contains(storablePacket1));
+        Assert.assertTrue(realGameInfo.getStorablePackets().contains(storablePacket2));
+        Assert.assertTrue(userState.getStorablePackets().isEmpty());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void sendStorablePacket() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        createBase(new Index(1000, 1000));
+        UserState userState = getUserState();
+        Assert.assertTrue(userState.getStorablePackets().isEmpty());
+        Thread.sleep(100);
+        clearPackets();
+        // Send first packet
+        StorablePacket storablePacket1 = new StorablePacket();
+        storablePacket1.setType(StorablePacket.Type.GUILD_LOST);
+        planetSystemService.sendPacket(userState, storablePacket1);
+        Assert.assertTrue(userState.getStorablePackets().isEmpty());
+        // Send second packet
+        StorablePacket storablePacket2 = new StorablePacket();
+        storablePacket2.setType(StorablePacket.Type.GUILD_LOST);
+        planetSystemService.sendPacket(userState, storablePacket2);
+        Assert.assertTrue(userState.getStorablePackets().isEmpty());
+        // Test Packet remove
+        Assert.assertTrue(userState.getStorablePackets().isEmpty());
+        assertPackagesIgnoreSyncItemInfoAndClear(storablePacket1, storablePacket2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }

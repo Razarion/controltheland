@@ -95,8 +95,9 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
     }
 
     @Override
-    public void sendPacket(UserState userState, Packet packet) {
+    public boolean sendPacket(UserState userState, Packet packet) {
         Assert.fail();
+        return false;
     }
 
     public void clearReceivedPackets() {

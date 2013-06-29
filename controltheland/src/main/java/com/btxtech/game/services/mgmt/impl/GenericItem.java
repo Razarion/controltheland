@@ -51,7 +51,7 @@ public abstract class GenericItem {
     @GeneratedValue
     private Integer id;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private BackupEntry backupEntry;
+    private DbBackupEntry backupEntry;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbItemType itemType;
     @Type(type = "id")
@@ -67,7 +67,7 @@ public abstract class GenericItem {
     public GenericItem() {
     }
 
-    public GenericItem(BackupEntry backupEntry) {
+    public GenericItem(DbBackupEntry backupEntry) {
         this.backupEntry = backupEntry;
     }
 

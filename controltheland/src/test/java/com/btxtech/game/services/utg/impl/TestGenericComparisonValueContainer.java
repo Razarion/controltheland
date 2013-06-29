@@ -6,7 +6,7 @@ import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueContaine
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.item.ServerItemTypeService;
-import com.btxtech.game.services.mgmt.impl.BackupEntry;
+import com.btxtech.game.services.mgmt.impl.DbBackupEntry;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.statistics.StatisticsEntry;
 import com.btxtech.game.services.statistics.StatisticsService;
@@ -141,16 +141,16 @@ public class TestGenericComparisonValueContainer extends AbstractServiceTest {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                BackupEntry backupEntry = new BackupEntry();
+                DbBackupEntry dbBackupEntry = new DbBackupEntry();
                 UserState userState = new UserState();
-                DbUserState dbUserState = new DbUserState(backupEntry, userService.getUser(userState.getUser()), userState, null, null, null, null, null, null);
+                DbUserState dbUserState = new DbUserState(dbBackupEntry, userService.getUser(userState.getUser()), userState, null, null, null, null, null, null);
                 dbUserState.addDbGenericComparisonValue(new DbGenericComparisonValue(1, save, serverItemTypeService));
                 statisticsService.createAndAddBackup(dbUserState, userState);
                 dbUserState.setStatisticsEntry(new StatisticsEntry());
                 Set<DbUserState> dbUserStates = new HashSet<>();
                 dbUserStates.add(dbUserState);
-                backupEntry.setUserStates(dbUserStates);
-                sessionFactory.getCurrentSession().save(backupEntry);
+                dbBackupEntry.setUserStates(dbUserStates);
+                sessionFactory.getCurrentSession().save(dbBackupEntry);
             }
         });
         System.out.println("----SAVE DONE---");
@@ -158,11 +158,11 @@ public class TestGenericComparisonValueContainer extends AbstractServiceTest {
 
     private GenericComparisonValueContainer restore(ServerItemTypeService serverItemTypeService) throws NoSuchItemTypeException {
         // restore
-        List<BackupEntry> backupEntries = HibernateUtil.loadAll(sessionFactory, BackupEntry.class);
+        List<DbBackupEntry> backupEntries = HibernateUtil.loadAll(sessionFactory, DbBackupEntry.class);
         Assert.assertEquals(1, backupEntries.size());
-        BackupEntry backupEntry = backupEntries.get(0);
-        Assert.assertEquals(1, backupEntry.getUserStates().size());
-        DbUserState dbUserState = CommonJava.getFirst(backupEntry.getUserStates());
+        DbBackupEntry dbBackupEntry = backupEntries.get(0);
+        Assert.assertEquals(1, dbBackupEntry.getUserStates().size());
+        DbUserState dbUserState = CommonJava.getFirst(dbBackupEntry.getUserStates());
         Assert.assertEquals(1, dbUserState.getDbGenericComparisonValues().size());
         DbGenericComparisonValue dbGenericComparisonValue = CommonJava.getFirst(dbUserState.getDbGenericComparisonValues());
         return dbGenericComparisonValue.createGenericComparisonValueContainer(serverItemTypeService);

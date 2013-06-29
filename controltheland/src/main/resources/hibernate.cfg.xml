@@ -82,11 +82,12 @@
         <mapping class="com.btxtech.game.services.utg.DbLevelTask"/>
         <mapping class="com.btxtech.game.services.utg.DbLevelItemTypeLimitation"/>
         <!-- Backup -->
-        <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
-        <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.DbBackupEntry"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.DbGenericBaseItem"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericProjectileItem"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.DbUserState"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.DbBase"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.DbStorablePacket"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbGenericComparisonValue"/>
         <!-- CMS -->
         <mapping class="com.btxtech.game.services.cms.DbCmsImage"/>

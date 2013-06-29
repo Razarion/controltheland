@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.jsre.common.packets.XpPacket;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class RealGameInfo extends GameInfo {
     private UnlockContainer unlockContainer;
     private StartPointInfo startPointInfo;
     private SimpleGuild mySimpleGuild;
+    private Collection<StorablePacket> storablePackets;
 
     public SimpleBase getBase() {
         return base;
@@ -172,5 +174,13 @@ public class RealGameInfo extends GameInfo {
 
     public void setMySimpleGuild(SimpleGuild mySimpleGuild) {
         this.mySimpleGuild = mySimpleGuild;
+    }
+
+    public void setStorablePackets(Collection<StorablePacket> storablePackets) {
+        this.storablePackets = storablePackets;
+    }
+
+    public Collection<StorablePacket> getStorablePackets() {
+        return storablePackets;
     }
 }
