@@ -46,8 +46,6 @@ public class DbSessionDetail implements Serializable {
     private String remoteAddr;
     private String cookieId;
     private boolean newUser;
-    @Column(length = 1000)
-    private String adCellBid;
     @Column(length = 50000)
     private String referer;
     private boolean javaScriptDetected = false;
@@ -60,10 +58,9 @@ public class DbSessionDetail implements Serializable {
     public DbSessionDetail() {
     }
 
-    public DbSessionDetail(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String referer, boolean newUser, String adCellBid) {
+    public DbSessionDetail(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String referer, boolean newUser) {
         this.cookieId = cookieId;
         this.newUser = newUser;
-        this.adCellBid = adCellBid;
         timeStamp = new Date();
         this.sessionId = sessionId;
         this.userAgent = userAgent;
@@ -125,10 +122,6 @@ public class DbSessionDetail implements Serializable {
 
     public boolean isNewUser() {
         return newUser;
-    }
-
-    public String getAdCellBid() {
-        return adCellBid;
     }
 
     @Override

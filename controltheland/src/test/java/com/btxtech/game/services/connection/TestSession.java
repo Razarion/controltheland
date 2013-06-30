@@ -23,45 +23,6 @@ public class TestSession extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testAdCellNoParams() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        session.getSessionId(); // Activating session
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Check history generation
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        List<DbSessionDetail> dbSessionDetails = HibernateUtil.loadAll(getSessionFactory(), DbSessionDetail.class);
-        Assert.assertEquals(1, dbSessionDetails.size());
-        Assert.assertNull(dbSessionDetails.get(0).getAdCellBid());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testAdCellUrlParams() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        setWicketParameterAdCellBid("adCellStringBid");
-        session.getSessionId(); // Activating session
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Check history generation
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        List<DbSessionDetail> dbSessionDetails = HibernateUtil.loadAll(getSessionFactory(), DbSessionDetail.class);
-        Assert.assertEquals(1, dbSessionDetails.size());
-        Assert.assertEquals(dbSessionDetails.get(0).getAdCellBid(), "adCellStringBid");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
     public void testTrackingCookie() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

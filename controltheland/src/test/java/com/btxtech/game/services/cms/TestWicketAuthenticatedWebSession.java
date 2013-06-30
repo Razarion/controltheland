@@ -26,27 +26,6 @@ import java.util.Locale;
 public class TestWicketAuthenticatedWebSession extends AbstractServiceTest {
     @Test
     @DirtiesContext
-    public void testAdCellNoParams() throws Exception {
-        WebRequest request = EasyMock.createNiceMock(WebRequest.class);
-        EasyMock.expect(request.getLocale()).andReturn(Locale.ENGLISH);
-        EasyMock.replay(request);
-        WicketAuthenticatedWebSession wicketSession = new WicketAuthenticatedWebSession(request);
-        Assert.assertEquals(null, wicketSession.getAdCellBid());
-    }
-
-    @Test
-    @DirtiesContext
-    public void testAdCellUrlParams() throws Exception {
-        WebRequest request = EasyMock.createNiceMock(WebRequest.class);
-        EasyMock.expect(request.getLocale()).andReturn(Locale.ENGLISH);
-        EasyMock.expect(request.getParameter("bid")).andReturn("adCellStringBid");
-        EasyMock.replay(request);
-        WicketAuthenticatedWebSession wicketSession = new WicketAuthenticatedWebSession(request);
-        Assert.assertEquals("adCellStringBid", wicketSession.getAdCellBid());
-    }
-
-    @Test
-    @DirtiesContext
     public void testTrackingCookie() throws Exception {
         WebRequest request = EasyMock.createNiceMock(WebRequest.class);
         EasyMock.expect(request.getLocale()).andReturn(Locale.ENGLISH);

@@ -2410,11 +2410,6 @@ abstract public class AbstractServiceTest {
         Assert.assertEquals((int) descImg.getId(), valueMap.getInt(CmsImageResource.ID));
     }
 
-    public void setWicketParameterAdCellBid(String adCellBid) throws Exception {
-        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getWicketSession();
-        setPrivateField(WicketAuthenticatedWebSession.class, wicketSession, "adCellBid", adCellBid);
-    }
-
     public void setWicketParameterTrackingCookie(String trackingCookieId) throws Exception {
         WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getWicketSession();
         setPrivateField(WicketAuthenticatedWebSession.class, wicketSession, "trackingCookieId", trackingCookieId);

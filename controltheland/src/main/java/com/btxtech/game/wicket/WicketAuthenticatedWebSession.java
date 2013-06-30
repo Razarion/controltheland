@@ -1,6 +1,5 @@
 package com.btxtech.game.wicket;
 
-import com.btxtech.game.jsre.client.AdCellHelper;
 import com.btxtech.game.services.user.UserService;
 import org.apache.wicket.Request;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
@@ -18,7 +17,6 @@ import org.springframework.security.core.GrantedAuthority;
 public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
     @SpringBean
     private UserService userService;
-    private String adCellBid;
     private String trackingCookieId;
     private boolean isTrackingCookieIdCookieNeeded;
     private boolean newUserTracking;
@@ -29,7 +27,6 @@ public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
         bind();
         // Inject AuthenticationManager
         InjectorHolder.getInjector().inject(this);
-        handleAdCellBid(request);
         handleCookieTracking(request);
     }
 
@@ -59,10 +56,6 @@ public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
         return roles;
     }
 
-    public String getAdCellBid() {
-        return adCellBid;
-    }
-
     public String getTrackingCookieId() {
         return trackingCookieId;
     }
@@ -77,10 +70,6 @@ public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
 
     public void clearTrackingCookieIdCookieNeeded() {
         isTrackingCookieIdCookieNeeded = false;
-    }
-
-    private void handleAdCellBid(Request request) {
-        adCellBid = request.getParameter(AdCellHelper.BID_URL_KEY);
     }
 
     private void handleCookieTracking(Request request) {
