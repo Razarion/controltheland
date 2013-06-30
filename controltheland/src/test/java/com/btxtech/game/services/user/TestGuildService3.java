@@ -3,6 +3,8 @@ package com.btxtech.game.services.user;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
@@ -148,6 +150,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         Thread.sleep(200); // Wait for packages
         ServerConnectionService serverConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
         serverConnectionService.sendPacket(createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "member", false, null));
+        EasyMock.expect(serverConnectionService.sendPacket(EasyMock.<UserState>anyObject(), EasyMock.<Packet>anyObject())).andReturn(true);
         EasyMock.replay(serverConnectionService);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerConnectionService(serverConnectionService);
         guildService.kickGuildMember(userId);
@@ -213,7 +216,9 @@ public class TestGuildService3 extends AbstractServiceTest {
         Thread.sleep(200); // Wait for packages
         ServerConnectionService serverConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
         serverConnectionService.sendPacket(createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "presi", false, null));
+        EasyMock.expect(serverConnectionService.sendPacket(EasyMock.<UserState>anyObject(), EasyMock.<Packet>anyObject())).andReturn(true);
         serverConnectionService.sendPacket(createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "member1", false, null));
+        EasyMock.expect(serverConnectionService.sendPacket(EasyMock.<UserState>anyObject(), EasyMock.<Packet>anyObject())).andReturn(true);
         serverConnectionService.sendPacket(createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "member2", false, null));
         EasyMock.replay(serverConnectionService);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerConnectionService(serverConnectionService);
@@ -240,7 +245,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         createAndLoginUser("presi");
         ServerConnectionService serverConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
         EasyMock.expect(serverConnectionService.hasConnection(createUserStateMatcher("presi"))).andReturn(true);
-        serverConnectionService.sendPacket(createUserStateMatcher("presi"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "presi", false, 1));
+        EasyMock.expect(serverConnectionService.sendPacket(createUserStateMatcher("presi"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "presi", false, 1))).andReturn(true);
         EasyMock.replay(serverConnectionService);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerConnectionService(serverConnectionService);
 
@@ -282,9 +287,9 @@ public class TestGuildService3 extends AbstractServiceTest {
         Thread.sleep(200); // Wait for packages
         ServerConnectionService serverConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
         EasyMock.expect(serverConnectionService.hasConnection(createUserStateMatcher("member"))).andReturn(true);
-        serverConnectionService.sendPacket(createUserStateMatcher("member"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "member", false, 1));
+        EasyMock.expect(serverConnectionService.sendPacket(createUserStateMatcher("member"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "member", false, 1))).andReturn(true);
         EasyMock.expect(serverConnectionService.hasConnection(createUserStateMatcher("member"))).andReturn(true);
-        serverConnectionService.sendPacket(createUserStateMatcher("member"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "member", false, null));
+        EasyMock.expect(serverConnectionService.sendPacket(createUserStateMatcher("member"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "member", false, null))).andReturn(true);
         EasyMock.replay(serverConnectionService);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerConnectionService(serverConnectionService);
         guildService.joinGuild(guildId);
@@ -332,7 +337,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         Thread.sleep(200); // Wait for packages
         ServerConnectionService serverConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
         EasyMock.expect(serverConnectionService.hasConnection(createUserStateMatcher("member"))).andReturn(true);
-        serverConnectionService.sendPacket(createUserStateMatcher("member"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "member", false, null));
+        EasyMock.expect(serverConnectionService.sendPacket(createUserStateMatcher("member"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "member", false, null))).andReturn(true);
         EasyMock.replay(serverConnectionService);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerConnectionService(serverConnectionService);
         guildService.kickGuildMember(userId);
@@ -379,6 +384,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         Thread.sleep(200); // Wait for packages
         ServerConnectionService serverConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
         EasyMock.expect(serverConnectionService.hasConnection(createUserStateMatcher("member"))).andReturn(false);
+        EasyMock.expect(serverConnectionService.sendPacket(createUserStateMatcher("member"), createStorablePacket(StorablePacket.Type.GUILD_LOST))).andReturn(true);
         EasyMock.replay(serverConnectionService);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerConnectionService(serverConnectionService);
         guildService.kickGuildMember(userId);
@@ -436,9 +442,11 @@ public class TestGuildService3 extends AbstractServiceTest {
         Thread.sleep(200); // Wait for packages
         ServerConnectionService serverConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
         EasyMock.expect(serverConnectionService.hasConnection(createUserStateMatcher("presi"))).andReturn(true);
-        serverConnectionService.sendPacket(createUserStateMatcher("presi"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "presi", false, null));
+        EasyMock.expect(serverConnectionService.sendPacket(createUserStateMatcher("presi"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "presi", false, null))).andReturn(true);
+        EasyMock.expect(serverConnectionService.sendPacket(EasyMock.<UserState>anyObject(), EasyMock.<StorablePacket>anyObject())).andReturn(true);
         EasyMock.expect(serverConnectionService.hasConnection(createUserStateMatcher("member1"))).andReturn(true);
-        serverConnectionService.sendPacket(createUserStateMatcher("member1"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "member1", false, null));
+        EasyMock.expect(serverConnectionService.sendPacket(createUserStateMatcher("member1"), createBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, "member1", false, null))).andReturn(true);
+        EasyMock.expect(serverConnectionService.sendPacket(EasyMock.<UserState>anyObject(), EasyMock.<StorablePacket>anyObject())).andReturn(true);
         EasyMock.expect(serverConnectionService.hasConnection(createUserStateMatcher("member2"))).andReturn(false);
         EasyMock.replay(serverConnectionService);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerConnectionService(serverConnectionService);
