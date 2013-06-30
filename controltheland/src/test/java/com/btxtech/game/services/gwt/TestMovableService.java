@@ -74,7 +74,7 @@ public class TestMovableService extends AbstractServiceTest {
         Assert.assertNotNull(realGameInfo.getLevelScope().getItemTypeLimitation());
         // TODO Assert.assertNotNull(realGameInfo.getLevelTaskPacket().getQuestInfo());
         Assert.assertEquals(1, realGameInfo.getAllBase().size());
-        Assert.assertEquals(0, realGameInfo.getAllianceOffers().size());
+        Assert.assertNull(realGameInfo.getMySimpleGuild());
         Assert.assertEquals(0, realGameInfo.getXpPacket().getXp());
         Assert.assertEquals(Integer.MAX_VALUE, realGameInfo.getXpPacket().getXp2LevelUp());
         Assert.assertEquals(20, realGameInfo.getPlanetInfo().getHouseSpace());
@@ -120,7 +120,7 @@ public class TestMovableService extends AbstractServiceTest {
         Assert.assertNotNull(realGameInfo.getLevelScope().getItemTypeLimitation());
         // TODO Assert.assertNotNull(realGameInfo.getLevelTaskPacket().getQuestInfo());
         Assert.assertEquals(1, realGameInfo.getAllBase().size());
-        Assert.assertEquals(0, realGameInfo.getAllianceOffers().size());
+        Assert.assertNull(realGameInfo.getMySimpleGuild());
         Assert.assertEquals(0, realGameInfo.getXpPacket().getXp());
         Assert.assertEquals(Integer.MAX_VALUE, realGameInfo.getXpPacket().getXp2LevelUp());
         Assert.assertEquals(20, realGameInfo.getPlanetInfo().getHouseSpace());
@@ -158,7 +158,7 @@ public class TestMovableService extends AbstractServiceTest {
         Assert.assertNull(realGameInfo.getLevelScope());
         // TODO Assert.assertNotNull(realGameInfo.getLevelTaskPacket().getQuestInfo());
         Assert.assertEquals(1, realGameInfo.getAllBase().size());
-        Assert.assertEquals(0, realGameInfo.getAllianceOffers().size());
+        Assert.assertNull(realGameInfo.getMySimpleGuild());
         Assert.assertNull(realGameInfo.getXpPacket());
         Assert.assertNull(realGameInfo.getPlanetInfo());
         Assert.assertNull(realGameInfo.getAllPlanets());

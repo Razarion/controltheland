@@ -110,16 +110,6 @@ public interface MovableServiceAsync {
 
     void sendStartupTerminated(boolean successful, long totalTime, String startUuid, Integer levelTaskId, AsyncCallback<Void> asyncCallback);
 
-    void acceptAllianceOffer(String partnerUserName, AsyncCallback<Void> asyncCallback);
-
-    void breakAlliance(String partnerUserName, AsyncCallback<Void> asyncCallback);
-
-    void proposeAlliance(SimpleBase partner, AsyncCallback<Void> asyncCallback);
-
-    void rejectAllianceOffer(String partnerUserName, AsyncCallback<Void> asyncCallback);
-
-    void getAllAlliances(AsyncCallback<Collection<String>> asyncCallback);
-
     void getInventory(Integer filterPlanetId, boolean filterLevel, AsyncCallback<InventoryInfo> asyncCallback);
 
     void assembleInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel, AsyncCallback<InventoryInfo> asyncCallback);

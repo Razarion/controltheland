@@ -58,7 +58,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     private final static String OWN_BASE_COLOR = "#00FF00";
-    private final static String ALLIANCE_BASE_COLOR = "#ffff00";
+    private final static String GUILD_MEMBER_BASE_COLOR = "#ffff00";
     private final static String ENEMY_BASE_COLOR = "#d58759";
     private final static String BOT_BASE_COLOR = "#f04040";
     private final static String UNKNOWN_BASE_COLOR = "#888888";
@@ -182,7 +182,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             if (isMyOwnBase(base)) {
                 return getOwnBaseHtmlColor();
             } else if (!isEnemy(base)) {
-                return getAllianceBaseHtmlColor();
+                return getGuildMemberBaseHtmlColor();
             }
             BaseAttributes baseAttributes = getBaseAttributes(base);
             if (baseAttributes == null) {
@@ -204,8 +204,8 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         return OWN_BASE_COLOR;
     }
 
-    public String getAllianceBaseHtmlColor() {
-        return ALLIANCE_BASE_COLOR;
+    public String getGuildMemberBaseHtmlColor() {
+        return GUILD_MEMBER_BASE_COLOR;
     }
 
     public void onBaseChangedPacket(BaseChangedPacket baseChangedPacket) {

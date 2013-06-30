@@ -236,9 +236,9 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
         getMockHttpServletRequest().addPreferredLocale(Locale.ENGLISH);
         SimpleBase simpleBase = getOrCreateBase();
         clearPackets();
-        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "alliancesOfferedNotRegistered", new Object[]{"Hallo"}, true);
+        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "guildOfferedOnlyRegistered", new Object[]{"Hallo"}, true);
         Message message = new Message();
-        message.setMessage("The player Hallo is not registered. Only registered user can form alliances. Use the chat to persuade him to register!");
+        message.setMessage("Hallo invited you to his guild. Only registered user can can join guilds.");
         message.setShowRegisterDialog(true);
         assertPackagesIgnoreSyncItemInfoAndClear(true, message);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -255,9 +255,9 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
         getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
         SimpleBase simpleBase = getOrCreateBase();
         clearPackets();
-        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "alliancesOfferedNotRegistered", new Object[]{"Hallo"}, false);
+        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "guildOfferedOnlyRegistered", new Object[]{"Hallo"}, false);
         Message message = new Message();
-        message.setMessage("Der Spieler Hallo ist nicht registriert. Nur registrierte Spieler können Allianzen eingehen. Benutze den Chat um den Spieler zum Registrieren zu überreden!");
+        message.setMessage("Hallo hat dich in seine Gilde eingeladen. Nur registrierte Benutzer können Gilden beitreten.");
         message.setShowRegisterDialog(false);
         assertPackagesIgnoreSyncItemInfoAndClear(true, message);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -277,13 +277,13 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "alliancesOfferedNotRegistered", new Object[]{"Hallo"}, false);
+                planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "guildOfferedOnlyRegistered", new Object[]{"Hallo"}, false);
             }
         });
         thread.start();
         thread.join();
         Message message = new Message();
-        message.setMessage("Der Spieler Hallo ist nicht registriert. Nur registrierte Spieler können Allianzen eingehen. Benutze den Chat um den Spieler zum Registrieren zu überreden!");
+        message.setMessage("Hallo hat dich in seine Gilde eingeladen. Nur registrierte Benutzer können Gilden beitreten.");
         message.setShowRegisterDialog(false);
         assertPackagesIgnoreSyncItemInfoAndClear(true, message);
         endHttpRequestAndOpenSessionInViewFilter();

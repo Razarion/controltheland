@@ -11,12 +11,10 @@ import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.UserIsAlreadyGuildMemberException;
 import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
-import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.common.NoSuchPropertyException;
 import com.btxtech.game.services.common.WrongPropertyTypeException;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -71,23 +69,4 @@ public interface GuildService {
     void onMakeBaseAbandonedHandleEnemies(User user, SimpleBase simpleBase);
 
     Set<SimpleBase> getGuildBases(UserState userState, int planetId);
-
-    /*------------------------------------------------------*/
-    void proposeAlliance(SimpleBase partner);
-
-    void acceptAllianceOffer(String partnerUserName);
-
-    void rejectAllianceOffer(String partnerUserName);
-
-    void breakAlliance(String partnerUserName);
-
-    void restoreAlliances();
-
-    Collection<AllianceOfferPacket> getPendingAllianceOffers();
-
-    Collection<String> getAllAlliances();
-
-//    void onBaseCreatedOrDeleted(int userId);
-
-//    void fillAlliancesForFakeBases(BaseAttributes fakeBaseAttributes, HashMap<SimpleBase, BaseAttributes> allFakeBaseAttributes, UserState userState, int planetId);
 }

@@ -120,16 +120,6 @@ public interface MovableService extends RemoteService {
 
     void sellItem(Id id);
 
-    void proposeAlliance(SimpleBase partner);
-
-    void acceptAllianceOffer(String partnerUserName);
-
-    void rejectAllianceOffer(String partnerUserName);
-
-    void breakAlliance(String partnerUserName);
-
-    Collection<String> getAllAlliances();
-
     InventoryInfo getInventory(Integer filterPlanetId, boolean filterLevel);
 
     InventoryInfo assembleInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel);

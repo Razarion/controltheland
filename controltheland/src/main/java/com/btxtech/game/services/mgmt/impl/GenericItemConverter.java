@@ -222,7 +222,6 @@ public class GenericItemConverter {
         userGuidanceService.restoreBackup(userStates);
         statisticsService.restoreBackup(userStates);
         planetSystemService.restore(dbBases.values(), syncBaseObject.values());
-        serverGlobalServices.getGuildService().restoreAlliances();
         planetSystemService.afterRestore();
     }
 

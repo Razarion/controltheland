@@ -97,7 +97,6 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -213,7 +212,6 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             }
             realGameInfo.setStorablePackets(userState.getAndClearStorablePackets());
             realGameInfo.setMySimpleGuild(guildService.getSimpleGuild());
-            realGameInfo.setAllianceOffers(guildService.getPendingAllianceOffers());
             terrainImageService.setupTerrainImages(realGameInfo);
             serverPlanetServices.getTerrainService().setupTerrainRealGame(realGameInfo);
             realGameInfo.setPlanetInfo(serverPlanetServices.getPlanetInfo());
@@ -452,52 +450,6 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             planetSystemService.getUnlockedServerPlanetServices().getItemService().sellItem(id);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
-        }
-    }
-
-    @Override
-    public void proposeAlliance(SimpleBase partner) {
-        try {
-            guildService.proposeAlliance(partner);
-        } catch (Throwable t) {
-            ExceptionHandler.handleException(t);
-        }
-    }
-
-    @Override
-    public void acceptAllianceOffer(String partnerUserName) {
-        try {
-            guildService.acceptAllianceOffer(partnerUserName);
-        } catch (Throwable t) {
-            ExceptionHandler.handleException(t);
-        }
-    }
-
-    @Override
-    public void rejectAllianceOffer(String partnerUserName) {
-        try {
-            guildService.rejectAllianceOffer(partnerUserName);
-        } catch (Throwable t) {
-            ExceptionHandler.handleException(t);
-        }
-    }
-
-    @Override
-    public void breakAlliance(String partnerUserName) {
-        try {
-            guildService.breakAlliance(partnerUserName);
-        } catch (Throwable t) {
-            ExceptionHandler.handleException(t);
-        }
-    }
-
-    @Override
-    public Collection<String> getAllAlliances() {
-        try {
-            return guildService.getAllAlliances();
-        } catch (Throwable t) {
-            ExceptionHandler.handleException(t);
-            return new ArrayList<>();
         }
     }
 

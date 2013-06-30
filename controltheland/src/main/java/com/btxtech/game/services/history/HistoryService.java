@@ -56,14 +56,6 @@ public interface HistoryService {
 
     void addLevelTaskDeactivated(UserState userState, DbLevelTask dbLevelTask);
 
-    void addAllianceOffered(User actor, User target);
-
-    void addAllianceOfferAccepted(User actor, User target);
-
-    void addAllianceOfferRejected(User actor, User target);
-
-    void addAllianceBroken(User actor, User target);
-
     void addBoxExpired(SyncBoxItem boxItem);
 
     void addBoxDropped(SyncBoxItem boxItem, Index position, SyncBaseItem dropper);

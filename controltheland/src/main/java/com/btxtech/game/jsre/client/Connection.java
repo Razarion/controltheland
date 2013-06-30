@@ -33,7 +33,6 @@ import com.btxtech.game.jsre.client.control.StartupSeq;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
-import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
@@ -66,7 +65,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
-import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.packets.BaseLostPacket;
 import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
@@ -315,8 +313,6 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;
                     ClientBase.getInstance().setHouseSpace(houseSpacePacket.getHouseSpace());
                     SideCockpit.getInstance().updateItemLimit();
-                } else if (packet instanceof AllianceOfferPacket) {
-                    ClientAllianceHandler.getInstance().handleAllianceOfferPacket((AllianceOfferPacket) packet);
                 } else if (packet instanceof BoxPickedPacket) {
                     SideCockpit.getInstance().onBoxPicked((BoxPickedPacket) packet);
                     InventoryDialog.onBoxPicket();
@@ -699,46 +695,6 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         @Override
         public void onSuccess(Void result) {
             disconnectionCount = 0;
-        }
-    }
-
-    public void acceptAllianceOffer(String partnerUserName) {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.acceptAllianceOffer(partnerUserName, new VoidAsyncCallback("acceptAllianceOffer"));
-        }
-    }
-
-    public void breakAlliance(String partnerUserName) {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.breakAlliance(partnerUserName, new VoidAsyncCallback("breakAlliance"));
-        }
-    }
-
-    public void proposeAlliance(SimpleBase partner) {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.proposeAlliance(partner, new VoidAsyncCallback("proposeAlliance"));
-        }
-    }
-
-    public void rejectAllianceOffer(String partnerUserName) {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.rejectAllianceOffer(partnerUserName, new VoidAsyncCallback("rejectAllianceOffer"));
-        }
-    }
-
-    public void getAllAlliances(final AllianceDialog allianceDialog) {
-        if (movableServiceAsync != null && isRegisteredAndVerified()) {
-            movableServiceAsync.getAllAlliances(new AsyncCallback<Collection<String>>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    handleDisconnection("getAllAlliances", caught);
-                }
-
-                @Override
-                public void onSuccess(Collection<String> alliances) {
-                    allianceDialog.onAlliancesReceived(alliances);
-                }
-            });
         }
     }
 

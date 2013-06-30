@@ -123,7 +123,7 @@ public class SyncWeapon extends SyncBaseAbility {
             SyncBaseItem targetItem = (SyncBaseItem) getPlanetServices().getItemService().getItem(target);
 
             if (!getPlanetServices().getBaseService().isEnemy(getSyncBaseItem(), targetItem)) {
-                // May the alliance state has changed
+                // May the guild member state has changed
                 return false;
             }
 
