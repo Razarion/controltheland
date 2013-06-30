@@ -81,8 +81,8 @@ public class SideCockpit {
     private static final int RADAR_H = 180;
     // Buttons
     private static final int BNT_X = 179;
-    private static final int BNT_Y = 82;
-    private static final int BNT_Y_SPACE = 26;
+    private static final int BNT_Y = 86;
+    private static final int BNT_Y_SPACE = 32;
     private static final int BNT_INVENTORY_X = BNT_X;
     private static final int BNT_INVENTORY_Y = BNT_Y;
     private static final int BNT_SELL_X = BNT_X;
