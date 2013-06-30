@@ -74,20 +74,6 @@ public class User implements UserDetails, Serializable, CrudParent {
     private Collection<DbContentAccessControl> dbContentAccessControls;
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "user")
     private Collection<DbPageAccessControl> dbPageAccessControls;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "USER_ALLIANCES",
-            joinColumns = @JoinColumn(name = "userId"),
-            inverseJoinColumns = @JoinColumn(name = "allianceUserId")
-    )
-    private Collection<User> alliances;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "USER_ALLIANCE_OFFERS",
-            joinColumns = @JoinColumn(name = "receiverUserId"),
-            inverseJoinColumns = @JoinColumn(name = "allianceOfferUserId")
-    )
-    private Collection<User> allianceOffers;
     @Enumerated(EnumType.STRING)
     private SocialNet socialNet;
     private String socialNetUserId;
@@ -209,28 +195,6 @@ public class User implements UserDetails, Serializable, CrudParent {
 
     public String getSocialNetUserId() {
         return socialNetUserId;
-    }
-
-    public Collection<User> getAlliances() {
-        if (alliances == null) {
-            alliances = new ArrayList<>();
-        }
-        return alliances;
-    }
-
-    public void setAlliances(Collection<User> alliances) {
-        this.alliances = alliances;
-    }
-
-    public Collection<User> getAllianceOffers() {
-        if (allianceOffers == null) {
-            allianceOffers = new ArrayList<>();
-        }
-        return allianceOffers;
-    }
-
-    public void setAllianceOffers(Collection<User> allianceOffers) {
-        this.allianceOffers = allianceOffers;
     }
 
     public CrudChildServiceHelper<DbContentAccessControl> getContentCrud() {

@@ -19,12 +19,10 @@ import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
-import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.jsre.common.packets.XpPacket;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,7 +39,6 @@ public class RealGameInfo extends GameInfo {
     private Collection<BaseAttributes> allBases;
     private int houseSpace;
     private LevelTaskPacket levelTaskPacket;
-    private Collection<AllianceOfferPacket> allianceOffers = new ArrayList<AllianceOfferPacket>();
     private XpPacket xpPacket;
     private LevelScope levelScope;
     private PlanetInfo planetInfo;
@@ -105,14 +102,6 @@ public class RealGameInfo extends GameInfo {
 
     public void setLevelTaskPacket(LevelTaskPacket levelTaskPacket) {
         this.levelTaskPacket = levelTaskPacket;
-    }
-
-    public Collection<AllianceOfferPacket> getAllianceOffers() {
-        return allianceOffers;
-    }
-
-    public void setAllianceOffers(Collection<AllianceOfferPacket> allianceOffers) {
-        this.allianceOffers = allianceOffers;
     }
 
     public XpPacket getXpPacket() {

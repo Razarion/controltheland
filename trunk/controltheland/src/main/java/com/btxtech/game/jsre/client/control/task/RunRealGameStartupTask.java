@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client.control.task;
 
-import com.btxtech.game.jsre.client.ClientAllianceHandler;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
 import com.btxtech.game.jsre.client.Connection;
@@ -52,7 +51,6 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
         RegisterDialog.showDialogRepeating();
         SideCockpit.getInstance().updateItemLimit();
         ClientMessageIdPacketHandler.getInstance().runRealGame(Connection.getInstance(), ChatCockpit.getInstance(), ClientMessageIdPacketHandler.START_DELAY);
-        ClientAllianceHandler.getInstance().checkForPendingAlliances();
         Renderer.getInstance().start();
         SoundHandler.getInstance().start(Connection.getInstance().getGameInfo().getCommonSoundInfo());
         TerrainView.getInstance().setFocus();

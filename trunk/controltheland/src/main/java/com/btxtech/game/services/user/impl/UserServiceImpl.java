@@ -520,8 +520,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private void loadDependencies(User user) {
-        Hibernate.initialize(user.getAlliances());
-        Hibernate.initialize(user.getAllianceOffers());
         Hibernate.initialize(user.getContentCrud().readDbChildren());
         for (DbContentAccessControl dbContentAccessControl : user.getContentCrud().readDbChildren()) {
             Hibernate.initialize(dbContentAccessControl.getDbContent());

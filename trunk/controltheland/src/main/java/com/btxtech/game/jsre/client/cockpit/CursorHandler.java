@@ -115,7 +115,7 @@ public class CursorHandler {
                 }
             } else {
                 if (CockpitMode.getInstance().isAttackPossible()) {
-                    setCursor(CursorType.ALLIANCE, false);
+                    setCursor(CursorType.GUILD_MEMBER, false);
                 } else {
                     setCursor(Style.Cursor.POINTER);
                 }

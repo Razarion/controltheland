@@ -30,10 +30,6 @@ public interface ClientI18nConstants extends Messages {
 
     String tooltipMaximize();
 
-    String reject();
-
-    String accept();
-
     String highScore();
 
     String limitation();
@@ -223,8 +219,6 @@ public interface ClientI18nConstants extends Messages {
 
     String tooltipEnergy();
 
-    String tooltipAlliances();
-
     String tooltipSell();
 
     String tooltipMute();
@@ -248,25 +242,6 @@ public interface ClientI18nConstants extends Messages {
     String tooltipXp();
 
     String xp();
-
-    // Alliance
-    String alliances();
-
-    String alliancesAll();
-
-    String alliancesAllNotAvailable();
-
-    String alliancesNo();
-
-    String alliancesOffer();
-
-    String alliancesOffered(String userName);
-
-    String breakAlliance();
-
-    String alliancesOnlyRegisteredVerified();
-
-    String alliancesOnlyRegistered();
 
     // Quests
     String quests();

@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
-import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.dialogs.highscore.HighscoreDialog;
@@ -86,10 +85,8 @@ public class SideCockpit {
     private static final int BNT_Y_SPACE = 26;
     private static final int BNT_INVENTORY_X = BNT_X;
     private static final int BNT_INVENTORY_Y = BNT_Y;
-    private static final int BNT_ALLIANCE_X = BNT_X;
-    private static final int BNT_ALLIANCE_Y = BNT_INVENTORY_Y + BNT_Y_SPACE;
     private static final int BNT_SELL_X = BNT_X;
-    private static final int BNT_SELL_Y = BNT_ALLIANCE_Y + BNT_Y_SPACE;
+    private static final int BNT_SELL_Y = BNT_Y + BNT_Y_SPACE;
     private static final int BNT_MUTE_X = BNT_X;
     private static final int BNT_MUTE_Y = BNT_SELL_Y + BNT_Y_SPACE;
     private static final int BNT_STAT_X = BNT_X;
@@ -216,15 +213,6 @@ public class SideCockpit {
             }
         });
         mainPanel.add(inventory, BNT_INVENTORY_X, BNT_INVENTORY_Y);
-
-        //Alliance
-        ExtendedCustomButton alliance = new ExtendedCustomButton("allianceButton", false, ClientI18nHelper.CONSTANTS.tooltipAlliances(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                DialogManager.showDialog(new AllianceDialog(), DialogManager.Type.QUEUE_ABLE);
-            }
-        });
-        mainPanel.add(alliance, BNT_ALLIANCE_X, BNT_ALLIANCE_Y);
 
         // Sell button
         sellButton = new ExtendedCustomButton("sellButton", true, ClientI18nHelper.CONSTANTS.tooltipSell(), new ClickHandler() {

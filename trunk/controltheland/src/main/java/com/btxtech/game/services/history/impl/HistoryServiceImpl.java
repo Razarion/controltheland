@@ -234,66 +234,6 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public void addAllianceOffered(User actor, User target) {
-        save(new DbHistoryElement(DbHistoryElement.Type.ALLIANCE_OFFERED,
-                actor,
-                target,
-                null,
-                null,              // TODO
-                null,
-                null,
-                null,
-                null,
-                userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
-    }
-
-    @Override
-    public void addAllianceOfferAccepted(User actor, User target) {
-        save(new DbHistoryElement(DbHistoryElement.Type.ALLIANCE_OFFER_ACCEPTED,
-                actor,
-                target,
-                null,
-                null,              // TODO
-                null,
-                null,
-                null,
-                null,
-                userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
-    }
-
-    @Override
-    public void addAllianceOfferRejected(User actor, User target) {
-        save(new DbHistoryElement(DbHistoryElement.Type.ALLIANCE_OFFER_REJECTED,
-                actor,
-                target,
-                null,
-                null,              // TODO
-                null,
-                null,
-                null,
-                null,
-                userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
-    }
-
-    @Override
-    public void addAllianceBroken(User actor, User target) {
-        save(new DbHistoryElement(DbHistoryElement.Type.ALLIANCE_BROKEN,
-                actor,
-                target,
-                null,
-                null,              // TODO
-                null,
-                null,
-                null,
-                null,
-                userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null, null, null, null, null, null));
-    }
-
-    @Override
     public void addBoxExpired(SyncBoxItem boxItem) {
         if (HibernateUtil.hasOpenSession(sessionFactory)) {
             save(new DbHistoryElement(DbHistoryElement.Type.BOX_EXPIRED,

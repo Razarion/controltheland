@@ -8,9 +8,7 @@
     <entry key="LOAD_JAVA_SCRIPT">Lade Java Script</entry>
     <entry key="registerThanks">Vielen Dank für die Registrierung</entry>
     <entry key="registerUserExists">Der gewünschte Benutzername existiert bereits</entry>
-    <entry key="alliancesAccepted">Der Spieler {0} hat deine Allianz angenommen.</entry>
     <entry key="youDefeated">Du hast {0} besiegt</entry>
-    <entry key="alliancesBroken">Der Spieler {0} hat die Allianz aufgehoben.</entry>
     <entry key="loginFailedTitle">Razarion Anmeldung</entry>
     <entry key="loginFailed">Anmeldung fehlgeschlagen. Bitte versuche es erneut.</entry>
     <entry key="loginFailed">Einloggen fehlgeschlagen. Bitte erneut versuchen.</entry>
@@ -34,7 +32,6 @@
     <entry key="loadingGame">Lade Spiel...</entry>
     <entry key="guildOfferedOnlyRegistered">{0} hat dich in seine Gilde eingeladen. Nur registrierte Benutzer können Gilden beitreten.</entry>
     <entry key="registerNoMatch">Passwort und bestätigungs Passwort sind nicht gleich</entry>
-    <entry key="alliancesRejected">Der Spieler {0}  hat die Allianz abgelehnt.</entry>
     <entry key="emailSubject">Razarion - Bestätige deine E-Mail-Adresse</entry>
     <entry key="emailVeriGreeting">Hallo {0}</entry>
     <entry key="emailVeriMain">Vielen Dank für die Registrierung bei Razarion. Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:</entry>

@@ -22,6 +22,7 @@ import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.history.GameHistoryFilter;
 import com.btxtech.game.services.history.GameHistoryFrame;
 import com.btxtech.game.services.history.HistoryService;
+import com.btxtech.game.services.user.DbGuild;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
@@ -544,14 +545,14 @@ public class TestTracking extends AbstractServiceTest {
         // Tracking start
         userTrackingService.onEventTrackingStart(new EventTrackingStart(uuid, 101, 102, 103, 104, 105, 106, 1200));
         // Mouse
-        Collection<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
+        Collection<EventTrackingItem> eventTrackingItems = new ArrayList<>();
         eventTrackingItems.add(new EventTrackingItem(uuid, 1, 1, 1, 1000));
         eventTrackingItems.add(new EventTrackingItem(uuid, 1, 10, 2, 1100));
         eventTrackingItems.add(new EventTrackingItem(uuid, 1, 10, 3, 1200));
         eventTrackingItems.add(new EventTrackingItem(uuid, 1, 10, 4, 1300));
         eventTrackingItems.add(new EventTrackingItem(uuid, 1, 10, 5, 1400));
         // SyncItemInfo                                                                     1
-        Collection<SyncItemInfo> itemInfos = new ArrayList<SyncItemInfo>();
+        Collection<SyncItemInfo> itemInfos = new ArrayList<>();
         SyncItemInfo syncItemInfo = new SyncItemInfo();
         syncItemInfo.setStartUuid(uuid);
         syncItemInfo.setAmount(0.5);
@@ -559,23 +560,23 @@ public class TestTracking extends AbstractServiceTest {
         setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 1200L);
         itemInfos.add(syncItemInfo);
         // Selection
-        Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
+        Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<>();
         SelectionTrackingItem selectionTrackingItem = new SelectionTrackingItem(uuid);
         setPrivateField(SelectionTrackingItem.class, selectionTrackingItem, "timeStamp", 1300);
         selectionTrackingItems.add(selectionTrackingItem);
         // Terrain scrolling
-        Collection<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
+        Collection<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<>();
         terrainScrollTrackings.add(new TerrainScrollTracking(uuid, 2, 1, 1100));
         terrainScrollTrackings.add(new TerrainScrollTracking(uuid, 3, 1, 1150));
         terrainScrollTrackings.add(new TerrainScrollTracking(uuid, 1, 1, 1050));
         // Browser window
-        Collection<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
+        Collection<BrowserWindowTracking> browserWindowTrackings = new ArrayList<>();
         browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 2, 3, 4, 5, 6, 1100));
         browserWindowTrackings.add(new BrowserWindowTracking(uuid, 2, 2, 3, 4, 5, 6, 1200));
         browserWindowTrackings.add(new BrowserWindowTracking(uuid, 3, 2, 3, 4, 5, 6, 1300));
         browserWindowTrackings.add(new BrowserWindowTracking(uuid, 4, 2, 3, 4, 5, 6, 1400));
         // Dialogs
-        Collection<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
+        Collection<DialogTracking> dialogTrackings = new ArrayList<>();
         dialogTrackings.add(new DialogTracking(uuid, 1, 2, 3, 4, 1, "dialog1", false, 42, 1100));
         dialogTrackings.add(new DialogTracking(uuid, 5, 6, 7, 8, 2, "dialog2", false, 43, 1120));
         dialogTrackings.add(new DialogTracking(uuid, null, null, null, null, null, "dialog3", false, 44, 1140));
@@ -611,14 +612,14 @@ public class TestTracking extends AbstractServiceTest {
         // Tracking start
         userTrackingService.onEventTrackingStart(new EventTrackingStart(uuid, 201, 202, 203, 204, 205, 206, 1900));
         // Mouse
-        Collection<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
+        Collection<EventTrackingItem> eventTrackingItems = new ArrayList<>();
         eventTrackingItems.add(new EventTrackingItem(uuid, 1, 1, 1, 1910));
         eventTrackingItems.add(new EventTrackingItem(uuid, 2, 10, 1, 1920));
         eventTrackingItems.add(new EventTrackingItem(uuid, 3, 10, 1, 1930));
         eventTrackingItems.add(new EventTrackingItem(uuid, 4, 10, 1, 1940));
         eventTrackingItems.add(new EventTrackingItem(uuid, 5, 10, 1, 1950));
         // SyncItemInfos                                                                     1
-        Collection<SyncItemInfo> syncItemInfos = new ArrayList<SyncItemInfo>();
+        Collection<SyncItemInfo> syncItemInfos = new ArrayList<>();
         SyncItemInfo syncItemInfo = new SyncItemInfo();
         syncItemInfo.setStartUuid(uuid);
         syncItemInfo.setFollowTarget(true);
@@ -626,7 +627,7 @@ public class TestTracking extends AbstractServiceTest {
         setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 2000L);
         syncItemInfos.add(syncItemInfo);
         // Selection
-        Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
+        Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<>();
         SelectionTrackingItem selectionTrackingItem1 = new SelectionTrackingItem(uuid);
         setPrivateField(SelectionTrackingItem.class, selectionTrackingItem1, "timeStamp", 2050);
         selectionTrackingItems.add(selectionTrackingItem1);
@@ -634,18 +635,18 @@ public class TestTracking extends AbstractServiceTest {
         setPrivateField(SelectionTrackingItem.class, selectionTrackingItem2, "timeStamp", 2100);
         selectionTrackingItems.add(selectionTrackingItem2);
         // Terrain scrolling
-        Collection<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
+        Collection<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<>();
         terrainScrollTrackings.add(new TerrainScrollTracking(uuid, 1, 1, 2100));
         terrainScrollTrackings.add(new TerrainScrollTracking(uuid, 1, 2, 2200));
         // Browser window
-        Collection<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
+        Collection<BrowserWindowTracking> browserWindowTrackings = new ArrayList<>();
         browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 1, 3, 4, 5, 6, 2100));
         browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 2, 3, 4, 5, 6, 2120));
         browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 3, 3, 4, 5, 6, 2130));
         browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 4, 3, 4, 5, 6, 2140));
         browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 5, 3, 4, 5, 6, 2150));
         // Dialogs
-        Collection<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
+        Collection<DialogTracking> dialogTrackings = new ArrayList<>();
         dialogTrackings.add(new DialogTracking(uuid, 10, 2, 3, 4, 19, "dialog11", true, 52, 2100));
         dialogTrackings.add(new DialogTracking(uuid, 50, 6, 7, 8, 29, "dialog12", true, 53, 2120));
         dialogTrackings.add(new DialogTracking(uuid, 90, 10, 11, 12, 39, "dialog13", true, 54, 2140));
@@ -929,10 +930,13 @@ public class TestTracking extends AbstractServiceTest {
         User u2 = userService.getUser("U2");
         createBase(new Index(2000, 2000));
         String session2 = getHttpSessionId();
-        historyService.addAllianceOffered(u2, u1);
-        historyService.addAllianceOfferAccepted(u2, u1);
-        historyService.addAllianceBroken(u2, u1);
-        historyService.addAllianceOfferRejected(u2, u1);
+        DbGuild dbGuild = new DbGuild();
+        dbGuild.setName("ThaGuild");
+        setPrivateField(DbGuild.class, dbGuild, "id", 1);
+        historyService.addGuildCreated(u2, 10, dbGuild);
+        historyService.addGuildInvitation(u2, u1, dbGuild);
+        historyService.addGuildJoined(u1, dbGuild);
+        historyService.addGuildMemberKicked(u2, u1, dbGuild);
         MoveCommand moveCommand = new MoveCommand();
         moveCommand.setId(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         moveCommand.setTimeStamp();
@@ -945,10 +949,10 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         List<UserCommandHistoryElement> userCommandHistoryElements = userTrackingService.getGameTracking(new GameHistoryFrame(session1, null, 0, 0), createGameHistoryFilter(false)).getUserCommandHistoryElements();
         Assert.assertTrue(userCommandHistoryElements.isEmpty());
-        userCommandHistoryElements = userTrackingService.getGameTracking(new GameHistoryFrame(session2, null, 0, 0), createGameHistoryFilter(false, DbHistoryElement.Type.ALLIANCE_BROKEN)).getUserCommandHistoryElements();
+        userCommandHistoryElements = userTrackingService.getGameTracking(new GameHistoryFrame(session2, null, 0, 0), createGameHistoryFilter(false, DbHistoryElement.Type.GUILD_CREATED)).getUserCommandHistoryElements();
         Assert.assertEquals(1, userCommandHistoryElements.size());
-        Assert.assertTrue(userCommandHistoryElements.get(0).getInfo1().contains("Alliance broken by"));
-        userCommandHistoryElements = userTrackingService.getGameTracking(new GameHistoryFrame(session2, null, 0, 0), createGameHistoryFilter(false, DbHistoryElement.Type.ALLIANCE_OFFER_ACCEPTED, DbHistoryElement.Type.ALLIANCE_BROKEN)).getUserCommandHistoryElements();
+        Assert.assertEquals("U2 created ThaGuild guild", userCommandHistoryElements.get(0).getInfo1());
+        userCommandHistoryElements = userTrackingService.getGameTracking(new GameHistoryFrame(session2, null, 0, 0), createGameHistoryFilter(false, DbHistoryElement.Type.GUILD_USER_INVITED, DbHistoryElement.Type.GUILD_MEMBER_KICKED)).getUserCommandHistoryElements();
         Assert.assertEquals(2, userCommandHistoryElements.size());
         userCommandHistoryElements = userTrackingService.getGameTracking(new GameHistoryFrame(session2, null, 0, 0), createGameHistoryFilter(true)).getUserCommandHistoryElements();
         Assert.assertEquals(1, userCommandHistoryElements.size());
