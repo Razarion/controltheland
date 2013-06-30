@@ -49,7 +49,7 @@ public class EmailVerificationPanel extends Panel {
             String verificationId = contentContext.getPageParameters().getString(CmsUtil.EMAIL_VERIFICATION_KEY);
             User user = registerService.onVerificationPageCalled(verificationId);
             userService.loginIfNotLoggedIn(user);
-            add(new AdCellProvisionPanel("adCellProvision", user));
+            add(new ConversionTrackingPanel("conversionTrackingPanel", user));
             add(new Form("enterGame") {
                 @Override
                 protected void onSubmit() {

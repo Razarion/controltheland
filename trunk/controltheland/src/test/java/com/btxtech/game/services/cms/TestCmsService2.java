@@ -2454,9 +2454,11 @@ public class TestCmsService2 extends AbstractServiceTest {
         endHttpSession();
     }
 
-    @Test
+
+    // TODO test conversion tracking here
+ /*   @Test
     @DirtiesContext
-    public void testEmailVerificationPageOkAdCellProvision() throws Exception {
+    public void testEmailVerificationPageOkConversionTrackingProvision() throws Exception {
         configureSimplePlanetNoResources();
         startFakeMailServer();
 
@@ -2502,22 +2504,22 @@ public class TestCmsService2 extends AbstractServiceTest {
         pageParameters.put(CmsUtil.EMAIL_VERIFICATION_KEY, user.getVerificationId());
         getWicketTester().startPage(CmsPage.class, pageParameters);
         getWicketTester().debugComponentTrees();
-        // Test adcell java script
-        getWicketTester().assertVisible("form:content:adCellProvision");
-        Label label = (Label) getWicketTester().getComponentFromLastRenderedPage("form:content:adCellProvision:adCellScript");
-        assertStringIgnoreWhitespace("Adcell.user.track({\n" +
-                "    'pid':'3111',\n" +
+        // Test ... java script
+        getWicketTester().assertVisible("form:content:...");
+        Label label = (Label) getWicketTester().getComponentFromLastRenderedPage("form:content:...:...");
+        assertStringIgnoreWhitespace("....user.track({\n" +
+                "    'pid':'...',\n" +
                 "    'eventid':'3820',\n" +
                 "    'referenz':'1'\n" +
                 "});", label.getDefaultModelObjectAsString());
-        ExternalImage adCellImage = (ExternalImage) getWicketTester().getComponentFromLastRenderedPage("form:content:adCellProvision:adCellImage");
-        Assert.assertEquals("http://www.adcell.de/event.php?pid=3111&eventid=3820&referenz=1", adCellImage.getUrl());
+        ExternalImage ... = (ExternalImage) getWicketTester().getComponentFromLastRenderedPage("form:content:...:...");
+        Assert.assertEquals("http://www.....de/event.php?pid=3111&eventid=3820&referenz=1", ....getUrl());
         getWicketTester().assertVisible("form:content:enterGame");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         stopFakeMailServer();
-    }
+    } */
 
     @Test
     @DirtiesContext

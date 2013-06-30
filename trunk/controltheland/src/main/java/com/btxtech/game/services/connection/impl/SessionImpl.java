@@ -80,13 +80,11 @@ public class SessionImpl implements Session, Serializable {
     public void init() {
         sessionId = request.getSession().getId();
         userAgent = request.getHeader("user-agent");
-        String adCellBid = null;
         boolean isNewUserTracking = false;
         try {
             RequestCycle requestCycle = RequestCycle.get();
             if (requestCycle != null) {
                 WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) WicketAuthenticatedWebSession.get();
-                adCellBid = wicketSession.getAdCellBid();
                 trackingCookieId = wicketSession.getTrackingCookieId();
                 isNewUserTracking = wicketSession.isNewUserTracking();
             } else {
@@ -121,8 +119,7 @@ public class SessionImpl implements Session, Serializable {
                 request.getHeader("Accept-Language"),
                 request.getRemoteAddr(),
                 request.getHeader("Referer"),
-                isNewUserTracking,
-                adCellBid);
+                isNewUserTracking);
         userTrackingService.saveBrowserDetails(dbSessionDetail);
     }
 
