@@ -155,9 +155,7 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
         }
         chatMessage.setName(name);
         messageIdPacketQueue.initAndPutMessage(chatMessage);
-        for (Planet planet : planetSystemService.getAllPlanets()) {
-            planet.getPlanetServices().getConnectionService().sendPacket(chatMessage);
-        }
+        planetSystemService.sendPacket(chatMessage);
         userTrackingService.trackChatMessage(chatMessage);
     }
 
@@ -167,9 +165,7 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
         packet.setRebootInSeconds(rebootInSeconds);
         packet.setDownTimeInMinutes(downTimeInMinutes);
         messageIdPacketQueue.initAndPutMessage(packet);
-        for (Planet planet : planetSystemService.getAllPlanets()) {
-            planet.getPlanetServices().getConnectionService().sendPacket(packet);
-        }
+        planetSystemService.sendPacket(packet);
     }
 
     @Override
