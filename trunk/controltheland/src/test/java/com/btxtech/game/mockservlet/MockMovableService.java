@@ -1,9 +1,11 @@
 package com.btxtech.game.mockservlet;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.NotAGuildMemberException;
 import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.PositionInBotException;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
@@ -215,12 +217,17 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public void sendChatMessage(ChatMessage chatMessage) {
+    public void sendChatMessage(ChatMessage chatMessage, ChatMessageFilter chatMessageFilter) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode) {
+    public List<MessageIdPacket> setChatMessageFilter(ChatMessageFilter chatMessageFilter) throws NotAGuildMemberException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, ChatMessageFilter chatMessageFilter, GameEngineMode gameEngineMode) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

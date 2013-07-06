@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
@@ -99,9 +100,11 @@ public interface MovableService extends RemoteService {
 
     VerificationRequestCallback.ErrorResult isNickNameValid(String nickname) throws UserAlreadyExistsException, PasswordNotMatchException;
 
-    void sendChatMessage(ChatMessage chatMessage);
+    void sendChatMessage(ChatMessage chatMessage, ChatMessageFilter chatMessageFilter);
 
-    List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode);
+    List<MessageIdPacket> setChatMessageFilter(ChatMessageFilter chatMessageFilter) throws NotAGuildMemberException;
+
+    List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, ChatMessageFilter chatMessageFilter, GameEngineMode gameEngineMode);
 
     void sendStartupTask(StartupTaskInfo startupTaskInfo, String uuid, Integer levelTaskId);
 

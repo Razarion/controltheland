@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatCockpit;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
@@ -57,9 +59,9 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         void onOwnBaseDestroyed();
     }
 
-    private final static String OWN_BASE_COLOR = "#00FF00";
-    private final static String GUILD_MEMBER_BASE_COLOR = "#ffff00";
-    private final static String ENEMY_BASE_COLOR = "#d58759";
+    public final static String OWN_BASE_COLOR = "#00FF00";
+    public final static String GUILD_MEMBER_BASE_COLOR = "#ffff00";
+    public final static String ENEMY_BASE_COLOR = "#d58759";
     private final static String BOT_BASE_COLOR = "#f04040";
     private final static String UNKNOWN_BASE_COLOR = "#888888";
     private static final ClientBase INSTANCE = new ClientBase();
@@ -470,11 +472,14 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     public void updateMySimpleGuild(SimpleGuild mySimpleGuild) {
+        if(this.mySimpleGuild != null && mySimpleGuild == null) {
+            ChatCockpit.getInstance().setChatMessageFilter(ChatMessageFilter.GLOBAL);
+        }
         setMySimpleGuild(mySimpleGuild);
         MenuBarCockpit.getInstance().updateGuild(mySimpleGuild);
     }
 
-    public void onGuildList() {
+    public void onGuildLost() {
         updateMySimpleGuild(null);
         DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.guildLostTitle(), ClientI18nHelper.CONSTANTS.guildLostMessage()), DialogManager.Type.STACK_ABLE);
     }

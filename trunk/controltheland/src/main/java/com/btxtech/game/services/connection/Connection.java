@@ -13,10 +13,12 @@
 
 package com.btxtech.game.services.connection;
 
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.user.UserState;
 
@@ -39,13 +41,17 @@ public class Connection implements Serializable {
     private String startUuid;
     private List<Packet> sentPackager = new ArrayList<>();
     private ServerPlanetServices serverPlanetServices;
+    private ServerGlobalServices serverGlobalServices;
+    private ChatMessageFilter chatMessageFilter;
 
 
-    public Connection(UserState userState, ServerPlanetServices serverPlanetServices, String sessionId, String startUuid) {
+    public Connection(UserState userState, ServerPlanetServices serverPlanetServices, ServerGlobalServices serverGlobalServices, String startUuid) {
         this.userState = userState;
         this.serverPlanetServices = serverPlanetServices;
-        this.sessionId = sessionId;
+        this.serverGlobalServices = serverGlobalServices;
+        this.sessionId = serverGlobalServices.getServerGlobalConnectionService().getSession().getSessionId();
         this.startUuid = startUuid;
+        chatMessageFilter = ChatMessageFilter.GLOBAL;
     }
 
     public UserState getUserState() {
@@ -92,8 +98,13 @@ public class Connection implements Serializable {
     }
 
     public void sendPacket(Packet packet) {
+        Packet convertedPackage = serverGlobalServices.getServerGlobalConnectionService().getMessageIdPacketQueue().convertPacketIfNecessary(packet, chatMessageFilter, userState);
+        if (convertedPackage == null) {
+            return;
+        }
+
         synchronized (pendingPackets) {
-            pendingPackets.add(packet);
+            pendingPackets.add(convertedPackage);
         }
     }
 
@@ -126,5 +137,9 @@ public class Connection implements Serializable {
 
     public NoConnectionException.Type getClosedReason() {
         return closedReason;
+    }
+
+    public void setChatMessageFilter(ChatMessageFilter chatMessageFilter) {
+        this.chatMessageFilter = chatMessageFilter;
     }
 }

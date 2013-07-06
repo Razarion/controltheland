@@ -35,8 +35,10 @@ public class DbChatMessage implements Serializable {
     private Date timeStamp;
     private String sessionId;
     private String name;
+    private Integer userId;
     @Column(length = 1000)
     private String message;
+    private Integer guildId;
 
     /**
      * Used by Hibernate
@@ -49,6 +51,8 @@ public class DbChatMessage implements Serializable {
         timeStamp = new Date();
         name = chatMessage.getName();
         message = chatMessage.getMessage();
+        userId = chatMessage.getUserId();
+        guildId = chatMessage.getGuildId();
     }
 
     public Date getTimeStamp() {
@@ -79,10 +83,20 @@ public class DbChatMessage implements Serializable {
         this.message = message;
     }
 
+    public Integer getGuildId() {
+        return guildId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
     public ChatMessage createMessageIdPacket() {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessage(message);
         chatMessage.setName(name);
+        chatMessage.setUserId(userId);
+        chatMessage.setGuildId(guildId);
         return chatMessage;
     }
 

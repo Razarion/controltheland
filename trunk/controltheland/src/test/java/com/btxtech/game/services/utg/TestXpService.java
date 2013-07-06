@@ -50,6 +50,7 @@ public class TestXpService extends AbstractServiceTest {
         endHttpSession();
 
         // Create target
+        // TODO failed on: 05.07.2013 (Enemy items too near ItemType: TestStartBuilderItem UserState: user=null)
         Collection<Id> targets = createTargets(20);
 
         beginHttpSession();

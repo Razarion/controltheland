@@ -12,6 +12,7 @@ import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.StartPointMode;
 import com.btxtech.game.jsre.client.WebBrowserCustomButton;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;

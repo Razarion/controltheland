@@ -1,6 +1,8 @@
 package com.btxtech.game.services.planet;
 
+import com.btxtech.game.jsre.client.NotAGuildMemberException;
 import com.btxtech.game.jsre.client.PositionInBotException;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.StartPointInfo;
@@ -106,4 +108,6 @@ public interface PlanetSystemService {
     ServerPlanetServices getPlanet4BaselessConnection(UserState userState);
 
     void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog);
+
+    void setChatMessageFilter(UserState userState, ChatMessageFilter chatMessageFilter) throws NotAGuildMemberException;
 }

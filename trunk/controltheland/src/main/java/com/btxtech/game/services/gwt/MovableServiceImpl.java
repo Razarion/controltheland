@@ -16,8 +16,10 @@ package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.NotAGuildMemberException;
 import com.btxtech.game.jsre.client.PositionInBotException;
 import com.btxtech.game.jsre.client.VerificationRequestCallback;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
@@ -206,7 +208,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
                 throw new IllegalStateException("No UserState available: " + userState);
             }
             if (userState.getBase() != null) {
-                continueBase(serverPlanetServices, userState, startUuid, realGameInfo);
+                continueBase(serverPlanetServices, realGameInfo);
             } else {
                 askForStartPosition(serverPlanetServices, userState, realGameInfo, planetSystemService, false);
             }
@@ -235,7 +237,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         realGameInfo.setStartPointInfo(planetSystemService.createStartPoint(serverPlanetServices.getPlanetInfo(), !existingGame));
     }
 
-    private void continueBase(ServerPlanetServices serverPlanetServices, UserState userState, String startUuid, RealGameInfo realGameInfo) throws InvalidLevelStateException {
+    private void continueBase(ServerPlanetServices serverPlanetServices, RealGameInfo realGameInfo) throws InvalidLevelStateException {
         fillRealGameInfo(realGameInfo);
         Base base = serverPlanetServices.getBaseService().getBase();
         realGameInfo.setUnlockContainer(serverUnlockService.getUnlockContainer(base.getSimpleBase()));
@@ -388,18 +390,31 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public void sendChatMessage(ChatMessage chatMessage) {
+    public void sendChatMessage(ChatMessage chatMessage, ChatMessageFilter chatMessageFilter) {
         try {
-            serverGlobalConnectionService.sendChatMessage(chatMessage);
+            serverGlobalConnectionService.sendChatMessage(chatMessage, chatMessageFilter);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }
     }
 
     @Override
-    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode) {
+    public List<MessageIdPacket> setChatMessageFilter(ChatMessageFilter chatMessageFilter) throws NotAGuildMemberException {
         try {
-            return serverGlobalConnectionService.pollMessageIdPackets(lastMessageId, gameEngineMode);
+            planetSystemService.setChatMessageFilter(userService.getUserState(), chatMessageFilter);
+            return pollMessageIdPackets(null, chatMessageFilter, null);
+        } catch (NotAGuildMemberException t) {
+            throw t;
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, ChatMessageFilter chatMessageFilter, GameEngineMode gameEngineMode) {
+        try {
+            return serverGlobalConnectionService.pollMessageIdPackets(lastMessageId, chatMessageFilter, gameEngineMode);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;

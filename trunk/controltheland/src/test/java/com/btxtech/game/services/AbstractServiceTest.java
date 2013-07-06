@@ -58,6 +58,8 @@ import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.PropertyService;
+import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
@@ -100,6 +102,7 @@ import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
@@ -324,6 +327,10 @@ abstract public class AbstractServiceTest {
     private RegionService regionService;
     @Autowired
     private WicketApplication wicketApplication;
+    @Autowired
+    private GuildService guildService;
+    @Autowired
+    private PropertyService propertyService;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
     private MockHttpSession mockHttpSession;
@@ -813,7 +820,10 @@ abstract public class AbstractServiceTest {
             ChatMessage received = (ChatMessage) receivedPacket;
             return expected.getMessage().equals(received.getMessage())
                     && expected.getName().equals(received.getName())
-                    && expected.getMessageId() == received.getMessageId();
+                    && expected.getMessageId() == received.getMessageId()
+                    && expected.getType() == received.getType()
+                    && ObjectUtils.equals(expected.getGuildId(), received.getGuildId())
+                    && ObjectUtils.equals(expected.getUserId(), received.getUserId());
         } else if (expectedPacket instanceof UnlockContainerPacket) {
             try {
                 Set<Integer> expectedItems = ((UnlockContainerPacket) expectedPacket).getUnlockContainer().getItemTypes();
@@ -2359,6 +2369,34 @@ abstract public class AbstractServiceTest {
         }
     }
 
+
+    protected int createGuildAnd2Users() throws Exception {
+        // Create member
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("member1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Create guild + presi
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("presi");
+        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        int guildId = guildService.createGuild("guild").getId();
+        guildService.inviteUserToGuild("member1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Join Guild
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("member1");
+        guildService.joinGuild(guildId);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        return guildId;
+    }
+
+
     // ------------------- Wicket --------------------
 
     /**
@@ -2428,6 +2466,14 @@ abstract public class AbstractServiceTest {
     // ------------------- User --------------------
     protected UserState getUserState() {
         return userService.getUserState();
+    }
+
+    protected User getUser() {
+        return userService.getUser();
+    }
+
+    protected Integer getUserId() {
+        return userService.getUser().getId();
     }
     // ------------------- Div --------------------
 

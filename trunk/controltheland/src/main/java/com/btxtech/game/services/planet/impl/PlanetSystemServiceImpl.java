@@ -1,6 +1,8 @@
 package com.btxtech.game.services.planet.impl;
 
+import com.btxtech.game.jsre.client.NotAGuildMemberException;
 import com.btxtech.game.jsre.client.PositionInBotException;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
@@ -34,16 +36,19 @@ import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainDbUtil;
 import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
+import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.user.impl.GuildServiceImpl;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,6 +87,8 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     private ServerUnlockService serverUnlockService;
     @Autowired
     private MgmtService mgmtService;
+    @Autowired
+    private GuildService guildService;
     private final Map<Integer, PlanetImpl> planetImpls = new HashMap<>();
 
     @PostConstruct
@@ -454,6 +461,20 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
         try {
             for (PlanetImpl planet : planetImpls.values()) {
                 planet.getPlanetServices().getConnectionService().sendMessage(userState, key, args, showRegisterDialog);
+            }
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+        }
+    }
+
+    @Override
+    public void setChatMessageFilter(UserState userState, ChatMessageFilter chatMessageFilter) throws NotAGuildMemberException {
+        if(chatMessageFilter == ChatMessageFilter.GUILD && guildService.getGuildId(userState) == null) {
+            throw new NotAGuildMemberException();
+        }
+        try {
+            for (PlanetImpl planet : planetImpls.values()) {
+                planet.getPlanetServices().getConnectionService().setChatMessageFilter(userState, chatMessageFilter);
             }
         } catch (Exception e) {
             ExceptionHandler.handleException(e);

@@ -1,6 +1,7 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
@@ -24,9 +25,9 @@ public interface ServerGlobalConnectionService {
 
     void createConnectionStatisticsNoSession(String sessionId, double ticksPerSecond, int planetId);
 
-    List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode);
+    List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, ChatMessageFilter chatMessageFilter, GameEngineMode gameEngineMode);
 
-    void sendChatMessage(ChatMessage chatMessage);
+    void sendChatMessage(ChatMessage chatMessage, ChatMessageFilter chatMessageFilter);
 
     void sendServerRebootMessage(int rebootInSeconds, int downTimeInMinutes);
 
@@ -37,4 +38,6 @@ public interface ServerGlobalConnectionService {
     void onLogout();
 
     Connection getConnection(String startUuid) throws NoConnectionException;
+
+    MessageIdPacketQueue getMessageIdPacketQueue();
 }

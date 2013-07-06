@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.connection;
 
+import com.btxtech.game.jsre.client.NotAGuildMemberException;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
@@ -45,6 +47,8 @@ public interface ServerConnectionService extends CommonConnectionService {
     void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog);
 
     void sendMessage(SimpleBase simpleBase, String key, Object[] args, boolean showRegisterDialog);
+
+    void setChatMessageFilter(UserState userState, ChatMessageFilter chatMessageFilter);
 
     void sendSyncInfos(Collection<SyncBaseItem> syncItem);
 

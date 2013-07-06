@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 
 /**
@@ -11,4 +12,6 @@ public interface ChatListener {
     void clearMessages();
 
     void addMessage(ChatMessage chatMessage);
+
+    ChatMessageFilter getChatMessageFilter();
 }

@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
 import com.btxtech.game.jsre.client.GlobalCommonConnectionService;
 import com.btxtech.game.jsre.client.cockpit.ChatListener;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
@@ -46,11 +47,11 @@ public class TestClientChatHandler extends AbstractGwtTest implements GlobalComm
                 assertEquals(2, displayMessages.size());
                 assertDisplayChatMessage("m2", "u2", 0);
                 assertDisplayChatMessage("m3", "u3", 1);
-                ClientMessageIdPacketHandler.getInstance().sendMessage("m4");
+                // TODO ClientMessageIdPacketHandler.getInstance().sendMessage("m4");
                 assertEquals(1, sentMessages.size());
                 assertSentChatMessage("m4", "lvl1", 0);
-                ClientMessageIdPacketHandler.getInstance().sendMessage("m5");
-                ClientMessageIdPacketHandler.getInstance().sendMessage("m6");
+                // TODO ClientMessageIdPacketHandler.getInstance().sendMessage("m5");
+                // TODO ClientMessageIdPacketHandler.getInstance().sendMessage("m6");
                 assertEquals(3, sentMessages.size());
                 assertSentChatMessage("m4", "lvl1", 0);
                 assertSentChatMessage("m5", "lvl1", 1);
@@ -88,11 +89,11 @@ public class TestClientChatHandler extends AbstractGwtTest implements GlobalComm
                                         assertEquals(2, displayMessages.size());
                                         assertDisplayChatMessage("m2", "u2", 0);
                                         assertDisplayChatMessage("m3", "u3", 1);
-                                        ClientMessageIdPacketHandler.getInstance().sendMessage("m4");
+                                        // TODO ClientMessageIdPacketHandler.getInstance().sendMessage("m4");
                                         assertEquals(1, sentMessages.size());
                                         assertSentChatMessage("m4", "test", 0);
-                                        ClientMessageIdPacketHandler.getInstance().sendMessage("m5");
-                                        ClientMessageIdPacketHandler.getInstance().sendMessage("m6");
+                                        // TODO ClientMessageIdPacketHandler.getInstance().sendMessage("m5");
+                                        // TODO ClientMessageIdPacketHandler.getInstance().sendMessage("m6");
                                         assertEquals(3, sentMessages.size());
                                         assertSentChatMessage("m4", "test", 0);
                                         assertSentChatMessage("m5", "test", 1);
@@ -144,12 +145,12 @@ public class TestClientChatHandler extends AbstractGwtTest implements GlobalComm
     }
 
     @Override
-    public void sendChatMessage(ChatMessage chatMessage) {
+    public void sendChatMessage(ChatMessage chatMessage, ChatMessageFilter chatMessageFilter) {
         sentMessages.add(chatMessage);
     }
 
     @Override
-    public void pollChatMessages(Integer lastMessageId) {
+    public void pollChatMessages(Integer lastMessageId, ChatMessageFilter chatMessageFilter) {
         this.lastMessageId = lastMessageId;
         pollChatMessagesCalled++;
     }
@@ -162,5 +163,10 @@ public class TestClientChatHandler extends AbstractGwtTest implements GlobalComm
     @Override
     public void addMessage(ChatMessage chatMessage) {
         displayMessages.add(chatMessage);
+    }
+
+    @Override
+    public ChatMessageFilter getChatMessageFilter() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

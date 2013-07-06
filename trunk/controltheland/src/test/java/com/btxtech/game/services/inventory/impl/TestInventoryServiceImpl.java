@@ -860,6 +860,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         assertNoHistoryType(DbHistoryElement.Type.INVENTORY_ITEM_FROM_BOX);
         assertNoHistoryType(DbHistoryElement.Type.INVENTORY_ARTIFACT_FROM_BOX);
         assertNoHistoryType(DbHistoryElement.Type.RAZARION_FROM_BOX);
+        // TODO failed on 05.07.2013
         sendPickupBoxCommand(TEST_PLANET_1_ID, getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), boxItem.getId());
         waitForActionServiceDone();
         waitForHistoryType(DbHistoryElement.Type.INVENTORY_ITEM_FROM_BOX);

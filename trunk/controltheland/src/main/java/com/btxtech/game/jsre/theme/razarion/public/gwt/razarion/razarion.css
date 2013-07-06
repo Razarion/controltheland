@@ -518,9 +518,10 @@
     }
 
     .gwt-PopupPanel {
-        border: 3px solid #C3D9FF;
+        border: 2px solid #C7C4BB;
         padding: 3px;
-        background: white;
+        background: #21250a;
+        color: #C7C4BB;
     }
 
     .gwt-DecoratedPopupPanel .popupContent {
