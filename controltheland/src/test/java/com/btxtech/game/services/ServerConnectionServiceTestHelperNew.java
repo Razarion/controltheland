@@ -1,6 +1,7 @@
 package com.btxtech.game.services;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -49,6 +50,11 @@ public class ServerConnectionServiceTestHelperNew implements ServerConnectionSer
     @Override
     public void sendMessage(SimpleBase simpleBase, String key, Object[] args, boolean showRegisterDialog) {
         log.error("Message to SimpleBase: " + simpleBase + " " + key + " " + args);
+    }
+
+    @Override
+    public void setChatMessageFilter(UserState userState, ChatMessageFilter chatMessageFilter) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

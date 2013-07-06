@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;

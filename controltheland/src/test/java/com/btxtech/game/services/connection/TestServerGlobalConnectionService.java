@@ -1,6 +1,7 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.connection.impl.ServerGlobalConnectionServiceImpl;
 import junit.framework.Assert;
@@ -32,12 +33,12 @@ public class TestServerGlobalConnectionService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         Thread.sleep(510);
-        // TODO failed on 14.03.2013
+        // TODO failed on 14.03.2013 05.07.2013
         Assert.assertEquals(1, connection.getAllOnlineMissionUserState().size());
     }
 
@@ -53,12 +54,12 @@ public class TestServerGlobalConnectionService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -78,34 +79,34 @@ public class TestServerGlobalConnectionService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GLOBAL, GameEngineMode.MASTER);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
-        connection.pollMessageIdPackets(null, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GUILD, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GUILD, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GUILD, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GUILD, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GUILD, GameEngineMode.MASTER);
+        connection.pollMessageIdPackets(null, ChatMessageFilter.GUILD, GameEngineMode.MASTER);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

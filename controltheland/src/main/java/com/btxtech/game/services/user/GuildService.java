@@ -54,13 +54,13 @@ public interface GuildService {
 
     SearchGuildsResult searchGuilds(int start, int length, String guildNameQuery);
 
-    SimpleGuild getSimpleGuild();
-
     void leaveGuild();
 
     void closeGuild();
 
     void fillUserAttentionPacket(User user, UserAttentionPacket userAttentionPacket);
+
+    SimpleGuild getSimpleGuild();
 
     SimpleGuild getGuildId(UserState userState);
 

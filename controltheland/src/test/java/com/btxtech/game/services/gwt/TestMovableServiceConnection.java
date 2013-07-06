@@ -6,9 +6,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerPlanetServices;
-import com.btxtech.game.services.connection.DbClientDebugEntry;
 import com.btxtech.game.services.connection.impl.ServerConnectionServiceImpl;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import junit.framework.Assert;
@@ -16,8 +14,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -285,6 +281,7 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
         Message message = new Message();
         message.setMessage("Hallo hat dich in seine Gilde eingeladen. Nur registrierte Benutzer können Gilden beitreten.");
         message.setShowRegisterDialog(false);
+        // TODO failed on: 05.07.2013
         assertPackagesIgnoreSyncItemInfoAndClear(true, message);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

@@ -11,17 +11,24 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client.cockpit;
+package com.btxtech.game.jsre.client.cockpit.chat;
 
+import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
+import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.NotAGuildMemberException;
+import com.btxtech.game.jsre.client.cockpit.ChatListener;
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -35,10 +42,12 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import java.util.List;
+import java.util.logging.Logger;
 
 
 /**
@@ -47,13 +56,13 @@ import com.google.gwt.user.client.ui.Widget;
  * Time: 18:36:49
  */
 public class ChatCockpit extends AbsolutePanel implements ChatListener {
+    private Logger log = Logger.getLogger(ChatCockpit.class.getName());
     private static final ChatCockpit INSTANCE = new ChatCockpit();
     private boolean resizeMode;
-    private AbsolutePanel contentPanel;
     private static final int CONTENT_BORDER = 2;
     private static final int RESIZE_CURSOR_AREA = 10;
-    private HTML receiving;
-    private TextBox send;
+    private ChatMessageFilter chatMessageFilter;
+    private ChatPanel chatPanel;
 
     public static ChatCockpit getInstance() {
         return INSTANCE;
@@ -63,6 +72,7 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
      * Singleton
      */
     private ChatCockpit() {
+        chatMessageFilter = ChatMessageFilter.GLOBAL;
         getElement().getStyle().setBackgroundColor("#868684");
         getElement().getStyle().setBorderStyle(Style.BorderStyle.SOLID);
         getElement().getStyle().setBorderWidth(1, Unit.PX);
@@ -112,55 +122,23 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
 
         preventEvents(this);
         // Content panel
-        contentPanel = new AbsolutePanel();
-        preventEvents(contentPanel);
-        contentPanel.setWidth("100%");
-        contentPanel.setHeight("100%");
-        contentPanel.getElement().getStyle().setFontSize(11, Unit.PX);
-        contentPanel.getElement().getStyle().setProperty("fontFamily", "Arial,Helvetica,sans-serif");
-        add(contentPanel);
-        // Receiving area
-        receiving = new HTML();
-        receiving.setWidth("100%");
-        receiving.getElement().getStyle().setOverflowY(Style.Overflow.SCROLL);
-        receiving.getElement().getStyle().setOverflowX(Style.Overflow.HIDDEN);
-        preventEvents(receiving);
-        receiving.getElement().getStyle().setBorderStyle(Style.BorderStyle.SOLID);
-        receiving.getElement().getStyle().setBorderWidth(1, Unit.PX);
-        receiving.getElement().getStyle().setBorderColor("#bbbcba");
-        receiving.getElement().getStyle().setBackgroundColor("#031723");
-        receiving.getElement().getStyle().setColor("#c0bdb2");
-        contentPanel.add(receiving, 0, 0);
-        // Send field
-        send = new TextBox();
-        send.setWidth("100%");
-        send.getElement().getStyle().setProperty("boxSizing", "border-box");
-        send.getElement().getStyle().setPosition(Position.ABSOLUTE);
-        send.getElement().getStyle().clearTop();
-        send.getElement().getStyle().clearRight();
-        send.getElement().getStyle().setBottom(0, Unit.PX);
-        send.getElement().getStyle().setLeft(0, Unit.PX);
-        send.getElement().getStyle().setBorderStyle(Style.BorderStyle.SOLID);
-        send.getElement().getStyle().setBorderWidth(1, Unit.PX);
-        send.getElement().getStyle().setBorderColor("#bbbcba");
-        send.getElement().getStyle().setBackgroundColor("#031723");
-        send.getElement().getStyle().setColor("#c0bdb2");
-        send.addKeyDownHandler(new KeyDownHandler() {
+        chatPanel = new ChatPanel(this);
+        add(chatPanel);
+        chatPanel.getSendBox().addKeyDownHandler(new KeyDownHandler() {
             @Override
             public void onKeyDown(KeyDownEvent event) {
                 if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-                    ClientMessageIdPacketHandler.getInstance().sendMessage(send.getText());
-                    send.setText("");
+                    String text = chatPanel.getSendBox().getText();
+                    if (text == null || text.trim().length() == 0) {
+                        TerrainView.getInstance().setFocus();
+                        return;
+                    }
+                    ClientMessageIdPacketHandler.getInstance().sendMessage(text, chatMessageFilter);
+                    chatPanel.getSendBox().setText("");
                     TerrainView.getInstance().setFocus();
                 }
             }
         });
-        contentPanel.add(send);
-    }
-
-    @Override
-    protected void onLoad() {
-        doInnerLayout();
     }
 
     public void addToParent(AbsolutePanel parent) {
@@ -174,22 +152,41 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
 
     @Override
     public void clearMessages() {
-        receiving.setText("");
+        chatPanel.getReceivingBox().setText("");
     }
 
     @Override
     public void addMessage(ChatMessage chatMessage) {
-        if (receiving.getHTML().trim().isEmpty()) {
-            receiving.setHTML(generateLine(chatMessage));
+        if (chatPanel.getReceivingBox().getHTML().trim().isEmpty()) {
+            chatPanel.getReceivingBox().setHTML(generateLine(chatMessage));
         } else {
-            receiving.setHTML(receiving.getHTML() + "<br />" + generateLine(chatMessage));
+            chatPanel.getReceivingBox().setHTML(chatPanel.getReceivingBox().getHTML() + "<br />" + generateLine(chatMessage));
         }
-        receiving.getElement().setScrollTop(receiving.getElement().getScrollHeight());
+        doInnerLayout();
     }
 
     private String generateLine(ChatMessage chatMessage) {
         StringBuilder builder = new StringBuilder();
-        builder.append("<span style='color:#FF6464;font-weight:bold'>[");
+        builder.append("<span style='color:");
+        switch (chatMessage.getType()) {
+            case OWN:
+                builder.append(ClientBase.OWN_BASE_COLOR);
+                break;
+            case GUILD:
+                builder.append(ClientBase.GUILD_MEMBER_BASE_COLOR);
+                break;
+            case ENEMY:
+                builder.append(ClientBase.ENEMY_BASE_COLOR);
+                break;
+            case ADMIN:
+                builder.append("#D358F7");
+                break;
+            default:
+                builder.append("#FFFFFF");
+                log.warning("ChatCockpit.generateLine() unexpected or unknown ChatMessage.Type: " + chatMessage.getType());
+                break;
+        }
+        builder.append(";font-weight:bold'>[");
         builder.append(SafeHtmlUtils.htmlEscape(chatMessage.getName()));
         builder.append("]</span> ");
         builder.append(SafeHtmlUtils.htmlEscape(chatMessage.getMessage()));
@@ -197,7 +194,7 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
     }
 
     public void blurFocus() {
-        send.setFocus(false);
+        chatPanel.getSendBox().setFocus(false);
     }
 
     private boolean isResizeAllowed(MouseEvent event) {
@@ -210,12 +207,12 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
     }
 
     private void doInnerLayout() {
-        int height = contentPanel.getOffsetHeight() - send.getOffsetHeight() - 3;
+        int height = getElement().getClientHeight() - chatPanel.getSendBox().getOffsetHeight() - 6;
         if (height < 0) {
             height = 0;
         }
-        receiving.setHeight(height + "px");
-        receiving.getElement().setScrollTop(receiving.getElement().getScrollHeight());
+        chatPanel.getReceivingBox().setHeight(height + "px");
+        chatPanel.getReceivingBox().getElement().setScrollTop(chatPanel.getReceivingBox().getElement().getScrollHeight());
     }
 
     private void preventEvents(Widget widget) {
@@ -223,7 +220,7 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
         widget.addDomHandler(new MouseUpHandler() {
             @Override
             public void onMouseUp(MouseUpEvent event) {
-                send.setFocus(true);
+                chatPanel.getSendBox().setFocus(true);
                 GwtCommon.preventDefault(event);
             }
         }, MouseUpEvent.getType());
@@ -231,13 +228,40 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
         widget.addDomHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent event) {
-                send.setFocus(true);
+                chatPanel.getSendBox().setFocus(true);
                 GwtCommon.preventDefault(event);
             }
         }, MouseDownEvent.getType());
     }
 
-    public Rectangle getArea() {
-        return new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), getOffsetWidth(), getOffsetHeight());
+    @Override
+    public ChatMessageFilter getChatMessageFilter() {
+        return chatMessageFilter;
+    }
+
+    public void setChatMessageFilter(final ChatMessageFilter chatMessageFilter) {
+        if (chatMessageFilter == this.chatMessageFilter) {
+            return;
+        }
+        if (Connection.getMovableServiceAsync() != null) {
+            Connection.getMovableServiceAsync().setChatMessageFilter(chatMessageFilter, new AsyncCallback<List<MessageIdPacket>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    if (caught instanceof NotAGuildMemberException) {
+                        DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.chatMessageFilter(), ClientI18nHelper.CONSTANTS.chatMessageFilterNoGuild()),
+                                DialogManager.Type.QUEUE_ABLE);
+                    } else {
+                        ClientExceptionHandler.handleException("setChatMessageFilter failed: ", caught);
+                    }
+                }
+
+                @Override
+                public void onSuccess(List<MessageIdPacket> messageIdPackets) {
+                    chatPanel.setChatMessageFilterIcon(chatMessageFilter);
+                    ChatCockpit.this.chatMessageFilter = chatMessageFilter;
+                    ClientMessageIdPacketHandler.getInstance().onSetChatMessageFilterChanged(messageIdPackets);
+                }
+            });
+        }
     }
 }

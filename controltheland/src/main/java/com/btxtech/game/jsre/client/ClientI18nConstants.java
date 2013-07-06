@@ -655,4 +655,15 @@ public interface ClientI18nConstants extends Messages {
     String guildLostTitle();
 
     String guildLostMessage();
+
+    // Chat
+    String tooltipChatMenu();
+
+    String globalChat();
+
+    String guildChat();
+
+    String chatMessageFilter();
+
+    String chatMessageFilterNoGuild();
 }

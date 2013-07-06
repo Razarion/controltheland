@@ -1,11 +1,14 @@
 package com.btxtech.game.services.connection;
 
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
-import com.btxtech.game.services.connection.impl.MessageIdPacketQueue;
+import com.btxtech.game.services.AbstractServiceTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
@@ -14,162 +17,146 @@ import java.util.List;
  * Date: 02.04.2012
  * Time: 23:44:18
  */
-public class TestMessageIdPacketQueue {
+public class TestMessageIdPacketQueue extends AbstractServiceTest {
+    @Autowired
+    private MessageIdPacketQueue messageIdPacketQueue;
 
     @Test
-    public void empty() {
-        MessageIdPacketQueue messageIdPacketQueue = new MessageIdPacketQueue();
-        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(null).size());
-        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(0).size());
-        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(1).size());
-        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(100).size());
+    @DirtiesContext
+    public void empty() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(null, ChatMessageFilter.GLOBAL).size());
+        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(null, ChatMessageFilter.GUILD).size());
+        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(0, ChatMessageFilter.GLOBAL).size());
+        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(0, ChatMessageFilter.GUILD).size());
+        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(1, ChatMessageFilter.GLOBAL).size());
+        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(1, ChatMessageFilter.GUILD).size());
+        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(100, ChatMessageFilter.GLOBAL).size());
+        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(100, ChatMessageFilter.GUILD).size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
-    public void multipleMessages() {
-        MessageIdPacketQueue messageIdPacketQueue = new MessageIdPacketQueue();
+    @DirtiesContext
+    public void multipleMessages() throws Exception {
+        configureSimplePlanetNoResources();
 
-        addChatMessage("m1", "u1", messageIdPacketQueue);
-        addRebootPacket(1, 2, messageIdPacketQueue);
-        addChatMessage("m2", "u2", messageIdPacketQueue);
-        addChatMessage("m3", "u3", messageIdPacketQueue);
-        addRebootPacket(3, 4, messageIdPacketQueue);
-        addChatMessage("m4", "u4", messageIdPacketQueue);
+        int guildId = createGuildAnd2Users();
 
-        List<MessageIdPacket> messageIdPackets = messageIdPacketQueue.peekMessages(null);
-        Assert.assertEquals(6, messageIdPackets.size());
-        assertChatMessage("m4", "u4", messageIdPackets.get(0));
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        loginUser("member1");
+        // Preparation
+        addChatMessage("m1", "member1", getUserId(), null);
+        addRebootPacket(1, 2);
+        addChatMessage("m2", "member1", getUserId(), guildId);
+        addChatMessage("m3", "member1", getUserId(), null);
+        addRebootPacket(3, 4);
+        addChatMessage("m4", "member1", getUserId(), guildId);
+        // Guild no message id
+        List<MessageIdPacket> messageIdPackets = messageIdPacketQueue.peekMessages(null, ChatMessageFilter.GUILD);
+        Assert.assertEquals(4, messageIdPackets.size());
+        assertChatMessage("m4", "member1", getUserId(), guildId, ChatMessage.Type.OWN, messageIdPackets.get(0));
         assertRebootPacket(3, 4, messageIdPackets.get(1));
-        assertChatMessage("m3", "u3", messageIdPackets.get(2));
-        assertChatMessage("m2", "u2", messageIdPackets.get(3));
-        assertRebootPacket(1, 2, messageIdPackets.get(4));
-        assertChatMessage("m1", "u1", messageIdPackets.get(5));
-        ChatMessage m1 = (ChatMessage) messageIdPackets.get(2);
-
-        messageIdPackets = messageIdPacketQueue.peekMessages(messageIdPackets.get(2).getMessageId());
-        Assert.assertEquals(2, messageIdPackets.size());
-        assertChatMessage("m4", "u4", messageIdPackets.get(0));
-        assertRebootPacket(3, 4, messageIdPackets.get(1));
-
-        Assert.assertEquals(0, messageIdPacketQueue.peekMessages(messageIdPackets.get(0).getMessageId()).size());
-
-        addChatMessage("m5", "u5", messageIdPacketQueue);
-        addRebootPacket(5, 6, messageIdPacketQueue);
-        addChatMessage("m6", "u6", messageIdPacketQueue);
-
-        messageIdPackets = messageIdPacketQueue.peekMessages(messageIdPackets.get(0).getMessageId());
+        assertChatMessage("m2", "member1", getUserId(), guildId, ChatMessage.Type.OWN, messageIdPackets.get(2));
+        assertRebootPacket(1, 2, messageIdPackets.get(3));
+        int rebootId = messageIdPackets.get(3).getMessageId();
+        // Global no message id
+        messageIdPackets = messageIdPacketQueue.peekMessages(null, ChatMessageFilter.GLOBAL);
+        Assert.assertEquals(4, messageIdPackets.size());
+        assertRebootPacket(3, 4, messageIdPackets.get(0));
+        assertChatMessage("m3", "member1", getUserId(), null, ChatMessage.Type.OWN, messageIdPackets.get(1));
+        assertRebootPacket(1, 2, messageIdPackets.get(2));
+        assertChatMessage("m1", "member1", getUserId(), null, ChatMessage.Type.OWN, messageIdPackets.get(3));
+        // Guild and message id
+        messageIdPackets = messageIdPacketQueue.peekMessages(rebootId, ChatMessageFilter.GUILD);
         Assert.assertEquals(3, messageIdPackets.size());
-        assertChatMessage("m6", "u6", messageIdPackets.get(0));
-        assertRebootPacket(5, 6, messageIdPackets.get(1));
-        assertChatMessage("m5", "u5", messageIdPackets.get(2));
-
-        List<MessageIdPacket> receivedMessageIdPacketAll = messageIdPacketQueue.peekMessages(null);
-        Assert.assertEquals(9, receivedMessageIdPacketAll.size());
-        assertChatMessage("m6", "u6", receivedMessageIdPacketAll.get(0));
-        assertRebootPacket(5, 6, receivedMessageIdPacketAll.get(1));
-        assertChatMessage("m5", "u5", receivedMessageIdPacketAll.get(2));
-        assertChatMessage("m4", "u4", receivedMessageIdPacketAll.get(3));
-        assertRebootPacket(3, 4, receivedMessageIdPacketAll.get(4));
-        assertChatMessage("m3", "u3", receivedMessageIdPacketAll.get(5));
-        assertChatMessage("m2", "u2", receivedMessageIdPacketAll.get(6));
-        assertRebootPacket(1, 2, receivedMessageIdPacketAll.get(7));
-        assertChatMessage("m1", "u1", receivedMessageIdPacketAll.get(8));
-
-        addChatMessage("m7", "u7", messageIdPacketQueue);
-        addChatMessage("m8", "u8", messageIdPacketQueue);
-        addRebootPacket(7, 8, messageIdPacketQueue);
-        addChatMessage("m9", "u9", messageIdPacketQueue);
-        addChatMessage("m10", "u10", messageIdPacketQueue);
-
-        receivedMessageIdPacketAll = messageIdPacketQueue.peekMessages(null);
-        Assert.assertEquals(10, receivedMessageIdPacketAll.size());
-        assertChatMessage("m10", "u10", receivedMessageIdPacketAll.get(0));
-        assertChatMessage("m9", "u9", receivedMessageIdPacketAll.get(1));
-        assertRebootPacket(7, 8, receivedMessageIdPacketAll.get(2));
-        assertChatMessage("m8", "u8", receivedMessageIdPacketAll.get(3));
-        assertChatMessage("m7", "u7", receivedMessageIdPacketAll.get(4));
-        assertChatMessage("m6", "u6", receivedMessageIdPacketAll.get(5));
-        assertRebootPacket(5, 6, receivedMessageIdPacketAll.get(6));
-        assertChatMessage("m5", "u5", receivedMessageIdPacketAll.get(7));
-        assertChatMessage("m4", "u4", receivedMessageIdPacketAll.get(8));
-        assertRebootPacket(3, 4, receivedMessageIdPacketAll.get(9));
-
-        messageIdPackets = messageIdPacketQueue.peekMessages(messageIdPackets.get(0).getMessageId());
-        Assert.assertEquals(5, messageIdPackets.size());
-        assertChatMessage("m10", "u10", receivedMessageIdPacketAll.get(0));
-        assertChatMessage("m9", "u9", receivedMessageIdPacketAll.get(1));
-        assertRebootPacket(7, 8, receivedMessageIdPacketAll.get(2));
-        assertChatMessage("m8", "u8", receivedMessageIdPacketAll.get(3));
-        assertChatMessage("m7", "u7", receivedMessageIdPacketAll.get(4));
-
-        addChatMessage("m11", "u11", messageIdPacketQueue);
-
-        messageIdPackets = messageIdPacketQueue.peekMessages(messageIdPackets.get(0).getMessageId());
-        Assert.assertEquals(1, messageIdPackets.size());
-        assertChatMessage("m11", "u11", messageIdPackets.get(0));
-
-        receivedMessageIdPacketAll = messageIdPacketQueue.peekMessages(null);
-        Assert.assertEquals(10, receivedMessageIdPacketAll.size());
-        assertChatMessage("m11", "u11", receivedMessageIdPacketAll.get(0));
-        assertChatMessage("m10", "u10", receivedMessageIdPacketAll.get(1));
-        assertChatMessage("m9", "u9", receivedMessageIdPacketAll.get(2));
-        assertRebootPacket(7, 8, receivedMessageIdPacketAll.get(3));
-        assertChatMessage("m8", "u8", receivedMessageIdPacketAll.get(4));
-        assertChatMessage("m7", "u7", receivedMessageIdPacketAll.get(5));
-        assertChatMessage("m6", "u6", receivedMessageIdPacketAll.get(6));
-        assertRebootPacket(5, 6, receivedMessageIdPacketAll.get(7));
-        assertChatMessage("m5", "u5", receivedMessageIdPacketAll.get(8));
-        assertChatMessage("m4", "u4", receivedMessageIdPacketAll.get(9));
-
-        receivedMessageIdPacketAll = messageIdPacketQueue.peekMessages(m1.getMessageId());
-        Assert.assertEquals(10, receivedMessageIdPacketAll.size());
-        assertChatMessage("m11", "u11", receivedMessageIdPacketAll.get(0));
-        assertChatMessage("m10", "u10", receivedMessageIdPacketAll.get(1));
-        assertChatMessage("m9", "u9", receivedMessageIdPacketAll.get(2));
-        assertRebootPacket(7, 8, receivedMessageIdPacketAll.get(3));
-        assertChatMessage("m8", "u8", receivedMessageIdPacketAll.get(4));
-        assertChatMessage("m7", "u7", receivedMessageIdPacketAll.get(5));
-        assertChatMessage("m6", "u6", receivedMessageIdPacketAll.get(6));
-        assertRebootPacket(5, 6, receivedMessageIdPacketAll.get(7));
-        assertChatMessage("m5", "u5", receivedMessageIdPacketAll.get(8));
-        assertChatMessage("m4", "u4", receivedMessageIdPacketAll.get(9));
-
-        addChatMessage("m12", "u12", messageIdPacketQueue);
-        addChatMessage("m13", "u13", messageIdPacketQueue);
-        addChatMessage("m14", "u14", messageIdPacketQueue);
-
-        receivedMessageIdPacketAll = messageIdPacketQueue.peekMessages(null);
-        Assert.assertEquals(10, receivedMessageIdPacketAll.size());
-        assertChatMessage("m14", "u14", receivedMessageIdPacketAll.get(0));
-        assertChatMessage("m13", "u13", receivedMessageIdPacketAll.get(1));
-        assertChatMessage("m12", "u12", receivedMessageIdPacketAll.get(2));
-        assertChatMessage("m11", "u11", receivedMessageIdPacketAll.get(3));
-        assertChatMessage("m10", "u10", receivedMessageIdPacketAll.get(4));
-        assertChatMessage("m9", "u9", receivedMessageIdPacketAll.get(5));
-        assertRebootPacket(7, 8, receivedMessageIdPacketAll.get(6));
-        assertChatMessage("m8", "u8", receivedMessageIdPacketAll.get(7));
-        assertChatMessage("m7", "u7", receivedMessageIdPacketAll.get(8));
-        assertChatMessage("m6", "u6", receivedMessageIdPacketAll.get(9));
+        assertChatMessage("m4", "member1", getUserId(), guildId, ChatMessage.Type.OWN, messageIdPackets.get(0));
+        assertRebootPacket(3, 4, messageIdPackets.get(1));
+        assertChatMessage("m2", "member1", getUserId(), guildId, ChatMessage.Type.OWN, messageIdPackets.get(2));
+        // Global and message id
+        messageIdPackets = messageIdPacketQueue.peekMessages(rebootId, ChatMessageFilter.GLOBAL);
+        Assert.assertEquals(2, messageIdPackets.size());
+        assertRebootPacket(3, 4, messageIdPackets.get(0));
+        assertChatMessage("m3", "member1", getUserId(), null, ChatMessage.Type.OWN, messageIdPackets.get(1));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
-    private void addChatMessage(String message, String name, MessageIdPacketQueue messageIdPacketQueue) {
+    @Test
+    @DirtiesContext
+    public void queueSize() throws Exception {
+        configureSimplePlanetNoResources();
+
+        int guildId = createGuildAnd2Users();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("member1");
+
+        for (int i = 0; i < 17; i++) {
+            addChatMessage("m" + i, "user", getUserId(), null);
+        }
+
+        for (int i = 0; i < 3; i++) {
+            addRebootPacket(i, 2);
+        }
+
+        for (int i = 0; i < 50; i++) {
+            addChatMessage("m" + i, "user", getUserId(), guildId);
+        }
+
+
+        List<MessageIdPacket> messageIdPackets = messageIdPacketQueue.peekMessages(null, ChatMessageFilter.GLOBAL);
+        Assert.assertEquals(7, messageIdPackets.size());
+        for (int i = 0; i < 3; i++) {
+            assertRebootPacket(2 - i, 2, messageIdPackets.get(i));
+        }
+        for (int i = 3; i < 7; i++) {
+            assertChatMessage("m" + (19 - i), "user", getUserId(), null, ChatMessage.Type.OWN, messageIdPackets.get(i));
+        }
+
+        messageIdPackets = messageIdPacketQueue.peekMessages(null, ChatMessageFilter.GUILD);
+        Assert.assertEquals(14, messageIdPackets.size());
+        for (int i = 0; i < 11; i++) {
+            assertChatMessage("m" + (49 - i), "user", getUserId(), guildId, ChatMessage.Type.OWN, messageIdPackets.get(i));
+        }
+        for (int i = 11; i < 14; i++) {
+            assertRebootPacket(13 - i, 2, messageIdPackets.get(i));
+        }
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private void addChatMessage(String message, String name, Integer userId, Integer guildId) {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessage(message);
         chatMessage.setName(name);
+        chatMessage.setUserId(userId);
+        chatMessage.setGuildId(guildId);
         messageIdPacketQueue.initAndPutMessage(chatMessage);
     }
 
-    private void addRebootPacket(int reboot, int downTime, MessageIdPacketQueue messageIdPacketQueue) {
+    private void addRebootPacket(int reboot, int downTime) {
         ServerRebootMessagePacket serverRebootMessagePacket = new ServerRebootMessagePacket();
         serverRebootMessagePacket.setRebootInSeconds(reboot);
         serverRebootMessagePacket.setDownTimeInMinutes(downTime);
         messageIdPacketQueue.initAndPutMessage(serverRebootMessagePacket);
     }
 
-    public static void assertChatMessage(String message, String name, MessageIdPacket messageIdPacket) {
+    public static void assertChatMessage(String message, String name, Integer userId, Integer guildId, ChatMessage.Type type, MessageIdPacket messageIdPacket) {
         ChatMessage chatMessage = (ChatMessage) messageIdPacket;
         Assert.assertEquals(message, chatMessage.getMessage());
         Assert.assertEquals(name, chatMessage.getName());
+        Assert.assertEquals(userId, chatMessage.getUserId());
+        Assert.assertEquals(guildId, chatMessage.getGuildId());
+        Assert.assertEquals(type, chatMessage.getType());
     }
 
     public static void assertRebootPacket(int reboot, int downTime, MessageIdPacket messageIdPacket) {

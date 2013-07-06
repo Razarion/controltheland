@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;

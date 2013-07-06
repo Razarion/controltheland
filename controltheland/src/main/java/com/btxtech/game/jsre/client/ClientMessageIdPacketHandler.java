@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.ChatListener;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.ServerRestartDialog;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
@@ -79,7 +80,7 @@ public class ClientMessageIdPacketHandler {
         lastMessageIdPacket = null;
     }
 
-    public void runRealGame(GlobalCommonConnectionService globalCommonConnectionService, ChatListener chatListener, int startDelay) {
+    public void runRealGame(GlobalCommonConnectionService globalCommonConnectionService, final ChatListener chatListener, int startDelay) {
         this.chatListener = chatListener;
         chatListener.clearMessages();
         this.globalCommonConnectionService = globalCommonConnectionService;
@@ -87,13 +88,13 @@ public class ClientMessageIdPacketHandler {
             @Override
             public void runPerfmon() {
                 startTimer = null;
-                pollMessages();
+                pollMessages(chatListener.getChatMessageFilter());
             }
         };
         startTimer.schedule(startDelay);
     }
 
-    public void runSimulatedGame(GlobalCommonConnectionService globalCommonConnectionService, ChatListener chatListener, int startDelay, final int pollDelay) {
+    public void runSimulatedGame(GlobalCommonConnectionService globalCommonConnectionService, final ChatListener chatListener, int startDelay, final int pollDelay) {
         this.chatListener = chatListener;
         chatListener.clearMessages();
         this.globalCommonConnectionService = globalCommonConnectionService;
@@ -101,11 +102,11 @@ public class ClientMessageIdPacketHandler {
             @Override
             public void runPerfmon() {
                 startTimer = null;
-                pollMessages();
+                pollMessages(chatListener.getChatMessageFilter());
                 pollTimer = new TimerPerfmon(PerfmonEnum.CHAT_POLL) {
                     @Override
                     public void runPerfmon() {
-                        pollMessages();
+                        pollMessages(chatListener.getChatMessageFilter());
                     }
                 };
                 pollTimer.scheduleRepeating(pollDelay);
@@ -115,28 +116,40 @@ public class ClientMessageIdPacketHandler {
     }
 
 
-    private void pollMessages() {
+    private void pollMessages(ChatMessageFilter chatMessageFilter) {
         if (globalCommonConnectionService == null) {
             log.severe("ClientMessageIdPacketHandler.poll() connection == null");
             return;
         }
         Integer lastMessageId = lastMessageIdPacket != null ? lastMessageIdPacket.getMessageId() : null;
-        globalCommonConnectionService.pollChatMessages(lastMessageId);
+        globalCommonConnectionService.pollChatMessages(lastMessageId, chatMessageFilter);
     }
 
-    public void pollMessagesIfInPollMode() {
+    public void pollMessagesIfInPollMode(ChatMessageFilter chatMessageFilter) {
         if (startTimer != null) {
             return;
         }
         if (pollTimer == null) {
             return;
         }
-        pollMessages();
+        pollMessages(chatMessageFilter);
     }
 
-    public void sendMessage(String text) {
+    public void sendMessage(String text, ChatMessageFilter chatMessageFilter) {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessage(text);
-        globalCommonConnectionService.sendChatMessage(chatMessage);
+        globalCommonConnectionService.sendChatMessage(chatMessage, chatMessageFilter);
+    }
+
+    public void onSetChatMessageFilterChanged(List<MessageIdPacket> messageIdPackets) {
+        lastMessageIdPacket = null;
+        chatListener.clearMessages();
+        Collections.reverse(messageIdPackets);
+        for (MessageIdPacket messageIdPacket : messageIdPackets) {
+            if(messageIdPacket instanceof ChatMessage) {
+                // DO not show the ServerRebootMessagePacket package again
+                onMessageReceived(messageIdPacket);
+            }
+        }
     }
 }

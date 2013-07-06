@@ -20,7 +20,7 @@ package com.btxtech.game.jsre.client.common;
  */
 public class Constants {
     // System
-    public static final int INTERFACE_VERSION = 4;
+    public static final int INTERFACE_VERSION = 5;
 
     // Game
     public static final double ITEM_SELL_FACTOR = 0.5;
@@ -57,7 +57,8 @@ public class Constants {
 
     // zIndex
     public static final int Z_INDEX_STARTUP_SCREEN = 100; // Fix coded in Game.html
-    public static final int Z_INDEX_TIP = 15;
+    public static final int Z_INDEX_TIP = 16;
+    public static final int Z_INDEX_POPUP = 15;
     public static final int Z_INDEX_DIALOG = 14;
     public static final int Z_INDEX_TIP_GAME_OVERLAY = 13;
     public static final int Z_INDEX_GAME_OVERLAY = 12;

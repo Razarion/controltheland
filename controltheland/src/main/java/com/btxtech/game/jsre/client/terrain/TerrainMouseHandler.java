@@ -6,7 +6,7 @@ import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.StartPointMode;
 import com.btxtech.game.jsre.client.action.ActionHandler;
-import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;

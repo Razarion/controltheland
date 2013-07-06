@@ -14,6 +14,7 @@
 package com.btxtech.game.services.connection.impl;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -175,6 +176,21 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
         return false;
     }
 
+
+    @Override
+    public void setChatMessageFilter(UserState userState, ChatMessageFilter chatMessageFilter) {
+        try {
+            synchronized (onlineConnection) {
+                Connection connection = onlineConnection.get(userState);
+                if (connection != null) {
+                    connection.setChatMessageFilter(chatMessageFilter);
+                }
+            }
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
     @Override
     public void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog) {
         Message message = new Message();
@@ -206,7 +222,7 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
             }
         }
 
-        connection = new Connection(userState, planetServices, serverGlobalServices.getServerGlobalConnectionService().getSession().getSessionId(), startUuid);
+        connection = new Connection(userState, planetServices, serverGlobalServices, startUuid);
         serverGlobalServices.getServerGlobalConnectionService().getSession().setConnection(connection);
         synchronized (onlineConnection) {
             onlineConnection.put(userState, connection);

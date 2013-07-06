@@ -14,6 +14,7 @@
 package com.btxtech.game.services.connection.impl;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.MessageIdPacket;
@@ -23,19 +24,14 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.DbClientDebugEntry;
 import com.btxtech.game.services.connection.DbConnectionStatistics;
+import com.btxtech.game.services.connection.MessageIdPacketQueue;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
-import com.btxtech.game.services.mgmt.ServerI18nHelper;
-import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbChatMessage;
 import com.btxtech.game.services.utg.UserTrackingService;
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
@@ -44,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -71,8 +66,7 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
     @Autowired
     private PlanetSystemService planetSystemService;
     @Autowired
-    private ServerI18nHelper serverI18nHelper;
-    private MessageIdPacketQueue messageIdPacketQueue = new MessageIdPacketQueue();
+    private MessageIdPacketQueue messageIdPacketQueue;
     private ScheduledThreadPoolExecutor onlineMissionThreadPool;
     private final Set<UserState> onlineMissionUserStates = new HashSet<>();
     private Set<UserState> onlineMissionUserStatesTmp = new HashSet<>();
@@ -94,27 +88,6 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
                 }
             }
         }, ONLINE_MISSION_TIMER_DELAY, ONLINE_MISSION_TIMER_DELAY, TimeUnit.MILLISECONDS);
-        loadChatMessages();
-    }
-
-    private void loadChatMessages() {
-        try {
-            HibernateUtil.openSession4InternalCall(sessionFactory);
-            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbChatMessage.class);
-            criteria.setMaxResults(10);
-            criteria.addOrder(Order.desc("timeStamp"));
-            List<DbChatMessage> dbChatMessages = criteria.list();
-            if (dbChatMessages != null) {
-                Collections.reverse(dbChatMessages);
-                for (DbChatMessage dbChatMessage : dbChatMessages) {
-                    messageIdPacketQueue.initAndPutMessage(dbChatMessage.createMessageIdPacket());
-                }
-            }
-        } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-        } finally {
-            HibernateUtil.closeSession4InternalCall(sessionFactory);
-        }
     }
 
     @PreDestroy
@@ -143,18 +116,8 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
     }
 
     @Override
-    public void sendChatMessage(ChatMessage chatMessage) {
-        User user = userService.getUser();
-        String name;
-        if (user != null) {
-            name = user.getUsername();
-        } else if (userService.getUserState().getBase() != null) {
-            name = planetSystemService.getServerPlanetServices().getBaseService().getBaseName();
-        } else {
-            name = serverI18nHelper.getString("guest");
-        }
-        chatMessage.setName(name);
-        messageIdPacketQueue.initAndPutMessage(chatMessage);
+    public void sendChatMessage(ChatMessage chatMessage, ChatMessageFilter chatMessageFilter) {
+        messageIdPacketQueue.setFilterAndPutMessage(chatMessage, chatMessageFilter);
         planetSystemService.sendPacket(chatMessage);
         userTrackingService.trackChatMessage(chatMessage);
     }
@@ -169,13 +132,18 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
     }
 
     @Override
-    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode) {
+    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, ChatMessageFilter chatMessageFilter, GameEngineMode gameEngineMode) {
         if (gameEngineMode == GameEngineMode.MASTER) {
             synchronized (onlineMissionUserStates) {
                 onlineMissionUserStatesTmp.add(userService.getUserState());
             }
         }
-        return messageIdPacketQueue.peekMessages(lastMessageId);
+        return messageIdPacketQueue.peekMessages(lastMessageId, chatMessageFilter);
+    }
+
+    @Override
+    public MessageIdPacketQueue getMessageIdPacketQueue() {
+        return messageIdPacketQueue;
     }
 
     @Override

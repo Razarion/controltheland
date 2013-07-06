@@ -1,26 +1,24 @@
 package com.btxtech.game.services.connection;
 
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
-import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.user.UserState;
 import junit.framework.Assert;
+import org.easymock.Capture;
+import org.easymock.EasyMock;
+import org.easymock.IAnswer;
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * User: beat
@@ -28,10 +26,32 @@ import java.util.Locale;
  * Time: 11:22
  */
 public class TestConnection extends AbstractServiceTest {
+    private ServerGlobalServices serverGlobalServicesMock;
+
+    @Before
+    public void init() {
+        Session sessionMock = EasyMock.createNiceMock(Session.class);
+        EasyMock.expect(sessionMock.getSessionId()).andReturn("1234");
+        MessageIdPacketQueue messageIdPacketQueueMock = EasyMock.createNiceMock(MessageIdPacketQueue.class);
+        final Capture<Packet> capture = new Capture<>();
+        EasyMock.expect(messageIdPacketQueueMock.convertPacketIfNecessary(EasyMock.capture(capture), EasyMock.<ChatMessageFilter>anyObject(), EasyMock.<UserState>anyObject())).andAnswer(new IAnswer<Packet>() {
+            @Override
+            public Packet answer() throws Throwable {
+                return capture.getValue();
+            }
+        }).anyTimes();
+        ServerGlobalConnectionService serverGlobalConnectionServiceMock = EasyMock.createNiceMock(ServerGlobalConnectionService.class);
+        EasyMock.expect(serverGlobalConnectionServiceMock.getSession()).andReturn(sessionMock);
+        EasyMock.expect(serverGlobalConnectionServiceMock.getMessageIdPacketQueue()).andReturn(messageIdPacketQueueMock);
+        serverGlobalServicesMock = EasyMock.createNiceMock(ServerGlobalServices.class);
+        EasyMock.expect(serverGlobalServicesMock.getServerGlobalConnectionService()).andReturn(serverGlobalConnectionServiceMock).anyTimes();
+        EasyMock.replay(sessionMock, messageIdPacketQueueMock, serverGlobalConnectionServiceMock, serverGlobalServicesMock);
+    }
+
     @Test
     @DirtiesContext
     public void noPendingPackets() {
-        Connection connection = new Connection(new UserState(), null, "1234", null);
+        Connection connection = new Connection(new UserState(), null, serverGlobalServicesMock, null);
         Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
         Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
         Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
@@ -43,7 +63,7 @@ public class TestConnection extends AbstractServiceTest {
     public void pendingPackets() throws Exception {
         configureSimplePlanetNoResources();
 
-        Connection connection = new Connection(new UserState(), null, "1234", null);
+        Connection connection = new Connection(new UserState(), null, serverGlobalServicesMock, null);
         SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1));
         connection.sendBaseSyncItem(attackItem);
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
@@ -61,7 +81,7 @@ public class TestConnection extends AbstractServiceTest {
     public void pendingPacketsResendLast() throws Exception {
         configureSimplePlanetNoResources();
 
-        Connection connection = new Connection(new UserState(), null, "1234", null);
+        Connection connection = new Connection(new UserState(), null, serverGlobalServicesMock, null);
         SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1));
         connection.sendBaseSyncItem(attackItem);
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();

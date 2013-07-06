@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
@@ -88,9 +89,11 @@ public interface MovableServiceAsync {
 
     void isNickNameValid(String nickname, AsyncCallback<VerificationRequestCallback.ErrorResult> async);
 
-    void sendChatMessage(ChatMessage chatMessage, AsyncCallback<Void> asyncCallback);
+    void sendChatMessage(ChatMessage chatMessage, ChatMessageFilter chatMessageFilter, AsyncCallback<Void> asyncCallback);
 
-    void pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode, AsyncCallback<List<MessageIdPacket>> asyncCallback);
+    void setChatMessageFilter(ChatMessageFilter chatMessageFilter, AsyncCallback<List<MessageIdPacket>> asyncCallback);
+
+    void pollMessageIdPackets(Integer lastMessageId, ChatMessageFilter chatMessageFilter, GameEngineMode gameEngineMode, AsyncCallback<List<MessageIdPacket>> asyncCallback);
 
     void sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp, AsyncCallback<GameFlow> asyncCallback);
 

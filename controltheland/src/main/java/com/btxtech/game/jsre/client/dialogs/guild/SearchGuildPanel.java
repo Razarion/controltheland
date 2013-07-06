@@ -58,7 +58,11 @@ public class SearchGuildPanel extends Composite {
 
             @Override
             public SafeHtml getValue(GuildDetailedInfo guildDetailedInfo) {
-                return SafeHtmlUtils.fromTrustedString(guildDetailedInfo.getText());
+                if(guildDetailedInfo.getText() != null) {
+                    return SafeHtmlUtils.fromTrustedString(guildDetailedInfo.getText());
+                } else {
+                    return null;
+                }
             }
         };
         guildTable.addColumn(textColumn, ClientI18nHelper.CONSTANTS.guildTextShort());

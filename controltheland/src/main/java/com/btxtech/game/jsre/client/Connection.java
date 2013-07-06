@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationCockpit;
@@ -361,7 +362,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     private void handleStorablePacket(StorablePacket storablePacket) {
         switch (storablePacket.getType()) {
             case GUILD_LOST:
-                ClientBase.getInstance().onGuildList();
+                ClientBase.getInstance().onGuildLost();
                 break;
             default:
                 throw new IllegalArgumentException("Connection.handleStorablePacket() unknown type: " + storablePacket.getType());
@@ -413,9 +414,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     }
 
     @Override
-    public void sendChatMessage(ChatMessage chatMessage) {
+    public void sendChatMessage(ChatMessage chatMessage, final ChatMessageFilter chatMessageFilter) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendChatMessage(chatMessage, new AsyncCallback<Void>() {
+            movableServiceAsync.sendChatMessage(chatMessage, chatMessageFilter, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     log.log(Level.SEVERE, "Chat message sending failed", caught);
@@ -423,16 +424,16 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
                 @Override
                 public void onSuccess(Void result) {
-                    ClientMessageIdPacketHandler.getInstance().pollMessagesIfInPollMode();
+                    ClientMessageIdPacketHandler.getInstance().pollMessagesIfInPollMode(chatMessageFilter);
                 }
             });
         }
     }
 
     @Override
-    public void pollChatMessages(Integer lastMessageId) {
+    public void pollChatMessages(Integer lastMessageId, ChatMessageFilter chatMessageFilter) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.pollMessageIdPackets(lastMessageId, gameEngineMode, new AsyncCallback<List<MessageIdPacket>>() {
+            movableServiceAsync.pollMessageIdPackets(lastMessageId, chatMessageFilter, gameEngineMode, new AsyncCallback<List<MessageIdPacket>>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     ClientExceptionHandler.handleExceptionOnlyOnce("Chat message polling failed", caught);

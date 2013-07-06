@@ -15,4 +15,8 @@ public class MessageIdPacket extends Packet{
     public void setMessageId(int messageId) {
         this.messageId = messageId;
     }
+
+    protected void copy(MessageIdPacket copy) {
+        copy.messageId = messageId;
+    }
 }

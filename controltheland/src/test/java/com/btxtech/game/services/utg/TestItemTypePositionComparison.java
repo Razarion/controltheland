@@ -1,6 +1,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
@@ -1204,6 +1205,11 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Override
     public void sendMessage(SimpleBase simpleBase, String key, Object[] args, boolean showRegisterDialog) {
 
+    }
+
+    @Override
+    public void setChatMessageFilter(UserState userState, ChatMessageFilter chatMessageFilter) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
