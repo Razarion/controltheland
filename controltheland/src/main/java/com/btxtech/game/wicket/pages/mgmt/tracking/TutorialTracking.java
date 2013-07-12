@@ -25,7 +25,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import javax.servlet.http.HttpSession;
@@ -66,7 +66,7 @@ public class TutorialTracking extends Panel {
 
             @Override
             public void onClick() {
-                HttpSession httpSession = ((WebRequest) getRequest()).getHttpServletRequest().getSession();
+                HttpSession httpSession = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
                 httpSession.setAttribute(PlaybackEntry.START_UUID, lifecycleTrackingInfo.getStartUuid());
                 setResponsePage(new PlaybackPage());
             }

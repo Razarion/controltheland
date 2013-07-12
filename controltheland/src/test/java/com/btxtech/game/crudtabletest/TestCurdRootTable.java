@@ -36,7 +36,7 @@ public class TestCurdRootTable extends AbstractServiceTest {
     @Before
     public void setUp() {
         tester = new WicketTester();
-        tester.getApplication().addComponentInstantiationListener(new SpringComponentInjector(tester.getApplication(), applicationContext, true));
+        tester.getApplication().getComponentInstantiationListeners().add(new SpringComponentInjector(tester.getApplication(), applicationContext, true));
     }
 
     @Test

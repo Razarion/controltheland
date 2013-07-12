@@ -184,7 +184,7 @@
         <!-- Wicket -->
         <dependency>
             <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket</artifactId>
+            <artifactId>wicket-core</artifactId>
             <version>${wicket.version}</version>
         </dependency>
         <dependency>
@@ -196,13 +196,6 @@
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-extensions</artifactId>
             <version>${wicket.version}</version>
-            <!-- exclude spring framework that wicket pulls in -->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
@@ -243,7 +236,7 @@
             <artifactId>activation</artifactId>
             <version>1.1.1</version>
         </dependency>
-        <!-- Logging -->
+        <!-- Velocity -->
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
@@ -253,7 +246,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.8</version>
+            <version>1.7.5</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -450,7 +443,7 @@
         </pluginRepository>
     </pluginRepositories>
     <properties>
-        <wicket.version>1.4.15</wicket.version>
+        <wicket.version>6.9.0</wicket.version>
         <jetty.version>6.1.25</jetty.version>
         <gwtVersion>2.4.0</gwtVersion>
         <hibernateVersion>4.0.0.Final</hibernateVersion>

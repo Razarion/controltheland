@@ -3,7 +3,7 @@ package com.btxtech.game.wicket.pages.cms;
 import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.cms.layout.DbContentList;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -31,11 +31,11 @@ public class ContentContext implements Serializable {
     }
 
     public String getContentSortInfoString(int contentListId) {
-        return pageParameters.getString(generateSortInfoKey(contentListId));
+        return pageParameters.get(generateSortInfoKey(contentListId)).toString();
     }
 
     public boolean isSorting(int contentListId) {
-        return pageParameters.containsKey(generateSortInfoKey(contentListId));
+        return !pageParameters.get(generateSortInfoKey(contentListId)).isNull();
     }
 
     public boolean isAscSorting(int contentListId) {
@@ -57,9 +57,9 @@ public class ContentContext implements Serializable {
                 DbExpressionProperty dbExpressionProperty = (DbExpressionProperty) dbContent;
                 if (dbExpressionProperty.isDefaultSortable()) {
                     if (dbExpressionProperty.isDefaultSortableAsc()) {
-                        pageParameters.put(generateSortInfoKey(dbContentList.getId()), CmsPage.SORT_ASCENDING + dbExpressionProperty.getName());
+                        pageParameters.set(generateSortInfoKey(dbContentList.getId()), CmsPage.SORT_ASCENDING + dbExpressionProperty.getName());
                     } else {
-                        pageParameters.put(generateSortInfoKey(dbContentList.getId()), CmsPage.SORT_DESCENDING + dbExpressionProperty.getName());
+                        pageParameters.set(generateSortInfoKey(dbContentList.getId()), CmsPage.SORT_DESCENDING + dbExpressionProperty.getName());
                     }
                 }
             }
@@ -87,11 +87,11 @@ public class ContentContext implements Serializable {
     }
 
     public boolean hasContentPagingNumber(int contentListId) {
-        return pageParameters.containsKey(generatePagingNumberKey(contentListId));
+        return !pageParameters.get(generatePagingNumberKey(contentListId)).isNull();
     }
 
     public int getContentPagingNumber(int contentListId) {
-        return pageParameters.getInt(generatePagingNumberKey(contentListId));
+        return pageParameters.get(generatePagingNumberKey(contentListId)).toInt();
     }
 
     public static String generatePagingNumberKey(int contentListId) {

@@ -52,7 +52,7 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.authentication.AuthenticatedWebSession;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
@@ -912,7 +912,7 @@ public class UserServiceImpl implements UserService {
     public UserAttentionPacket createUserAttentionPacket() {
         UserAttentionPacket userAttentionPacket = new UserAttentionPacket();
         User user = getUser();
-        if(user != null) {
+        if (user != null) {
             contentService.fillUserAttentionPacket(user, userAttentionPacket);
             guildService.fillUserAttentionPacket(user, userAttentionPacket);
         }

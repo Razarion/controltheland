@@ -11,6 +11,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 public class CmsUtil {
     public static final String MOUNT_GAME_CMS = "game_cms";
     public static final String MOUNT_GAME = "game_run";
+    public static final String MOUNT_MANAGEMENT = "game_mgmt";
     public static final String ID = "page";
     public static final String NO_HTML5_BROWSER_PAGE_STRING_ID = "NoHtml5Browser";
 

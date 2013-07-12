@@ -5,7 +5,7 @@ import com.btxtech.game.services.cms.layout.DbContentContainer;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -29,7 +29,7 @@ public class ContentContainer extends Panel {
         contentId = dbContentContainer.getId();
         setupContainer(dbContentContainer);
         if (dbContentContainer.getCssClass() != null) {
-            add(new SimpleAttributeModifier("class", dbContentContainer.getCssClass()));
+            add(new AttributeModifier("class", dbContentContainer.getCssClass()));
         }
     }
 

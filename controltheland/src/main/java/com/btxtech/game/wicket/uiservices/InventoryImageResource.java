@@ -17,50 +17,49 @@ import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.injection.web.InjectorHolder;
-import org.apache.wicket.markup.html.WebResource;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.resource.ByteArrayResource;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.value.ValueMap;
 
 /**
  * User: beat Date: 01.06.2011 Time: 10:49:56
  */
-public class InventoryImageResource extends WebResource {
+public class InventoryImageResource extends DynamicImageResource {
     public static final String SHARED_IMAGE_RESOURCES = "inventoryImage";
 
     @SpringBean
     private GlobalInventoryService globalInventoryService;
 
     public static Image createArtifactImage(String id, DbInventoryArtifact dbInventoryArtifact) {
-        ValueMap valueMap = new ValueMap();
-        valueMap.put(Constants.INVENTORY_TYPE, Constants.INVENTORY_TYPE_ARTIFACT);
-        valueMap.put(Constants.INVENTORY_ID, dbInventoryArtifact.getId());
-        return new Image(id, new ResourceReference(SHARED_IMAGE_RESOURCES), valueMap);
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set(Constants.INVENTORY_TYPE, Constants.INVENTORY_TYPE_ITEM);
+        pageParameters.set(Constants.INVENTORY_ID, dbInventoryArtifact.getId());
+        return new Image(id, new PackageResourceReference(SHARED_IMAGE_RESOURCES), pageParameters);
     }
 
     public static Image createItemImage(String id, DbInventoryItem dbInventoryItem) {
-        ValueMap valueMap = new ValueMap();
-        valueMap.put(Constants.INVENTORY_TYPE, Constants.INVENTORY_TYPE_ITEM);
-        valueMap.put(Constants.INVENTORY_ID, dbInventoryItem.getId());
-        return new Image(id, new ResourceReference(SHARED_IMAGE_RESOURCES), valueMap);
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set(Constants.INVENTORY_TYPE, Constants.INVENTORY_TYPE_ITEM);
+        pageParameters.set(Constants.INVENTORY_ID, dbInventoryItem.getId());
+        return new Image(id, new PackageResourceReference(SHARED_IMAGE_RESOURCES), pageParameters);
     }
 
     public InventoryImageResource() {
         // Inject CmsService
-        InjectorHolder.getInjector().inject(this);
+        Injector.get().inject(this);
     }
 
+
     @Override
-    public IResourceStream getResourceStream() {
+    protected byte[] getImageData(Attributes attributes) {
         String contentType = null;
         byte[] contentData = null;
 
-        int id = Utils.parseIntSave(getParameters().getString(Constants.INVENTORY_ID));
-        String type = Utils.parseStringSave(getParameters().getString(Constants.INVENTORY_TYPE));
+        int id = Utils.parseIntSave(attributes.getParameters().get(Constants.INVENTORY_ID).toString());
+        String type = Utils.parseStringSave(attributes.getParameters().get(Constants.INVENTORY_TYPE).toString());
         switch (type) {
             case Constants.INVENTORY_TYPE_ARTIFACT: {
                 DbInventoryArtifact dbInventoryArtifact = globalInventoryService.getArtifactCrud().readDbChild(id);
@@ -82,9 +81,10 @@ public class InventoryImageResource extends WebResource {
                 throw new IllegalArgumentException("Type:" + type + " id: " + id);
         }
         if (contentType != null && contentData != null) {
-            return new ByteArrayResource(contentType, contentData).getResourceStream();
+            setFormat(contentType);
+            return contentData;
         } else {
-            return new ByteArrayResource("", new byte[]{}).getResourceStream();
+            return new byte[]{};
         }
     }
 }

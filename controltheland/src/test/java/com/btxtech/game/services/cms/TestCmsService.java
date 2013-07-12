@@ -35,25 +35,25 @@ import com.btxtech.game.services.forum.DbSubForum;
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.TestForum;
 import com.btxtech.game.services.item.ServerItemTypeService;
-import com.btxtech.game.services.messenger.MessengerService;
-import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
-import com.btxtech.game.services.user.RegisterService;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
+import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.SecurityCmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import org.apache.wicket.Page;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.tester.FormTester;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -85,21 +85,58 @@ public class TestCmsService extends AbstractServiceTest {
     @Autowired
     private ForumService forumService;
     @Autowired
-    private MessengerService messengerService;
-    @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private StatisticsService statisticsService;
-    @Autowired
     private ServerItemTypeService serverItemTypeService;
-    @Autowired
-    private PlanetSystemService planetSystemService;
-    @Autowired
-    private RegisterService registerService;
-    @Autowired
-    private com.btxtech.game.services.connection.Session session;
 
     @Test
+    @DirtiesContext
+    public void testMountings() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Setup admin user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("Admin", "admin");
+        User user = userService.getUser();
+        user.setRoles(Collections.singleton(SecurityRoles.ROLE_ADMINISTRATOR));
+        userService.save(user);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Test
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("game_cms");
+        getWicketTester().assertRenderedPage(CmsPage.class);
+        getWicketTester().executeUrl("game_run");
+        getWicketTester().assertRenderedPage(Game.class);
+        // Login as administrator
+        loginUser("Admin", "admin");
+        try {
+            // First call crashes. Wickets need to set up wicket-session first
+            getWicketTester().startPage(MgmtPage.class);
+        } catch (Exception e) {
+            // Ignore
+        }
+        ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn(true);
+        getWicketTester().executeUrl("game_mgmt");
+        getWicketTester().assertRenderedPage(MgmtPage.class);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+        @Test
     @DirtiesContext
     public void testImages() {
         beginHttpSession();
@@ -468,16 +505,16 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("menu:menuTable:1:menuLink:menuLinkName", "English");
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.GERMAN);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.GERMAN);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("menu:menuTable:1:menuLink:menuLinkName", "German");
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.CHINESE);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.CHINESE);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("menu:menuTable:1:menuLink:menuLinkName", "English");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -518,6 +555,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertInvisible("menu:bottom");
+        getWicketTester().debugComponentTrees();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -962,16 +1000,16 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("form:content:table:rows:1:cells:1:cell", "english");
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.GERMAN);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.GERMAN);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("form:content:table:rows:1:cells:1:cell", "german");
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.CHINESE);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.CHINESE);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("form:content:table:rows:1:cells:1:cell", "english");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1642,9 +1680,9 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         // Verify        
-        getWicketTester().setupRequestAndResponse(); // Clears the attribute in the request
+        // getWicketTester().setupRequestAndResponse(); // Clears the attribute in the request
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertNull(((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getAttribute(CmsUiServiceImpl.REQUEST_TMP_CREATE_BEAN_ATTRIBUTES));
+        Assert.assertNull(((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().getAttribute(CmsUiServiceImpl.REQUEST_TMP_CREATE_BEAN_ATTRIBUTES));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1701,9 +1739,9 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         // Verify
-        getWicketTester().setupRequestAndResponse(); // Clears the attribute in the request
+        // getWicketTester().setupRequestAndResponse(); // Clears the attribute in the request
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertNull(((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getAttribute(CmsUiServiceImpl.REQUEST_TMP_CREATE_BEAN_ATTRIBUTES));
+        Assert.assertNull(((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().getAttribute(CmsUiServiceImpl.REQUEST_TMP_CREATE_BEAN_ATTRIBUTES));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -2148,19 +2186,25 @@ public class TestCmsService extends AbstractServiceTest {
         getWicketTester().assertLabel("form:content:table:rows:1:cells:2:cell", "TestFactoryItem");
         getWicketTester().assertLabel("form:content:table:rows:2:cells:2:cell", "1000.0");
         getWicketTester().assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell:link:label", "TEST_HARVESTER_ITEM");
-        PageParameters pageParameters = new PageParameters("page=1,sec=units");
-        pageParameters.put("childId", 2);
-        assertBookmarkablePageLink(getWicketTester(), "form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell:link", CmsPage.class, pageParameters);
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sec", "units");
+        pageParameters.set("childId", 2);
+        getWicketTester().assertBookmarkablePageLink("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell:link", CmsPage.class, pageParameters);
 
         getWicketTester().assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:2:cell:link:label", "TestAttackItem");
-        pageParameters = new PageParameters("page=1,sec=units");
-        pageParameters.put("childId", 3);
-        assertBookmarkablePageLink(getWicketTester(), "form:content:table:rows:3:cells:2:cell:table:rows:1:cells:2:cell:link", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sec", "units");
+        pageParameters.set("childId", 3);
+        getWicketTester().assertBookmarkablePageLink("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:2:cell:link", CmsPage.class, pageParameters);
 
         getWicketTester().assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:3:cell:link:label", "TestContainerItem");
-        pageParameters = new PageParameters("page=1,sec=units");
-        pageParameters.put("childId", 4);
-        assertBookmarkablePageLink(getWicketTester(), "form:content:table:rows:3:cells:2:cell:table:rows:1:cells:3:cell:link", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sec", "units");
+        pageParameters.set("childId", 4);
+        getWicketTester().assertBookmarkablePageLink("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:3:cell:link", CmsPage.class, pageParameters);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -2354,38 +2398,45 @@ public class TestCmsService extends AbstractServiceTest {
         getWicketTester().assertLabel("form:content:navigation:upLink:upLabel", "up");
         getWicketTester().assertEnabled("form:content:navigation:upLink:upLabel");
         getWicketTester().assertEnabled("form:content:navigation:upLink");
-        getWicketTester().assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, "page = 1");
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        getWicketTester().assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, pageParameters);
 
         getWicketTester().assertLabel("form:content:navigation:nextLink:nextLabel", "next");
         getWicketTester().assertEnabled("form:content:navigation:nextLink:nextLabel");
         getWicketTester().assertEnabled("form:content:navigation:nextLink");
-        PageParameters pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 2);
-        pageParameters.put("detailId", "1");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:navigation:nextLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("childId", 2);
+        pageParameters.set("detailId", "1");
+        getWicketTester().assertBookmarkablePageLink("form:content:navigation:nextLink", CmsPage.class, pageParameters);
 
         // Click next
         getWicketTester().clickLink("form:content:navigation:nextLink");
         getWicketTester().assertLabel("form:content:navigation:previousLink:previousLabel", "previous");
         getWicketTester().assertEnabled("form:content:navigation:previousLink:previousLabel");
         getWicketTester().assertEnabled("form:content:navigation:previousLink");
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 1);
-        pageParameters.put("detailId", "1");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:navigation:previousLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("childId", 1);
+        pageParameters.set("detailId", "1");
+        getWicketTester().assertBookmarkablePageLink("form:content:navigation:previousLink", CmsPage.class, pageParameters);
 
         getWicketTester().assertLabel("form:content:navigation:upLink:upLabel", "up");
         getWicketTester().assertEnabled("form:content:navigation:upLink:upLabel");
         getWicketTester().assertEnabled("form:content:navigation:upLink");
-        getWicketTester().assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, "page = 1");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        getWicketTester().assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, pageParameters);
 
         getWicketTester().assertLabel("form:content:navigation:nextLink:nextLabel", "next");
         getWicketTester().assertEnabled("form:content:navigation:nextLink:nextLabel");
         getWicketTester().assertEnabled("form:content:navigation:nextLink");
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 3);
-        pageParameters.put("detailId", "1");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:navigation:nextLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("childId", 3);
+        pageParameters.set("detailId", "1");
+        getWicketTester().assertBookmarkablePageLink("form:content:navigation:nextLink", CmsPage.class, pageParameters);
 
         // Click next (go to the last)
         getWicketTester().clickLink("form:content:navigation:nextLink");
@@ -2400,15 +2451,18 @@ public class TestCmsService extends AbstractServiceTest {
         getWicketTester().assertLabel("form:content:navigation:previousLink:previousLabel", "previous");
         getWicketTester().assertEnabled("form:content:navigation:previousLink:previousLabel");
         getWicketTester().assertEnabled("form:content:navigation:previousLink");
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 10);
-        pageParameters.put("detailId", "1");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:navigation:previousLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("childId", 10);
+        pageParameters.set("detailId", "1");
+        getWicketTester().assertBookmarkablePageLink("form:content:navigation:previousLink", CmsPage.class, pageParameters);
 
         getWicketTester().assertLabel("form:content:navigation:upLink:upLabel", "up");
         getWicketTester().assertEnabled("form:content:navigation:upLink:upLabel");
         getWicketTester().assertEnabled("form:content:navigation:upLink");
-        getWicketTester().assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, "page = 1");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        getWicketTester().assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, pageParameters);
 
         getWicketTester().assertLabel("form:content:navigation:nextLink:nextLabel", "next");
         getWicketTester().assertDisabled("form:content:navigation:nextLink:nextLabel");
@@ -2419,23 +2473,27 @@ public class TestCmsService extends AbstractServiceTest {
         getWicketTester().assertLabel("form:content:navigation:previousLink:previousLabel", "previous");
         getWicketTester().assertEnabled("form:content:navigation:previousLink:previousLabel");
         getWicketTester().assertEnabled("form:content:navigation:previousLink");
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 9);
-        pageParameters.put("detailId", "1");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:navigation:previousLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("childId", 9);
+        pageParameters.set("detailId", "1");
+        getWicketTester().assertBookmarkablePageLink("form:content:navigation:previousLink", CmsPage.class, pageParameters);
 
         getWicketTester().assertLabel("form:content:navigation:upLink:upLabel", "up");
         getWicketTester().assertEnabled("form:content:navigation:upLink:upLabel");
         getWicketTester().assertEnabled("form:content:navigation:upLink");
-        getWicketTester().assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, "page = 1");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        getWicketTester().assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, pageParameters);
 
         getWicketTester().assertLabel("form:content:navigation:nextLink:nextLabel", "next");
         getWicketTester().assertEnabled("form:content:navigation:nextLink:nextLabel");
         getWicketTester().assertEnabled("form:content:navigation:nextLink");
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 11);
-        pageParameters.put("detailId", "1");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:navigation:nextLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("childId", 11);
+        pageParameters.set("detailId", "1");
+        getWicketTester().assertBookmarkablePageLink("form:content:navigation:nextLink", CmsPage.class, pageParameters);
 
         // Click up
         getWicketTester().clickLink("form:content:navigation:upLink");
@@ -2589,7 +2647,7 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.submit();
         getWicketTester().assertRenderedPage(Game.class);
         Page page = getWicketTester().getLastRenderedPage();
-        Assert.assertEquals(TEST_LEVEL_TASK_1_1_SIMULATED_ID, page.getPageParameters().getInt(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID));
+        Assert.assertEquals(TEST_LEVEL_TASK_1_1_SIMULATED_ID, page.getPageParameters().get(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID).toInt());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -2622,7 +2680,7 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.submit();
         getWicketTester().assertRenderedPage(Game.class);
         Page page = getWicketTester().getLastRenderedPage();
-        Assert.assertFalse(page.getPageParameters().containsKey(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID));
+        Assert.assertTrue(page.getPageParameters().get(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID).isEmpty());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

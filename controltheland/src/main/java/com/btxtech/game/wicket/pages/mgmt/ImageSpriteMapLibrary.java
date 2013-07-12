@@ -10,7 +10,7 @@ import com.btxtech.game.services.media.PreloadedImageSpriteMap;
 import com.btxtech.game.wicket.uiservices.ClipPanel;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.ImageSpriteMapPanel;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;

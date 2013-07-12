@@ -15,19 +15,17 @@ package com.btxtech.game.wicket.pages.cms;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.common.Utils;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.injection.web.InjectorHolder;
-import org.apache.wicket.markup.html.WebResource;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.resource.ByteArrayResource;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.value.ValueMap;
 
 /**
  * User: beat Date: 01.06.2011 Time: 10:49:56
  */
-public class CmsImageResource extends WebResource {
+public class CmsImageResource extends DynamicImageResource {
     public static final String CMS_SHARED_IMAGE_RESOURCES = "cmsimg";
     public static final String PATH = "/cmsimg";
     public static final String ID = "id";
@@ -36,18 +34,21 @@ public class CmsImageResource extends WebResource {
     private CmsService cmsService;
 
     public static Image createImage(String id, DbCmsImage imageId) {
-        return new Image(id, new ResourceReference(CMS_SHARED_IMAGE_RESOURCES), new ValueMap(ID + "=" + imageId.getId()));
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set(ID, imageId.getId());
+        return new Image(id, new PackageResourceReference(CMS_SHARED_IMAGE_RESOURCES), pageParameters);
     }
 
     public CmsImageResource() {
         // Inject CmsService
-        InjectorHolder.getInjector().inject(this);
+        Injector.get().inject(this);
     }
 
     @Override
-    public IResourceStream getResourceStream() {
-        int imgId = Utils.parseIntSave(getParameters().getString(ID));
+    protected byte[] getImageData(Attributes attributes) {
+        int imgId = Utils.parseIntSave(attributes.getParameters().get(ID).toString());
         DbCmsImage dbCmsImage = cmsService.getDbCmsImage(imgId);
-        return new ByteArrayResource(dbCmsImage.getContentType(), dbCmsImage.getData()).getResourceStream();
+        setFormat(dbCmsImage.getContentType());
+        return dbCmsImage.getData();
     }
 }

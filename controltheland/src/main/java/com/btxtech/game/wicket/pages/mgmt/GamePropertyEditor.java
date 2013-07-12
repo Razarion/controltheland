@@ -13,31 +13,17 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.common.db.DbProperty;
-import com.btxtech.game.services.media.DbCommonSound;
-import com.btxtech.game.services.terrain.DbSurfaceImage;
-import com.btxtech.game.services.terrain.DbTerrainImageGroup;
-import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.Arrays;

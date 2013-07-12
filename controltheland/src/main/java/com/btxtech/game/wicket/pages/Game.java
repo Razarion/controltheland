@@ -18,15 +18,24 @@ import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.template.JavaScriptTemplate;
+import org.apache.wicket.util.template.PackageTextTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -44,21 +53,20 @@ public class Game extends WebPage {
 
     public Game(PageParameters parameters) {
         super(parameters);
-        cmsUiService.addLscErrorHandler(this, "InPageError(Game)");
         if (!userTrackingService.isHtml5Support()) {
             cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.NO_HTML5_BROWSER);
             return;
         }
 
-        add(new WebMarkupContainer("metaGwtLocale").add(new SimpleAttributeModifier("content", "locale=" + getSession().getLocale().toString())));
+        add(new WebMarkupContainer("metaGwtLocale").add(new AttributeModifier("content", "locale=" + getSession().getLocale().toString())));
 
         add(new FacebookController("facebook", FacebookController.Type.GAME));
 
         GameStartupSeq gameStartupSeq;
 
-        if (parameters.containsKey(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID) && !userGuidanceService.isStartRealGame()) {
+        if (!parameters.get(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID).isNull() && !userGuidanceService.isStartRealGame()) {
             // userGuidanceService.isStartRealGame() prevent error if user finished first mission and press reload in real game (url: .../taskId/1)
-            levelTaskId = parameters.getInt(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID);
+            levelTaskId = parameters.get(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID).toInt();
             gameStartupSeq = GameStartupSeq.COLD_SIMULATED;
         } else {
             gameStartupSeq = GameStartupSeq.COLD_REAL;
@@ -71,10 +79,10 @@ public class Game extends WebPage {
 
     private void setupStartupSeq(GameStartupSeq gameStartupSeq, Integer levelTaskId) {
         Component startupSeqLabel = new Label("startupSeq", "");
-        startupSeqLabel.add(new SimpleAttributeModifier("id", com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID));
-        startupSeqLabel.add(new SimpleAttributeModifier(com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID, gameStartupSeq.name()));
+        startupSeqLabel.add(new AttributeModifier("id", com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID));
+        startupSeqLabel.add(new AttributeModifier(com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID, gameStartupSeq.name()));
         if (levelTaskId != null) {
-            startupSeqLabel.add(new SimpleAttributeModifier(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, levelTaskId.toString()));
+            startupSeqLabel.add(new AttributeModifier(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, levelTaskId.toString()));
         }
         add(startupSeqLabel);
     }
@@ -82,10 +90,20 @@ public class Game extends WebPage {
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
+        // Tracking
         if (levelTaskId != null) {
             userTrackingService.pageAccess(getClass().getName(), "LevelTaskId=" + levelTaskId);
         } else {
             userTrackingService.pageAccess(getClass().getName(), null);
         }
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        // LSC detection
+        PackageTextTemplate jsTemplate = new PackageTextTemplate(CmsUiServiceImpl.class, "LscErrorHandler.js");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("DISPLAY_ERROR_PREFIX", "InPageError(Game)");
+        response.render(new StringHeaderItem(new JavaScriptTemplate(jsTemplate).asString(parameters)));
     }
 }

@@ -18,7 +18,7 @@ import com.btxtech.game.services.utg.SessionOverviewDto;
 import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioChoice;

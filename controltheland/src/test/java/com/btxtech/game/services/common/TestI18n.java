@@ -15,7 +15,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.pages.mgmt.I18nMgmtPage;
 import junit.framework.Assert;
-import org.apache.wicket.authentication.AuthenticatedWebSession;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;

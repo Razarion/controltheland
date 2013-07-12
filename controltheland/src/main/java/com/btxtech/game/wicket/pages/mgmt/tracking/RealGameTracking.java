@@ -60,7 +60,7 @@ public class RealGameTracking extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 filterForm.setDefaultModelObject(filterForm.getModelObject());
-                target.addComponent(listContainer);
+                target.add(listContainer);
             }
         });
     }

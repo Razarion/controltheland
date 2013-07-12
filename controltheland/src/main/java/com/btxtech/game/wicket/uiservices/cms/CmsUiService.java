@@ -12,7 +12,7 @@ import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 
 import java.lang.reflect.InvocationTargetException;
@@ -117,8 +117,6 @@ public interface CmsUiService {
     String getFacebookAppId();
 
     String getFacebookRedirectUri();
-
-    void addLscErrorHandler(WebPage webPage, String displayErrorPrefix);
 
     String getUrl4CmsPage(CmsUtil.CmsPredefinedPage predefinedType);
 }

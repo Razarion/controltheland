@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <comment>Support Email</comment>
     <entry key="send">Send</entry>
     <entry key="email">Email</entry>
     <entry key="registerEmailVerified">The email confirmation link you followed has already been verified.</entry>
@@ -24,23 +23,11 @@
     <entry key="password">Password</entry>
     <entry key="confirmPassword">Confirm password</entry>
     <entry key="loginAlready">Already logged in as: {0}</entry>
-    <entry key="baseLost">You lost your base. A new base was created.</entry>
-    <entry key="guest">Guest</entry>
     <entry key="registerConfirmationInvalid">The email confirmation link you followed is invalid. Please re-register.</entry>
     <entry key="error">Error: {0}</entry>
     <entry key="loadingGame">Loading game...</entry>
-    <entry key="guildOfferedOnlyRegistered">{0} invited you to his guild. Only registered user can can join guilds.</entry>
     <entry key="registerNoMatch">Password and confirm password do not match</entry>
-    <entry key="emailSubject">Razarion - Please confirm your Email address</entry>
-    <entry key="emailVeriGreeting">Hello {0}</entry>
-    <entry key="emailVeriMain">Thank you for registering at Razarion. Please follow the link below to confirm your email address:</entry>
-    <entry key="emailVeriUser">User name: {0}</entry>
-    <entry key="emailVeriClosing">We are pleased to be able to welcome you to Razarion</entry>
-    <entry key="emailVeriRazarionTeam">With kind regards your Razarion team</entry>
     <entry key="loggedIn">Logged in</entry>
-    <entry key="emailForgotPasswordSubject">Razarion - Account password help</entry>
-    <entry key="emailForgotPasswordSubjectMain1">You're receiving this email because you requested a password reset for your Razarion account. If you did not request this change, you can safely ignore this email.</entry>
-    <entry key="emailForgotPasswordSubjectMain2">To choose a new password and complete your request, please follow the link below:</entry>
     <entry key="play">Play</entry>
     <entry key="nameToShort">Name must have at least 3 characters</entry>
     <entry key="nameAlreadyUsed">Name has already been taken</entry>

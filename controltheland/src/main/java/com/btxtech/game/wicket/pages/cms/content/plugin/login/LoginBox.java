@@ -20,15 +20,15 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.Action;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeAction;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -48,7 +48,7 @@ public class LoginBox extends Panel {
     public LoginBox(String id, boolean showRegisterLink) {
         super(id);
         add(new FacebookController("facebook", FacebookController.Type.AUTO_LOGON));
-        StatelessForm<LoginBox> form = new StatelessForm<LoginBox>("loginForm", new CompoundPropertyModel<LoginBox>(this)) {
+        StatelessForm<LoginBox> form = new StatelessForm<LoginBox>("loginForm", new CompoundPropertyModel<>(this)) {
             @Override
             protected void onSubmit() {
                 try {
@@ -56,7 +56,7 @@ public class LoginBox extends Panel {
                     if (session.signIn(loginName, loginPassword)) {
                         PageParameters parameters = new PageParameters();
                         if (!userGuidanceService.isStartRealGame()) {
-                            parameters.put(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
+                            parameters.set(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
                         }
                         setResponsePage(Game.class, parameters);
                     } else {

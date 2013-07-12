@@ -8,7 +8,7 @@ import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
@@ -45,7 +45,7 @@ public class ContentList extends Panel {
         add(table);
         setupDetailTable(table, dbContentList);
         if (dbContentList.getCssClass() != null) {
-            table.add(new SimpleAttributeModifier("class", dbContentList.getCssClass()));
+            table.add(new AttributeModifier("class", dbContentList.getCssClass()));
         }
     }
 
@@ -60,10 +60,10 @@ public class ContentList extends Panel {
 
     private void setupDetailTableNormalColumns(WebMarkupContainer table, DbContentList dbContentList) {
 
-        List<IColumn> columns = new ArrayList<IColumn>();
+        List<IColumn> columns = new ArrayList<>();
         for (DbContent dbContent : dbContentList.getColumnsCrud().readDbChildren()) {
             final Integer dbContentId = dbContent.getId();
-            columns.add(new HeaderlessColumn<Object>() {
+            columns.add(new HeaderlessColumn<Object, Object>() {
 
                 @Override
                 public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
@@ -76,7 +76,7 @@ public class ContentList extends Panel {
 
         // Edit stuff
         if (cmsUiService.isEnterEditModeAllowed(contentId, beanIdPathElement)) {
-            columns.add(new HeaderlessColumn<Object>() {
+            columns.add(new HeaderlessColumn<Object, Object>() {
 
                 @Override
                 public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
@@ -102,7 +102,7 @@ public class ContentList extends Panel {
         BookmarkablePagingNavigator pagingNavigator = new BookmarkablePagingNavigator("navigator", contentId, dataGridView, beanIdPathElement);
 
         if (dbContentList.isPageable()) {
-            dataGridView.setRowsPerPage(dbContentList.getRowsPerPage());
+            dataGridView.setItemsPerPage(dbContentList.getRowsPerPage());
         }
         if (contentContext.hasContentPagingNumber(contentId)) {
             dataGridView.setCurrentPage(contentContext.getContentPagingNumber(contentId));

@@ -46,21 +46,20 @@ import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
 import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
-import com.btxtech.game.wicket.uiservices.ExternalImage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
+import org.apache.commons.lang.mutable.MutableBoolean;
+import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.behavior.StringHeaderContributor;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.protocol.http.MockHttpServletResponse;
-import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
+import org.apache.wicket.protocol.http.mock.MockHttpServletResponse;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.Url;
+import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
+import org.apache.wicket.request.cycle.IRequestCycleListener;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.tester.FormTester;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -132,8 +131,8 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
         formTester.setValue("loginName", "U1");
@@ -142,7 +141,9 @@ public class TestCmsService2 extends AbstractServiceTest {
         getWicketTester().debugComponentTrees();
         getWicketTester().assertLabel("form:content:text", "Login failed. Please try again.");
         getWicketTester().assertVisible("form:content:forgotPassword");
-        getWicketTester().assertBookmarkablePageLink("form:content:forgotPassword", CmsPage.class, "page=3");
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set("page", 3);
+        getWicketTester().assertBookmarkablePageLink("form:content:forgotPassword", CmsPage.class, pageParameters);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -187,8 +188,8 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
         formTester.setValue("loginName", "U1");
@@ -197,7 +198,9 @@ public class TestCmsService2 extends AbstractServiceTest {
         getWicketTester().debugComponentTrees();
         getWicketTester().assertLabel("form:content:text", "Login failed. Please try again.");
         getWicketTester().assertVisible("form:content:forgotPassword");
-        getWicketTester().assertBookmarkablePageLink("form:content:forgotPassword", CmsPage.class, "page=3");
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set("page", 3);
+        getWicketTester().assertBookmarkablePageLink("form:content:forgotPassword", CmsPage.class, pageParameters);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -236,8 +239,8 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
         formTester.setValue("loginName", "U1");
@@ -449,8 +452,8 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
         formTester.setValue("loginName", "U1");
@@ -514,8 +517,8 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_REQUEST);
         getWicketTester().startPage(CmsPage.class, pageParameters);
         FormTester formTester = getWicketTester().newFormTester("form:content:form");
@@ -569,8 +572,8 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
         formTester.setValue("loginName", "U1");
@@ -628,10 +631,10 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE);
-        pageParameters.put(CmsUtil.FORGOT_PASSWORD_UUID_KEY, uuid);
+        pageParameters.set(CmsUtil.FORGOT_PASSWORD_UUID_KEY, uuid);
         getWicketTester().startPage(CmsPage.class, pageParameters);
         FormTester formTester = getWicketTester().newFormTester("form:content:form");
         formTester.setValue("password", "aaa");
@@ -683,10 +686,10 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE);
-        pageParameters.put(CmsUtil.FORGOT_PASSWORD_UUID_KEY, "xxxxxxx");
+        pageParameters.set(CmsUtil.FORGOT_PASSWORD_UUID_KEY, "xxxxxxx");
         getWicketTester().startPage(CmsPage.class, pageParameters);
         FormTester formTester = getWicketTester().newFormTester("form:content:form");
         formTester.setValue("password", "aaa");
@@ -741,10 +744,10 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE);
-        pageParameters.put(CmsUtil.FORGOT_PASSWORD_UUID_KEY, uuid);
+        pageParameters.set(CmsUtil.FORGOT_PASSWORD_UUID_KEY, uuid);
         getWicketTester().startPage(CmsPage.class, pageParameters);
         FormTester formTester = getWicketTester().newFormTester("form:content:form");
         formTester.setValue("password", "aaa");
@@ -778,14 +781,14 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("title", "English");
-        getWicketTester().getWicketSession().setLocale(Locale.GERMAN);
+        getWicketTester().getSession().setLocale(Locale.GERMAN);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("title", "German");
-        getWicketTester().getWicketSession().setLocale(Locale.CHINESE);
+        getWicketTester().getSession().setLocale(Locale.CHINESE);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("title", "English");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -952,14 +955,14 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("form:content", "This is page two <br>");
-        getWicketTester().getWicketSession().setLocale(Locale.GERMAN);
+        getWicketTester().getSession().setLocale(Locale.GERMAN);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("form:content", "Seite 2 <br>");
-        getWicketTester().getWicketSession().setLocale(Locale.CHINESE);
+        getWicketTester().getSession().setLocale(Locale.CHINESE);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("form:content", "This is page two <br>");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1226,8 +1229,8 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         createAndLoginUser("U1");
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertVisible("form:content:container:1:button");
@@ -1487,16 +1490,16 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().debugComponentTrees();
         getWicketTester().assertLabel("form:content", "Hello");
-        getWicketTester().getWicketSession().setLocale(Locale.GERMAN);
+        getWicketTester().getSession().setLocale(Locale.GERMAN);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().debugComponentTrees();
         getWicketTester().assertLabel("form:content", "Hallo");
-        getWicketTester().getWicketSession().setLocale(Locale.CHINESE);
+        getWicketTester().getSession().setLocale(Locale.CHINESE);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().debugComponentTrees();
         getWicketTester().assertLabel("form:content", "Hello");
@@ -1621,7 +1624,9 @@ public class TestCmsService2 extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        getWicketTester().startPage(CmsPage.class, new PageParameters("page=NoHtml5Browser"));
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set("page", "NoHtml5Browser");
+        getWicketTester().startPage(CmsPage.class, pageParameters);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1803,19 +1808,31 @@ public class TestCmsService2 extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("form:content:table:tHead:cell:1", "Rank");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, "page=1,sort1=dLevel");
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dLevel");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:2:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:2:link:label", "Level");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:2:link:image");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, "page=1,sort1=dUser");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dUser");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:3:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:3:link:label", "User");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:3:link:image");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, "page=1,sort1=dTime");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dTime");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:4:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:4:link:label", "Time");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:4:link:image");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, "page=1,sort1=aItems");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "aItems");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:5:link", "sortCSSActive");
         getWicketTester().assertLabel("form:content:table:tHead:cell:5:link:label", "Items");
         assertCmsImage(getWicketTester(), "form:content:table:tHead:cell:5:link:image", descImg);
@@ -1844,19 +1861,31 @@ public class TestCmsService2 extends AbstractServiceTest {
         getWicketTester().clickLink("form:content:table:tHead:cell:4:link");
 
         getWicketTester().assertLabel("form:content:table:tHead:cell:1", "Rank");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, "page=1,sort1=dLevel");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dLevel");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:2:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:2:link:label", "Level");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:2:link:image");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, "page=1,sort1=dUser");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dUser");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:3:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:3:link:label", "User");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:3:link:image");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, "page=1,sort1=aTime");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "aTime");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:4:link", "sortCSSActive");
         getWicketTester().assertLabel("form:content:table:tHead:cell:4:link:label", "Time");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:4:link:image");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, "page=1,sort1=dItems");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dItems");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:5:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:5:link:label", "Items");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:5:link:image");
@@ -1886,19 +1915,31 @@ public class TestCmsService2 extends AbstractServiceTest {
         getWicketTester().clickLink("form:content:table:tHead:cell:3:link");
 
         getWicketTester().assertLabel("form:content:table:tHead:cell:1", "Rank");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, "page=1,sort1=dLevel");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dLevel");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:2:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:2:link:label", "Level");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:2:link:image");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, "page=1,sort1=aUser");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "aUser");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:3:link", "sortCSSActive");
         getWicketTester().assertLabel("form:content:table:tHead:cell:3:link:label", "User");
         assertCmsImage(getWicketTester(), "form:content:table:tHead:cell:3:link:image", descImg);
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, "page=1,sort1=dTime");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dTime");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:4:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:4:link:label", "Time");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:4:link:image");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, "page=1,sort1=dItems");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dItems");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:5:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:5:link:label", "Items");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:5:link:image");
@@ -1928,19 +1969,31 @@ public class TestCmsService2 extends AbstractServiceTest {
         getWicketTester().clickLink("form:content:table:tHead:cell:3:link");
 
         getWicketTester().assertLabel("form:content:table:tHead:cell:1", "Rank");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, "page=1,sort1=dLevel");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dLevel");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:2:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:2:link:label", "Level");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:2:link:image");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, "page=1,sort1=dUser");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dUser");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:3:link", "sortCSSActive");
         getWicketTester().assertLabel("form:content:table:tHead:cell:3:link:label", "User");
         assertCmsImage(getWicketTester(), "form:content:table:tHead:cell:3:link:image", ascImg);
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, "page=1,sort1=dTime");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dTime");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:4:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:4:link:label", "Time");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:4:link:image");
-        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, "page=1,sort1=dItems");
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("sort1", "dItems");
+        getWicketTester().assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, pageParameters);
         assertCssClass(getWicketTester(), "form:content:table:tHead:cell:5:link", "sortCSS");
         getWicketTester().assertLabel("form:content:table:tHead:cell:5:link:label", "Items");
         getWicketTester().assertInvisible("form:content:table:tHead:cell:5:link:image");
@@ -2098,39 +2151,47 @@ public class TestCmsService2 extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getWicketTester().startPage(CmsPage.class);
-        PageParameters pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 0);
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 0);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
         getWicketTester().assertDisabled("form:content:container:1:navigator:navigation:0:pageLink");
         getWicketTester().assertLabel("form:content:container:1:navigator:navigation:0:pageLink:pageNumber", "1");
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 1);
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:navigation:1:pageLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 1);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:navigation:1:pageLink", CmsPage.class, pageParameters);
         getWicketTester().assertEnabled("form:content:container:1:navigator:navigation:1:pageLink");
         getWicketTester().assertLabel("form:content:container:1:navigator:navigation:1:pageLink:pageNumber", "2");
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 0);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 0);
         getWicketTester().assertDisabled("form:content:container:1:navigator:first");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:first", CmsPage.class, pageParameters);
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 0);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:first", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 0);
         getWicketTester().assertDisabled("form:content:container:1:navigator:prev");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:prev", CmsPage.class, pageParameters);
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 1);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:prev", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 1);
         getWicketTester().assertEnabled("form:content:container:1:navigator:next");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:next", CmsPage.class, pageParameters);
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 1);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:next", CmsPage.class, pageParameters);
+        pageParameters.set("page", 1);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 1);
         getWicketTester().assertEnabled("form:content:container:1:navigator:last");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:last", CmsPage.class, pageParameters);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:last", CmsPage.class, pageParameters);
 
         getWicketTester().assertLabel("form:content:container:1:table:rows:1:cells:1:cell", "1");
         getWicketTester().assertLabel("form:content:container:1:table:rows:2:cells:1:cell", "2");
 
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging8", 0);
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:2:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging8", 0);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:2:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
         getWicketTester().assertDisabled("form:content:container:2:navigator:navigation:0:pageLink");
         getWicketTester().assertLabel("form:content:container:2:navigator:navigation:0:pageLink:pageNumber", "1");
 
@@ -2139,38 +2200,45 @@ public class TestCmsService2 extends AbstractServiceTest {
 
         getWicketTester().clickLink("form:content:container:1:navigator:next");
 
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 0);
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 0);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
         getWicketTester().assertEnabled("form:content:container:1:navigator:navigation:0:pageLink");
         getWicketTester().assertLabel("form:content:container:1:navigator:navigation:0:pageLink:pageNumber", "1");
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 1);
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:navigation:1:pageLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 1);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:navigation:1:pageLink", CmsPage.class, pageParameters);
         getWicketTester().assertDisabled("form:content:container:1:navigator:navigation:1:pageLink");
         getWicketTester().assertLabel("form:content:container:1:navigator:navigation:1:pageLink:pageNumber", "2");
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 0);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 0);
         getWicketTester().assertEnabled("form:content:container:1:navigator:first");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:first", CmsPage.class, pageParameters);
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 0);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:first", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 0);
         getWicketTester().assertEnabled("form:content:container:1:navigator:prev");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:prev", CmsPage.class, pageParameters);
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 1);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:prev", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 1);
         getWicketTester().assertDisabled("form:content:container:1:navigator:next");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:next", CmsPage.class, pageParameters);
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging2", 1);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:next", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging2", 1);
         getWicketTester().assertDisabled("form:content:container:1:navigator:last");
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:1:navigator:last", CmsPage.class, pageParameters);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:1:navigator:last", CmsPage.class, pageParameters);
 
         getWicketTester().assertLabel("form:content:container:1:table:rows:1:cells:1:cell", "2");
 
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging8", 0);
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:2:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging8", 0);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:2:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
         getWicketTester().assertDisabled("form:content:container:2:navigator:navigation:0:pageLink");
         getWicketTester().assertLabel("form:content:container:2:navigator:navigation:0:pageLink:pageNumber", "1");
 
@@ -2181,9 +2249,10 @@ public class TestCmsService2 extends AbstractServiceTest {
 
         getWicketTester().assertLabel("form:content:container:1:table:rows:1:cells:1:cell", "1");
 
-        pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging8", 0);
-        assertBookmarkablePageLink(getWicketTester(), "form:content:container:2:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
+        pageParameters = new PageParameters();
+        pageParameters.set("page", 1);
+        pageParameters.set("paging8", 0);
+        getWicketTester().assertBookmarkablePageLink("form:content:container:2:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
         getWicketTester().assertEnabled("form:content:container:2:navigator:navigation:0:pageLink");
         getWicketTester().assertLabel("form:content:container:2:navigator:navigation:0:pageLink:pageNumber", "1");
 
@@ -2389,7 +2458,8 @@ public class TestCmsService2 extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testFacebook() throws Exception {
-        configureSimplePlanetNoResources();
+        Assert.fail("...TODO...");
+/*        configureSimplePlanetNoResources();
 
         // Do not rejoice too quicklyJust... this is just a  test secret.
         setPrivateField(CmsUiServiceImpl.class, cmsUiService, "facebookAppSecret", "029a30fb9677d35c79c44d8a505d8fe1");
@@ -2447,11 +2517,11 @@ public class TestCmsService2 extends AbstractServiceTest {
         formTester = getWicketTester().newFormTester("form:content:form");
         formTester.submit("goButton");
         getWicketTester().debugComponentTrees();  */
-        getWicketTester().assertRenderedPage(Game.class);
+ /*       getWicketTester().assertRenderedPage(Game.class);
 
         endHttpRequestAndOpenSessionInViewFilter();
 
-        endHttpSession();
+        endHttpSession();   */
     }
 
 
@@ -2495,13 +2565,13 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertRenderedPage(CmsPage.class);
 
         PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
-        pageParameters.put(CmsUtil.EMAIL_VERIFICATION_KEY, user.getVerificationId());
+        pageParameters.set(CmsUtil.EMAIL_VERIFICATION_KEY, user.getVerificationId());
         getWicketTester().startPage(CmsPage.class, pageParameters);
         getWicketTester().debugComponentTrees();
         // Test ... java script
@@ -2561,14 +2631,14 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
 
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertRenderedPage(CmsPage.class);
 
         PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
-        pageParameters.put(CmsUtil.EMAIL_VERIFICATION_KEY, user.getVerificationId());
+        pageParameters.set(CmsUtil.EMAIL_VERIFICATION_KEY, user.getVerificationId());
         getWicketTester().startPage(CmsPage.class, pageParameters);
         getWicketTester().assertLabel("form:content:border:borderContent:message", "The email confirmation link you followed has already been verified.");
         getWicketTester().debugComponentTrees();
@@ -2609,13 +2679,13 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertRenderedPage(CmsPage.class);
 
         PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
-        pageParameters.put(CmsUtil.EMAIL_VERIFICATION_KEY, "abcedefgahijk");
+        pageParameters.set(CmsUtil.EMAIL_VERIFICATION_KEY, "abcedefgahijk");
         getWicketTester().startPage(CmsPage.class, pageParameters);
         getWicketTester().assertLabel("form:content:border:borderContent:message", "The email confirmation link you followed is invalid. Please re-register.");
 
@@ -2627,34 +2697,75 @@ public class TestCmsService2 extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testLocale() throws Exception {
+    public void testLocale4Game() throws Exception {
         configureSimplePlanetNoResources();
 
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
-        testLocale("en", "Loading java script");
-
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.GERMAN);
-        testLocale("de", "Lade Java Script");
-    }
-
-    private void testLocale(String expectedLocale, String startupTaskText) {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().startPage(Game.class);
-        getWicketTester().assertRenderedPage(Game.class);
-        getWicketTester().assertComponent("metaGwtLocale", WebMarkupContainer.class);
-        WebMarkupContainer container = (WebMarkupContainer) getWicketTester().getComponentFromLastRenderedPage("metaGwtLocale");
-        SimpleAttributeModifier simpleAttributeModifier = (SimpleAttributeModifier) container.getBehaviors().get(0);
-        Assert.assertEquals("content", simpleAttributeModifier.getAttribute());
-        Assert.assertEquals("locale=" + expectedLocale, simpleAttributeModifier.getValue());
-        getWicketTester().assertLabel("startupTaskText", startupTaskText);
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
+        testLocale("en", "Loading java script");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().getSession().setLocale(Locale.GERMAN);
+        testLocale("de", "Lade Java Script");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
+    private void testLocale(String expectedLocale, String startupTaskText) {
+        getWicketTester().startPage(Game.class);
+        getWicketTester().assertRenderedPage(Game.class);
+        getWicketTester().assertComponent("metaGwtLocale", WebMarkupContainer.class);
+        WebMarkupContainer container = (WebMarkupContainer) getWicketTester().getComponentFromLastRenderedPage("metaGwtLocale");
+        assertAttributeModifier(container, 0, "content", "locale=" + expectedLocale);
+        getWicketTester().assertLabel("startupTaskText", startupTaskText);
+    }
+
     @Test
+    @DirtiesContext
+    public void testSetMessageResponsePage() throws Exception {
+        configureSimplePlanetNoResources();
+        // Setup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        DbPage dbMessagePage = pageCrud.createDbChild();
+        dbMessagePage.setPredefinedType(CmsUtil.CmsPredefinedPage.MESSAGE);
+        dbMessagePage.setName("Message Page");
+        pageCrud.updateDbChild(dbMessagePage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Page page = getWicketTester().startPage(CmsPage.class);
+
+        final MutableBoolean mutableBoolean = new MutableBoolean(false);
+        RequestCycle.get().getListeners().add(new AbstractRequestCycleListener() {
+
+            @Override
+            public void onRequestHandlerScheduled(RequestCycle cycle, IRequestHandler handler) {
+                RenderPageRequestHandler requestHandler = (RenderPageRequestHandler) handler;
+                Assert.assertEquals(CmsPage.class, requestHandler.getPageClass());
+                Assert.assertEquals("loginAlready", requestHandler.getPageParameters().get("messageId").toString());
+                Assert.assertEquals("KUH", requestHandler.getPageParameters().get("messageAdditional").toString());
+                mutableBoolean.setValue(true);
+            }
+        });
+        cmsUiService.setMessageResponsePage(page, "loginAlready", "KUH");
+        Assert.assertTrue(mutableBoolean.booleanValue());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+        @Test
     @DirtiesContext
     public void testMessage() throws Exception {
         configureSimplePlanetNoResources();
@@ -2676,84 +2787,64 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify En parameter
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
-        getWicketTester().startPage(CmsPage.class);
-        Page page = getWicketTester().getLastRenderedPage();
-        cmsUiService.setMessageResponsePage(page, "loginAlready", "KUH");
-        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
-        BookmarkablePageRequestTarget requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
-        getWicketTester().startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
+        PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
+        pageParameters.set(CmsPage.MESSAGE_ID, "loginAlready");
+        pageParameters.set(CmsPage.MESSAGE_ADDITIONAL_PARAMETER, "KUH");
+        getWicketTester().startPage(CmsPage.class, pageParameters);
         getWicketTester().assertLabel("form:content:border:borderContent:message", "Already logged in as: KUH");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify chinese parameter
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.CHINESE);
-        getWicketTester().startPage(CmsPage.class);
-        page = getWicketTester().getLastRenderedPage();
-        cmsUiService.setMessageResponsePage(page, "loginAlready", "KUH");
-        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
-        requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
-        getWicketTester().startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        getWicketTester().getSession().setLocale(Locale.CHINESE);
+        pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
+        pageParameters.set(CmsPage.MESSAGE_ID, "loginAlready");
+        pageParameters.set(CmsPage.MESSAGE_ADDITIONAL_PARAMETER, "KUH");
+        getWicketTester().startPage(CmsPage.class, pageParameters);
         getWicketTester().assertLabel("form:content:border:borderContent:message", "Already logged in as: KUH");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify german parameter
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.GERMAN);
-        getWicketTester().startPage(CmsPage.class);
-        page = getWicketTester().getLastRenderedPage();
-        cmsUiService.setMessageResponsePage(page, "loginAlready", "KUH");
-        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
-        requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
-        getWicketTester().startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        getWicketTester().getSession().setLocale(Locale.GERMAN);
+        pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
+        pageParameters.set(CmsPage.MESSAGE_ID, "loginAlready");
+        pageParameters.set(CmsPage.MESSAGE_ADDITIONAL_PARAMETER, "KUH");
+        getWicketTester().startPage(CmsPage.class, pageParameters);
         getWicketTester().assertLabel("form:content:border:borderContent:message", "Bereits KUH als eingeloggt");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify En
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
-        getWicketTester().startPage(CmsPage.class);
-        page = getWicketTester().getLastRenderedPage();
-        cmsUiService.setMessageResponsePage(page, "registerConfirmationInvalid", null);
-        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
-        requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
-        getWicketTester().startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
+        pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
+        pageParameters.set(CmsPage.MESSAGE_ID, "registerConfirmationInvalid");
+        getWicketTester().startPage(CmsPage.class, pageParameters);
         getWicketTester().assertLabel("form:content:border:borderContent:message", "The email confirmation link you followed is invalid. Please re-register.");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify En no valid key
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
-        getWicketTester().startPage(CmsPage.class);
-        page = getWicketTester().getLastRenderedPage();
-        cmsUiService.setMessageResponsePage(page, "_____________thisIsAnInvalidKey___________", null);
-        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
-        requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
-        getWicketTester().startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
-        getWicketTester().assertLabel("form:content:border:borderContent:message", "_____________thisIsAnInvalidKey___________");
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
+        pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
+        pageParameters.set(CmsPage.MESSAGE_ID, "_____________thisIsAnInvalidKey___________");
+        getWicketTester().startPage(CmsPage.class, pageParameters);
+        getWicketTester().assertLabel("form:content:border:borderContent:message", "[Warning: Property for '_____________thisIsAnInvalidKey___________' not found]");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify umlaute
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.GERMAN);
-        getWicketTester().startPage(CmsPage.class);
-        page = getWicketTester().getLastRenderedPage();
-        cmsUiService.setMessageResponsePage(page, "registerUserExists", null);
-        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
-        requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
-        getWicketTester().startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        // getWicketTester().setupRequestAndResponse();
+        getWicketTester().getSession().setLocale(Locale.GERMAN);
+        pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
+        pageParameters.set(CmsPage.MESSAGE_ID, "registerUserExists");
+        getWicketTester().startPage(CmsPage.class, pageParameters);
         getWicketTester().assertLabel("form:content:border:borderContent:message", "Der gewünschte Benutzername existiert bereits");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -2762,7 +2853,7 @@ public class TestCmsService2 extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testFallbackLocale() throws Exception {
-        getWicketTester().getWicketSession().setLocale(Locale.CHINESE);
+        getWicketTester().getSession().setLocale(Locale.CHINESE);
         configureSimplePlanetNoResources();
         // Setup
         beginHttpSession();
@@ -2782,12 +2873,10 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Verify En parameter
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().startPage(CmsPage.class);
-        Page page = getWicketTester().getLastRenderedPage();
-        cmsUiService.setMessageResponsePage(page, "loginAlready", "KUH");
-        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
-        BookmarkablePageRequestTarget requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
-        getWicketTester().startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
+        pageParameters.set(CmsPage.MESSAGE_ID, "loginAlready");
+        pageParameters.set(CmsPage.MESSAGE_ADDITIONAL_PARAMETER, "KUH");
+        getWicketTester().startPage(CmsPage.class, pageParameters);
         getWicketTester().assertLabel("form:content:border:borderContent:message", "Already logged in as: KUH");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -2816,14 +2905,14 @@ public class TestCmsService2 extends AbstractServiceTest {
         setWicketParameterTrackingCookie("aswedrfvc1234");
         setWicketParameterTrackingCookieNeeded(true);
         getWicketTester().startPage(CmsPage.class);
-        MockHttpServletResponse response = (MockHttpServletResponse) getWicketTester().getWicketResponse().getHttpServletResponse();
+        MockHttpServletResponse response = (MockHttpServletResponse) getWicketTester().getLastResponse();
         Assert.assertEquals("aswedrfvc1234", session.getTrackingCookieId());
         assertCookie(response, "cookieId", "aswedrfvc1234", Integer.MAX_VALUE);
         endHttpRequestAndOpenSessionInViewFilter();
         // Second access
         beginHttpRequestAndOpenSessionInViewFilter();
         getWicketTester().startPage(CmsPage.class);
-        response = (MockHttpServletResponse) getWicketTester().getWicketResponse().getHttpServletResponse();
+        response = (MockHttpServletResponse) getWicketTester().getLastResponse();
         Assert.assertNotNull(session.getTrackingCookieId());
         assertCookieNotSet(response, "cookieId");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -2835,14 +2924,14 @@ public class TestCmsService2 extends AbstractServiceTest {
         setWicketParameterTrackingCookieNeeded(true);
         setWicketParameterTrackingCookie("qwertzui");
         getWicketTester().startPage(CmsPage.class);
-        response = (MockHttpServletResponse) getWicketTester().getWicketResponse().getHttpServletResponse();
+        response = (MockHttpServletResponse) getWicketTester().getLastResponse();
         Assert.assertEquals("qwertzui", session.getTrackingCookieId());
         assertCookie(response, "cookieId", "qwertzui", Integer.MAX_VALUE);
         endHttpRequestAndOpenSessionInViewFilter();
         // Second access
         beginHttpRequestAndOpenSessionInViewFilter();
         getWicketTester().startPage(CmsPage.class);
-        response = (MockHttpServletResponse) getWicketTester().getWicketResponse().getHttpServletResponse();
+        response = (MockHttpServletResponse) getWicketTester().getLastResponse();
         Assert.assertNotNull(session.getTrackingCookieId());
         assertCookieNotSet(response, "cookieId");
         endHttpRequestAndOpenSessionInViewFilter();

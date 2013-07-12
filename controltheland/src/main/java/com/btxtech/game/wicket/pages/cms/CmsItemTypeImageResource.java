@@ -17,20 +17,18 @@ import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import org.apache.wicket.AbortException;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.injection.web.InjectorHolder;
-import org.apache.wicket.markup.html.WebResource;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.resource.ByteArrayResource;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.value.ValueMap;
+import org.aspectj.bridge.AbortException;
 
 /**
  * User: beat Date: 01.06.2011 Time: 10:49:56
  */
-public class CmsItemTypeImageResource extends WebResource {
+public class CmsItemTypeImageResource extends DynamicImageResource {
     public static final String CMS_SHARED_IMAGE_RESOURCES = "cmsitemtypeimg";
     public static final String PATH = "/cmsitemimg";
     private static final String ID = "id";
@@ -39,20 +37,23 @@ public class CmsItemTypeImageResource extends WebResource {
     private ServerItemTypeService serverItemTypeService;
 
     public static Image createImage(String id, DbItemType dbItemType) {
-        return new Image(id, new ResourceReference(CMS_SHARED_IMAGE_RESOURCES), new ValueMap(ID + "=" + dbItemType.getId()));
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set(ID, dbItemType.getId());
+        return new Image(id, new PackageResourceReference(CMS_SHARED_IMAGE_RESOURCES), pageParameters);
     }
 
     public CmsItemTypeImageResource() {
         // Inject CmsService
-        InjectorHolder.getInjector().inject(this);
+        Injector.get().inject(this);
     }
 
     @Override
-    public IResourceStream getResourceStream() {
+    protected byte[] getImageData(Attributes attributes) {
         try {
-            int itmTypeId = Utils.parseIntSave(getParameters().getString(ID));
+            int itmTypeId = Utils.parseIntSave(attributes.getParameters().get(ID).toString());
             DbItemTypeImage dbItemTypeImage = serverItemTypeService.getCmsDbItemTypeImage(itmTypeId);
-            return new ByteArrayResource(dbItemTypeImage.getContentType(), dbItemTypeImage.getData()).getResourceStream();
+            setFormat(dbItemTypeImage.getContentType());
+            return dbItemTypeImage.getData();
         } catch (NoSuchItemTypeException e) {
             throw new AbortException();
         }

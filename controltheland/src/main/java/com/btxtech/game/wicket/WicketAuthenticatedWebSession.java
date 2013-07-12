@@ -1,11 +1,11 @@
 package com.btxtech.game.wicket;
 
 import com.btxtech.game.services.user.UserService;
-import org.apache.wicket.Request;
-import org.apache.wicket.authentication.AuthenticatedWebSession;
-import org.apache.wicket.authorization.strategies.role.Roles;
-import org.apache.wicket.injection.web.InjectorHolder;
-import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.injection.Injector;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -25,8 +25,7 @@ public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
         super(request);
         // If not bound, two session object will be generated
         bind();
-        // Inject AuthenticationManager
-        InjectorHolder.getInjector().inject(this);
+        Injector.get().inject(this);
         handleCookieTracking(request);
     }
 

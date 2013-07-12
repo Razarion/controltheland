@@ -26,6 +26,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * User: beat
@@ -53,22 +54,22 @@ public class InventoryEditor extends MgmtWebPage {
                 dbInventoryArtifactItem.add(new DropDownChoice<>("rareness", Arrays.asList(DbInventoryArtifact.Rareness.values())));
                 dbInventoryArtifactItem.add(new PlanetsReadonlyPanel("planets"));
                 dbInventoryArtifactItem.add(new ItemTypesReadonlyPanel("baseItemTypes"));
-                dbInventoryArtifactItem.add(new FileUploadField("upload", new IModel<FileUpload>() {
+                dbInventoryArtifactItem.add(new FileUploadField("upload", new IModel<List<FileUpload>>() {
 
                     @Override
-                    public FileUpload getObject() {
+                    public List<FileUpload> getObject() {
                         return null;
                     }
 
                     @Override
-                    public void setObject(FileUpload fileUpload) {
-                        if (fileUpload == null) {
+                    public void setObject(List<FileUpload> list) {
+                        if (list == null) {
                             // Don't know why...
                             return;
                         }
                         DbInventoryArtifact dbInventoryArtifact = dbInventoryArtifactItem.getModelObject();
-                        dbInventoryArtifact.setImageContentType(fileUpload.getContentType());
-                        dbInventoryArtifact.setImageData(fileUpload.getBytes());
+                        dbInventoryArtifact.setImageContentType(list.get(0).getContentType());
+                        dbInventoryArtifact.setImageData(list.get(0).getBytes());
                     }
 
                     @Override
@@ -76,7 +77,7 @@ public class InventoryEditor extends MgmtWebPage {
                     }
                 }));
                 // alternating row color
-                dbInventoryArtifactItem.add(new AttributeModifier("class", true, new Model<>(dbInventoryArtifactItem.getIndex() % 2 == 0 ? "even" : "odd")));
+                dbInventoryArtifactItem.add(new AttributeModifier("class", new Model<>(dbInventoryArtifactItem.getIndex() % 2 == 0 ? "even" : "odd")));
             }
 
             @Override
@@ -98,22 +99,22 @@ public class InventoryEditor extends MgmtWebPage {
                 dbInventoryItemItem.add(new ItemTypesReadonlyPanel("baseItemTypesViaArtifact"));
                 dbInventoryItemItem.add(new PlanetsReadonlyPanel("planets"));
                 dbInventoryItemItem.add(new ItemTypesReadonlyPanel("baseItemTypes"));
-                dbInventoryItemItem.add(new FileUploadField("upload", new IModel<FileUpload>() {
+                dbInventoryItemItem.add(new FileUploadField("upload", new IModel<List<FileUpload>>() {
 
                     @Override
-                    public FileUpload getObject() {
+                    public List<FileUpload> getObject() {
                         return null;
                     }
 
                     @Override
-                    public void setObject(FileUpload fileUpload) {
-                        if (fileUpload == null) {
+                    public void setObject(List<FileUpload> list) {
+                        if (list == null) {
                             // Don't know why...
                             return;
                         }
                         DbInventoryItem dbInventoryItem = dbInventoryItemItem.getModelObject();
-                        dbInventoryItem.setImageContentType(fileUpload.getContentType());
-                        dbInventoryItem.setImageData(fileUpload.getBytes());
+                        dbInventoryItem.setImageContentType(list.get(0).getContentType());
+                        dbInventoryItem.setImageData(list.get(0).getBytes());
                     }
 
                     @Override
@@ -121,7 +122,7 @@ public class InventoryEditor extends MgmtWebPage {
                     }
                 }));
                 // alternating row color
-                dbInventoryItemItem.add(new AttributeModifier("class", true, new Model<>(dbInventoryItemItem.getIndex() % 2 == 0 ? "even" : "odd")));
+                dbInventoryItemItem.add(new AttributeModifier("class", new Model<>(dbInventoryItemItem.getIndex() % 2 == 0 ? "even" : "odd")));
             }
 
             @Override

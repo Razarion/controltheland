@@ -5,7 +5,7 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -33,15 +33,15 @@ public class ContentGameLink extends Panel {
             pageLink.add(CmsImageResource.createImage("image", dbContentGameLink.getDbCmsImage()));
         } else {
             pageLink.add(new Label("label", dbContentGameLink.getDbI18nName().getString(getLocale())));
-            pageLink.add(new Image("image").setVisible(false));
+            pageLink.add(new Image("image", "").setVisible(false));
         }
         if (!userGuidanceService.isStartRealGame()) {
-            pageLink.setParameter(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
+            pageLink.getPageParameters().set(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
         }
 
         add(pageLink);
         if (dbContentGameLink.getCssClass() != null) {
-            pageLink.add(new SimpleAttributeModifier("class", dbContentGameLink.getCssClass()));
+            pageLink.add(new AttributeModifier("class", dbContentGameLink.getCssClass()));
         }
     }
 

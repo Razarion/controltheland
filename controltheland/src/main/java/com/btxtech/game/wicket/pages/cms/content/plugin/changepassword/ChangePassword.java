@@ -39,7 +39,7 @@ public class ChangePassword extends Panel {
 
         final Model<String> password = new Model<>();
         final Model<String> confirmPassword = new Model<>();
-        final String uuid = contentContext.getPageParameters().getString(CmsUtil.FORGOT_PASSWORD_UUID_KEY);
+        final String uuid = contentContext.getPageParameters().get(CmsUtil.FORGOT_PASSWORD_UUID_KEY).toString();
         add(new FeedbackPanel("msgs"));
 
         Form form = new Form("form") {

@@ -20,7 +20,7 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.tracker.DbPageAccess;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -40,7 +40,7 @@ public class SessionDetail extends MgmtWebPage {
 
     public SessionDetail(PageParameters parameters) {
         super(parameters);
-        String sessionId = parameters.getString(SESSION_KEY);
+        String sessionId = parameters.get(SESSION_KEY).toString();
         if (sessionId == null) {
             throw new IllegalArgumentException(SESSION_KEY + " must be available in the PageParameters");
         }

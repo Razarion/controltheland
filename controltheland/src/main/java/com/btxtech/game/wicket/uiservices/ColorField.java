@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.uiservices;
 
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 
@@ -24,7 +24,7 @@ import org.apache.wicket.model.Model;
  */
 public class ColorField {
     public static Label create(String id, String color) {
-        SimpleAttributeModifier bgColor = new SimpleAttributeModifier("bgcolor", color);
+        AttributeModifier bgColor = new AttributeModifier("bgcolor", color);
         Label label = new Label(id, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
         label.setEscapeModelStrings(false);
         label.add(bgColor);
@@ -38,7 +38,7 @@ public class ColorField {
     }
 
     public static void setColorModifier(Label label, String color) {
-        SimpleAttributeModifier bgColor = new SimpleAttributeModifier("bgcolor", color);
+        AttributeModifier bgColor = new AttributeModifier("bgcolor", color);
         label.add(bgColor);
     }
 

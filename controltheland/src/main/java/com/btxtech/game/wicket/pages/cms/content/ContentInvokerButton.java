@@ -3,7 +3,7 @@ package com.btxtech.game.wicket.pages.cms.content;
 import com.btxtech.game.services.cms.layout.DbContentInvokerButton;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -38,7 +38,7 @@ public class ContentInvokerButton extends Panel {
         });
 
         if (dbContentInvokerButton.getCssClass() != null) {
-            add(new SimpleAttributeModifier("class", dbContentInvokerButton.getCssClass()));
+            add(new AttributeModifier("class", dbContentInvokerButton.getCssClass()));
         }
     }
 

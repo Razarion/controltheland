@@ -1,14 +1,15 @@
 package com.btxtech.game.wicket.uiservices;
 
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.template.JavaScriptTemplate;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
@@ -46,8 +47,8 @@ public class WysiwygEditor extends Panel implements IHeaderContributor {
         });
         add(textArea);
         String htmlEditorId = UUID.randomUUID().toString().toUpperCase();
-        textArea.add(new SimpleAttributeModifier("id", htmlEditorId));
-        PackagedTextTemplate jsTemplate = new PackagedTextTemplate(WysiwygEditor.class, "WysiwygEditor.js");
+        textArea.add(new AttributeModifier("id", htmlEditorId));
+        PackageTextTemplate jsTemplate = new PackageTextTemplate(WysiwygEditor.class, "WysiwygEditor.js");
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("editorId", htmlEditorId);
         Label myScript = new Label("editorScript", new JavaScriptTemplate(jsTemplate).asString(parameters));
@@ -61,7 +62,7 @@ public class WysiwygEditor extends Panel implements IHeaderContributor {
 
     @Override
     public void renderHead(IHeaderResponse iHeaderResponse) {
-        iHeaderResponse.renderJavascriptReference("/ckeditor/ckeditor.js");
+        iHeaderResponse.render(JavaScriptHeaderItem.forUrl("/ckeditor/ckeditor.js"));
     }
 
 }

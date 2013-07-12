@@ -5,7 +5,7 @@ import com.btxtech.game.services.cms.layout.DbContentList;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
@@ -42,7 +42,7 @@ public class TableHead extends Panel {
         }
         add(view);
         if (cssClassHead != null) {
-            add(new SimpleAttributeModifier("class", cssClassHead));
+            add(new AttributeModifier("class", cssClassHead));
         }
     }
 

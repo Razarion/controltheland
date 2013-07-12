@@ -5,7 +5,7 @@ import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.utg.DbLevel;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import java.io.Serializable;
 

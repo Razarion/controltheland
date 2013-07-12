@@ -31,10 +31,11 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.resource.ByteArrayResource;
+import org.apache.wicket.request.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * User: beat
@@ -63,19 +64,19 @@ public class TerrainTileEditor extends MgmtWebPage {
                 if (item.getModelObject().getImageData() != null && item.getModelObject().getImageData().length > 0) {
                     item.add(new Image("image", new ByteArrayResource("", item.getModelObject().getImageData())));
                 } else {
-                    item.add(new Image("image").setVisible(false));
+                    item.add(new Image("image", "").setVisible(false));
                 }
                 // upload
-                FileUploadField upload = new FileUploadField("upload", new IModel<FileUpload>() {
+                FileUploadField upload = new FileUploadField("upload", new IModel<List<FileUpload>>() {
                     @Override
-                    public FileUpload getObject() {
+                    public List<FileUpload> getObject() {
                         return null;
                     }
 
                     @Override
-                    public void setObject(FileUpload fileUpload) {
-                        item.getModelObject().setImageData(fileUpload.getBytes());
-                        item.getModelObject().setContentType(fileUpload.getContentType());
+                    public void setObject(List<FileUpload> list) {
+                        item.getModelObject().setImageData(list.get(0).getBytes());
+                        item.getModelObject().setContentType(list.get(0).getContentType());
                     }
 
                     @Override
@@ -107,7 +108,7 @@ public class TerrainTileEditor extends MgmtWebPage {
                 item.add(new DropDownChoice<SurfaceType>("surfaceType", surfaceTypeIModel, Arrays.asList(SurfaceType.values())));
                 item.add(new TextField("htmlBackgroundColor"));
                 // alternating row color
-                item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
+                item.add(new AttributeModifier("class", new Model<>(item.getIndex() % 2 == 0 ? "even" : "odd")));
             }
         };
 
@@ -137,7 +138,7 @@ public class TerrainTileEditor extends MgmtWebPage {
 
             @Override
             protected void extendedPopulateItem(Item<DbTerrainImageGroup> dbTerrainImageGroupItem) {
-                displayId(dbTerrainImageGroupItem);                
+                displayId(dbTerrainImageGroupItem);
                 super.extendedPopulateItem(dbTerrainImageGroupItem);
             }
 
