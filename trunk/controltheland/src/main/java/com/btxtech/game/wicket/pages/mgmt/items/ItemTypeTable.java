@@ -52,7 +52,7 @@ public class ItemTypeTable extends MgmtWebPage {
                 // Name
                 super.extendedPopulateItem(dbItemTypeItem);
                 // alternating row color
-                dbItemTypeItem.add(new AttributeModifier("class", true, new Model<>(dbItemTypeItem.getIndex() % 2 == 0 ? "even" : "odd")));
+                dbItemTypeItem.add(new AttributeModifier("class", new Model<>(dbItemTypeItem.getIndex() % 2 == 0 ? "even" : "odd")));
             }
 
             @Override

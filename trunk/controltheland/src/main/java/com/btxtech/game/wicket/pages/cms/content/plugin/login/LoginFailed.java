@@ -35,7 +35,7 @@ public class LoginFailed extends Panel {
     public LoginFailed(String id, ContentContext contentContext) {
         super(id);
 
-        String loginName = contentContext.getPageParameters().getString(CmsPage.RESPONSE_PAGE_ADDITIONAL_PARAMETER);
+        String loginName = contentContext.getPageParameters().get(CmsPage.RESPONSE_PAGE_ADDITIONAL_PARAMETER).toString();
         User user = userService.loadUserFromDb(loginName);
         if (user == null) {
             add(new Label("text", new StringResourceModel("loginFailed", this, null)));

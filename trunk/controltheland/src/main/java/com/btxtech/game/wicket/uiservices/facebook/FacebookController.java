@@ -20,7 +20,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.util.template.PackageTextTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,19 +45,19 @@ public class FacebookController extends Panel {
     public FacebookController(String id, Type type) {
         super(id);
 
-        PackagedTextTemplate jsTemplate;
+        PackageTextTemplate jsTemplate;
         switch (type) {
             case REGISTER:
-                jsTemplate = new PackagedTextTemplate(FacebookController.class, "FacebookRegister.js");
+                jsTemplate = new PackageTextTemplate(FacebookController.class, "FacebookRegister.js");
                 break;
             case AUTO_LOGON:
-                jsTemplate = new PackagedTextTemplate(FacebookController.class, "FacebookAutologin.js");
+                jsTemplate = new PackageTextTemplate(FacebookController.class, "FacebookAutologin.js");
                 break;
             case LOGGED_IN:
-                jsTemplate = new PackagedTextTemplate(FacebookController.class, "FacebookOnLoggedIn.js");
+                jsTemplate = new PackageTextTemplate(FacebookController.class, "FacebookOnLoggedIn.js");
                 break;
             case GAME:
-                jsTemplate = new PackagedTextTemplate(FacebookController.class, "FacebookInit.js");
+                jsTemplate = new PackageTextTemplate(FacebookController.class, "FacebookInit.js");
                 break;
             default:
                 throw new IllegalArgumentException("Unknown type: " + type);

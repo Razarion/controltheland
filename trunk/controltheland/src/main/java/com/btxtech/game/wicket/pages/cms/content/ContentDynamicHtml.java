@@ -5,7 +5,7 @@ import com.btxtech.game.services.cms.layout.DbContentDynamicHtml;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.WysiwygEditor;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -61,7 +61,7 @@ public class ContentDynamicHtml extends Panel {
         add(wysiwygEditor);
 
         if (dbContentDynamicHtml.getCssClass() != null) {
-            add(new SimpleAttributeModifier("class", dbContentDynamicHtml.getCssClass()));
+            add(new AttributeModifier("class", dbContentDynamicHtml.getCssClass()));
         }
     }
 }

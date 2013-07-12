@@ -20,7 +20,7 @@ import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.wicket.uiservices.RuModel;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -58,7 +58,7 @@ public class TerrainImageSurfaceTypeEditor extends MgmtWebPage {
 
         String bgImageUrl = ImageHandler.getTerrainImageUrl(dbTerrainImage.getId());
         WebMarkupContainer table = new WebMarkupContainer("table");
-        table.add(new SimpleAttributeModifier("style", "border:solid black " + LINE_WIDTH / 2 + "px;background-image: url(\"" + bgImageUrl + "\")"));
+        table.add(new AttributeModifier("style", "border:solid black " + LINE_WIDTH / 2 + "px;background-image: url(\"" + bgImageUrl + "\")"));
         form.add(table);
         RepeatingView row = new RepeatingView("rows");
         table.add(row);
@@ -71,7 +71,7 @@ public class TerrainImageSurfaceTypeEditor extends MgmtWebPage {
             for (int x = 0; x < dbTerrainImage.getTileWidth(); x++) {
                 final int finalX = x;
                 WebMarkupContainer cellContainer = new WebMarkupContainer(cell.newChildId());
-                cellContainer.add(new SimpleAttributeModifier("style", "border:solid black " + LINE_WIDTH / 2 + "px;width:" + cellWidth + "px;height:" + cellHeight + "px"));
+                cellContainer.add(new AttributeModifier("style", "border:solid black " + LINE_WIDTH / 2 + "px;width:" + cellWidth + "px;height:" + cellHeight + "px"));
                 cell.add(cellContainer);
                 DropDownChoice dropDownChoice = new DropDownChoice<>("surfaceType", new IModel<SurfaceType>() {
                     @Override
@@ -90,7 +90,7 @@ public class TerrainImageSurfaceTypeEditor extends MgmtWebPage {
                     }
                 }, Arrays.asList(SurfaceType.values()));
                 cellContainer.add(dropDownChoice);
-                dropDownChoice.add(new SimpleAttributeModifier("style", "width:" + cellWidth + "px"));
+                dropDownChoice.add(new AttributeModifier("style", "width:" + cellWidth + "px"));
             }
         }
 

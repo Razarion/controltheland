@@ -16,6 +16,6 @@ public class Message extends Panel {
         if (additionalParameter != null) {
             args = new Object[]{additionalParameter};
         }
-        add(new Label("message", new StringResourceModel(key, null, null, args, key)).setEscapeModelStrings(false));
+        add(new Label("message", new StringResourceModel(key, null, args)).setEscapeModelStrings(false));
     }
 }

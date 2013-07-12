@@ -21,7 +21,7 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
@@ -59,7 +59,7 @@ public class Register extends Panel {
                     cmsUiService.getSecurityCmsUiService().signIn(name, password);
                     PageParameters parameters = new PageParameters();
                     if (!userGuidanceService.isStartRealGame()) {
-                        parameters.put(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
+                        parameters.set(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
                     }
                     setResponsePage(Game.class, parameters);
                 } catch (AlreadyLoggedInException e) {

@@ -1,13 +1,17 @@
 package com.btxtech.game.backend;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.page.DbPage;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
+import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
-import junit.framework.Assert;
-import org.apache.wicket.authentication.AuthenticatedWebSession;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -22,20 +26,31 @@ import java.util.Collections;
 public class TestBackend extends AbstractServiceTest {
     @Autowired
     private UserService userService;
+    @Autowired
+    private CmsService cmsService;
 
     @Test
     @DirtiesContext
     public void testPagesNoRights() throws Exception {
         configureSimplePlanetNoResources();
 
+        // Setup CMS content
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        try {
-            getWicketTester().startPage(MgmtPage.class);
-            Assert.fail();
-        } catch (Exception e) {
-            // Expected
-        }
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().startPage(MgmtPage.class);
+        getWicketTester().assertRenderedPage(CmsPage.class);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

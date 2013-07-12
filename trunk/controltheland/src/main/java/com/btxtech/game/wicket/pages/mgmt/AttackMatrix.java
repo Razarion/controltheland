@@ -46,8 +46,8 @@ public class AttackMatrix extends MgmtWebPage {
     public AttackMatrix() {
         add(new FeedbackPanel("msgs"));
 
-        ArrayList<IColumn<DbBaseItemType>> columnList = new ArrayList<>();
-        columnList.add(new AbstractColumn<DbBaseItemType>(new Model<>("Attacker")) {
+        ArrayList<IColumn<DbBaseItemType, DbBaseItemType>> columnList = new ArrayList<>();
+        columnList.add(new AbstractColumn<DbBaseItemType, DbBaseItemType>(new Model<>("Attacker")) {
 
             @Override
             public void populateItem(Item<ICellPopulator<DbBaseItemType>> cellItem, String componentId, IModel<DbBaseItemType> rowModel) {
@@ -56,7 +56,7 @@ public class AttackMatrix extends MgmtWebPage {
         });
 
         for (final DbBaseItemType baseItemType : serverItemTypeService.getDbBaseItemTypes()) {
-            columnList.add(new AbstractColumn<DbBaseItemType>(new Model<>(baseItemType.getName())) {
+            columnList.add(new AbstractColumn<DbBaseItemType, DbBaseItemType>(new Model<>(baseItemType.getName())) {
 
                 @Override
                 public void populateItem(Item<ICellPopulator<DbBaseItemType>> cellItem, String componentId, IModel<DbBaseItemType> rowModel) {
@@ -65,8 +65,6 @@ public class AttackMatrix extends MgmtWebPage {
             });
         }
 
-        @SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
-        IColumn<DbBaseItemType>[] columnArray = (IColumn<DbBaseItemType>[]) columnList.toArray(new IColumn[columnList.size()]);
         final ListProvider<DbBaseItemType> weaponProvider = new ListProvider<DbBaseItemType>() {
             @Override
             protected List<DbBaseItemType> createList() {
@@ -82,8 +80,8 @@ public class AttackMatrix extends MgmtWebPage {
         };
         add(form);
 
-        DataTable<DbBaseItemType> dataTable = new DataTable<>("dataTable", columnArray, weaponProvider, Integer.MAX_VALUE);
-        dataTable.addTopToolbar(new HeadersToolbar(dataTable, null));
+        DataTable<DbBaseItemType, DbBaseItemType> dataTable = new DataTable<>("dataTable", columnList, weaponProvider, Integer.MAX_VALUE);
+        dataTable.addTopToolbar(new HeadersToolbar<>(dataTable, null));
         dataTable.addBottomToolbar(new NoRecordsToolbar(dataTable, new Model<>("No Weapon items")));
         form.add(dataTable);
     }

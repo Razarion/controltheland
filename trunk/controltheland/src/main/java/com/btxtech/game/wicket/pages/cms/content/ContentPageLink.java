@@ -5,8 +5,8 @@ import com.btxtech.game.services.cms.layout.DbContentPageLink;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -34,11 +34,11 @@ public class ContentPageLink extends Panel {
             link.add(CmsImageResource.createImage("image", dbContentPageLink.getDbCmsImage()));
         } else {
             link.add(new Label("label", dbContentPageLink.getDbI18nName().getString(getLocale())));
-            link.add(new Image("image").setVisible(false));
+            link.add(new Image("image", "").setVisible(false));
         }
         add(link);
         if (dbContentPageLink.getCssClass() != null) {
-            link.add(new SimpleAttributeModifier("class", dbContentPageLink.getCssClass()));
+            link.add(new AttributeModifier("class", dbContentPageLink.getCssClass()));
         }
     }
 

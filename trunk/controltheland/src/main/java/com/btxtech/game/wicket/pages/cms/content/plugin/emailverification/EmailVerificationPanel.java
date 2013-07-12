@@ -21,7 +21,7 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -46,7 +46,7 @@ public class EmailVerificationPanel extends Panel {
     public EmailVerificationPanel(String id, ContentContext contentContext) {
         super(id);
         try {
-            String verificationId = contentContext.getPageParameters().getString(CmsUtil.EMAIL_VERIFICATION_KEY);
+            String verificationId = contentContext.getPageParameters().get(CmsUtil.EMAIL_VERIFICATION_KEY).toString();
             User user = registerService.onVerificationPageCalled(verificationId);
             userService.loginIfNotLoggedIn(user);
             add(new ConversionTrackingPanel("conversionTrackingPanel", user));
@@ -55,7 +55,7 @@ public class EmailVerificationPanel extends Panel {
                 protected void onSubmit() {
                     PageParameters parameters = new PageParameters();
                     if (!userGuidanceService.isStartRealGame()) {
-                        parameters.put(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
+                        parameters.set(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
                     }
                     setResponsePage(Game.class, parameters);
                 }

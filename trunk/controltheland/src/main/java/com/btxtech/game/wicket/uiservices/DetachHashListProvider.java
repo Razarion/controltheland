@@ -32,12 +32,12 @@ public abstract class DetachHashListProvider<T> implements IDataProvider<T> {
     private Map<Integer, T> hashMap = new HashMap<>();
 
     @Override
-    public Iterator<? extends T> iterator(int first, int count) {
-        return getList().subList(first, first + count).iterator();
+    public Iterator<? extends T> iterator(long first, long count) {
+        return getList().subList((int)first, (int)first + (int)count).iterator();
     }
 
     @Override
-    public int size() {
+    public long size() {
         return getList().size();
     }
 

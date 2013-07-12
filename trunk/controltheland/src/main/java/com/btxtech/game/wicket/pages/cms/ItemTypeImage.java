@@ -2,7 +2,7 @@ package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -16,7 +16,7 @@ public class ItemTypeImage extends Panel {
         super(id);
         Image image = CmsItemTypeImageResource.createImage("image", dbItemType);
         if (dbExpressionProperty.getCssClass() != null) {
-            image.add(new SimpleAttributeModifier("class", dbExpressionProperty.getCssClass()));
+            image.add(new AttributeModifier("class", dbExpressionProperty.getCssClass()));
         }
         add(image);
     }

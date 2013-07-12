@@ -3,7 +3,7 @@ package com.btxtech.game.wicket.pages.cms.content;
 import com.btxtech.game.services.cms.layout.DbContentSmartPageLink;
 import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -64,7 +64,7 @@ public class ContentSmartPageLink extends Panel {
         }
 
         if (dbContentSmartPageLink.getCssClass() != null) {
-            add(new SimpleAttributeModifier("class", dbContentSmartPageLink.getCssClass()));
+            add(new AttributeModifier("class", dbContentSmartPageLink.getCssClass()));
         }
     }
 

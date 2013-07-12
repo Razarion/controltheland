@@ -508,13 +508,13 @@ public class UserStateEditor extends MgmtWebPage {
                 }));
                 switch (userGuidanceService.getLevelTaskState(item.getModelObject().getId(), form.getModelObject())) {
                     case OPEN:
-                        item.add(new AttributeModifier("bgcolor", true, new Model<>("#FFBBBB")));
+                        item.add(new AttributeModifier("bgcolor", new Model<>("#FFBBBB")));
                         break;
                     case ACTIVE:
-                        item.add(new AttributeModifier("bgcolor", true, new Model<>("#FFFFBB")));
+                        item.add(new AttributeModifier("bgcolor", new Model<>("#FFFFBB")));
                         break;
                     case DONE:
-                        item.add(new AttributeModifier("bgcolor", true, new Model<>("#BBFFBB")));
+                        item.add(new AttributeModifier("bgcolor", new Model<>("#BBFFBB")));
                         break;
                 }
             }

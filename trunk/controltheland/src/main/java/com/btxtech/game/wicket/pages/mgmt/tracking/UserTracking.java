@@ -27,7 +27,7 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.mgmt.BaseEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.pages.mgmt.usermgmt.UserStateEditor;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -65,7 +65,7 @@ public class UserTracking extends MgmtWebPage {
     private Integer userId;
 
     public UserTracking(PageParameters pageParameters) {
-        setDefaultModel(new CompoundPropertyModel<User>(new LoadableDetachableModel<User>() {
+        setDefaultModel(new CompoundPropertyModel<>(new LoadableDetachableModel<User>() {
             @Override
             protected User load() {
                 return userService.getUser(userId);
@@ -167,9 +167,8 @@ public class UserTracking extends MgmtWebPage {
                 }
             }
         });
-        Integer userId = pageParameters.getAsInteger(USER_ID);
-        if (userId != null) {
-            this.userId = userId;
+        if (!pageParameters.get(USER_ID).isNull()) {
+            this.userId = pageParameters.get(USER_ID).toInteger();
         }
     }
 

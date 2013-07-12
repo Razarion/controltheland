@@ -1,8 +1,8 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.user.SecurityRoles;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 
 /**

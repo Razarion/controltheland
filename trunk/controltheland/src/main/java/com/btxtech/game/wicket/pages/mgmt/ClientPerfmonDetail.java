@@ -16,7 +16,7 @@ import com.googlecode.charts4j.Fills;
 import com.googlecode.charts4j.GCharts;
 import com.googlecode.charts4j.LinearGradientFill;
 import com.googlecode.charts4j.Plots;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -38,7 +38,7 @@ public class ClientPerfmonDetail extends MgmtWebPage {
     public ClientPerfmonDetail(PageParameters parameters) {
         super(parameters);
         add(new FeedbackPanel("msgs"));
-        String sessionId = parameters.getString(SESSION_KEY);
+        String sessionId = parameters.get(SESSION_KEY).toString();
         setupChart(mgmtService.getClientPerfmonData(sessionId));
     }
 

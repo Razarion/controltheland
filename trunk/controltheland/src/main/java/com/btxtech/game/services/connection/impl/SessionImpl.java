@@ -25,7 +25,7 @@ import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;

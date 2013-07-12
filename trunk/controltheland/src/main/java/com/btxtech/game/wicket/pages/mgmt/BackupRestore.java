@@ -43,7 +43,7 @@ public class BackupRestore extends MgmtWebPage {
     @SpringBean
     private MgmtService mgmtService;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
-    private Collection<Date> toBeDeleted = new ArrayList<Date>();
+    private Collection<Date> toBeDeleted = new ArrayList<>();
 
     public BackupRestore() {
         setupBackup();
@@ -121,7 +121,7 @@ public class BackupRestore extends MgmtWebPage {
         }
 
         @Override
-        public Iterator<? extends BackupSummary> iterator(int first, int count) {
+        public Iterator<? extends BackupSummary> iterator(long first, long count) {
             List<BackupSummary> backups = mgmtService.getBackupSummary();
             if (first != 0 || count != backups.size()) {
                 throw new IllegalArgumentException();
@@ -130,13 +130,13 @@ public class BackupRestore extends MgmtWebPage {
         }
 
         @Override
-        public int size() {
+        public long size() {
             return mgmtService.getBackupSummary().size();
         }
 
         @Override
         public IModel<BackupSummary> model(BackupSummary object) {
-            return new Model<BackupSummary>(object);
+            return new Model<>(object);
         }
     }
 }

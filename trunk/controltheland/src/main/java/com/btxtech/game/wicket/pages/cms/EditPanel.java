@@ -4,7 +4,7 @@ import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.cms.layout.DbContentList;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -103,11 +103,11 @@ public class EditPanel extends Panel {
         Button createEditButton;
         if (dbContent instanceof DbContentList && ((DbContentList) dbContent).getDbContentCreateEdit() != null) {
             DbContentList dbContentList = (DbContentList) dbContent;
-            createEditButton = new Button("createEdit", new Model<String>(dbContentList.getDbContentCreateEdit().getName())) {
+            createEditButton = new Button("createEdit", new Model<>(dbContentList.getDbContentCreateEdit().getName())) {
                 @Override
                 public void onSubmit() {
                     PageParameters parameters = cmsUiService.createPageParametersFromBeanId(beanIdPathElement);
-                    parameters.put(CmsPage.CREATE_CONTENT_ID, Integer.toString(contentCreateEditID));
+                    parameters.set(CmsPage.CREATE_CONTENT_ID, Integer.toString(contentCreateEditID));
                     setResponsePage(CmsPage.class, parameters);
                 }
 

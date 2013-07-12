@@ -169,7 +169,7 @@ public class TestMgmtService extends AbstractServiceTest {
         Assert.assertEquals("Hallogalli11", entry.getThrowableMessage());
         Assert.assertEquals(Thread.currentThread().getName(), entry.getThread());
         Assert.assertEquals(ExceptionUtils.getFullStackTrace(e), entry.getStackTrace());
-        Assert.assertEquals("[Page class = org.apache.wicket.markup.html.pages.AccessDeniedPage, id = 0, version = 0]", entry.getCausePage());
+        Assert.assertEquals("[Page class = org.apache.wicket.markup.html.pages.AccessDeniedPage, id = 0, render count = 0]", entry.getCausePage());
         Assert.assertEquals("mozilla", entry.getUserAgent());
         Assert.assertEquals("U100", entry.getUserName());
         Assert.assertEquals("/test", entry.getRequestUri());

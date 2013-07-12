@@ -123,7 +123,7 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
         triggers.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                target.addComponent(comparisons);
+                target.add(comparisons);
             }
         });
         IndexPanel radarPositionHint = new IndexPanel("radarPositionHint");

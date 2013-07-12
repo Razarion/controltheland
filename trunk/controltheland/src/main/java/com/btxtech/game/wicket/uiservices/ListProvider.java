@@ -30,18 +30,18 @@ public abstract class ListProvider<T> implements IDataProvider<T> {
     private List<T> lastModifiedList;
 
     @Override
-    public Iterator<? extends T> iterator(int first, int count) {
-        return getList().subList(first, first + count).iterator();
+    public Iterator<? extends T> iterator(long first, long count) {
+        return getList().subList((int) first, (int) first + (int) count).iterator();
     }
 
     @Override
-    public int size() {
+    public long size() {
         return getList().size();
     }
 
     @Override
     public IModel<T> model(T object) {
-        return new CompoundPropertyModel<T>(object);
+        return new CompoundPropertyModel<>(object);
     }
 
     @Override

@@ -31,12 +31,12 @@ public abstract class CrudTableListProvider<T extends CrudChild> implements IDat
     private List<T> list;
 
     @Override
-    public Iterator<? extends T> iterator(int first, int count) {
-        return getList().subList(first, first + count).iterator();
+    public Iterator<? extends T> iterator(long first, long count) {
+        return getList().subList((int)first, (int)first + (int)count).iterator();
     }
 
     @Override
-    public int size() {
+    public long size() {
         return getList().size();
     }
 

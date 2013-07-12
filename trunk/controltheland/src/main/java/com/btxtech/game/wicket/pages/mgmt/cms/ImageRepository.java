@@ -13,8 +13,10 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.resource.ByteArrayResource;
+import org.apache.wicket.request.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -41,17 +43,18 @@ public class ImageRepository extends MgmtWebPage {
             @Override
             protected void extendedPopulateItem(final Item<DbCmsImage> dbCmsImageItem) {
                 displayId(dbCmsImageItem);
-                dbCmsImageItem.add(new FileUploadField("upload", new IModel<FileUpload>() {
+                dbCmsImageItem.add(new FileUploadField("upload", new IModel<List<FileUpload>>() {
+
 
                     @Override
-                    public FileUpload getObject() {
+                    public List<FileUpload> getObject() {
                         return null;
                     }
 
                     @Override
-                    public void setObject(FileUpload fileUpload) {
-                        dbCmsImageItem.getModelObject().setContentType(fileUpload.getContentType());
-                        dbCmsImageItem.getModelObject().setData(fileUpload.getBytes());
+                    public void setObject(List<FileUpload> list) {
+                        dbCmsImageItem.getModelObject().setContentType(list.get(0).getContentType());
+                        dbCmsImageItem.getModelObject().setData(list.get(0).getBytes());
                     }
 
                     @Override

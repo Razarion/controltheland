@@ -119,14 +119,20 @@ import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfi
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
+import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.IPageFactory;
+import org.apache.wicket.Page;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.parser.XmlTag;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.image.resource.LocalizedImageResource;
@@ -2269,7 +2275,6 @@ abstract public class AbstractServiceTest {
         }
         mockHttpSession = new MockHttpSession();
         securityContext = SecurityContextHolder.createEmptyContext();
-        wicketTester.setupRequestAndResponse();
     }
 
     protected void endHttpSession() {
@@ -2396,47 +2401,10 @@ abstract public class AbstractServiceTest {
         return guildId;
     }
 
-
     // ------------------- Wicket --------------------
-
-    /**
-     * Asserts that that the BookmarkablePageLink identified by "id" points to the page as expected
-     * - including parameters.
-     *
-     * @param id
-     * @param pageClass
-     * @param parameters
-     */
-    protected void assertBookmarkablePageLink(WicketTester wicketTester, final String id,
-                                              final Class<? extends WebPage> pageClass, final PageParameters parameters) {
-        BookmarkablePageLink<?> pageLink = null;
-        try {
-            pageLink = (BookmarkablePageLink<?>) wicketTester.getComponentFromLastRenderedPage(id);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Component with id:" + id +
-                    " is not a BookmarkablePageLink");
-        }
-
-        junit.framework.Assert.assertEquals("BookmarkablePageLink: " + id + " is pointing to the wrong page",
-                pageClass, pageLink.getPageClass());
-
-        junit.framework.Assert.assertEquals(
-                "One or more of the parameters associated with the BookmarkablePageLink: " + id +
-                        " do not match", parameters, pageLink.getPageParameters());
-    }
-
-    public void assertCssClass(WicketTester tester, String path, String cssClass) {
-        Component component = tester.getComponentFromLastRenderedPage(path);
-        Assert.assertNotNull("No such component: " + path, component);
-        for (IBehavior iBehavior : component.getBehaviors()) {
-            if (iBehavior instanceof SimpleAttributeModifier) {
-                SimpleAttributeModifier simpleAttributeModifier = (SimpleAttributeModifier) iBehavior;
-                if (simpleAttributeModifier.getAttribute().equals("class") && simpleAttributeModifier.getValue().equals(cssClass)) {
-                    return;
-                }
-            }
-        }
-        Assert.fail("No such CSS class: " + cssClass);
+    @Before
+    public void setupWicketTester() {
+        wicketTester = new WicketTester(wicketApplication);
     }
 
     public void assertCmsImage(WicketTester tester, String path, DbCmsImage descImg) throws Exception {
@@ -2444,23 +2412,54 @@ abstract public class AbstractServiceTest {
         Assert.assertNotNull("No such component: " + path, component);
         Image image = (Image) component;
         LocalizedImageResource localizedImageResource = (LocalizedImageResource) getPrivateField(Image.class, image, "localizedImageResource");
-        ValueMap valueMap = (ValueMap) getPrivateField(LocalizedImageResource.class, localizedImageResource, "resourceParameters");
-        Assert.assertEquals((int) descImg.getId(), valueMap.getInt(CmsImageResource.ID));
+        PageParameters pageParameters = (PageParameters) getPrivateField(LocalizedImageResource.class, localizedImageResource, "resourceParameters");
+        Assert.assertEquals((int) descImg.getId(), pageParameters.get(CmsImageResource.ID).toInt());
     }
 
     public void setWicketParameterTrackingCookie(String trackingCookieId) throws Exception {
-        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getWicketSession();
+        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getSession();
         setPrivateField(WicketAuthenticatedWebSession.class, wicketSession, "trackingCookieId", trackingCookieId);
     }
 
     public void setWicketParameterTrackingCookieNeeded(boolean cookieNeeded) throws Exception {
-        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getWicketSession();
+        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getSession();
         setPrivateField(WicketAuthenticatedWebSession.class, wicketSession, "isTrackingCookieIdCookieNeeded", cookieNeeded);
     }
 
-    @Before
-    public void setupWicketTester() {
-        wicketTester = new WicketTester(wicketApplication);
+    public void assertCssClass(WicketTester tester, String path, String cssClass) {
+        Component component = tester.getComponentFromLastRenderedPage(path);
+        Assert.assertNotNull("No such component: " + path, component);
+        for (Behavior behavior : component.getBehaviors()) {
+            if (behavior instanceof AttributeModifier) {
+                AttributeModifier attributeModifier = (AttributeModifier) behavior;
+                XmlTag xmlTag = new XmlTag();
+                ComponentTag tag = new ComponentTag(xmlTag);
+                tag.setId("class");
+                tag.setName("id");
+                attributeModifier.replaceAttributeValue(null, tag);
+                Map<String, Object> attributes = tag.getAttributes();
+                Assert.assertFalse(attributes.isEmpty());
+                String replacement = (String)attributes.get("class");
+                Assert.assertNotNull(replacement);
+                Assert.assertEquals(cssClass, replacement);
+                return;
+            }
+        }
+        Assert.fail("No such CSS class: " + cssClass);
+    }
+
+    public void assertAttributeModifier(WebMarkupContainer container, int index, String attribute, String expectedValue) {
+        AttributeModifier attributeModifier = (AttributeModifier) container.getBehaviors().get(0);
+        XmlTag xmlTag = new XmlTag();
+        ComponentTag tag = new ComponentTag(xmlTag);
+        tag.setId(attribute);
+        tag.setName("id");
+        attributeModifier.replaceAttributeValue(null, tag);
+        Map<String, Object> attributes = tag.getAttributes();
+        Assert.assertFalse(attributes.isEmpty());
+        String replacement = (String)attributes.get(attribute);
+        Assert.assertNotNull(replacement);
+        Assert.assertEquals(expectedValue, replacement);
     }
 
     // ------------------- User --------------------

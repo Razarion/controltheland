@@ -21,8 +21,6 @@ import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.form.AjaxFormValidatingBehavior;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -32,11 +30,12 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
-import org.apache.wicket.validation.validator.AbstractValidator;
 
 public class ChooseNickname extends Panel {
     @SpringBean
@@ -54,7 +53,7 @@ public class ChooseNickname extends Panel {
         super(id);
 
         Bean bean = new Bean();
-        final Form<Bean> form = new Form<>("form", new CompoundPropertyModel<Bean>(bean));
+        final Form<Bean> form = new Form<>("form", new CompoundPropertyModel<>(bean));
         add(form);
         form.setOutputMarkupId(true);
 
@@ -63,14 +62,14 @@ public class ChooseNickname extends Panel {
         form.add(feedback);
 
         FormComponent<String> fc = new RequiredTextField<>("name");
-        fc.add(new AbstractValidator<String>() {
+        fc.add(new IValidator<String>() {
 
             @Override
-            protected void onValidate(IValidatable<String> validatable) {
+            public void validate(IValidatable<String> validatable) {
                 VerificationRequestCallback.ErrorResult errorResult = userService.isNickNameValid(validatable.getValue());
                 if (errorResult != null) {
                     ValidationError error = new ValidationError();
-                    error.addMessageKey("NickNameError");
+                    error.addKey("NickNameError");
                     error.setVariable("error", getLocalizedErrorText(errorResult));
                     validatable.error(error);
                 }
@@ -122,7 +121,7 @@ public class ChooseNickname extends Panel {
     /**
      * simple java bean.
      */
-    public static class Bean implements IClusterable {
+    public static class Bean {
         private String name;
 
         /**

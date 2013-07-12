@@ -45,13 +45,13 @@ public class TestItemImageHandling extends AbstractServiceTest {
     public static final byte[] IMAGE_DATA_1 = new byte[]{-57, 28, 113};
     public static final String INLINE_IMAGE_2 = "data:image/loeli;base64,iVBORw0KGgoAAAANS";
     public static final String MIME_IMAGE_2 = "image/loeli";
-    public static final byte[] IMAGE_DATA_2 = new byte[]{-119, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 0};
+    public static final byte[] IMAGE_DATA_2 = new byte[]{-119, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13};
     public static final String INLINE_IMAGE_3 = "data:image/jpg;base64,iVBOdseedc";
     public static final String MIME_IMAGE_3 = "image/jpg";
-    public static final byte[] IMAGE_DATA_3 = new byte[]{-119, 80, 78, 118, -57, -98, 0, 0};
+    public static final byte[] IMAGE_DATA_3 = new byte[]{-119, 80, 78, 118, -57, -98, 117};
     public static final String INLINE_IMAGE_4 = "data:image/gif;base64,wrefdfs";
     public static final String MIME_IMAGE_4 = "image/gif";
-    public static final byte[] IMAGE_DATA_4 = new byte[]{-62, -73, -97, 0, 0, 0};
+    public static final byte[] IMAGE_DATA_4 = new byte[]{-62, -73, -97, 117, -5};
     public static final String INLINE_IMAGE_5 = "data:image/png;base64," +
             "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAANbY1E9YMgAAABl0" +
             "RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAGAUExURcDYv1C8WdPrtIDAeWqk" +

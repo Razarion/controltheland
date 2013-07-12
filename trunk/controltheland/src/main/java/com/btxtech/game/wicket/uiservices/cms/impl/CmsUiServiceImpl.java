@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsSectionInfo;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.EditMode;
+import com.btxtech.game.services.cms.InvalidUrlException;
 import com.btxtech.game.services.cms.layout.DataProviderInfo;
 import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.cms.layout.DbContentActionButton;
@@ -68,18 +69,19 @@ import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.behavior.StringHeaderContributor;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebRequestCycle;
-import org.apache.wicket.protocol.http.request.InvalidUrlException;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebResponse;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.template.JavaScriptTemplate;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -164,7 +166,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     public PageParameters getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage predefinedType) {
         PageParameters pageParameters = new PageParameters();
         try {
-            pageParameters.put(CmsUtil.ID, Integer.toString(cmsService.getPredefinedDbPage(predefinedType).getId()));
+            pageParameters.set(CmsUtil.ID, Integer.toString(cmsService.getPredefinedDbPage(predefinedType).getId()));
         } catch (CmsPredefinedPageDoesNotExistException e) {
             log.error("", e);
         }
@@ -174,7 +176,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public PageParameters createPageParametersFromBeanId(BeanIdPathElement beanIdPathElement) {
         PageParameters pageParameters = new PageParameters();
-        pageParameters.put(CmsUtil.ID, Integer.toString(beanIdPathElement.getPageId()));
+        pageParameters.set(CmsUtil.ID, Integer.toString(beanIdPathElement.getPageId()));
         List<Serializable> beanIds = new ArrayList<>();
         BeanIdPathElement tmpBeanIdPathElement = beanIdPathElement;
         while (tmpBeanIdPathElement != null) {
@@ -193,7 +195,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         Collections.reverse(beanIds);
         for (int level = 0, beanIdsSize = beanIds.size(); level < beanIdsSize; level++) {
             Serializable beanId = beanIds.get(level);
-            pageParameters.put(CmsPage.getChildUrlParameter(level), beanId);
+            pageParameters.set(CmsPage.getChildUrlParameter(level), beanId);
         }
         return pageParameters;
     }
@@ -208,7 +210,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
         BeanIdPathElement newBeanIdPathElement = beanIdPathElement.getParent().createChildFromBeanId(((CrudChild) list.get(position - 1)).getId());
         PageParameters pageParameters = createPageParametersFromBeanId(newBeanIdPathElement);
-        pageParameters.put(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContent.getId()));
+        pageParameters.set(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContent.getId()));
         return pageParameters;
     }
 
@@ -222,7 +224,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
         BeanIdPathElement newBeanIdPathElement = beanIdPathElement.getParent().createChildFromBeanId(((CrudChild) list.get(position + 1)).getId());
         PageParameters pageParameters = createPageParametersFromBeanId(newBeanIdPathElement);
-        pageParameters.put(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContent.getId()));
+        pageParameters.set(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContent.getId()));
         return pageParameters;
     }
 
@@ -245,7 +247,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     public CmsPage getPredefinedNotFound() {
         PageParameters pageParameters = getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.NOT_FOUND);
         CmsPage cmsPage = new CmsPage(pageParameters);
-        ((WebRequestCycle) cmsPage.getRequestCycle()).getWebResponse().getHttpServletResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
+        ((WebResponse) cmsPage.getResponse()).setStatus(HttpServletResponse.SC_NOT_FOUND);
         return cmsPage;
     }
 
@@ -257,16 +259,16 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public void setPredefinedResponsePage(Component component, CmsUtil.CmsPredefinedPage predefinedType, String additionalParameter) {
         PageParameters pageParameters = getPredefinedDbPageParameters(predefinedType);
-        pageParameters.put(CmsPage.RESPONSE_PAGE_ADDITIONAL_PARAMETER, additionalParameter);
+        pageParameters.set(CmsPage.RESPONSE_PAGE_ADDITIONAL_PARAMETER, additionalParameter);
         component.setResponsePage(CmsPage.class, pageParameters);
     }
 
     @Override
     public void setMessageResponsePage(Component component, String key, String additionalParameter) {
         PageParameters pageParameters = getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
-        pageParameters.put(CmsPage.MESSAGE_ID, key);
+        pageParameters.set(CmsPage.MESSAGE_ID, key);
         if (additionalParameter != null) {
-            pageParameters.put(CmsPage.MESSAGE_ADDITIONAL_PARAMETER, additionalParameter);
+            pageParameters.set(CmsPage.MESSAGE_ADDITIONAL_PARAMETER, additionalParameter);
         }
         component.setResponsePage(CmsPage.class, pageParameters);
     }
@@ -274,15 +276,15 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public void setResponsePage(Component component, int dbPageId) {
         PageParameters pageParameters = new PageParameters();
-        pageParameters.put(CmsUtil.ID, Integer.toString(dbPageId));
+        pageParameters.set(CmsUtil.ID, Integer.toString(dbPageId));
         component.setResponsePage(CmsPage.class, pageParameters);
     }
 
     @Override
     public void setInvokerResponsePage(Component component, int dbPageId, DbContentInvoker dbContentInvoker) {
         PageParameters parameters = new PageParameters();
-        parameters.put(CmsUtil.ID, Integer.toString(dbPageId));
-        parameters.put(CmsPage.INVOKE_ID, Integer.toString(dbContentInvoker.getId()));
+        parameters.set(CmsUtil.ID, Integer.toString(dbPageId));
+        parameters.set(CmsPage.INVOKE_ID, Integer.toString(dbContentInvoker.getId()));
         component.setResponsePage(CmsPage.class, parameters);
     }
 
@@ -292,7 +294,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         // Find out if parent was a detail link
         if (dbContent.getParent() instanceof DbContentList) {
             // ??? Why -> dbContent.getParent().getParent().getParent().getParent()
-            parameters.put(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContent.getParent().getParent().getParent().getParent().getId()));
+            parameters.set(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContent.getParent().getParent().getParent().getParent().getId()));
         }
         component.setResponsePage(CmsPage.class, parameters);
     }
@@ -303,17 +305,17 @@ public class CmsUiServiceImpl implements CmsUiService {
         BeanIdPathElement beanIdPathElement = new BeanIdPathElement(dbPage, dbContent);
         PageParameters pageParameters = contentContext.getPageParameters();
         // if the Page should display a child of a ContentList
-        if (pageParameters.containsKey(CmsPage.DETAIL_CONTENT_ID)) {
-            dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.DETAIL_CONTENT_ID));
+        if (!pageParameters.get(CmsPage.DETAIL_CONTENT_ID).isNull()) {
+            dbContent = cmsService.getDbContent(pageParameters.get(CmsPage.DETAIL_CONTENT_ID).toInt());
             beanIdPathElement = createBeanIdPathElement(pageParameters, dbContent, beanIdPathElement);
             beanIdPathElement.setChildDetailPage(true);
             Object bean = getDataProviderBean(beanIdPathElement);
             dbContent = ((DbContentList) dbContent).getDbPropertyBook(bean.getClass());
-        } else if (pageParameters.containsKey(CmsUtil.SECTION_ID)) {
-            String section = pageParameters.getString(CmsUtil.SECTION_ID);
+        } else if (!pageParameters.get(CmsUtil.SECTION_ID).isNull()) {
+            String section = pageParameters.get(CmsUtil.SECTION_ID).toString();
             CmsSectionInfo cmsSectionInfo = cmsService.getCmsSectionInfo(section);
             DbContentList dbContentList = cmsSectionInfo.getDbContentList();
-            if (section.equals(CmsUtil.LEVEL_TASK_SECTION) && !pageParameters.containsKey(CmsPage.getChildUrlParameter(1)) && !pageParameters.containsKey(CmsPage.getChildUrlParameter(2))) {
+            if (section.equals(CmsUtil.LEVEL_TASK_SECTION) && pageParameters.get(CmsPage.getChildUrlParameter(1)).isNull() && pageParameters.get(CmsPage.getChildUrlParameter(2)).isNull()) {
                 beanIdPathElement = createUglyBeanIdPathElement4LevelTask(pageParameters, dbContentList, beanIdPathElement);
             } else {
                 beanIdPathElement = createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
@@ -324,15 +326,15 @@ public class CmsUiServiceImpl implements CmsUiService {
             }
             dbContent = dbContentList.getDbPropertyBook(bean.getClass());
             beanIdPathElement.setChildDetailPage(true);
-        } else if (pageParameters.containsKey(CmsPage.CREATE_CONTENT_ID)) {
-            dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.CREATE_CONTENT_ID));
+        } else if (!pageParameters.get(CmsPage.CREATE_CONTENT_ID).isNull()) {
+            dbContent = cmsService.getDbContent(pageParameters.get(CmsPage.CREATE_CONTENT_ID).toInt());
             beanIdPathElement = createBeanIdPathElement(pageParameters, dbContent, beanIdPathElement);
             beanIdPathElement.setCreateEditPage(true);
-        } else if (pageParameters.containsKey(CmsPage.INVOKE_ID)) {
-            dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.INVOKE_ID));
+        } else if (!pageParameters.get(CmsPage.INVOKE_ID).isNull()) {
+            dbContent = cmsService.getDbContent(pageParameters.get(CmsPage.INVOKE_ID).toInt());
             beanIdPathElement.setInvokePage(true);
-        } else if (pageParameters.containsKey(CmsPage.MESSAGE_ID)) {
-            Message message = new Message("borderContent", pageParameters.getString(CmsPage.MESSAGE_ID), pageParameters.getString(CmsPage.MESSAGE_ADDITIONAL_PARAMETER));
+        } else if (!pageParameters.get(CmsPage.MESSAGE_ID).isNull()) {
+            Message message = new Message("borderContent", pageParameters.get(CmsPage.MESSAGE_ID).toString(), pageParameters.get(CmsPage.MESSAGE_ADDITIONAL_PARAMETER).toString());
             return new BorderWrapper(componentId, message, "iBorder");
         }
         return getComponent(dbContent, null, componentId, beanIdPathElement, contentContext);
@@ -343,10 +345,10 @@ public class CmsUiServiceImpl implements CmsUiService {
         // Main reason: only page id and level task id are given
         // -> DbLevel id mus be generated in this method
         // But this can be a new way to access section link without specifying the whole childId path
-        int levelTaskId = pageParameters.getInt(CmsUtil.CHILD_ID);
+        int levelTaskId = pageParameters.get(CmsUtil.CHILD_ID).toInt();
         DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, levelTaskId);
-        pageParameters.put(CmsPage.getChildUrlParameter(0), Integer.toString(dbLevelTask.getParent().getId()));
-        pageParameters.put(CmsPage.getChildUrlParameter(2), Integer.toString(levelTaskId));
+        pageParameters.set(CmsPage.getChildUrlParameter(0), Integer.toString(dbLevelTask.getParent().getId()));
+        pageParameters.set(CmsPage.getChildUrlParameter(2), Integer.toString(levelTaskId));
         return createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
     }
 
@@ -366,8 +368,8 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
         List<Integer> beanIds = new ArrayList<>();
         for (int level = 0; level < CmsPage.MAX_LEVELS; level++) {
-            if (pageParameters.containsKey(CmsPage.getChildUrlParameter(level))) {
-                beanIds.add(pageParameters.getInt(CmsPage.getChildUrlParameter(level)));
+            if (!pageParameters.get(CmsPage.getChildUrlParameter(level)).isNull()) {
+                beanIds.add(pageParameters.get(CmsPage.getChildUrlParameter(level)).toInt());
             }
         }
 
@@ -414,7 +416,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 DbContentStaticHtml dbContentStaticHtml = (DbContentStaticHtml) dbContent;
                 Component label = new Label(componentId, dbContentStaticHtml.getDbI18nHtml().getString(contentContext.getLocale())).setEscapeModelStrings(dbContentStaticHtml.getEditorType().isEscapeHtml());
                 if (dbContent.getCssClass() != null) {
-                    label.add(new SimpleAttributeModifier("class", dbContent.getCssClass()));
+                    label.add(new AttributeModifier("class", dbContent.getCssClass()));
                 }
                 return label;
             } else if (dbContent instanceof DbContentDynamicHtml) {
@@ -426,7 +428,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             } else if (dbContent instanceof DbContentPlugin) {
                 Component component = ((DbContentPlugin) dbContent).getPluginEnum().createComponent(componentId, contentContext);
                 if (dbContent.getCssClass() != null) {
-                    component.add(new SimpleAttributeModifier("class", dbContent.getCssClass()));
+                    component.add(new AttributeModifier("class", dbContent.getCssClass()));
                 }
                 return component;
             } else if (dbContent instanceof DbContentActionButton) {
@@ -458,7 +460,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             Component content = getComponentPrivate(dbContent, bean, "borderContent", beanIdPathElement, contentContext);
             BorderWrapper borderWrapper = new BorderWrapper(componentId, content, dbContent.getBorderCss());
             if (dbContent.hasAboveBorderCss()) {
-                borderWrapper.add(new SimpleAttributeModifier("class", dbContent.getAboveBorderCss()));
+                borderWrapper.add(new AttributeModifier("class", dbContent.getAboveBorderCss()));
             }
             return borderWrapper;
         } else {
@@ -526,7 +528,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             }
         }
         if (dbExpressionProperty.getCssClass() != null && !(component instanceof ItemTypeImage)) {
-            component.add(new SimpleAttributeModifier("class", dbExpressionProperty.getCssClass()));
+            component.add(new AttributeModifier("class", dbExpressionProperty.getCssClass()));
         }
         return component;
     }
@@ -926,7 +928,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     @SuppressWarnings("unchecked")
     public CrudChild createAndFillBean(BeanIdPathElement beanIdPathElement) {
         CrudChild crudChild = createBean(beanIdPathElement);
-        Map<String, Object> attributeMap = (Map<String, Object>) ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES);
+        Map<String, Object> attributeMap = (Map<String, Object>) ((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().getAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES);
         if (attributeMap != null) {
             for (Map.Entry<String, Object> entry : attributeMap.entrySet()) {
                 try {
@@ -1010,10 +1012,10 @@ public class CmsUiServiceImpl implements CmsUiService {
 
     @SuppressWarnings("unchecked")
     private void putCreateEditTmpBeanAttribute(BeanIdPathElement beanIdPathElement, Object value) {
-        Map<String, Object> attributeMap = (Map<String, Object>) ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES);
+        Map<String, Object> attributeMap = (Map<String, Object>) ((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().getAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES);
         if (attributeMap == null) {
             attributeMap = new HashMap<>();
-            ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().setAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES, attributeMap);
+            ((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().setAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES, attributeMap);
         }
         attributeMap.put(beanIdPathElement.getExpression(), value);
     }
@@ -1104,15 +1106,15 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public void handleFacebookRequest(PageParameters pageParameters, Component component) {
         try {
-            if ("access_denied".equals(pageParameters.get("error"))) {
+            if ("access_denied".equals(pageParameters.get("error").toString())) {
                 PageParameters gamePageParameters = new PageParameters();
                 if (!userGuidanceService.isStartRealGame()) {
                     gamePageParameters.add(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(userGuidanceService.getDefaultLevelTaskId()));
                 }
-                component.setRedirect(true);
+                // TODO no longer needed ? component.setRedirect(true);
                 component.setResponsePage(Game.class, gamePageParameters);
             } else {
-                String signedRequestParameter = pageParameters.getString("signed_request");
+                String signedRequestParameter = pageParameters.get("signed_request").toString();
 
                 FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(getFacebookAppSecret(), signedRequestParameter);
                 if (facebookSignedRequest.hasUserId()) {
@@ -1125,14 +1127,14 @@ public class CmsUiServiceImpl implements CmsUiService {
                         if (!userGuidanceService.isStartRealGame()) {
                             gamePageParameters.add(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(userGuidanceService.getDefaultLevelTaskId()));
                         }
-                        component.setRedirect(true);
+                        // TODO no longer needed ? component.setRedirect(true);
                         component.setResponsePage(Game.class, gamePageParameters);
                     } else {
                         String email;
-                        if (pageParameters.containsKey("email")) {
-                            email = pageParameters.getString("email");
-                        } else {
+                        if (pageParameters.get("email").isNull()) {
                             email = FacebookUtil.doGraphApiCall4Email(facebookSignedRequest.getUserId(), facebookSignedRequest.getOAuthToken());
+                        } else {
+                            email = pageParameters.get("email").toString();
                         }
                         facebookSignedRequest.setEmail(email);
                         setFacebookSignedRequest(facebookSignedRequest);
@@ -1140,12 +1142,19 @@ public class CmsUiServiceImpl implements CmsUiService {
                     }
                 } else {
                     // Is NOT authorized by facebook
-                    PackagedTextTemplate jsTemplate = new PackagedTextTemplate(CmsPage.class, "FacebookOAuthDialogRedirect.js");
+                    PackageTextTemplate jsTemplate = new PackageTextTemplate(CmsPage.class, "FacebookOAuthDialogRedirect.js");
                     Map<String, Object> parameters = new HashMap<>();
                     parameters.put("FACEBOOK_APP_ID", facebookAppId);
                     parameters.put("FACEBOOK_REDIRECT_URI", facebookRedirectUri);
                     parameters.put("FACEBOOK_PERMISSIONS", "email");
-                    component.add(new StringHeaderContributor(new JavaScriptTemplate(jsTemplate).asString(parameters)));
+                    final String javaScript = new JavaScriptTemplate(jsTemplate).asString(parameters);
+                    // TODO leads to NotSerializableException
+                    component.add(new Behavior() {
+                        @Override
+                        public void renderHead(Component component, IHeaderResponse response) {
+                            response.render(JavaScriptHeaderItem.forScript(javaScript, null));
+                        }
+                    });
                 }
             }
         } catch (Exception e) {
@@ -1166,13 +1175,5 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public String getFacebookRedirectUri() {
         return facebookRedirectUri;
-    }
-
-    @Override
-    public void addLscErrorHandler(WebPage webPage, String displayErrorPrefix) {
-        PackagedTextTemplate jsTemplate = new PackagedTextTemplate(CmsUiServiceImpl.class, "LscErrorHandler.js");
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("DISPLAY_ERROR_PREFIX", displayErrorPrefix);
-        webPage.add(new StringHeaderContributor(new JavaScriptTemplate(jsTemplate).asString(parameters)));
     }
 }

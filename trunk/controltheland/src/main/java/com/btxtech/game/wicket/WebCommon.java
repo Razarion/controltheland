@@ -13,10 +13,11 @@
 
 package com.btxtech.game.wicket;
 
-import org.apache.wicket.authentication.AuthenticatedWebSession;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
+import org.apache.wicket.request.http.WebResponse;
 
 import javax.servlet.http.Cookie;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -27,7 +28,7 @@ import java.util.UUID;
 public class WebCommon {
     public static final String RAZARION_COOKIE_ID = "cookieId";
 
-    public static String getCookie(Cookie[] cookies, String name) {
+    public static String getCookie(List<Cookie> cookies, String name) {
         if (cookies == null) {
             return null;
         }
@@ -45,7 +46,7 @@ public class WebCommon {
         response.addCookie(cookie);
     }
 
-    public static String getTrackingCookie(Cookie[] cookies) {
+    public static String getTrackingCookie(List<Cookie> cookies) {
         return getCookie(cookies, RAZARION_COOKIE_ID);
     }
 

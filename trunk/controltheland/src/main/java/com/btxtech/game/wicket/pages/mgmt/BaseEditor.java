@@ -67,7 +67,7 @@ public class BaseEditor extends MgmtWebPage {
     }
 
     private void createSelectionHelper() {
-        Form<Rectangle> form = new Form<Rectangle>("selection", new CompoundPropertyModel<Rectangle>(selection)) {
+        Form<Rectangle> form = new Form<Rectangle>("selection", new CompoundPropertyModel<>(selection)) {
             @Override
             protected void onSubmit() {
                 itemsToKill.clear();
@@ -281,7 +281,7 @@ public class BaseEditor extends MgmtWebPage {
                     }));
 
                     // alternating row color
-                    item.add(new AttributeModifier("class", true, new Model<>(item.getIndex() % 2 == 0 ? "even" : "odd")));
+                    item.add(new AttributeModifier("class", new Model<>(item.getIndex() % 2 == 0 ? "even" : "odd")));
 
                 } catch (RuntimeException e) {
                     if (e.getCause() instanceof ItemDoesNotExistException) {
@@ -300,7 +300,7 @@ public class BaseEditor extends MgmtWebPage {
                         CheckBox checkBox = new CheckBox("select", new Model<>(false));
                         item.add(checkBox);
                         // alternating row color
-                        item.add(new AttributeModifier("class", true, new Model<>(item.getIndex() % 2 == 0 ? "even" : "odd")));
+                        item.add(new AttributeModifier("class", new Model<>(item.getIndex() % 2 == 0 ? "even" : "odd")));
                     } else {
                         throw e;
                     }
@@ -348,12 +348,12 @@ public class BaseEditor extends MgmtWebPage {
         }
 
         @Override
-        public Iterator<SyncBaseItem> iterator(int first, int count) {
-            return getSyncBaseItem().subList(first, first + count).iterator();
+        public Iterator<SyncBaseItem> iterator(long first, long count) {
+            return getSyncBaseItem().subList((int) first, (int) first + (int) count).iterator();
         }
 
         @Override
-        public int size() {
+        public long size() {
             return getSyncBaseItem().size();
         }
 

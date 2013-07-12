@@ -3,7 +3,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.mgmt.ClientPerfmonDto;
 import com.btxtech.game.services.mgmt.MgmtService;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;

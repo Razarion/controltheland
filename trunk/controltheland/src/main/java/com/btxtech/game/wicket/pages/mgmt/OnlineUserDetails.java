@@ -11,7 +11,7 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.mgmt.tracking.SessionDetail;
 import com.btxtech.game.wicket.pages.mgmt.tracking.UserTracking;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
