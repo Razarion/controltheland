@@ -13,13 +13,16 @@
 
 package com.btxtech.game.services.connection.impl;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.ExceptionHandler;
+import com.btxtech.game.services.common.PropertyService;
+import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.Session;
-import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.DbFacebookSource;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
@@ -54,6 +57,8 @@ public class SessionImpl implements Session, Serializable {
     UserTrackingService userTrackingService;
     @Autowired
     UserService userService;
+    @Autowired
+    PropertyService propertyService;
     private String sessionId;
     private String userAgent;
     private boolean javaScriptDetected = false;
@@ -64,6 +69,7 @@ public class SessionImpl implements Session, Serializable {
     private EditMode editMode;
     private boolean html5Support = true;
     private String trackingCookieId;
+    private DbFacebookSource dbFacebookSource;
 
     @Override
     public Connection getConnection() {
@@ -79,6 +85,7 @@ public class SessionImpl implements Session, Serializable {
     public void init() {
         sessionId = request.getSession().getId();
         userAgent = request.getHeader("user-agent");
+        handleFacebookTracking();
         boolean isNewUserTracking = false;
         try {
             RequestCycle requestCycle = RequestCycle.get();
@@ -102,7 +109,7 @@ public class SessionImpl implements Session, Serializable {
                 log.error("Referer: " + request.getHeader("Referer"));
                 log.error("Request URI: " + request.getRequestURI());
                 log.error("Query String: " + request.getQueryString());
-                if(request.getCookies() != null) {
+                if (request.getCookies() != null) {
                     for (Cookie cookie : request.getCookies()) {
                         log.error("Cookie: " + cookie.getName() + "=" + cookie.getValue());
                     }
@@ -118,8 +125,27 @@ public class SessionImpl implements Session, Serializable {
                 request.getHeader("Accept-Language"),
                 request.getRemoteAddr(),
                 request.getHeader("Referer"),
-                isNewUserTracking);
+                isNewUserTracking,
+                dbFacebookSource);
         userTrackingService.saveBrowserDetails(dbSessionDetail);
+    }
+
+    private void handleFacebookTracking() {
+        try {
+            if (request.getRequestURI().toLowerCase().contains(CmsUtil.MOUNT_GAME_FACEBOOK_APP.toLowerCase())) {
+                dbFacebookSource = new DbFacebookSource();
+                dbFacebookSource.setWholeString(request.getQueryString());
+                dbFacebookSource.setFbSource(request.getParameter("fb_source"));
+                try {
+                    String optionalAdKey = propertyService.getStringProperty(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY);
+                    dbFacebookSource.setOptionalAdValue(request.getParameter(optionalAdKey));
+                } catch (Exception e) {
+                    ExceptionHandler.handleException(e);
+                }
+            }
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+        }
     }
 
     @PreDestroy
@@ -203,5 +229,10 @@ public class SessionImpl implements Session, Serializable {
     @Override
     public void setEditMode(EditMode editMode) {
         this.editMode = editMode;
+    }
+
+    @Override
+    public DbFacebookSource getDbFacebookSource() {
+        return dbFacebookSource;
     }
 }

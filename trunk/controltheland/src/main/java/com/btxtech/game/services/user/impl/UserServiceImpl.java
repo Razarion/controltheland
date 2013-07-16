@@ -391,7 +391,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.registerFacebookUser(facebookSignedRequest, nickName);
+        user.registerFacebookUser(facebookSignedRequest, nickName, session.getDbFacebookSource());
         privateSave(user);
         userTrackingService.onUserCreated(user);
 

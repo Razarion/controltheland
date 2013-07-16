@@ -23,6 +23,7 @@ public class DbProperty implements CrudChild {
     @Enumerated(EnumType.STRING)
     private PropertyServiceEnum propertyServiceEnum;
     private Integer integerValue;
+    private String stringValue;
 
     /**
      * Used by hibernate
@@ -74,8 +75,22 @@ public class DbProperty implements CrudChild {
         this.integerValue = integerValue;
     }
 
+    public String getStringValue() {
+        return stringValue;
+    }
+
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
+
     public String getValueAsString() {
-        return integerValue != null ? integerValue.toString() : "";
+        if (integerValue != null) {
+            return integerValue.toString();
+        } else if (stringValue != null) {
+            return stringValue;
+        } else {
+            return "";
+        }
     }
 
     public void setValueAsString(String string) {
@@ -84,6 +99,8 @@ public class DbProperty implements CrudChild {
         }
         if (Integer.class.isAssignableFrom(propertyServiceEnum.getType())) {
             integerValue = Integer.parseInt(string);
+        } else if (String.class.isAssignableFrom(propertyServiceEnum.getType())) {
+            stringValue = string;
         } else {
             throw new IllegalArgumentException("Unsupported property type: " + propertyServiceEnum);
         }

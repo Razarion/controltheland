@@ -6,7 +6,8 @@ package com.btxtech.game.services.common;
  * Time: 18:23
  */
 public enum PropertyServiceEnum {
-    GUILD_RAZARION_COST("Razarion cost for creating a guild", Integer.class);
+    GUILD_RAZARION_COST("Razarion cost for creating a guild", Integer.class),
+    FACEBOOK_OPTIONAL_AD_URL_KEY("Facebook optional ad key", String.class);
 
     private String displayName;
     private Class type;

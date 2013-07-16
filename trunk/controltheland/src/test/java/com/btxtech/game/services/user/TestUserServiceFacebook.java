@@ -4,6 +4,8 @@ import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.page.DbPage;
+import com.btxtech.game.services.common.PropertyService;
+import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
@@ -25,6 +27,8 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
     private CmsService cmsService;
     @Autowired
     private CmsUiService cmsUiService;
+    @Autowired
+    private PropertyService propertyService;
 
     @Test
     @DirtiesContext
@@ -186,4 +190,36 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
     public void testFacebookProperties() throws Exception {
         Assert.assertEquals("https://apps.facebook.com/razarion/", cmsUiService.getFacebookRedirectUri());
     }
+
+    @Test
+    @DirtiesContext
+    public void testFacebookAppTracking() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        propertyService.createProperty(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY, "fbAd");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter("/game_cms_facebook_app/?fb_source=bookmark_favorites&ref=bookmarks&count=0&fb_bmpos=6_0&fbAd=ad1");
+        getWicketTester().getRequest().getPostParameters().setParameterValue("signed_request", "v3-O8s1WrS9B2XnYXpRo61n2hKc9wboofRDHOxcF8XI.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImV4cGlyZXMiOjEzNDMxNTI4MDAsImlzc3VlZF9hdCI6MTM0MzE0NjY4Mywib2F1dGhfdG9rZW4iOiJBQUFFa3RlWVZ1WkNNQkFDS29mOGpkWDMxcnVTWkN3RXFuRnFWd3Z2NnBBNldNMTVaQ1V6bzlRNmliUXJiWGtRVkJOeEF0UDJmc2EzVzY3ZXJITW5EWkFvNlZHRzVPajg4U2FJMWZOYkVyYjhCeDBuOURRWkIyIiwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX0sInVzZXJfaWQiOiIxMDAwMDM2MzQwOTQxMzkifQ");
+        getWicketTester().executeUrl("/game_cms_facebook_app/?fb_source=bookmark_favorites&ref=bookmarks&count=0&fb_bmpos=6_0&fbAd=ad1");
+        FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest(null, 0, null, null, "12345");
+        facebookSignedRequest.setEmail("email");
+        userService.createAndLoginFacebookUser(facebookSignedRequest, "F2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        User user = userService.getUser("F2");
+        Assert.assertEquals("?fb_source=bookmark_favorites&ref=bookmarks&count=0&fb_bmpos=6_0&fbAd=ad1", user.getDbFacebookSource().getWholeString());
+        Assert.assertEquals("bookmark_favorites", user.getDbFacebookSource().getFbSource());
+        Assert.assertEquals("ad1", user.getDbFacebookSource().getOptionalAdValue());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

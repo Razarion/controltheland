@@ -43,6 +43,14 @@ public class PropertyServiceImpl implements PropertyService {
         return getProperty(propertyServiceEnum).getIntegerValue();
     }
 
+    @Override
+    public String getStringProperty(PropertyServiceEnum propertyServiceEnum) throws NoSuchPropertyException, WrongPropertyTypeException {
+        if (!(String.class.isAssignableFrom(propertyServiceEnum.getType()))) {
+            throw new WrongPropertyTypeException(String.class, propertyServiceEnum);
+        }
+        return getProperty(propertyServiceEnum).getStringValue();
+    }
+
     @SuppressWarnings("unchecked")
     private DbProperty getProperty(PropertyServiceEnum propertyServiceEnum) throws NoSuchPropertyException {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbProperty.class);
@@ -65,8 +73,13 @@ public class PropertyServiceImpl implements PropertyService {
         }
         DbProperty dbProperty = dbPropertyCrudRootServiceHelper.createDbChild();
         dbProperty.setPropertyServiceEnum(propertyServiceEnum);
-        // TODO handle other types
-        dbProperty.setIntegerValue((Integer) value);
+        if (value instanceof Integer) {
+            dbProperty.setIntegerValue((Integer) value);
+        } else if (value instanceof String) {
+            dbProperty.setStringValue((String) value);
+        } else {
+            throw new IllegalArgumentException("Unknown value: " + value);
+        }
         dbPropertyCrudRootServiceHelper.updateDbChild(dbProperty);
     }
 
