@@ -74,7 +74,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -195,7 +194,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         Collections.reverse(beanIds);
         for (int level = 0, beanIdsSize = beanIds.size(); level < beanIdsSize; level++) {
             Serializable beanId = beanIds.get(level);
-            pageParameters.set(CmsPage.getChildUrlParameter(level), beanId);
+            pageParameters.set(CmsUtil.getChildUrlParameter(level), beanId);
         }
         return pageParameters;
     }
@@ -315,7 +314,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             String section = pageParameters.get(CmsUtil.SECTION_ID).toString();
             CmsSectionInfo cmsSectionInfo = cmsService.getCmsSectionInfo(section);
             DbContentList dbContentList = cmsSectionInfo.getDbContentList();
-            if (section.equals(CmsUtil.LEVEL_TASK_SECTION) && pageParameters.get(CmsPage.getChildUrlParameter(1)).isNull() && pageParameters.get(CmsPage.getChildUrlParameter(2)).isNull()) {
+            if (section.equals(CmsUtil.LEVEL_TASK_SECTION) && pageParameters.get(CmsUtil.getChildUrlParameter(1)).isNull() && pageParameters.get(CmsUtil.getChildUrlParameter(2)).isNull()) {
                 beanIdPathElement = createUglyBeanIdPathElement4LevelTask(pageParameters, dbContentList, beanIdPathElement);
             } else {
                 beanIdPathElement = createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
@@ -347,8 +346,8 @@ public class CmsUiServiceImpl implements CmsUiService {
         // But this can be a new way to access section link without specifying the whole childId path
         int levelTaskId = pageParameters.get(CmsUtil.CHILD_ID).toInt();
         DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, levelTaskId);
-        pageParameters.set(CmsPage.getChildUrlParameter(0), Integer.toString(dbLevelTask.getParent().getId()));
-        pageParameters.set(CmsPage.getChildUrlParameter(2), Integer.toString(levelTaskId));
+        pageParameters.set(CmsUtil.getChildUrlParameter(0), Integer.toString(dbLevelTask.getParent().getId()));
+        pageParameters.set(CmsUtil.getChildUrlParameter(2), Integer.toString(levelTaskId));
         return createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
     }
 
@@ -368,8 +367,8 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
         List<Integer> beanIds = new ArrayList<>();
         for (int level = 0; level < CmsPage.MAX_LEVELS; level++) {
-            if (!pageParameters.get(CmsPage.getChildUrlParameter(level)).isNull()) {
-                beanIds.add(pageParameters.get(CmsPage.getChildUrlParameter(level)).toInt());
+            if (!pageParameters.get(CmsUtil.getChildUrlParameter(level)).isNull()) {
+                beanIds.add(pageParameters.get(CmsUtil.getChildUrlParameter(level)).toInt());
             }
         }
 
@@ -1085,80 +1084,6 @@ public class CmsUiServiceImpl implements CmsUiService {
             method.invoke(bean, parameter);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public FacebookSignedRequest getAndClearFacebookSignedRequest() {
-        FacebookSignedRequest facebookSignedRequest = session.getFacebookSignedRequest();
-        if (facebookSignedRequest == null) {
-            throw new IllegalStateException("Facebook user is not in session. " + session.getSessionId());
-        }
-        session.setFacebookSignedRequest(null);
-        return facebookSignedRequest;
-    }
-
-    @Override
-    public void setFacebookSignedRequest(FacebookSignedRequest facebookSignedRequest) {
-        session.setFacebookSignedRequest(facebookSignedRequest);
-    }
-
-    @Override
-    public void handleFacebookRequest(PageParameters pageParameters, Component component) {
-        try {
-            if ("access_denied".equals(pageParameters.get("error").toString())) {
-                PageParameters gamePageParameters = new PageParameters();
-                if (!userGuidanceService.isStartRealGame()) {
-                    gamePageParameters.add(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(userGuidanceService.getDefaultLevelTaskId()));
-                }
-                // TODO no longer needed ? component.setRedirect(true);
-                component.setResponsePage(Game.class, gamePageParameters);
-            } else {
-                String signedRequestParameter = pageParameters.get("signed_request").toString();
-
-                FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(getFacebookAppSecret(), signedRequestParameter);
-                if (facebookSignedRequest.hasUserId()) {
-                    // Is authorized by facebook
-                    if (userService.isFacebookUserRegistered(facebookSignedRequest)) {
-                        if (!userService.isFacebookLoggedIn(facebookSignedRequest)) {
-                            userService.loginFacebookUser(facebookSignedRequest);
-                        }
-                        PageParameters gamePageParameters = new PageParameters();
-                        if (!userGuidanceService.isStartRealGame()) {
-                            gamePageParameters.add(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(userGuidanceService.getDefaultLevelTaskId()));
-                        }
-                        // TODO no longer needed ? component.setRedirect(true);
-                        component.setResponsePage(Game.class, gamePageParameters);
-                    } else {
-                        String email;
-                        if (pageParameters.get("email").isNull()) {
-                            email = FacebookUtil.doGraphApiCall4Email(facebookSignedRequest.getUserId(), facebookSignedRequest.getOAuthToken());
-                        } else {
-                            email = pageParameters.get("email").toString();
-                        }
-                        facebookSignedRequest.setEmail(email);
-                        setFacebookSignedRequest(facebookSignedRequest);
-                        setPredefinedResponsePage(component, CmsUtil.CmsPredefinedPage.CHOOSE_NICKNAME);
-                    }
-                } else {
-                    // Is NOT authorized by facebook
-                    PackageTextTemplate jsTemplate = new PackageTextTemplate(CmsPage.class, "FacebookOAuthDialogRedirect.js");
-                    Map<String, Object> parameters = new HashMap<>();
-                    parameters.put("FACEBOOK_APP_ID", facebookAppId);
-                    parameters.put("FACEBOOK_REDIRECT_URI", facebookRedirectUri);
-                    parameters.put("FACEBOOK_PERMISSIONS", "email");
-                    final String javaScript = new JavaScriptTemplate(jsTemplate).asString(parameters);
-                    // TODO leads to NotSerializableException
-                    component.add(new Behavior() {
-                        @Override
-                        public void renderHead(Component component, IHeaderResponse response) {
-                            response.render(JavaScriptHeaderItem.forScript(javaScript, null));
-                        }
-                    });
-                }
-            }
-        } catch (Exception e) {
-            ExceptionHandler.handleException(e);
         }
     }
 

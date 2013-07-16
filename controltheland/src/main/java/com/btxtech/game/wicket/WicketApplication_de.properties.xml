@@ -33,4 +33,7 @@
     <entry key="nameToShort">Name muss mindestens 3 Zeichen lang sein</entry>
     <entry key="nameAlreadyUsed">Name bereits vergeben</entry>
     <entry key="unknownErrorReceived">Unbekannter Fehler</entry>
+    <entry key="NickNameError">${error}</entry>
+    <entry key="chooseYourNickName">Spielername wählen </entry>
+    <entry key="facebookAlreadyLoggedIn">Du bist bereits als {0} eingeloggt. Bitte logge dich zuerst aus, bevor du dich via Facebook einloggst.</entry>
 </properties>

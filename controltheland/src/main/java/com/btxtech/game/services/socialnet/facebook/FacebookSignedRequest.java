@@ -1,11 +1,13 @@
 package com.btxtech.game.services.socialnet.facebook;
 
+import java.io.Serializable;
+
 /**
  * User: beat
  * Date: 22.07.12
  * Time: 14:44
  */
-public class FacebookSignedRequest {
+public class FacebookSignedRequest implements Serializable {
     private String algorithm;
     private long issued_at; // camel notation does not work here
     private FacebookUser user;

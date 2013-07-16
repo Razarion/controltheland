@@ -1,0 +1,106 @@
+package com.btxtech.game.wicket.pages;
+
+import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
+import com.btxtech.game.services.socialnet.facebook.FacebookUtil;
+import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptContentHeaderItem;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.template.PackageTextTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * User: beat
+ * Date: 12.07.13
+ * Time: 17:55
+ */
+public class FacebookAppStart extends RazarionPage {
+    @SpringBean
+    private CmsUiService cmsUiService;
+    @SpringBean
+    private UserService userService;
+    @SpringBean
+    private UserGuidanceService userGuidanceService;
+    @SpringBean
+    private UserTrackingService userTrackingService;
+
+    public FacebookAppStart(PageParameters parameters) {
+        super(parameters);
+
+        add(new FeedbackPanel("feedback"));
+
+        IRequestParameters postParameters = getRequest().getPostParameters();
+
+        if ("access_denied".equals(parameters.get("error").toString())) {
+            userTrackingService.pageAccess(getClass().getName(), "---Access Denied--- Query Parameters: " + parameters.toString() + " Post Parameters: " + postParameters.toString());
+            setGameResponsePage();
+        } else {
+            String signedRequestParameter = postParameters.getParameterValue("signed_request").toString();
+            FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(cmsUiService.getFacebookAppSecret(), signedRequestParameter);
+            if (facebookSignedRequest.hasUserId()) {
+                // Is authorized by facebook
+                if (userService.isFacebookUserRegistered(facebookSignedRequest)) {
+                    if (!userService.isFacebookLoggedIn(facebookSignedRequest)) {
+                        userService.loginFacebookUser(facebookSignedRequest);
+                    }
+                    userTrackingService.pageAccess(getClass().getName(), "---User Authorized by Facebook and registered by Game--- Parameters: " + parameters.toString());
+                    setGameResponsePage();
+                } else {
+                    User user = userService.getUser();
+                    if (user != null) {
+                        error(new StringResourceModel("facebookAlreadyLoggedIn", null, new Object[]{user.getUsername()}).getString());
+                    } else {
+                        String email;
+                        if (postParameters.getParameterValue("email").isNull()) {
+                            email = FacebookUtil.doGraphApiCall4Email(facebookSignedRequest.getUserId(), facebookSignedRequest.getOAuthToken());
+                        } else {
+                            email = postParameters.getParameterValue("email").toString();
+                        }
+                        facebookSignedRequest.setEmail(email);
+                        setResponsePage(new FacebookAppNickName(facebookSignedRequest));
+                        userTrackingService.pageAccess(getClass().getName(), "---User Authorized by Facebook but NOT registered by Game--- Parameters: " + parameters.toString());
+                    }
+                }
+            } else {
+                User user = userService.getUser();
+                if (user != null) {
+                    error(new StringResourceModel("facebookAlreadyLoggedIn", null, new Object[]{user.getUsername()}).getString());
+                } else {
+                    // Is NOT authorized by facebook
+                    add(new Behavior() {
+                        @Override
+                        public void renderHead(Component component, IHeaderResponse response) {
+                            PackageTextTemplate jsTemplate = new PackageTextTemplate(FacebookAppStart.class, "FacebookOAuthDialogRedirect.js");
+                            Map<String, Object> jsParameters = new HashMap<>();
+                            jsParameters.put("FACEBOOK_APP_ID", cmsUiService.getFacebookAppId());
+                            jsParameters.put("FACEBOOK_REDIRECT_URI", cmsUiService.getFacebookRedirectUri());
+                            jsParameters.put("FACEBOOK_PERMISSIONS", "email");
+                            response.render(new JavaScriptContentHeaderItem(jsTemplate.asString(jsParameters), null, null));
+                        }
+                    });
+                    userTrackingService.pageAccess(getClass().getName(), "---User NOT Authorized by Facebook--- Query Parameters: " + parameters.toString() + " Post Parameters: " + postParameters.toString());
+                }
+            }
+        }
+    }
+
+    private void setGameResponsePage() {
+        PageParameters gamePageParameters = new PageParameters();
+        if (!userGuidanceService.isStartRealGame()) {
+            gamePageParameters.add(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(userGuidanceService.getDefaultLevelTaskId()));
+        }
+        setResponsePage(Game.class, gamePageParameters);
+    }
+}

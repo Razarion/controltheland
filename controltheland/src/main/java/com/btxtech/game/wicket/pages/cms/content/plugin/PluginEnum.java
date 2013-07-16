@@ -6,7 +6,6 @@ import com.btxtech.game.wicket.pages.cms.content.plugin.changepassword.ForgotPas
 import com.btxtech.game.wicket.pages.cms.content.plugin.emailverification.EmailVerificationPanel;
 import com.btxtech.game.wicket.pages.cms.content.plugin.login.LoginBox;
 import com.btxtech.game.wicket.pages.cms.content.plugin.login.LoginFailed;
-import com.btxtech.game.wicket.pages.cms.content.plugin.nickname.ChooseNickname;
 import com.btxtech.game.wicket.pages.cms.content.plugin.register.Register;
 import org.apache.wicket.Component;
 
@@ -28,10 +27,11 @@ public enum PluginEnum {
             return new Register(componentId);
         }
     },
+    @Deprecated
     NICK_NAME("Nick name") {
         @Override
         public Component createComponent(String componentId, ContentContext contentContext) {
-            return new ChooseNickname(componentId);
+            return null;
         }
     },
     EMAIL_VERIFICATION("Email verification") {

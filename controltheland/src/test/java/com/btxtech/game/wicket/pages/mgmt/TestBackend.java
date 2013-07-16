@@ -1,4 +1,4 @@
-package com.btxtech.game.backend;
+package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -10,7 +10,6 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
-import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

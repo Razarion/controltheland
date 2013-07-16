@@ -63,7 +63,6 @@ public class SessionImpl implements Session, Serializable {
     private Log log = LogFactory.getLog(SessionImpl.class);
     private EditMode editMode;
     private boolean html5Support = true;
-    private FacebookSignedRequest facebookSignedRequest;
     private String trackingCookieId;
 
     @Override
@@ -204,15 +203,5 @@ public class SessionImpl implements Session, Serializable {
     @Override
     public void setEditMode(EditMode editMode) {
         this.editMode = editMode;
-    }
-
-    @Override
-    public FacebookSignedRequest getFacebookSignedRequest() {
-        return facebookSignedRequest;
-    }
-
-    @Override
-    public void setFacebookSignedRequest(FacebookSignedRequest facebookSignedRequest) {
-        this.facebookSignedRequest = facebookSignedRequest;
     }
 }

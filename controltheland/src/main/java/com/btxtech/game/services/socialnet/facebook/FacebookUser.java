@@ -1,11 +1,13 @@
 package com.btxtech.game.services.socialnet.facebook;
 
+import java.io.Serializable;
+
 /**
  * User: beat
  * Date: 22.07.12
  * Time: 14:46
  */
-public class FacebookUser {
+public class FacebookUser implements Serializable {
     private String country;
     private String locale;
     private FacebookAge age;

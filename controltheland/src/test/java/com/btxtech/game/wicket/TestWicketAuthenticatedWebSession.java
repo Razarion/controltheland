@@ -1,4 +1,4 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.wicket;
 
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.wicket.WebCommon;

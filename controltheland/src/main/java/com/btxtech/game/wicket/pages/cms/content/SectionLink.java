@@ -48,7 +48,7 @@ public class SectionLink extends Panel {
         Collections.reverse(ids);
         for (int i = 0; i < ids.size(); i++) {
             Serializable serializable = ids.get(i);
-            pageParameters.set(CmsPage.getChildUrlParameter(i), serializable);
+            pageParameters.set(CmsUtil.getChildUrlParameter(i), serializable);
         }
         ////
         BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>("link", CmsPage.class, pageParameters);
