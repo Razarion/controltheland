@@ -130,10 +130,10 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.image.resource.LocalizedImageResource;
 import org.apache.wicket.markup.parser.XmlTag;
+import org.apache.wicket.request.Url;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.EasyMock;
@@ -166,6 +166,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.subethamail.wiser.Wiser;
 
 import javax.servlet.ServletRequest;
@@ -2315,7 +2316,7 @@ abstract public class AbstractServiceTest {
         return mockHttpServletResponse;
     }
 
-    private void beginHttpRequest() {
+    private void beginHttpRequest(String httpUrl) {
         if (mockHttpServletRequest != null) {
             throw new IllegalStateException("mockHttpServletRequest is not null");
         }
@@ -2326,6 +2327,14 @@ abstract public class AbstractServiceTest {
             throw new IllegalStateException("mockHttpSession is null");
         }
         mockHttpServletRequest = new MockHttpServletRequest();
+        if(httpUrl != null) {
+            Url url = Url.parse(httpUrl);
+            for (Url.QueryParameter queryParameter : url.getQueryParameters()) {
+                mockHttpServletRequest.setParameter(queryParameter.getName(), queryParameter.getValue());
+            }
+            mockHttpServletRequest.setQueryString(url.getQueryString());
+            mockHttpServletRequest.setRequestURI(httpUrl);
+        }
         mockHttpServletRequest.setSession(mockHttpSession);
         mockHttpServletResponse = new MockHttpServletResponse();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockHttpServletRequest));
@@ -2346,9 +2355,13 @@ abstract public class AbstractServiceTest {
         securityContext = SecurityContextHolder.getContext();
     }
 
-    protected void beginHttpRequestAndOpenSessionInViewFilter() {
-        beginHttpRequest();
+    protected void beginHttpRequestAndOpenSessionInViewFilter(String httpUrl) {
+        beginHttpRequest(httpUrl);
         beginOpenSessionInViewFilter();
+    }
+
+    protected void beginHttpRequestAndOpenSessionInViewFilter() {
+        beginHttpRequestAndOpenSessionInViewFilter(null);
     }
 
     protected void endHttpRequestAndOpenSessionInViewFilter() {

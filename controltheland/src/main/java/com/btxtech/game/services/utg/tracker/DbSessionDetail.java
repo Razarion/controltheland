@@ -13,9 +13,11 @@
 
 package com.btxtech.game.services.utg.tracker;
 
+import com.btxtech.game.services.utg.DbFacebookSource;
 import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -50,6 +52,8 @@ public class DbSessionDetail implements Serializable {
     private String referer;
     private boolean javaScriptDetected = false;
     private boolean html5Support;
+    @Embedded
+    private DbFacebookSource dbFacebookSource;
 
 
     /**
@@ -58,9 +62,10 @@ public class DbSessionDetail implements Serializable {
     public DbSessionDetail() {
     }
 
-    public DbSessionDetail(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String referer, boolean newUser) {
+    public DbSessionDetail(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String referer, boolean newUser, DbFacebookSource dbFacebookSource) {
         this.cookieId = cookieId;
         this.newUser = newUser;
+        this.dbFacebookSource = dbFacebookSource;
         timeStamp = new Date();
         this.sessionId = sessionId;
         this.userAgent = userAgent;
@@ -122,6 +127,10 @@ public class DbSessionDetail implements Serializable {
 
     public boolean isNewUser() {
         return newUser;
+    }
+
+    public DbFacebookSource getDbFacebookSource() {
+        return dbFacebookSource;
     }
 
     @Override

@@ -30,6 +30,17 @@ public class TestPropertyService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void testStringPropertyNoSession() throws Exception {
+        try {
+            propertyService.getStringProperty(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY);
+            Assert.fail("HibernateException expected");
+        } catch (HibernateException e) {
+            Assert.assertEquals("No Session found for current thread", e.getMessage());
+        }
+    }
+
+    @Test
+    @DirtiesContext
     public void testIntPropertyNoProperty() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -38,6 +49,21 @@ public class TestPropertyService extends AbstractServiceTest {
             Assert.fail("NoSuchPropertyException expected");
         } catch (NoSuchPropertyException e) {
             Assert.assertEquals("No such property: PropertyServiceEnum{displayName='Razarion cost for creating a guild', type=class java.lang.Integer}", e.getMessage());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testStringPropertyNoProperty() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        try {
+            propertyService.getStringProperty(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY);
+            Assert.fail("NoSuchPropertyException expected");
+        } catch (NoSuchPropertyException e) {
+            Assert.assertEquals("No such property: PropertyServiceEnum{displayName='Facebook ad URL key', type=class java.lang.String}", e.getMessage());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -55,6 +81,22 @@ public class TestPropertyService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertEquals(1, propertyService.getIntProperty(PropertyServiceEnum.GUILD_RAZARION_COST));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCreateStringProperty() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        propertyService.createProperty(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY, "qwert");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals("qwert", propertyService.getStringProperty(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -95,32 +137,51 @@ public class TestPropertyService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void setValueAsString() throws Exception {
-        DbProperty dbProperty = new DbProperty();
+    public void setValueAsString4Integer() throws Exception {
+        DbProperty dbIntProperty = new DbProperty();
         try {
-            dbProperty.setValueAsString("Hallo");
+            dbIntProperty.setValueAsString("Hallo");
             Assert.fail("IllegalStateException expected");
         } catch (IllegalStateException e) {
             Assert.assertEquals("propertyServiceEnum is not set", e.getMessage());
         }
-        dbProperty.setPropertyServiceEnum(PropertyServiceEnum.GUILD_RAZARION_COST);
+        dbIntProperty.setPropertyServiceEnum(PropertyServiceEnum.GUILD_RAZARION_COST);
         try {
-            dbProperty.setValueAsString("Hallo");
+            dbIntProperty.setValueAsString("Hallo");
             Assert.fail("NumberFormatException expected");
         } catch (NumberFormatException e) {
             Assert.assertEquals("For input string: \"Hallo\"", e.getMessage());
         }
-        dbProperty.setValueAsString("111");
-        Assert.assertEquals(111, (int)dbProperty.getIntegerValue());
+        dbIntProperty.setValueAsString("111");
+        Assert.assertEquals(111, (int) dbIntProperty.getIntegerValue());
+    }
+
+    @Test
+    @DirtiesContext
+    public void setValueAsString4String() throws Exception {
+        DbProperty dbIntProperty = new DbProperty();
+        try {
+            dbIntProperty.setValueAsString("Hallo");
+            Assert.fail("IllegalStateException expected");
+        } catch (IllegalStateException e) {
+            Assert.assertEquals("propertyServiceEnum is not set", e.getMessage());
+        }
+        dbIntProperty.setPropertyServiceEnum(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY);
+        dbIntProperty.setValueAsString("Hallo");
+        Assert.assertEquals("Hallo", dbIntProperty.getStringValue());
     }
 
     @Test
     @DirtiesContext
     public void getValueAsString() throws Exception {
-        DbProperty dbProperty = new DbProperty();
-        dbProperty.setPropertyServiceEnum(PropertyServiceEnum.GUILD_RAZARION_COST);
-        dbProperty.setIntegerValue(111);
-        Assert.assertEquals("111", dbProperty.getValueAsString());
+        DbProperty dbIntProperty = new DbProperty();
+        dbIntProperty.setPropertyServiceEnum(PropertyServiceEnum.GUILD_RAZARION_COST);
+        dbIntProperty.setIntegerValue(111);
+        Assert.assertEquals("111", dbIntProperty.getValueAsString());
+        DbProperty dbStringProperty = new DbProperty();
+        dbStringProperty.setPropertyServiceEnum(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY);
+        dbStringProperty.setStringValue("Hallo");
+        Assert.assertEquals("Hallo", dbStringProperty.getValueAsString());
     }
 
 }

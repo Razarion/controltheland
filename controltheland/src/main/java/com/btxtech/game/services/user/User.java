@@ -18,15 +18,18 @@ import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
+import com.btxtech.game.services.utg.DbFacebookSource;
 import org.hibernate.annotations.Index;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -84,6 +87,8 @@ public class User implements UserDetails, Serializable, CrudParent {
     @Transient
     private CrudChildServiceHelper<DbPageAccessControl> pageCrud;
     private Date lastNews;
+    @Embedded
+    private DbFacebookSource dbFacebookSource;
 
     public Integer getId() {
         return id;
@@ -113,8 +118,9 @@ public class User implements UserDetails, Serializable, CrudParent {
         lastNews = registerDate;
     }
 
-    public void registerFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName) {
+    public void registerFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName, DbFacebookSource dbFacebookSource) {
         name = nickName;
+        this.dbFacebookSource = dbFacebookSource;
         socialNet = SocialNet.FACEBOOK;
         socialNetUserId = facebookSignedRequest.getUserId();
         email = facebookSignedRequest.getEmail();
@@ -254,6 +260,10 @@ public class User implements UserDetails, Serializable, CrudParent {
 
     public void updateLastNews() {
         lastNews = new Date();
+    }
+
+    public DbFacebookSource getDbFacebookSource() {
+        return dbFacebookSource;
     }
 
     @Override

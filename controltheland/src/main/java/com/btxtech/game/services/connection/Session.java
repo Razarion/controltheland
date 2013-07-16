@@ -15,6 +15,7 @@ package com.btxtech.game.services.connection;
 
 import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.DbFacebookSource;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -53,4 +54,6 @@ public interface Session {
     EditMode getEditMode();
 
     void setEditMode(EditMode editMode);
+
+    DbFacebookSource getDbFacebookSource();
 }
