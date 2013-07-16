@@ -16,4 +16,3 @@ window.onerror = function (message, file, lineNumber) {
     }
     return true;
 };
-

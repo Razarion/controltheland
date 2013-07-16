@@ -89,7 +89,7 @@ public class FacebookUtil {
         }
     }
 
-    public static String doGraphApiCall4Email(String facebookUserId, String accessToken) throws IOException, URISyntaxException {
+    public static String doGraphApiCall4Email(String facebookUserId, String accessToken) {
         ClientHttpResponse clientHttpResponse = null;
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         try {
@@ -115,6 +115,8 @@ public class FacebookUtil {
             } else {
                 throw new IllegalStateException("Facebook graph call fails: " + clientHttpResponse.getStatusText() + " " + clientHttpResponse.getStatusCode() + "|" + builder.toString());
             }
+        } catch (IOException | URISyntaxException e){
+            throw new RuntimeException(e);
         } finally {
             if (clientHttpResponse != null) {
                 clientHttpResponse.close();

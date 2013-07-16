@@ -15,6 +15,7 @@ package com.btxtech.game.controllers;
 
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.pages.RazarionPage;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,11 +36,11 @@ public class StatisticsController implements Controller {
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         try {
-            String html5 = httpServletRequest.getParameter(CmsPage.HTML5_KEY);
+            String html5 = httpServletRequest.getParameter(RazarionPage.HTML5_KEY);
             Boolean html5Support = null;
-            if (html5.equals((CmsPage.HTML5_KEY_Y))) {
+            if (html5.equals((RazarionPage.HTML5_KEY_Y))) {
                 html5Support = true;
-            } else if (html5.equals((CmsPage.HTML5_KEY_N))) {
+            } else if (html5.equals((RazarionPage.HTML5_KEY_N))) {
                 html5Support = false;
             } else {
                 log.warn("StatisticsController: Unknown HTML5 parameter received: " + html5);

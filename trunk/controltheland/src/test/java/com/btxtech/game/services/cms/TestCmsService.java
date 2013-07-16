@@ -37,20 +37,16 @@ import com.btxtech.game.services.forum.TestForum;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
-import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
-import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.SecurityCmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import org.apache.wicket.Page;
-import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -90,53 +86,6 @@ public class TestCmsService extends AbstractServiceTest {
     private ServerItemTypeService serverItemTypeService;
 
     @Test
-    @DirtiesContext
-    public void testMountings() throws Exception {
-        configureMultiplePlanetsAndLevels();
-        // Setup admin user
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        createAndLoginUser("Admin", "admin");
-        User user = userService.getUser();
-        user.setRoles(Collections.singleton(SecurityRoles.ROLE_ADMINISTRATOR));
-        userService.save(user);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Setup CMS content
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
-        DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
-        dbPage.setName("Home");
-        pageCrud.updateDbChild(dbPage);
-        cmsService.activateCms();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Test
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().executeUrl("game_cms");
-        getWicketTester().assertRenderedPage(CmsPage.class);
-        getWicketTester().executeUrl("game_run");
-        getWicketTester().assertRenderedPage(Game.class);
-        // Login as administrator
-        loginUser("Admin", "admin");
-        try {
-            // First call crashes. Wickets need to set up wicket-session first
-            getWicketTester().startPage(MgmtPage.class);
-        } catch (Exception e) {
-            // Ignore
-        }
-        ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn(true);
-        getWicketTester().executeUrl("game_mgmt");
-        getWicketTester().assertRenderedPage(MgmtPage.class);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-        @Test
     @DirtiesContext
     public void testImages() {
         beginHttpSession();

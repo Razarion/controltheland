@@ -1551,14 +1551,6 @@ public class TestCmsService2 extends AbstractServiceTest {
         pageCrud.updateDbChild(dbPage);
 
         dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_START);
-        pageCrud.updateDbChild(dbPage);
-
-        dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.CHOOSE_NICKNAME);
-        pageCrud.updateDbChild(dbPage);
-
-        dbPage = pageCrud.createDbChild();
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
         pageCrud.updateDbChild(dbPage);
 
@@ -2455,74 +2447,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         endHttpSession();
     }
 
-    @Test
-    @DirtiesContext
-    public void testFacebook() throws Exception {
-        Assert.fail("...TODO...");
-/*        configureSimplePlanetNoResources();
 
-        // Do not rejoice too quicklyJust... this is just a  test secret.
-        setPrivateField(CmsUiServiceImpl.class, cmsUiService, "facebookAppSecret", "029a30fb9677d35c79c44d8a505d8fe1");
-
-        // Setup CMS content
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
-        DbPage facebookPage = pageCrud.createDbChild();
-        facebookPage.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_START);
-        facebookPage.setName("Facebook Start");
-        pageCrud.updateDbChild(facebookPage);
-        DbPage nicknamePage = pageCrud.createDbChild();
-        nicknamePage.setPredefinedType(CmsUtil.CmsPredefinedPage.CHOOSE_NICKNAME);
-        nicknamePage.setName("Nickname");
-        DbContentPlugin contentPlugin = new DbContentPlugin();
-        contentPlugin.setPluginEnum(PluginEnum.NICK_NAME);
-        contentPlugin.init(userService);
-        nicknamePage.setContentAndAccessWrites(contentPlugin);
-        pageCrud.updateDbChild(nicknamePage);
-        cmsService.activateCms();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        beginHttpSession();
-        // First authorization -> OAuth dialog
-        beginHttpRequestAndOpenSessionInViewFilter();
-        PageParameters parameters = new PageParameters();
-        parameters.add("page", Integer.toString(facebookPage.getId()));
-        parameters.add("signed_request", "3RaYyXwkwhCc4OlVfDhAU9Y-O_pyqN4mgE7JyzPwcIc.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImlzc3VlZF9hdCI6MTM0MzE0NjYzOSwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX19");
-        Page page = getWicketTester().startPage(CmsPage.class, parameters);
-        StringHeaderContributor stringHeaderContributor = (StringHeaderContributor) page.getBehaviors().get(1);
-        Assert.assertTrue(stringHeaderContributor.toString().contains("https://www.facebook.com/dialog/oauth/"));
-        endHttpRequestAndOpenSessionInViewFilter();
-        // User accepted
-        beginHttpRequestAndOpenSessionInViewFilter();
-        parameters = new PageParameters();
-        parameters.add("page", Integer.toString(facebookPage.getId()));
-        parameters.add("signed_request", "v3-O8s1WrS9B2XnYXpRo61n2hKc9wboofRDHOxcF8XI.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImV4cGlyZXMiOjEzNDMxNTI4MDAsImlzc3VlZF9hdCI6MTM0MzE0NjY4Mywib2F1dGhfdG9rZW4iOiJBQUFFa3RlWVZ1WkNNQkFDS29mOGpkWDMxcnVTWkN3RXFuRnFWd3Z2NnBBNldNMTVaQ1V6bzlRNmliUXJiWGtRVkJOeEF0UDJmc2EzVzY3ZXJITW5EWkFvNlZHRzVPajg4U2FJMWZOYkVyYjhCeDBuOURRWkIyIiwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX0sInVzZXJfaWQiOiIxMDAwMDM2MzQwOTQxMzkifQ");
-        parameters.add("email", "fakeEmail");
-        getWicketTester().startPage(CmsPage.class, parameters);
-        Assert.assertTrue(stringHeaderContributor.toString().contains("https://www.facebook.com/dialog/oauth/"));
-        // Enter invalid name in nickname field
-        //FormTester formTester = getWicketTester().newFormTester("form:content:form");
-        //formTester.setValue("name", "xx");
-        //getWicketTester().executeAjaxEvent("form:content:form:name", "onkeyup");
-        //formTester.submit("goButton");
-        //getWicketTester().assertLabel("form:content:form:feedback:feedbackul:messages:0:message", "Invalid nick name: name must have at least 3 characters");
-        FormTester formTester = getWicketTester().newFormTester("form:content:form");
-        formTester.setValue("name", "xxx");
-        getWicketTester().executeAjaxEvent("form:content:form:goButton", "onkeyup");
-        getWicketTester().debugComponentTrees();
-        /*formTester.submit("goButton");
-        getWicketTester().executeAjaxEvent();
-        formTester = getWicketTester().newFormTester("form:content:form");
-        formTester.submit("goButton");
-        getWicketTester().debugComponentTrees();  */
- /*       getWicketTester().assertRenderedPage(Game.class);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        endHttpSession();   */
-    }
 
 
     // TODO test conversion tracking here
@@ -2693,35 +2618,6 @@ public class TestCmsService2 extends AbstractServiceTest {
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testLocale4Game() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().getSession().setLocale(Locale.ENGLISH);
-        testLocale("en", "Loading java script");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().getSession().setLocale(Locale.GERMAN);
-        testLocale("de", "Lade Java Script");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    private void testLocale(String expectedLocale, String startupTaskText) {
-        getWicketTester().startPage(Game.class);
-        getWicketTester().assertRenderedPage(Game.class);
-        getWicketTester().assertComponent("metaGwtLocale", WebMarkupContainer.class);
-        WebMarkupContainer container = (WebMarkupContainer) getWicketTester().getComponentFromLastRenderedPage("metaGwtLocale");
-        assertAttributeModifier(container, 0, "content", "locale=" + expectedLocale);
-        getWicketTester().assertLabel("startupTaskText", startupTaskText);
     }
 
     @Test

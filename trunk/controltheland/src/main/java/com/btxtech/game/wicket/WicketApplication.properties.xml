@@ -32,4 +32,7 @@
     <entry key="nameToShort">Name must have at least 3 characters</entry>
     <entry key="nameAlreadyUsed">Name has already been taken</entry>
     <entry key="unknownErrorReceived">Unknown error</entry>
+    <entry key="NickNameError">${error}</entry>
+    <entry key="chooseYourNickName">Choose your nickname</entry>
+    <entry key="facebookAlreadyLoggedIn">You are already logged in as {0}. Please logout before you login via Facebook</entry>
 </properties>

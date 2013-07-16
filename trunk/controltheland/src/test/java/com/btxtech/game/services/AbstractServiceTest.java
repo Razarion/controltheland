@@ -90,6 +90,9 @@ import com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation;
 import com.btxtech.game.services.planet.db.DbRegionResource;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.playback.impl.PlaybackServiceImpl;
+import com.btxtech.game.services.socialnet.facebook.FacebookAge;
+import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
+import com.btxtech.game.services.socialnet.facebook.FacebookUser;
 import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
@@ -119,26 +122,20 @@ import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfi
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
-import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.IPageFactory;
-import org.apache.wicket.Page;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.parser.XmlTag;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.image.resource.LocalizedImageResource;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.parser.XmlTag;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.tester.WicketTester;
-import org.apache.wicket.util.value.ValueMap;
 import org.easymock.EasyMock;
 import org.easymock.IArgumentMatcher;
 import org.hibernate.SessionFactory;
@@ -2203,6 +2200,17 @@ abstract public class AbstractServiceTest {
         createAndLoginUser(userName, "test");
     }
 
+    protected void createAndLoginFacebookUser(String userId, String nickName) {
+        try {
+            FacebookAge facebookAge = new FacebookAge(20);
+            FacebookUser facebookUser = new FacebookUser("", "", facebookAge);
+            FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest("", 0, facebookUser, "", userId);
+            userService.createAndLoginFacebookUser(facebookSignedRequest, nickName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // ------------------- History helpers --------------------
 
     protected List<DbHistoryElement> getAllHistoryEntriesOfType(DbHistoryElement.Type type) throws Exception {
@@ -2348,10 +2356,6 @@ abstract public class AbstractServiceTest {
         endHttpRequest();
     }
 
-    public WicketTester getWicketTester() {
-        return wicketTester;
-    }
-
     @Before
     public void setup() throws Exception {
         configurableListableBeanFactory.registerResolvableDependency(ServletRequest.class, new ObjectFactory<ServletRequest>() {
@@ -2407,6 +2411,10 @@ abstract public class AbstractServiceTest {
         wicketTester = new WicketTester(wicketApplication);
     }
 
+    public WicketTester getWicketTester() {
+        return wicketTester;
+    }
+
     public void assertCmsImage(WicketTester tester, String path, DbCmsImage descImg) throws Exception {
         Component component = tester.getComponentFromLastRenderedPage(path);
         Assert.assertNotNull("No such component: " + path, component);
@@ -2439,7 +2447,7 @@ abstract public class AbstractServiceTest {
                 attributeModifier.replaceAttributeValue(null, tag);
                 Map<String, Object> attributes = tag.getAttributes();
                 Assert.assertFalse(attributes.isEmpty());
-                String replacement = (String)attributes.get("class");
+                String replacement = (String) attributes.get("class");
                 Assert.assertNotNull(replacement);
                 Assert.assertEquals(cssClass, replacement);
                 return;
@@ -2448,8 +2456,8 @@ abstract public class AbstractServiceTest {
         Assert.fail("No such CSS class: " + cssClass);
     }
 
-    public void assertAttributeModifier(WebMarkupContainer container, int index, String attribute, String expectedValue) {
-        AttributeModifier attributeModifier = (AttributeModifier) container.getBehaviors().get(0);
+    public void assertAttributeModifier(Component component, int index, String attribute, String expectedValue) {
+        AttributeModifier attributeModifier = (AttributeModifier) component.getBehaviors().get(index);
         XmlTag xmlTag = new XmlTag();
         ComponentTag tag = new ComponentTag(xmlTag);
         tag.setId(attribute);
@@ -2457,9 +2465,44 @@ abstract public class AbstractServiceTest {
         attributeModifier.replaceAttributeValue(null, tag);
         Map<String, Object> attributes = tag.getAttributes();
         Assert.assertFalse(attributes.isEmpty());
-        String replacement = (String)attributes.get(attribute);
+        String replacement = (String) attributes.get(attribute);
         Assert.assertNotNull(replacement);
         Assert.assertEquals(expectedValue, replacement);
+    }
+
+    public void assertAttributeModifier(String path, int index, String attribute, String expectedValue) {
+        Component component = getWicketTester().getComponentFromLastRenderedPage(path);
+        Assert.assertNotNull("No component for path: " + path);
+        assertAttributeModifier(component, index, attribute, expectedValue);
+    }
+
+    public String getLastRenderedHeaderString() {
+        String response = getWicketTester().getLastResponseAsString();
+        int end = response.lastIndexOf("</head>");
+        if (end > -1) {
+            int start = response.indexOf("<head>") + "<head>".length();
+            return response.substring(start, end);
+        } else {
+            return null;
+        }
+    }
+
+    public void assertStringInHeader(String expected) {
+        String head = getLastRenderedHeaderString();
+        Assert.assertNotNull(head);
+        assertContainsStringIgnoreWhitespace(head, expected);
+    }
+
+    public void assertStringNotInHeader(String expected) {
+        String head = getLastRenderedHeaderString();
+        Assert.assertNotNull(head);
+        assertNotContainsStringIgnoreWhitespace(head, expected);
+    }
+
+    public void debugWholeLastResponse() {
+        System.out.println("---------------------------------------------------");
+        System.out.println(getWicketTester().getLastResponseAsString());
+        System.out.println("---------------------------------------------------");
     }
 
     // ------------------- User --------------------
@@ -2530,6 +2573,20 @@ abstract public class AbstractServiceTest {
         expected = expected.replaceAll("\\s", "");
         actual = actual.replaceAll("\\s", "");
         Assert.assertEquals(expected, actual);
+    }
+
+    public static void assertContainsStringIgnoreWhitespace(String wholeString, String expectedToBeContained) {
+        wholeString = wholeString.replaceAll("\\s", "");
+        expectedToBeContained = expectedToBeContained.replaceAll("\\s", "");
+        if (!wholeString.contains(expectedToBeContained)) {
+            Assert.fail("String\n" + expectedToBeContained + "\nnot contained in\n" + wholeString);
+        }
+    }
+
+    public static void assertNotContainsStringIgnoreWhitespace(String wholeString, String expectedNotToBeContained) {
+        wholeString = wholeString.replaceAll("\\s", "");
+        expectedNotToBeContained = expectedNotToBeContained.replaceAll("\\s", "");
+        Assert.assertFalse(wholeString.contains(expectedNotToBeContained));
     }
 
     public static void assertDate(long before, long after, Date time) {

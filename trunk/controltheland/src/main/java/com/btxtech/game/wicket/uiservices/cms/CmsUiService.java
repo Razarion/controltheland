@@ -7,13 +7,11 @@ import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentInvoker;
 import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.Component;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.markup.html.WebPage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -105,12 +103,6 @@ public interface CmsUiService {
     void invoke(DbContentInvoker dbContentInvoker, HashMap<String, String> parameters) throws InvocationTargetException;
 
     void invokeHiddenMethod(DbContentBook dbContentBook, BeanIdPathElement beanIdPathElement);
-
-    FacebookSignedRequest getAndClearFacebookSignedRequest();
-
-    void setFacebookSignedRequest(FacebookSignedRequest facebookSignedRequest);
-
-    void handleFacebookRequest(PageParameters pageParameters, Component component);
 
     String getFacebookAppSecret();
 

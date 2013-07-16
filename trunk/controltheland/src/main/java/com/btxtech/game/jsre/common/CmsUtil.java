@@ -11,6 +11,8 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 public class CmsUtil {
     public static final String MOUNT_GAME_CMS = "game_cms";
     public static final String MOUNT_GAME = "game_run";
+    public static final String MOUNT_GAME_FACEBOOK_APP = "game_cms_facebook_app";
+    public static final String MOUNT_GAME_FACEBOOK_AUTO_LOGIN = "game_cms_facebook_auto_login";
     public static final String MOUNT_MANAGEMENT = "game_mgmt";
     public static final String ID = "page";
     public static final String NO_HTML5_BROWSER_PAGE_STRING_ID = "NoHtml5Browser";
@@ -32,6 +34,14 @@ public class CmsUtil {
     public static final String EMAIL_VERIFICATION_KEY = "verification_code";
     public static final String FORGOT_PASSWORD_UUID_KEY = "uuid";
 
+    public static String getChildUrlParameter(int level) {
+        if (level == 0) {
+            return CHILD_ID;
+        } else {
+            return CHILD_ID + level;
+        }
+    }
+
     /**
      * User: beat
      * Date: 05.08.2011
@@ -47,7 +57,9 @@ public class CmsUtil {
         NO_HTML5_BROWSER,
         NOT_FOUND,
         LEVEL_TASK_DONE,
+        @Deprecated
         FACEBOOK_START,
+        @Deprecated
         CHOOSE_NICKNAME,
         EMAIL_VERIFICATION,
         FORGOT_PASSWORD_REQUEST,

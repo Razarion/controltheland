@@ -15,38 +15,30 @@ package com.btxtech.game.wicket.pages;
 
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.services.cms.page.DbPage;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.template.JavaScriptTemplate;
-import org.apache.wicket.util.template.PackageTextTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * User: beat
  * Date: Jun 1, 2009
  * Time: 12:10:57 AM
  */
-public class Game extends WebPage {
-    @SpringBean
-    private UserTrackingService userTrackingService;
+public class Game extends RazarionPage {
     @SpringBean
     private UserGuidanceService userGuidanceService;
+    @SpringBean
+    private UserTrackingService userTrackingService;
     @SpringBean
     private CmsUiService cmsUiService;
     private Integer levelTaskId;
@@ -89,21 +81,16 @@ public class Game extends WebPage {
 
     @Override
     protected void onBeforeRender() {
-        super.onBeforeRender();
-        // Tracking
-        if (levelTaskId != null) {
-            userTrackingService.pageAccess(getClass().getName(), "LevelTaskId=" + levelTaskId);
-        } else {
-            userTrackingService.pageAccess(getClass().getName(), null);
+        try {
+            if (levelTaskId != null) {
+                userTrackingService.pageAccess(getClass().getName(), "LevelTaskId=" + levelTaskId);
+            } else {
+                userTrackingService.pageAccess(getClass().getName(), null);
+            }
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
         }
+        super.onBeforeRender();
     }
 
-    @Override
-    public void renderHead(IHeaderResponse response) {
-        // LSC detection
-        PackageTextTemplate jsTemplate = new PackageTextTemplate(CmsUiServiceImpl.class, "LscErrorHandler.js");
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("DISPLAY_ERROR_PREFIX", "InPageError(Game)");
-        response.render(new StringHeaderItem(new JavaScriptTemplate(jsTemplate).asString(parameters)));
-    }
 }

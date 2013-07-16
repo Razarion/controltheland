@@ -1,34 +1,21 @@
-/*
- * Copyright (c) 2010.
- *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; version 2 of the License.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- */
-
-package com.btxtech.game.wicket.pages.cms.content.plugin.nickname;
+package com.btxtech.game.wicket.pages;
 
 import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.services.common.ExceptionHandler;
+import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.wicket.pages.Game;
+import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.ajax.form.AjaxFormValidatingBehavior;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.RequiredTextField;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -37,31 +24,36 @@ import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
 
-public class ChooseNickname extends Panel {
+/**
+ * User: beat
+ * Date: 12.07.13
+ * Time: 18:22
+ */
+public class FacebookAppNickName extends RazarionPage {
     @SpringBean
     private UserService userService;
     @SpringBean
     private CmsUiService cmsUiService;
     @SpringBean
     private UserGuidanceService userGuidanceService;
-    private Log log = LogFactory.getLog(ChooseNickname.class);
+    @SpringBean
+    private UserTrackingService userTrackingService;
+    private Log log = LogFactory.getLog(FacebookAppNickName.class);
+    private FacebookSignedRequest facebookSignedRequest;
 
-    /**
-     * Constructor
-     */
-    public ChooseNickname(String id) {
-        super(id);
-
-        Bean bean = new Bean();
-        final Form<Bean> form = new Form<>("form", new CompoundPropertyModel<>(bean));
+    public FacebookAppNickName(FacebookSignedRequest facebookSignedRequest) {
+        this.facebookSignedRequest = facebookSignedRequest;
+        Form form = new Form("form");
         add(form);
         form.setOutputMarkupId(true);
 
-        final FeedbackPanel feedback = new FeedbackPanel("feedback");
+        FeedbackPanel feedback = new FeedbackPanel("feedback");
         feedback.setOutputMarkupId(true);
         form.add(feedback);
 
-        FormComponent<String> fc = new RequiredTextField<>("name");
+        final Model<String> nameModel = new Model<>();
+
+        TextField<String> fc = new TextField<>("name", nameModel);
         fc.add(new IValidator<String>() {
 
             @Override
@@ -80,11 +72,10 @@ public class ChooseNickname extends Panel {
         form.add(new Button("goButton") {
             @Override
             public void onSubmit() {
-                Bean bean = form.getModelObject();
-                VerificationRequestCallback.ErrorResult errorResult = userService.isNickNameValid(bean.getName());
+                VerificationRequestCallback.ErrorResult errorResult = userService.isNickNameValid(nameModel.getObject());
                 if (errorResult == null) {
                     try {
-                        userService.createAndLoginFacebookUser(cmsUiService.getAndClearFacebookSignedRequest(), bean.getName());
+                        userService.createAndLoginFacebookUser(FacebookAppNickName.this.facebookSignedRequest, nameModel.getObject());
                     } catch (UserAlreadyExistsException e) {
                         throw new RuntimeException(e);
                     }
@@ -94,7 +85,7 @@ public class ChooseNickname extends Panel {
                     }
                     setResponsePage(Game.class, gamePageParameters);
                 } else {
-                    error("Invalid nick name: " + getLocalizedErrorText(errorResult));
+                    error(getLocalizedErrorText(errorResult));
                 }
             }
         });
@@ -118,28 +109,13 @@ public class ChooseNickname extends Panel {
         }
     }
 
-    /**
-     * simple java bean.
-     */
-    public static class Bean {
-        private String name;
-
-        /**
-         * Gets name.
-         *
-         * @return name
-         */
-        public String getName() {
-            return name;
+    @Override
+    protected void onBeforeRender() {
+        try {
+            userTrackingService.pageAccess(getClass().getName(), getRequest().getPostParameters().toString());
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
         }
-
-        /**
-         * Sets name.
-         *
-         * @param name name
-         */
-        public void setName(String name) {
-            this.name = name;
-        }
+        super.onBeforeRender();
     }
 }
