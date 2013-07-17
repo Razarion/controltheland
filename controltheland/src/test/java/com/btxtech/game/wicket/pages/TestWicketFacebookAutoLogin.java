@@ -8,6 +8,7 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.tracker.DbPageAccess;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import org.apache.wicket.Page;
@@ -17,6 +18,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -57,13 +60,22 @@ public class TestWicketFacebookAutoLogin extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testTODO() throws Exception {
+    public void testTracking() throws Exception {
         configureSimplePlanetNoResources();
-
+        // Test
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().startPage(FacebookAppStart.class);
-        Assert.fail("...TODO... , tracking, etc");
+        getWicketTester().getRequest().getPostParameters().setParameterValue("signed_request", "v3-O8s1WrS9B2XnYXpRo61n2hKc9wboofRDHOxcF8XI.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImV4cGlyZXMiOjEzNDMxNTI4MDAsImlzc3VlZF9hdCI6MTM0MzE0NjY4Mywib2F1dGhfdG9rZW4iOiJBQUFFa3RlWVZ1WkNNQkFDS29mOGpkWDMxcnVTWkN3RXFuRnFWd3Z2NnBBNldNMTVaQ1V6bzlRNmliUXJiWGtRVkJOeEF0UDJmc2EzVzY3ZXJITW5EWkFvNlZHRzVPajg4U2FJMWZOYkVyYjhCeDBuOURRWkIyIiwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX0sInVzZXJfaWQiOiIxMDAwMDM2MzQwOTQxMzkifQ");
+        getWicketTester().startPage(FacebookAutoLogin.class);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify DB
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbPageAccess> dbPageAccesses = loadAll(DbPageAccess.class);
+        junit.framework.Assert.assertEquals(2, dbPageAccesses.size());
+        junit.framework.Assert.assertEquals(FacebookAutoLogin.class.getName(), dbPageAccesses.get(0).getPage());
+        junit.framework.Assert.assertNull(dbPageAccesses.get(0).getAdditional());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

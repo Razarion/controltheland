@@ -112,7 +112,7 @@ public class FacebookAppNickName extends RazarionPage {
     @Override
     protected void onBeforeRender() {
         try {
-            userTrackingService.pageAccess(getClass().getName(), getRequest().getPostParameters().toString());
+            userTrackingService.pageAccess(getClass().getName(), null);
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
         }

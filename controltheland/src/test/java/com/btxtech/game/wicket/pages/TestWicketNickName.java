@@ -11,6 +11,7 @@ import com.btxtech.game.services.socialnet.facebook.FacebookUser;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.tracker.DbPageAccess;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import org.apache.wicket.Page;
@@ -21,6 +22,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -172,13 +174,22 @@ public class TestWicketNickName extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testTODO() throws Exception {
+    public void testTracking() throws Exception {
         configureSimplePlanetNoResources();
-
+        FacebookSignedRequest facebookSignedRequest = createUsersAndRequest();
+        // Test
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().startPage(FacebookAppStart.class);
-        Assert.fail("...TODO..., tracking, etc");
+        getWicketTester().startPage(new FacebookAppNickName(facebookSignedRequest));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify DB
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbPageAccess> dbPageAccesses = loadAll(DbPageAccess.class);
+        junit.framework.Assert.assertEquals(1, dbPageAccesses.size());
+        junit.framework.Assert.assertEquals(FacebookAppNickName.class.getName(), dbPageAccesses.get(0).getPage());
+        junit.framework.Assert.assertNull(dbPageAccesses.get(0).getAdditional());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

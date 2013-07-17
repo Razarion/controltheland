@@ -17,10 +17,8 @@ import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
 import junit.framework.Assert;
-import org.apache.wicket.Page;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
-import org.apache.wicket.util.tester.FormTester;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -56,7 +54,7 @@ public class TestWicketCommon extends AbstractServiceTest {
             "};\n" +
             "/*]]>*/\n" +
             "</script>";
-    public static final String HTML5_DETECT ="<script type=\"text/javascript\" >\n" +
+    public static final String HTML5_DETECT = "<script type=\"text/javascript\" >\n" +
             "/*<![CDATA[*/\n" +
             "Wicket.Event.add(window, \"load\", function(event) { \n" +
             "try {\n" +
@@ -125,7 +123,7 @@ public class TestWicketCommon extends AbstractServiceTest {
             getWicketTester().executeUrl("game_cms_facebook_app");
             Assert.fail("WicketRuntimeException expected");
         } catch (WicketRuntimeException wicketRuntimeException) {
-            Assert.assertEquals("java.lang.IllegalArgumentException: Empty signed_request received", (((InvocationTargetException) wicketRuntimeException.getCause()).getTargetException()).getMessage());
+            Assert.assertEquals("Empty signed_request received", (((InvocationTargetException) wicketRuntimeException.getCause()).getTargetException()).getMessage());
         }
         try {
             getWicketTester().executeUrl("game_cms_facebook_auto_login");

@@ -6,6 +6,7 @@ import com.btxtech.game.services.cms.impl.CmsServiceImpl;
 import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.tracker.DbPageAccess;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import junit.framework.Assert;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -14,6 +15,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -139,13 +141,44 @@ public class TestWicketGame extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testGame() throws Exception {
+    public void testTrackingRealGame() throws Exception {
         configureSimplePlanetNoResources();
-
+        // Test
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getWicketTester().startPage(Game.class);
-        Assert.fail("...TODO... tracking, etc");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify DB
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbPageAccess> dbPageAccesses = loadAll(DbPageAccess.class);
+        Assert.assertEquals(1, dbPageAccesses.size());
+        Assert.assertEquals(Game.class.getName(), dbPageAccesses.get(0).getPage());
+        Assert.assertNull(dbPageAccesses.get(0).getAdditional());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testTrackingTutorial() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Test
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, TEST_LEVEL_TASK_1_1_SIMULATED_ID);
+        getWicketTester().startPage(Game.class, pageParameters);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify DB
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbPageAccess> dbPageAccesses = loadAll(DbPageAccess.class);
+        Assert.assertEquals(1, dbPageAccesses.size());
+        Assert.assertEquals(Game.class.getName(), dbPageAccesses.get(0).getPage());
+        Assert.assertEquals("LevelTaskId=" + TEST_LEVEL_TASK_1_1_SIMULATED_ID, dbPageAccesses.get(0).getAdditional());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

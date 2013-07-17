@@ -349,11 +349,15 @@ abstract public class AbstractServiceTest {
     private Log log = LogFactory.getLog(AbstractServiceTest.class);
     private WicketTester wicketTester;
 
+    // ---------------------- Spring  -----------------------
     protected PlatformTransactionManager getTransactionManager() {
         return transactionManager;
     }
 
-    // ---------------------- planet -----------------------
+    protected ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+// ---------------------- planet -----------------------
 
     protected void overrideConnectionService(ServerPlanetServicesImpl serverPlanetServices, ServerConnectionService serverConnectionService) {
         serverPlanetServices.getConnectionService().deactivate();
