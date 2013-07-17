@@ -25,8 +25,8 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
     public static final String FACEBOOK_OAUTH_REDIRECT = "<script type=\"text/javascript\">\n" +
             "        /*<![CDATA[*/\n" +
             "        var oauth_url = 'https://www.facebook.com/dialog/oauth/';\n" +
-            "        oauth_url += '?client_id=321838644575219';\n" +
-            "        oauth_url += '&redirect_uri=' + encodeURIComponent('http://apps.facebook.com/testing_purposes/');\n" +
+            "        oauth_url += '?client_id=195335357236873';\n" +
+            "        oauth_url += '&redirect_uri=' + encodeURIComponent('https://apps.facebook.com/razarion/');\n" +
             "        oauth_url += '&scope=' + encodeURIComponent('email');\n" +
             "        window.top.location = oauth_url;\n" +
             "        /*]]>*/\n" +
@@ -137,6 +137,8 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
     @DirtiesContext
     public void usersDeniesAccess() throws Exception {
         configureMultiplePlanetsAndLevels();
+        // Do not rejoice too quickly Just... this is just a test secret.
+        setPrivateField(CmsUiServiceImpl.class, cmsUiService, "facebookAppSecret", "029a30fb9677d35c79c44d8a505d8fe1");
         // Login
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
