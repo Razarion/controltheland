@@ -62,6 +62,8 @@ public class TestWicketFacebookAutoLogin extends AbstractServiceTest {
     @DirtiesContext
     public void testTracking() throws Exception {
         configureSimplePlanetNoResources();
+        // Do not rejoice too quickly Just... this is just a test secret.
+        setPrivateField(CmsUiServiceImpl.class, cmsUiService, "facebookAppSecret", "029a30fb9677d35c79c44d8a505d8fe1");
         // Test
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
