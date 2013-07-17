@@ -58,6 +58,8 @@ public interface UserTrackingService {
 
     SessionDetailDto getSessionDetailDto(String sessionId);
 
+    List<User> getNewUsers(NewUserTrackingFilter newUserTrackingFilter);
+
     void saveUserCommand(BaseCommand baseCommand);
 
     void onUserCreated(User user);

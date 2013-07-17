@@ -443,7 +443,7 @@
         </pluginRepository>
     </pluginRepositories>
     <properties>
-        <wicket.version>6.9.0</wicket.version>
+        <wicket.version>6.9.1</wicket.version>
         <jetty.version>6.1.25</jetty.version>
         <gwtVersion>2.4.0</gwtVersion>
         <hibernateVersion>4.0.0.Final</hibernateVersion>

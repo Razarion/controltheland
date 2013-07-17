@@ -20,10 +20,10 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.tracker.DbPageAccess;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.Date;
@@ -104,6 +104,15 @@ public class SessionDetail extends MgmtWebPage {
         add(new Label("cookieId", dbSessionDetail.getCookieId()));
         add(new Label("javaScriptDetected", dbSessionDetail.isJavaScriptDetected() ? "Yes" : "No"));
         add(new Label("referer", dbSessionDetail.getReferer()));
+        if (dbSessionDetail.getDbFacebookSource() != null) {
+            add(new Label("dbFacebookSource.fbSource", dbSessionDetail.getDbFacebookSource().getFbSource()));
+            add(new Label("dbFacebookSource.optionalAdValue", dbSessionDetail.getDbFacebookSource().getOptionalAdValue()));
+            add(new Label("dbFacebookSource.wholeString", dbSessionDetail.getDbFacebookSource().getWholeString()));
+        } else {
+            add(new Label("dbFacebookSource.fbSource", ""));
+            add(new Label("dbFacebookSource.optionalAdValue", ""));
+            add(new Label("dbFacebookSource.wholeString", ""));
+        }
     }
 
     private void gameOverview(SessionDetailDto sessionDetailDto) {

@@ -63,7 +63,7 @@ public class TestPropertyService extends AbstractServiceTest {
             propertyService.getStringProperty(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY);
             Assert.fail("NoSuchPropertyException expected");
         } catch (NoSuchPropertyException e) {
-            Assert.assertEquals("No such property: PropertyServiceEnum{displayName='Facebook ad URL key', type=class java.lang.String}", e.getMessage());
+            Assert.assertEquals("No such property: PropertyServiceEnum{displayName='Facebook optional ad key', type=class java.lang.String}", e.getMessage());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

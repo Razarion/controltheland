@@ -46,6 +46,7 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbChatMessage;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
+import com.btxtech.game.services.utg.NewUserTrackingFilter;
 import com.btxtech.game.services.utg.RealGameTrackingInfo;
 import com.btxtech.game.services.utg.SessionDetailDto;
 import com.btxtech.game.services.utg.SessionOverviewDto;
@@ -79,6 +80,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -105,6 +111,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private SessionFactory sessionFactory;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     @Override
     @Transactional
@@ -352,6 +360,25 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         sessionDetailDto.setMoneyCollectCommands(getUserCommandCount(sessionId, MoneyCollectCommand.class, null, null));
         sessionDetailDto.setGameAttempts(getGameAttempts(sessionId));
         return sessionDetailDto;
+    }
+
+    @Override
+    public List<User> getNewUsers(NewUserTrackingFilter newUserTrackingFilter) {
+        CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        // Query for total row count in invitations
+        CriteriaQuery<User> userQuery = criteriaBuilder.createQuery(User.class);
+        Root<User> from = userQuery.from(User.class);
+        if (newUserTrackingFilter.getFromDate() != null && newUserTrackingFilter.getToDate() == null) {
+            userQuery.where(criteriaBuilder.greaterThanOrEqualTo(from.<Date>get("registerDate"), newUserTrackingFilter.getFromDate()));
+        } else if (newUserTrackingFilter.getFromDate() == null && newUserTrackingFilter.getToDate() != null) {
+            userQuery.where(criteriaBuilder.lessThanOrEqualTo(from.<Date>get("registerDate"), newUserTrackingFilter.getToDate()));
+        } else if (newUserTrackingFilter.getFromDate() != null && newUserTrackingFilter.getToDate() != null) {
+            userQuery.where(criteriaBuilder.between(from.<Date>get("registerDate"), newUserTrackingFilter.getFromDate(), newUserTrackingFilter.getToDate()));
+        }
+        userQuery.orderBy(criteriaBuilder.desc(from.<String>get("registerDate")));
+        CriteriaQuery<User> userSelect = userQuery.select(from);
+        TypedQuery<User> typedUserQuery = entityManagerFactory.createEntityManager().createQuery(userSelect);
+        return typedUserQuery.getResultList();
     }
 
     @SuppressWarnings("unchecked")
