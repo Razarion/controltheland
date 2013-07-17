@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.pages;
 
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.socialnet.facebook.FacebookUtil;
 import com.btxtech.game.services.user.UserService;
@@ -27,6 +28,12 @@ public class FacebookAutoLogin extends RazarionPage {
 
     public FacebookAutoLogin(PageParameters parameters) {
         super(parameters);
+
+        try {
+            userTrackingService.pageAccess(getClass().getName(), null);
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+        }
 
         IRequestParameters postParameters = getRequest().getPostParameters();
 

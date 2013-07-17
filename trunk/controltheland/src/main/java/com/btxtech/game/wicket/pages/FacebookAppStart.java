@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.pages;
 
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.socialnet.facebook.FacebookUtil;
 import com.btxtech.game.services.user.User;
@@ -44,7 +45,11 @@ public class FacebookAppStart extends RazarionPage {
         IRequestParameters postParameters = getRequest().getPostParameters();
 
         if ("access_denied".equals(parameters.get("error").toString())) {
-            userTrackingService.pageAccess(getClass().getName(), "---Access Denied--- Query Parameters: " + parameters.toString() + " Post Parameters: " + postParameters.toString());
+            try {
+                userTrackingService.pageAccess(getClass().getName(), "---Access Denied--- Query Parameters: " + parameters.toString());
+            } catch (Exception e) {
+                ExceptionHandler.handleException(e);
+            }
             setGameResponsePage();
         } else {
             String signedRequestParameter = postParameters.getParameterValue("signed_request").toString();
@@ -55,11 +60,20 @@ public class FacebookAppStart extends RazarionPage {
                     if (!userService.isFacebookLoggedIn(facebookSignedRequest)) {
                         userService.loginFacebookUser(facebookSignedRequest);
                     }
-                    userTrackingService.pageAccess(getClass().getName(), "---User Authorized by Facebook and registered by Game--- Parameters: " + parameters.toString());
+                    try {
+                        userTrackingService.pageAccess(getClass().getName(), "---User Authorized by Facebook and registered by Game--- Parameters: " + parameters.toString());
+                    } catch (Exception e) {
+                        ExceptionHandler.handleException(e);
+                    }
                     setGameResponsePage();
                 } else {
                     User user = userService.getUser();
                     if (user != null) {
+                        try {
+                            userTrackingService.pageAccess(getClass().getName(), "---User Authorized by Facebook but logged in with different user Game--- Parameters: " + parameters.toString());
+                        } catch (Exception e) {
+                            ExceptionHandler.handleException(e);
+                        }
                         error(new StringResourceModel("facebookAlreadyLoggedIn", null, new Object[]{user.getUsername()}).getString());
                     } else {
                         String email;
@@ -69,13 +83,22 @@ public class FacebookAppStart extends RazarionPage {
                             email = postParameters.getParameterValue("email").toString();
                         }
                         facebookSignedRequest.setEmail(email);
+                        try {
+                            userTrackingService.pageAccess(getClass().getName(), "---User Authorized by Facebook but NOT registered by Game--- Parameters: " + parameters.toString());
+                        } catch (Exception e) {
+                            ExceptionHandler.handleException(e);
+                        }
                         setResponsePage(new FacebookAppNickName(facebookSignedRequest));
-                        userTrackingService.pageAccess(getClass().getName(), "---User Authorized by Facebook but NOT registered by Game--- Parameters: " + parameters.toString());
                     }
                 }
             } else {
                 User user = userService.getUser();
                 if (user != null) {
+                    try {
+                        userTrackingService.pageAccess(getClass().getName(), "---User NOT Authorized by Facebook but logged in with different user Game--- Parameters: " + parameters.toString());
+                    } catch (Exception e) {
+                        ExceptionHandler.handleException(e);
+                    }
                     error(new StringResourceModel("facebookAlreadyLoggedIn", null, new Object[]{user.getUsername()}).getString());
                 } else {
                     // Is NOT authorized by facebook
@@ -90,7 +113,11 @@ public class FacebookAppStart extends RazarionPage {
                             response.render(new JavaScriptContentHeaderItem(jsTemplate.asString(jsParameters), null, null));
                         }
                     });
-                    userTrackingService.pageAccess(getClass().getName(), "---User NOT Authorized by Facebook--- Query Parameters: " + parameters.toString() + " Post Parameters: " + postParameters.toString());
+                    try {
+                        userTrackingService.pageAccess(getClass().getName(), "---User NOT Authorized by Facebook--- Query Parameters: " + parameters.toString());
+                    } catch (Exception e) {
+                        ExceptionHandler.handleException(e);
+                    }
                 }
             }
         }
