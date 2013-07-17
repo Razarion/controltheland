@@ -82,7 +82,6 @@ public class UserTracking extends MgmtWebPage {
         add(new Label("accountNonLocked"));
         add(new Label("registerDate"));
         add(new Label("lastLoginDate"));
-        add(new Label("socialNet"));
         add(new Label("email"));
         add(new Label("loginCount", new LoadableDetachableModel<Integer>() {
             @Override
@@ -95,6 +94,10 @@ public class UserTracking extends MgmtWebPage {
                 }
             }
         }));
+        add(new Label("socialNet"));
+        add(new Label("dbFacebookSource.fbSource"));
+        add(new Label("dbFacebookSource.optionalAdValue"));
+        add(new Label("dbFacebookSource.wholeString"));
         add(new Label("inGameTime", new LoadableDetachableModel<String>() {
             @Override
             protected String load() {

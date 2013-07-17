@@ -29,6 +29,8 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
+import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
+import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -162,6 +164,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -2211,6 +2214,22 @@ abstract public class AbstractServiceTest {
             throw new RuntimeException(e);
         }
     }
+
+    protected void createUserInSession(String userName, Date registerDate) {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        try {
+            userService.createUser(userName, "xxx", "xxx", "");
+            User user = userService.getUser(userName);
+            setPrivateField(User.class, user, "registerDate", registerDate);
+            saveOrUpdateInTransaction(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 
     // ------------------- History helpers --------------------
 

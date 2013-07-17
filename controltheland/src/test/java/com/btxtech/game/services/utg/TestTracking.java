@@ -33,6 +33,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -1057,6 +1058,186 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals(sessionId4, sessionOverviewDtos.get(1).getSessionId());
         Assert.assertEquals(sessionId2, sessionOverviewDtos.get(2).getSessionId());
         Assert.assertEquals(4, userTrackingService.getLoginCount(userService.getUser("U2")));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testNewUserTrackingFrom() throws Exception {
+        configureSimplePlanetNoResources();
+        createUserInSession("U1", new Date(100000000000L));
+        createUserInSession("U2", new Date(200000000000L));
+        createUserInSession("U3", new Date(300000000000L));
+        createUserInSession("U4", new Date(400000000000L));
+        createUserInSession("U5", new Date(500000000000L));
+        createUserInSession("U6", new Date(600000000000L));
+        createUserInSession("U7", new Date(700000000000L));
+        createUserInSession("U8", new Date(800000000000L));
+        createUserInSession("U9", new Date(900000000000L));
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // test from 1
+        NewUserTrackingFilter newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setFromDate(new Date(400000000000L));
+        List<User> users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(6, users.size());
+        Assert.assertEquals("U9", users.get(0).getUsername());
+        Assert.assertEquals("U8", users.get(1).getUsername());
+        Assert.assertEquals("U7", users.get(2).getUsername());
+        Assert.assertEquals("U6", users.get(3).getUsername());
+        Assert.assertEquals("U5", users.get(4).getUsername());
+        Assert.assertEquals("U4", users.get(5).getUsername());
+        // test from 2
+        newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setFromDate(new Date(800000000000L));
+        users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(2, users.size());
+        Assert.assertEquals("U9", users.get(0).getUsername());
+        Assert.assertEquals("U8", users.get(1).getUsername());
+        // test from too high
+        newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setFromDate(new Date(1000000000000L));
+        users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(0, users.size());
+        // test from too low
+        newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setFromDate(new Date(10000000000L));
+        users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(9, users.size());
+        Assert.assertEquals("U9", users.get(0).getUsername());
+        Assert.assertEquals("U8", users.get(1).getUsername());
+        Assert.assertEquals("U7", users.get(2).getUsername());
+        Assert.assertEquals("U6", users.get(3).getUsername());
+        Assert.assertEquals("U5", users.get(4).getUsername());
+        Assert.assertEquals("U4", users.get(5).getUsername());
+        Assert.assertEquals("U3", users.get(6).getUsername());
+        Assert.assertEquals("U2", users.get(7).getUsername());
+        Assert.assertEquals("U1", users.get(8).getUsername());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testNewUserTrackingTo() throws Exception {
+        configureSimplePlanetNoResources();
+        createUserInSession("U1", new Date(100000000000L));
+        createUserInSession("U2", new Date(200000000000L));
+        createUserInSession("U3", new Date(300000000000L));
+        createUserInSession("U4", new Date(400000000000L));
+        createUserInSession("U5", new Date(500000000000L));
+        createUserInSession("U6", new Date(600000000000L));
+        createUserInSession("U7", new Date(700000000000L));
+        createUserInSession("U8", new Date(800000000000L));
+        createUserInSession("U9", new Date(900000000000L));
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // test from 1
+        NewUserTrackingFilter newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setToDate(new Date(400000000000L));
+        List<User> users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(4, users.size());
+        Assert.assertEquals("U4", users.get(0).getUsername());
+        Assert.assertEquals("U3", users.get(1).getUsername());
+        Assert.assertEquals("U2", users.get(2).getUsername());
+        Assert.assertEquals("U1", users.get(3).getUsername());
+        // test from 2
+        newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setToDate(new Date(600000000000L));
+        users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(6, users.size());
+        Assert.assertEquals("U6", users.get(0).getUsername());
+        Assert.assertEquals("U5", users.get(1).getUsername());
+        Assert.assertEquals("U4", users.get(2).getUsername());
+        Assert.assertEquals("U3", users.get(3).getUsername());
+        Assert.assertEquals("U2", users.get(4).getUsername());
+        Assert.assertEquals("U1", users.get(5).getUsername());
+        // test from too high
+        newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setToDate(new Date(1000000000000L));
+        users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(9, users.size());
+        Assert.assertEquals("U9", users.get(0).getUsername());
+        Assert.assertEquals("U8", users.get(1).getUsername());
+        Assert.assertEquals("U7", users.get(2).getUsername());
+        Assert.assertEquals("U6", users.get(3).getUsername());
+        Assert.assertEquals("U5", users.get(4).getUsername());
+        Assert.assertEquals("U4", users.get(5).getUsername());
+        Assert.assertEquals("U3", users.get(6).getUsername());
+        Assert.assertEquals("U2", users.get(7).getUsername());
+        Assert.assertEquals("U1", users.get(8).getUsername());
+        // test from too low
+        newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setToDate(new Date(10000000000L));
+        users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(0, users.size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testNewUserTrackingFromAndTo() throws Exception {
+        configureSimplePlanetNoResources();
+        createUserInSession("U1", new Date(100000000000L));
+        createUserInSession("U2", new Date(200000000000L));
+        createUserInSession("U3", new Date(300000000000L));
+        createUserInSession("U4", new Date(400000000000L));
+        createUserInSession("U5", new Date(500000000000L));
+        createUserInSession("U6", new Date(600000000000L));
+        createUserInSession("U7", new Date(700000000000L));
+        createUserInSession("U8", new Date(800000000000L));
+        createUserInSession("U9", new Date(900000000000L));
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // test 1
+        NewUserTrackingFilter newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setFromDate(new Date(200000000000L));
+        newUserTrackingFilter.setToDate(new Date(300000000000L));
+        List<User> users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(2, users.size());
+        Assert.assertEquals("U3", users.get(0).getUsername());
+        Assert.assertEquals("U2", users.get(1).getUsername());
+        // test 2
+        newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setFromDate(new Date(600000000000L));
+        newUserTrackingFilter.setToDate(new Date(900000000000L));
+        users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(4, users.size());
+        Assert.assertEquals("U9", users.get(0).getUsername());
+        Assert.assertEquals("U8", users.get(1).getUsername());
+        Assert.assertEquals("U7", users.get(2).getUsername());
+        Assert.assertEquals("U6", users.get(3).getUsername());
+        // test too high
+        newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setFromDate(new Date(1000000000000L));
+        newUserTrackingFilter.setToDate(new Date(2000000000000L));
+        users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(0, users.size());
+        // test too low
+        newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setFromDate(new Date(10000000000L));
+        newUserTrackingFilter.setToDate(new Date(20000000000L));
+        users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(0, users.size());
+        // test lower border
+        newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setFromDate(new Date(10000000000L));
+        newUserTrackingFilter.setToDate(new Date(100000000000L));
+        users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(1, users.size());
+        Assert.assertEquals("U1", users.get(0).getUsername());
+        // test upper border
+        newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setFromDate(new Date(900000000000L));
+        newUserTrackingFilter.setToDate(new Date(1000000000000L));
+        users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(1, users.size());
+        Assert.assertEquals("U9", users.get(0).getUsername());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

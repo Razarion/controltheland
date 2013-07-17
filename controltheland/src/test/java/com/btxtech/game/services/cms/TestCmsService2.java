@@ -1579,7 +1579,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Map<CmsUtil.CmsPredefinedPage, String> urls = cmsUiService.getPredefinedUrls();
-        Assert.assertEquals(CmsUtil.CmsPredefinedPage.values().length, urls.size());
+        Assert.assertEquals(CmsUtil.CmsPredefinedPage.values().length - 2 /*Two are deprected*/, urls.size());
 
         for (String url : urls.values()) {
             Assert.assertNotNull(url);
