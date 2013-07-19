@@ -1,10 +1,21 @@
 package com.btxtech.game.wicket;
 
+import com.btxtech.game.controllers.TestItemImageController;
+import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
+import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.inventory.DbInventoryArtifact;
+import com.btxtech.game.services.inventory.DbInventoryItem;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
+import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.socialnet.facebook.FacebookAge;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.socialnet.facebook.FacebookUser;
@@ -16,14 +27,16 @@ import com.btxtech.game.wicket.pages.FacebookAppNickName;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
-import junit.framework.Assert;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
+import org.apache.wicket.protocol.http.mock.MockHttpServletResponse;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -87,6 +100,10 @@ public class TestWicketCommon extends AbstractServiceTest {
     private UserService userService;
     @Autowired
     private UserTrackingService userTrackingService;
+    @Autowired
+    private GlobalInventoryService globalInventoryService;
+    @Autowired
+    private ServerItemTypeService serverItemTypeService;
 
     @Test
     @DirtiesContext
@@ -203,4 +220,143 @@ public class TestWicketCommon extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testInventoryItemImages() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbInventoryItem dbInventoryItem = globalInventoryService.getItemCrud().createDbChild();
+        dbInventoryItem.setImageData(new byte[]{0, 1, 2, 3, 4});
+        dbInventoryItem.setImageContentType("img/bmp");
+        globalInventoryService.getItemCrud().updateDbChild(dbInventoryItem);
+        Assert.assertEquals(1, (int) dbInventoryItem.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals("/inventoryImage?type=item&id=1", ImageHandler.getInventoryItemUrl(1));
+        getWicketTester().executeUrl("inventoryImage?type=item&id=1");
+        MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("img/bmp", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(5, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{0, 1, 2, 3, 4}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testInventoryArtifactImages() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbInventoryArtifact dbInventoryArtifact = globalInventoryService.getArtifactCrud().createDbChild();
+        dbInventoryArtifact.setImageData(new byte[]{10, 11, 12, 13, 14, 15});
+        dbInventoryArtifact.setImageContentType("img/gegel");
+        globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact);
+        Assert.assertEquals(1, (int) dbInventoryArtifact.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals("/inventoryImage?type=art&id=1", ImageHandler.getInventoryArtifactUrl(1));
+        getWicketTester().executeUrl("inventoryImage?type=art&id=1");
+        MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("img/gegel", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(6, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{10, 11, 12, 13, 14, 15}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testItemTypeImages() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        TestItemImageController.createDbItemTypeImage(getSessionFactory(), dbBaseItemType, 0, 0, 0, ItemTypeSpriteMap.SyncObjectState.RUN_TIME, "hoover_bagger_0001.png");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        BoundingBox boundingBox = new BoundingBox(10, new double[]{0.0});
+        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 0, 0, 0, 1, 0, null);
+        serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
+                boundingBox,
+                itemTypeSpriteMap,
+                null,
+                Arrays.<ItemTypeImageInfo>asList(),
+                Arrays.<ItemTypeImageInfo>asList(),
+                Arrays.<ItemTypeImageInfo>asList());
+        serverItemTypeService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("cmsitemimg?type=art&id=1");
+        MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("image/png", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(2799, mockHttpServletResponse.getBufferSize());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCmsImages() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbCmsImage dbCmsImage = cmsService.getImageCrudRootServiceHelper().createDbChild();
+        dbCmsImage.setData(new byte[]{10, 12, 13, 14, 15});
+        dbCmsImage.setContentType("ich/gegel");
+        cmsService.getImageCrudRootServiceHelper().updateDbChild(dbCmsImage);
+        cmsService.activateCms();
+        Assert.assertEquals(1, (int)dbCmsImage.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("cmsimg?id=1");
+        MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("ich/gegel", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(5, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{10, 12, 13, 14, 15}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testParameterMounting() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbCmsImage dbCmsImage = cmsService.getImageCrudRootServiceHelper().createDbChild();
+        dbCmsImage.setData(new byte[]{10, 12, 13, 14, 15});
+        dbCmsImage.setContentType("ich/gegel");
+        cmsService.getImageCrudRootServiceHelper().updateDbChild(dbCmsImage);
+        cmsService.activateCms();
+        Assert.assertEquals(1, (int)dbCmsImage.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("cmsimg?id=1");
+        MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("ich/gegel", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(5, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{10, 12, 13, 14, 15}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }

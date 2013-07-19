@@ -48,16 +48,12 @@ import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
 import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.lang.mutable.MutableBoolean;
-import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.protocol.http.mock.MockHttpServletResponse;
 import org.apache.wicket.request.IRequestHandler;
-import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
-import org.apache.wicket.request.cycle.IRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.tester.FormTester;
@@ -2447,13 +2443,9 @@ public class TestCmsService2 extends AbstractServiceTest {
         endHttpSession();
     }
 
-
-
-
-    // TODO test conversion tracking here
- /*   @Test
+    @Test
     @DirtiesContext
-    public void testEmailVerificationPageOkConversionTrackingProvision() throws Exception {
+    public void testEmailVerificationPageOk() throws Exception {
         configureSimplePlanetNoResources();
         startFakeMailServer();
 
@@ -2498,23 +2490,73 @@ public class TestCmsService2 extends AbstractServiceTest {
         PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
         pageParameters.set(CmsUtil.EMAIL_VERIFICATION_KEY, user.getVerificationId());
         getWicketTester().startPage(CmsPage.class, pageParameters);
-        getWicketTester().debugComponentTrees();
-        // Test ... java script
-        getWicketTester().assertVisible("form:content:...");
-        Label label = (Label) getWicketTester().getComponentFromLastRenderedPage("form:content:...:...");
-        assertStringIgnoreWhitespace("....user.track({\n" +
-                "    'pid':'...',\n" +
-                "    'eventid':'3820',\n" +
-                "    'referenz':'1'\n" +
-                "});", label.getDefaultModelObjectAsString());
-        ExternalImage ... = (ExternalImage) getWicketTester().getComponentFromLastRenderedPage("form:content:...:...");
-        Assert.assertEquals("http://www.....de/event.php?pid=3111&eventid=3820&referenz=1", ....getUrl());
-        getWicketTester().assertVisible("form:content:enterGame");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertTrue(get(User.class, user.getId()).isVerified());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+
+        stopFakeMailServer();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testParameterMountingEmailVerificationPageOk() throws Exception {
+        configureSimplePlanetNoResources();
+        startFakeMailServer();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+
+        DbPage dbEmail = pageCrud.createDbChild();
+        dbEmail.setPredefinedType(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
+        dbEmail.setName("Email");
+        DbContentPlugin contentPlugin = new DbContentPlugin();
+        contentPlugin.setPluginEnum(PluginEnum.EMAIL_VERIFICATION);
+        contentPlugin.init(userService);
+        dbEmail.setContentAndAccessWrites(contentPlugin);
+        pageCrud.updateDbChild(dbEmail);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Setup user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        registerService.register("U1", "xxx", "xxx", "xxx@yyy.com");
+        User user = userService.getUser();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().getSession().setLocale(Locale.ENGLISH);
+        getWicketTester().executeUrl("game_cms/page/" + dbEmail.getId() + "/verification_code/" + user.getVerificationId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertTrue(get(User.class, user.getId()).isVerified());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         stopFakeMailServer();
-    } */
+    }
 
     @Test
     @DirtiesContext
@@ -2661,7 +2703,8 @@ public class TestCmsService2 extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
-        @Test
+
+    @Test
     @DirtiesContext
     public void testMessage() throws Exception {
         configureSimplePlanetNoResources();

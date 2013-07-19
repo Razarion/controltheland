@@ -13,6 +13,8 @@
 package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
@@ -20,31 +22,31 @@ import com.btxtech.game.services.inventory.GlobalInventoryService;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * User: beat Date: 01.06.2011 Time: 10:49:56
  */
-public class InventoryImageResource extends DynamicImageResource {
-    public static final String SHARED_IMAGE_RESOURCES = "inventoryImage";
-
+public class InventoryImageResource extends AbstractResource {
     @SpringBean
     private GlobalInventoryService globalInventoryService;
 
     public static Image createArtifactImage(String id, DbInventoryArtifact dbInventoryArtifact) {
         PageParameters pageParameters = new PageParameters();
-        pageParameters.set(Constants.INVENTORY_TYPE, Constants.INVENTORY_TYPE_ITEM);
+        pageParameters.set(Constants.INVENTORY_TYPE, Constants.INVENTORY_TYPE_ARTIFACT);
         pageParameters.set(Constants.INVENTORY_ID, dbInventoryArtifact.getId());
-        return new Image(id, new PackageResourceReference(SHARED_IMAGE_RESOURCES), pageParameters);
+        return new Image(id, new PackageResourceReference(CmsUtil.MOUNT_INVENTORY_IMAGES), pageParameters);
     }
 
     public static Image createItemImage(String id, DbInventoryItem dbInventoryItem) {
         PageParameters pageParameters = new PageParameters();
         pageParameters.set(Constants.INVENTORY_TYPE, Constants.INVENTORY_TYPE_ITEM);
         pageParameters.set(Constants.INVENTORY_ID, dbInventoryItem.getId());
-        return new Image(id, new PackageResourceReference(SHARED_IMAGE_RESOURCES), pageParameters);
+        return new Image(id, new PackageResourceReference(CmsUtil.MOUNT_INVENTORY_IMAGES), pageParameters);
     }
 
     public InventoryImageResource() {
@@ -52,39 +54,48 @@ public class InventoryImageResource extends DynamicImageResource {
         Injector.get().inject(this);
     }
 
-
     @Override
-    protected byte[] getImageData(Attributes attributes) {
-        String contentType = null;
-        byte[] contentData = null;
-
+    protected ResourceResponse newResourceResponse(Attributes attributes) {
         int id = Utils.parseIntSave(attributes.getParameters().get(Constants.INVENTORY_ID).toString());
         String type = Utils.parseStringSave(attributes.getParameters().get(Constants.INVENTORY_TYPE).toString());
         switch (type) {
             case Constants.INVENTORY_TYPE_ARTIFACT: {
-                DbInventoryArtifact dbInventoryArtifact = globalInventoryService.getArtifactCrud().readDbChild(id);
+                final DbInventoryArtifact dbInventoryArtifact = globalInventoryService.getArtifactCrud().readDbChild(id);
                 if (dbInventoryArtifact.getImageData() != null) {
-                    contentType = dbInventoryArtifact.getImageContentType();
-                    contentData = dbInventoryArtifact.getImageData();
+                    ResourceResponse response = new ResourceResponse();
+                    response.setContentType(dbInventoryArtifact.getImageContentType());
+                    response.setWriteCallback(new WriteCallback() {
+                        @Override
+                        public void writeData(final Attributes attributes) {
+                            attributes.getResponse().write(dbInventoryArtifact.getImageData());
+                        }
+                    });
+                    return response;
                 }
                 break;
             }
             case Constants.INVENTORY_TYPE_ITEM: {
-                DbInventoryItem dbInventoryItem = globalInventoryService.getItemCrud().readDbChild(id);
+                final DbInventoryItem dbInventoryItem = globalInventoryService.getItemCrud().readDbChild(id);
                 if (dbInventoryItem.getImageData() != null) {
-                    contentType = dbInventoryItem.getImageContentType();
-                    contentData = dbInventoryItem.getImageData();
+                    ResourceResponse response = new ResourceResponse();
+                    response.setContentType(dbInventoryItem.getImageContentType());
+                    response.setWriteCallback(new WriteCallback() {
+                        @Override
+                        public void writeData(final Attributes attributes) {
+                            attributes.getResponse().write(dbInventoryItem.getImageData());
+                        }
+                    });
+                    return response;
                 }
                 break;
             }
-            default:
-                throw new IllegalArgumentException("Type:" + type + " id: " + id);
         }
-        if (contentType != null && contentData != null) {
-            setFormat(contentType);
-            return contentData;
-        } else {
-            return new byte[]{};
-        }
+
+        ExceptionHandler.handleException("Can not deliver inventory image resource: " + attributes.getParameters().toString());
+        ResourceResponse response = new ResourceResponse();
+        response.setError(HttpServletResponse.SC_NOT_FOUND);
+        return response;
     }
+
+
 }

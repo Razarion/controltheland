@@ -50,6 +50,10 @@ public class SoundLibrary extends MgmtWebPage {
 
                     @Override
                     public void setObject(List<FileUpload> list) {
+                        if(list == null) {
+                            // Don't know why
+                            return;
+                        }
                         dbSoundItem.getModelObject().setDataMp3(list.get(0).getBytes());
                     }
 
@@ -69,6 +73,10 @@ public class SoundLibrary extends MgmtWebPage {
 
                     @Override
                     public void setObject(List<FileUpload> list) {
+                        if(list == null) {
+                            // Don't know why
+                            return;
+                        }
                         dbSoundItem.getModelObject().setDataOgg(list.get(0).getBytes());
                     }
 

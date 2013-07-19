@@ -8,6 +8,7 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import org.apache.wicket.util.io.IOUtils;
+import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class TestItemImageController extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
-        createDbItemTypeImage(dbBaseItemType, 0, 0, 0, ItemTypeSpriteMap.SyncObjectState.RUN_TIME, "hoover_bagger_0001.png");
+        createDbItemTypeImage(getSessionFactory(), dbBaseItemType, 0, 0, 0, ItemTypeSpriteMap.SyncObjectState.RUN_TIME, "hoover_bagger_0001.png");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -69,16 +70,16 @@ public class TestItemImageController extends AbstractServiceTest {
         Assert.assertEquals(2533, mockHttpServletResponse.getContentAsByteArray().length);
     }
 
-    private void createDbItemTypeImage(DbBaseItemType dbBaseItemType, int angelIndex, int step, int frame, ItemTypeSpriteMap.SyncObjectState type, String imageName) throws IOException {
+    public static void createDbItemTypeImage(SessionFactory sessionFactory, DbBaseItemType dbBaseItemType, int angelIndex, int step, int frame, ItemTypeSpriteMap.SyncObjectState type, String imageName) throws IOException {
         DbItemTypeImage dbItemTypeImage = new DbItemTypeImage();
         dbItemTypeImage.setParent(dbBaseItemType);
         dbItemTypeImage.setAngelIndex(angelIndex);
         dbItemTypeImage.setStep(step);
         dbItemTypeImage.setFrame(frame);
         dbItemTypeImage.setType(type);
-        dbItemTypeImage.setData(IOUtils.toByteArray(getClass().getResource("/images/" + imageName).openStream()));
+        dbItemTypeImage.setData(IOUtils.toByteArray(TestItemImageController.class.getResource("/images/" + imageName).openStream()));
         dbItemTypeImage.setContentType("image/png");
-        getSessionFactory().getCurrentSession().save(dbItemTypeImage);
+        sessionFactory.getCurrentSession().save(dbItemTypeImage);
     }
 
 }

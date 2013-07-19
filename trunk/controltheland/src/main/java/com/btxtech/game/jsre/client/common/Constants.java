@@ -79,7 +79,6 @@ public class Constants {
     public static final String ERROR_PATH_NAME = "p";
 
     // Inventory Items
-    public static final String INVENTORY_PATH = "/inventoryImg";
     public static final String INVENTORY_ID = "id";
     public static final String INVENTORY_TYPE = "type";
     public static final String INVENTORY_TYPE_ARTIFACT = "art";

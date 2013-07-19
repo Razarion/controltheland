@@ -114,6 +114,7 @@ public class TestLevelTaskConnection extends AbstractServiceTest {
         getPackages(LevelTaskPacket.class);// Clear
         userGuidanceServiceImpl.conditionPassed(getUserState(), TEST_LEVEL_TASK_2_4_REAL_ID);
         levelTaskPackets = getPackages(LevelTaskPacket.class);
+        // TODO Failed on: 18.07.2013
         Assert.assertEquals(1, levelTaskPackets.size());
         Assert.assertTrue(levelTaskPackets.get(0).isCompleted());
         Assert.assertNull(levelTaskPackets.get(0).getQuestInfo());

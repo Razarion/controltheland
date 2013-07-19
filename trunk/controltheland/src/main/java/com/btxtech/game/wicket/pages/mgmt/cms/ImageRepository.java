@@ -53,6 +53,10 @@ public class ImageRepository extends MgmtWebPage {
 
                     @Override
                     public void setObject(List<FileUpload> list) {
+                        if(list == null) {
+                            // Don't know why
+                            return;
+                        }
                         dbCmsImageItem.getModelObject().setContentType(list.get(0).getContentType());
                         dbCmsImageItem.getModelObject().setData(list.get(0).getBytes());
                     }

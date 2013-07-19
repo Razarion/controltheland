@@ -9,5 +9,7 @@
     <inherits name="com.google.gwt.logging.Logging"/>
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
 
+    <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
+
     <entry-point class="com.btxtech.game.jsre.imagespritemapeditor.ImageSpriteMapEditor" />
 </module>

@@ -14,20 +14,22 @@ package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsImage;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.Utils;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * User: beat Date: 01.06.2011 Time: 10:49:56
  */
-public class CmsImageResource extends DynamicImageResource {
+public class CmsImageResource extends AbstractResource {
     public static final String CMS_SHARED_IMAGE_RESOURCES = "cmsimg";
-    public static final String PATH = "/cmsimg";
     public static final String ID = "id";
 
     @SpringBean
@@ -45,10 +47,26 @@ public class CmsImageResource extends DynamicImageResource {
     }
 
     @Override
-    protected byte[] getImageData(Attributes attributes) {
-        int imgId = Utils.parseIntSave(attributes.getParameters().get(ID).toString());
-        DbCmsImage dbCmsImage = cmsService.getDbCmsImage(imgId);
-        setFormat(dbCmsImage.getContentType());
-        return dbCmsImage.getData();
+    protected ResourceResponse newResourceResponse(Attributes attributes) {
+        try {
+            int imgId = Utils.parseIntSave(attributes.getParameters().get(ID).toString());
+            final DbCmsImage dbCmsImage = cmsService.getDbCmsImage(imgId);
+            ResourceResponse response = new ResourceResponse();
+            response.setContentType(dbCmsImage.getContentType());
+            response.setWriteCallback(new WriteCallback() {
+                @Override
+                public void writeData(final Attributes attributes) {
+                    attributes.getResponse().write(dbCmsImage.getData());
+                }
+            });
+            return response;
+
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            ResourceResponse response = new ResourceResponse();
+            response.setError(HttpServletResponse.SC_NOT_FOUND);
+            return response;
+        }
+
     }
 }

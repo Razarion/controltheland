@@ -962,6 +962,8 @@ public class TestRegisterService extends AbstractServiceTest {
     @DirtiesContext
     public void removeOldDbForgotPasswordMultiple() throws Exception {
         configureSimplePlanetNoResources();
+        setPrivateStaticField(RegisterServiceImpl.class, "CLEANUP_DELAY", 100);
+        ((RegisterServiceImpl) deAopProxy(registerService)).cleanup();
 
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
         gregorianCalendar.add(GregorianCalendar.DAY_OF_YEAR, -1);
@@ -1008,10 +1010,9 @@ public class TestRegisterService extends AbstractServiceTest {
         endHttpSession();
 
         long timeBefore = System.currentTimeMillis();
-        setPrivateStaticField(RegisterServiceImpl.class, "CLEANUP_DELAY", 100);
-        ((RegisterServiceImpl) deAopProxy(registerService)).cleanup();
+        Thread.sleep(200); // Due to time check
         ((RegisterServiceImpl) deAopProxy(registerService)).init();
-        Thread.sleep(200);
+        Thread.sleep(200); // Due to time check
         long timeAfter = System.currentTimeMillis();
 
         // Verify DB

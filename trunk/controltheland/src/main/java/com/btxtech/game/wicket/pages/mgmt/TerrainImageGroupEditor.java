@@ -89,6 +89,10 @@ public class TerrainImageGroupEditor extends MgmtWebPage {
 
                     @Override
                     public void setObject(List<FileUpload> list) {
+                        if(list == null) {
+                            // Don't know why
+                            return;
+                        }
                         ImageIcon image = new ImageIcon(list.get(0).getBytes());
                         item.getModelObject().setImageData(list.get(0).getBytes());
                         item.getModelObject().setContentType(list.get(0).getContentType());
