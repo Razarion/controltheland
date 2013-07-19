@@ -39,12 +39,14 @@ import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.authorization.IUnauthorizedComponentInstantiationListener;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
+import org.apache.wicket.core.request.mapper.MountedMapper;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.UrlPathPageParametersEncoder;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
@@ -80,25 +82,26 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
         getResourceSettings().setThrowExceptionOnMissingResource(false);
         getComponentInstantiationListeners().add(new SpringComponentInjector(this, applicationContext, true));
         getApplicationSettings().setAccessDeniedPage(CmsPage.class);
-        mountResource(CmsImageResource.PATH, new ResourceReference(Application.class, CmsImageResource.CMS_SHARED_IMAGE_RESOURCES) {
+        mountResource(CmsUtil.MOUNT_CMS_IMAGES, new ResourceReference(Application.class, CmsImageResource.CMS_SHARED_IMAGE_RESOURCES) {
             @Override
             public IResource getResource() {
                 return new CmsImageResource();
             }
         });
-        mountResource(CmsItemTypeImageResource.PATH, new ResourceReference(Application.class, CmsItemTypeImageResource.CMS_SHARED_IMAGE_RESOURCES) {
+        mountResource(CmsUtil.MOUNT_SINGLE_ITEM_TYPE_IMAGES, new ResourceReference(Application.class, CmsItemTypeImageResource.CMS_SHARED_IMAGE_RESOURCES) {
             @Override
             public IResource getResource() {
                 return new CmsItemTypeImageResource();
             }
         });
-        mountResource(InventoryImageResource.SHARED_IMAGE_RESOURCES, new ResourceReference(Application.class, InventoryImageResource.SHARED_IMAGE_RESOURCES) {
+        mountResource(CmsUtil.MOUNT_INVENTORY_IMAGES, new ResourceReference(Application.class, CmsUtil.MOUNT_INVENTORY_IMAGES) {
             @Override
             public IResource getResource() {
                 return new InventoryImageResource();
             }
         });
         mountPage(CmsUtil.MOUNT_GAME_CMS, CmsPage.class);
+        mount(new MountedMapper("/" + CmsUtil.MOUNT_GAME_CMS, CmsPage.class, new UrlPathPageParametersEncoder()));
         mountPage(CmsUtil.MOUNT_GAME, Game.class);
         mountPage(CmsUtil.MOUNT_GAME_FACEBOOK_APP, FacebookAppStart.class);
         mountPage(CmsUtil.MOUNT_GAME_FACEBOOK_AUTO_LOGIN, FacebookAutoLogin.class);

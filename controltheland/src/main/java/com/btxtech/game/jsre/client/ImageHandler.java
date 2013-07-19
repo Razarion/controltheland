@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.google.gwt.user.client.ui.Image;
@@ -146,7 +147,8 @@ public class ImageHandler {
 
     public static String getInventoryItemUrl(int id) {
         StringBuilder url = new StringBuilder();
-        url.append(Constants.INVENTORY_PATH);
+        url.append("/");
+        url.append(CmsUtil.MOUNT_INVENTORY_IMAGES);
         url.append("?");
         url.append(Constants.INVENTORY_TYPE);
         url.append("=");
@@ -160,7 +162,8 @@ public class ImageHandler {
 
     public static String getInventoryArtifactUrl(int id) {
         StringBuilder url = new StringBuilder();
-        url.append(Constants.INVENTORY_PATH);
+        url.append("/");
+        url.append(CmsUtil.MOUNT_INVENTORY_IMAGES);
         url.append("?");
         url.append(Constants.INVENTORY_TYPE);
         url.append("=");

@@ -12,7 +12,7 @@
  */
 package com.btxtech.game.wicket.pages.cms;
 
-import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbItemType;
@@ -20,17 +20,17 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.aspectj.bridge.AbortException;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * User: beat Date: 01.06.2011 Time: 10:49:56
  */
-public class CmsItemTypeImageResource extends DynamicImageResource {
+public class CmsItemTypeImageResource extends AbstractResource {
     public static final String CMS_SHARED_IMAGE_RESOURCES = "cmsitemtypeimg";
-    public static final String PATH = "/cmsitemimg";
     private static final String ID = "id";
 
     @SpringBean
@@ -48,14 +48,24 @@ public class CmsItemTypeImageResource extends DynamicImageResource {
     }
 
     @Override
-    protected byte[] getImageData(Attributes attributes) {
+    protected ResourceResponse newResourceResponse(Attributes attributes) {
         try {
             int itmTypeId = Utils.parseIntSave(attributes.getParameters().get(ID).toString());
-            DbItemTypeImage dbItemTypeImage = serverItemTypeService.getCmsDbItemTypeImage(itmTypeId);
-            setFormat(dbItemTypeImage.getContentType());
-            return dbItemTypeImage.getData();
-        } catch (NoSuchItemTypeException e) {
-            throw new AbortException();
+            final DbItemTypeImage dbItemTypeImage = serverItemTypeService.getCmsDbItemTypeImage(itmTypeId);
+            ResourceResponse response = new ResourceResponse();
+            response.setContentType(dbItemTypeImage.getContentType());
+            response.setWriteCallback(new WriteCallback() {
+                @Override
+                public void writeData(final Attributes attributes) {
+                    attributes.getResponse().write(dbItemTypeImage.getData());
+                }
+            });
+            return response;
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            ResourceResponse response = new ResourceResponse();
+            response.setError(HttpServletResponse.SC_NOT_FOUND);
+            return response;
         }
     }
 }

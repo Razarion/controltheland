@@ -75,6 +75,10 @@ public class TerrainTileEditor extends MgmtWebPage {
 
                     @Override
                     public void setObject(List<FileUpload> list) {
+                        if(list == null) {
+                            // Don't know why
+                            return;
+                        }
                         item.getModelObject().setImageData(list.get(0).getBytes());
                         item.getModelObject().setContentType(list.get(0).getContentType());
                     }
@@ -105,7 +109,7 @@ public class TerrainTileEditor extends MgmtWebPage {
                         //Ignore
                     }
                 };
-                item.add(new DropDownChoice<SurfaceType>("surfaceType", surfaceTypeIModel, Arrays.asList(SurfaceType.values())));
+                item.add(new DropDownChoice<>("surfaceType", surfaceTypeIModel, Arrays.asList(SurfaceType.values())));
                 item.add(new TextField("htmlBackgroundColor"));
                 // alternating row color
                 item.add(new AttributeModifier("class", new Model<>(item.getIndex() % 2 == 0 ? "even" : "odd")));

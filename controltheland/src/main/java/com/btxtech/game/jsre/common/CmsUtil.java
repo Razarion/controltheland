@@ -9,14 +9,18 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
  * Time: 15:55:09
  */
 public class CmsUtil {
+    // Mountings
     public static final String MOUNT_GAME_CMS = "game_cms";
     public static final String MOUNT_GAME = "game_run";
     public static final String MOUNT_GAME_FACEBOOK_APP = "game_cms_facebook_app";
     public static final String MOUNT_GAME_FACEBOOK_AUTO_LOGIN = "game_cms_facebook_auto_login";
     public static final String MOUNT_MANAGEMENT = "game_mgmt";
+    public static final String MOUNT_INVENTORY_IMAGES = "inventoryImage";
+    public static final String MOUNT_CMS_IMAGES = "cmsimg";
+    public static final String MOUNT_SINGLE_ITEM_TYPE_IMAGES = "cmsitemimg";
+    // ???
     public static final String ID = "page";
     public static final String NO_HTML5_BROWSER_PAGE_STRING_ID = "NoHtml5Browser";
-
     public static final String TARGET_SELF = "_self";
     public static final String TARGET_BLANK = "_blank";
 
