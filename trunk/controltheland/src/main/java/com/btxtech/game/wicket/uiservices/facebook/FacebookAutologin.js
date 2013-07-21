@@ -11,7 +11,7 @@ window.fbAsyncInit = function () {
         if (response.status === 'connected') {
             var form = document.createElement('form');
             form.setAttribute('method', 'post');
-            form.setAttribute('action', '${FACEBOOK_START}');
+            form.setAttribute('action', '${FACEBOOK_AUTO_LOGIN}');
             var hiddenField = document.createElement('input');
             hiddenField.setAttribute('type', 'hidden');
             hiddenField.setAttribute('name', 'signed_request');

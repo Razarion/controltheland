@@ -66,7 +66,7 @@ public class FacebookController extends Panel {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("FACEBOOK_APP_ID", cmsUiService.getFacebookAppId());
         parameters.put("CHANNEL_URL", "//www.razarion.com/FacebookChannelFile.html");
-        parameters.put("FACEBOOK_START", CmsUtil.MOUNT_GAME_FACEBOOK_AUTO_LOGIN);
+        parameters.put("FACEBOOK_AUTO_LOGIN", "/" + CmsUtil.MOUNT_GAME_FACEBOOK_AUTO_LOGIN);
         add(new Label("facebookJsSkd", new Model<>(jsTemplate.asString(parameters))).setEscapeModelStrings(false));
 
     }
