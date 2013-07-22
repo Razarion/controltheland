@@ -42,7 +42,7 @@ public class TestChat extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getOrCreateBase(); // Setup connection
-        Thread.sleep(1000); // Wait for the account balance package
+        Thread.sleep(200); // Wait for the account balance package
         getPackagesIgnoreSyncItemInfoAndClear(false);
         sendMessageGlobal("m1");
         assertPackagesIgnoreSyncItemInfoAndClear(createMessage("m1", "Base 1", null, null, 0, ChatMessage.Type.ENEMY));
