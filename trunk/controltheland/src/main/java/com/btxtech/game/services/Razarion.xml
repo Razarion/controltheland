@@ -13,4 +13,5 @@
     <entry key="emailForgotPasswordSubjectMain2">To choose a new password and complete your request, please follow the link below:</entry>
     <entry key="baseLost">You lost your base. A new base was created.</entry>
     <entry key="guildOfferedOnlyRegistered">{0} invited you to his guild. Only registered user can can join guilds.</entry>
+    <entry key="youDefeated">You defeated {0}</entry>
 </properties>
