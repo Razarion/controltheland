@@ -40,6 +40,7 @@ import org.apache.wicket.authorization.IUnauthorizedComponentInstantiationListen
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.core.request.mapper.MountedMapper;
+import org.apache.wicket.core.request.mapper.ResourceMapper;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -82,24 +83,27 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
         getResourceSettings().setThrowExceptionOnMissingResource(false);
         getComponentInstantiationListeners().add(new SpringComponentInjector(this, applicationContext, true));
         getApplicationSettings().setAccessDeniedPage(CmsPage.class);
-        mountResource(CmsUtil.MOUNT_CMS_IMAGES, new ResourceReference(Application.class, CmsImageResource.CMS_SHARED_IMAGE_RESOURCES) {
+        ResourceReference cmsImageResourceReference = new ResourceReference(Application.class, CmsUtil.MOUNT_CMS_IMAGES) {
             @Override
             public IResource getResource() {
                 return new CmsImageResource();
             }
-        });
-        mountResource(CmsUtil.MOUNT_SINGLE_ITEM_TYPE_IMAGES, new ResourceReference(Application.class, CmsItemTypeImageResource.CMS_SHARED_IMAGE_RESOURCES) {
+        };
+        mount(new ResourceMapper("/" + CmsUtil.MOUNT_CMS_IMAGES, cmsImageResourceReference, new UrlPathPageParametersEncoder()));
+        ResourceReference cmsSingleItemImageResourceReference = new ResourceReference(Application.class, CmsUtil.MOUNT_SINGLE_ITEM_TYPE_IMAGES) {
             @Override
             public IResource getResource() {
                 return new CmsItemTypeImageResource();
             }
-        });
-        mountResource(CmsUtil.MOUNT_INVENTORY_IMAGES, new ResourceReference(Application.class, CmsUtil.MOUNT_INVENTORY_IMAGES) {
+        };
+        mount(new ResourceMapper("/" + CmsUtil.MOUNT_SINGLE_ITEM_TYPE_IMAGES, cmsSingleItemImageResourceReference, new UrlPathPageParametersEncoder()));
+        ResourceReference cmsInventoryImageResourceReference = new ResourceReference(Application.class, CmsUtil.MOUNT_INVENTORY_IMAGES) {
             @Override
             public IResource getResource() {
                 return new InventoryImageResource();
             }
-        });
+        };
+        mount(new ResourceMapper("/" + CmsUtil.MOUNT_INVENTORY_IMAGES, cmsInventoryImageResourceReference, new UrlPathPageParametersEncoder()));
         mountPage(CmsUtil.MOUNT_GAME_CMS, CmsPage.class);
         mount(new MountedMapper("/" + CmsUtil.MOUNT_GAME_CMS, CmsPage.class, new UrlPathPageParametersEncoder()));
         mountPage(CmsUtil.MOUNT_GAME, Game.class);

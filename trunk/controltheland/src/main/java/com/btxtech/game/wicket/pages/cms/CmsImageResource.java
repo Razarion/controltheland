@@ -12,6 +12,7 @@
  */
 package com.btxtech.game.wicket.pages.cms;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.common.ExceptionHandler;
@@ -29,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
  * User: beat Date: 01.06.2011 Time: 10:49:56
  */
 public class CmsImageResource extends AbstractResource {
-    public static final String CMS_SHARED_IMAGE_RESOURCES = "cmsimg";
     public static final String ID = "id";
 
     @SpringBean
@@ -38,7 +38,7 @@ public class CmsImageResource extends AbstractResource {
     public static Image createImage(String id, DbCmsImage imageId) {
         PageParameters pageParameters = new PageParameters();
         pageParameters.set(ID, imageId.getId());
-        return new Image(id, new PackageResourceReference(CMS_SHARED_IMAGE_RESOURCES), pageParameters);
+        return new Image(id, new PackageResourceReference(CmsUtil.MOUNT_CMS_IMAGES), pageParameters);
     }
 
     public CmsImageResource() {

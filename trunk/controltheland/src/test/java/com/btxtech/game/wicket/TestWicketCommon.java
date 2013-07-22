@@ -232,12 +232,46 @@ public class TestWicketCommon extends AbstractServiceTest {
         Assert.assertEquals(1, (int) dbInventoryItem.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
-        beginHttpSession();
+        // Test generating
+        Assert.assertEquals("/inventoryImage/type/item/id/1", ImageHandler.getInventoryItemUrl(1));
+        // Normal Parameter
+/*        beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals("/inventoryImage?type=item&id=1", ImageHandler.getInventoryItemUrl(1));
         getWicketTester().executeUrl("inventoryImage?type=item&id=1");
         MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("img/bmp", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(5, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{0, 1, 2, 3, 4}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Normal Parameter with session
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("inventoryImage?type=item&id=1;jsessionid=4F3860F226027C271226CB572332C2DD");
+        mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("img/bmp", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(5, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{0, 1, 2, 3, 4}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();*/
+        // Pretty url
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("inventoryImage/type/item/id/1");
+        MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("img/bmp", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(5, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{0, 1, 2, 3, 4}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Pretty url with session
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("inventoryImage/type/item/id/1;jsessionid=4F3860F226027C271226CB572332C2DD");
+        mockHttpServletResponse = getWicketTester().getLastResponse();
         Assert.assertEquals(200, mockHttpServletResponse.getStatus());
         Assert.assertEquals("img/bmp", mockHttpServletResponse.getContentType());
         Assert.assertEquals(5, mockHttpServletResponse.getBufferSize());
@@ -258,12 +292,49 @@ public class TestWicketCommon extends AbstractServiceTest {
         Assert.assertEquals(1, (int) dbInventoryArtifact.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
-        beginHttpSession();
+        // Test generating
+        Assert.assertEquals("/inventoryImage/type/art/id/1", ImageHandler.getInventoryArtifactUrl(1));
+        // Normal Parameter
+/*        beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertEquals("/inventoryImage?type=art&id=1", ImageHandler.getInventoryArtifactUrl(1));
         getWicketTester().executeUrl("inventoryImage?type=art&id=1");
         MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("img/gegel", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(6, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{10, 11, 12, 13, 14, 15}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Normal Parameter with session
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals("/inventoryImage?type=art&id=1", ImageHandler.getInventoryArtifactUrl(1));
+        getWicketTester().executeUrl("inventoryImage?type=art&id=1;jsessionid=4F3860F226027C271226CB572332C2DD");
+        mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("img/gegel", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(6, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{10, 11, 12, 13, 14, 15}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession(); */
+        // Pretty url
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("inventoryImage/type/art/id/1");
+        MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("img/gegel", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(6, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{10, 11, 12, 13, 14, 15}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Pretty url with session
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals("/inventoryImage?type=art&id=1", ImageHandler.getInventoryArtifactUrl(1));
+        getWicketTester().executeUrl("inventoryImage/type/art/id/1;jsessionid=4F3860F226027C271226CB572332C2DD");
+        mockHttpServletResponse = getWicketTester().getLastResponse();
         Assert.assertEquals(200, mockHttpServletResponse.getStatus());
         Assert.assertEquals("img/gegel", mockHttpServletResponse.getContentType());
         Assert.assertEquals(6, mockHttpServletResponse.getBufferSize());
@@ -296,16 +367,47 @@ public class TestWicketCommon extends AbstractServiceTest {
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
-        beginHttpSession();
+        // Normal Parameter
+/*        beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().executeUrl("cmsitemimg?type=art&id=1");
+        getWicketTester().executeUrl("cmsitemimg?id=1");
         MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
         Assert.assertEquals(200, mockHttpServletResponse.getStatus());
         Assert.assertEquals("image/png", mockHttpServletResponse.getContentType());
         Assert.assertEquals(2799, mockHttpServletResponse.getBufferSize());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+        // Normal Parameter with session
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("cmsitemimg?id=1;jsessionid=4F3860F226027C271226CB572332C2DD");
+        mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("image/png", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(2799, mockHttpServletResponse.getBufferSize());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession(); */
+        // Pretty url
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("cmsitemimg/id/1");
+        MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("image/png", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(2799, mockHttpServletResponse.getBufferSize());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Pretty url with session
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("cmsitemimg/id/1;jsessionid=4F3860F226027C271226CB572332C2DD");
+        mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("image/png", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(2799, mockHttpServletResponse.getBufferSize());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
 
     @Test
@@ -321,7 +423,7 @@ public class TestWicketCommon extends AbstractServiceTest {
         Assert.assertEquals(1, (int)dbCmsImage.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
+ /*       // Normal Parameter
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getWicketTester().executeUrl("cmsimg?id=1");
@@ -332,25 +434,21 @@ public class TestWicketCommon extends AbstractServiceTest {
         Assert.assertArrayEquals(new byte[]{10, 12, 13, 14, 15}, mockHttpServletResponse.getBinaryContent());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testParameterMounting() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        DbCmsImage dbCmsImage = cmsService.getImageCrudRootServiceHelper().createDbChild();
-        dbCmsImage.setData(new byte[]{10, 12, 13, 14, 15});
-        dbCmsImage.setContentType("ich/gegel");
-        cmsService.getImageCrudRootServiceHelper().updateDbChild(dbCmsImage);
-        cmsService.activateCms();
-        Assert.assertEquals(1, (int)dbCmsImage.getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
+        // Normal Parameter with session
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getWicketTester().executeUrl("cmsimg?id=1");
+        mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("ich/gegel", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(5, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{10, 12, 13, 14, 15}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();  */
+        // Pretty url
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("cmsimg/id/1");
         MockHttpServletResponse mockHttpServletResponse = getWicketTester().getLastResponse();
         Assert.assertEquals(200, mockHttpServletResponse.getStatus());
         Assert.assertEquals("ich/gegel", mockHttpServletResponse.getContentType());
@@ -358,5 +456,17 @@ public class TestWicketCommon extends AbstractServiceTest {
         Assert.assertArrayEquals(new byte[]{10, 12, 13, 14, 15}, mockHttpServletResponse.getBinaryContent());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+        // Pretty url with session
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("cmsimg/id/1;jsessionid=4F3860F226027C271226CB572332C2DD");
+        mockHttpServletResponse = getWicketTester().getLastResponse();
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        Assert.assertEquals("ich/gegel", mockHttpServletResponse.getContentType());
+        Assert.assertEquals(5, mockHttpServletResponse.getBufferSize());
+        Assert.assertArrayEquals(new byte[]{10, 12, 13, 14, 15}, mockHttpServletResponse.getBinaryContent());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
 }

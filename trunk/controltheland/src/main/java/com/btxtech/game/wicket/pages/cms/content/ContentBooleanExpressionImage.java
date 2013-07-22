@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
@@ -32,7 +33,7 @@ public class ContentBooleanExpressionImage extends Panel {
         }
         PageParameters pageParameters = new PageParameters();
         pageParameters.set(CmsImageResource.ID, imageId);
-        Image image = new Image("image", new PackageResourceReference(CmsImageResource.CMS_SHARED_IMAGE_RESOURCES), pageParameters);
+        Image image = new Image("image", new PackageResourceReference(CmsUtil.MOUNT_CMS_IMAGES), pageParameters);
         if (dbContentBooleanExpressionImage.getCssClass() != null) {
             image.add(new AttributeModifier("class", dbContentBooleanExpressionImage.getCssClass()));
         }

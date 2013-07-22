@@ -56,45 +56,48 @@ public class InventoryImageResource extends AbstractResource {
 
     @Override
     protected ResourceResponse newResourceResponse(Attributes attributes) {
-        int id = Utils.parseIntSave(attributes.getParameters().get(Constants.INVENTORY_ID).toString());
-        String type = Utils.parseStringSave(attributes.getParameters().get(Constants.INVENTORY_TYPE).toString());
-        switch (type) {
-            case Constants.INVENTORY_TYPE_ARTIFACT: {
-                final DbInventoryArtifact dbInventoryArtifact = globalInventoryService.getArtifactCrud().readDbChild(id);
-                if (dbInventoryArtifact.getImageData() != null) {
-                    ResourceResponse response = new ResourceResponse();
-                    response.setContentType(dbInventoryArtifact.getImageContentType());
-                    response.setWriteCallback(new WriteCallback() {
-                        @Override
-                        public void writeData(final Attributes attributes) {
-                            attributes.getResponse().write(dbInventoryArtifact.getImageData());
-                        }
-                    });
-                    return response;
+        try {
+            int id = Utils.parseIntSave(attributes.getParameters().get(Constants.INVENTORY_ID).toString());
+            String type = Utils.parseStringSave(attributes.getParameters().get(Constants.INVENTORY_TYPE).toString());
+            switch (type) {
+                case Constants.INVENTORY_TYPE_ARTIFACT: {
+                    final DbInventoryArtifact dbInventoryArtifact = globalInventoryService.getArtifactCrud().readDbChild(id);
+                    if (dbInventoryArtifact.getImageData() != null) {
+                        ResourceResponse response = new ResourceResponse();
+                        response.setContentType(dbInventoryArtifact.getImageContentType());
+                        response.setWriteCallback(new WriteCallback() {
+                            @Override
+                            public void writeData(final Attributes attributes) {
+                                attributes.getResponse().write(dbInventoryArtifact.getImageData());
+                            }
+                        });
+                        return response;
+                    }
+                    break;
                 }
-                break;
-            }
-            case Constants.INVENTORY_TYPE_ITEM: {
-                final DbInventoryItem dbInventoryItem = globalInventoryService.getItemCrud().readDbChild(id);
-                if (dbInventoryItem.getImageData() != null) {
-                    ResourceResponse response = new ResourceResponse();
-                    response.setContentType(dbInventoryItem.getImageContentType());
-                    response.setWriteCallback(new WriteCallback() {
-                        @Override
-                        public void writeData(final Attributes attributes) {
-                            attributes.getResponse().write(dbInventoryItem.getImageData());
-                        }
-                    });
-                    return response;
+                case Constants.INVENTORY_TYPE_ITEM: {
+                    final DbInventoryItem dbInventoryItem = globalInventoryService.getItemCrud().readDbChild(id);
+                    if (dbInventoryItem.getImageData() != null) {
+                        ResourceResponse response = new ResourceResponse();
+                        response.setContentType(dbInventoryItem.getImageContentType());
+                        response.setWriteCallback(new WriteCallback() {
+                            @Override
+                            public void writeData(final Attributes attributes) {
+                                attributes.getResponse().write(dbInventoryItem.getImageData());
+                            }
+                        });
+                        return response;
+                    }
+                    break;
                 }
-                break;
             }
+            throw new Exception("Can not deliver inventory image resource: " + attributes.getParameters().toString());
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            ResourceResponse response = new ResourceResponse();
+            response.setError(HttpServletResponse.SC_NOT_FOUND);
+            return response;
         }
-
-        ExceptionHandler.handleException("Can not deliver inventory image resource: " + attributes.getParameters().toString());
-        ResourceResponse response = new ResourceResponse();
-        response.setError(HttpServletResponse.SC_NOT_FOUND);
-        return response;
     }
 
 
