@@ -149,13 +149,13 @@ public class ImageHandler {
         StringBuilder url = new StringBuilder();
         url.append("/");
         url.append(CmsUtil.MOUNT_INVENTORY_IMAGES);
-        url.append("?");
+        url.append("/");
         url.append(Constants.INVENTORY_TYPE);
-        url.append("=");
+        url.append("/");
         url.append(Constants.INVENTORY_TYPE_ITEM);
-        url.append("&");
+        url.append("/");
         url.append(Constants.INVENTORY_ID);
-        url.append("=");
+        url.append("/");
         url.append(Integer.toString(id));
         return url.toString();
     }
@@ -164,13 +164,13 @@ public class ImageHandler {
         StringBuilder url = new StringBuilder();
         url.append("/");
         url.append(CmsUtil.MOUNT_INVENTORY_IMAGES);
-        url.append("?");
+        url.append("/");
         url.append(Constants.INVENTORY_TYPE);
-        url.append("=");
+        url.append("/");
         url.append(Constants.INVENTORY_TYPE_ARTIFACT);
-        url.append("&");
+        url.append("/");
         url.append(Constants.INVENTORY_ID);
-        url.append("=");
+        url.append("/");
         url.append(Integer.toString(id));
         return url.toString();
     }

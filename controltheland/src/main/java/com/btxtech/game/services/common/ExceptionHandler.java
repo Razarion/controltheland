@@ -1,6 +1,6 @@
 package com.btxtech.game.services.common;
 
-import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.mgmt.RequestHelper;
 import com.btxtech.game.services.user.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,15 +44,17 @@ public class ExceptionHandler {
     public static void logParameters(Log log, UserService userService) {
         try {
             log.error("Thread: " + Thread.currentThread().getName());
-            Session session = null;
+            RequestHelper requestHelper = null;
             if (userService != null) {
-                session = userService.getSession4ExceptionHandler();
+                requestHelper = userService.getRequestHelper4ExceptionHandler();
             }
-            if (session != null) {
-                log.error("User Agent: " + session.getUserAgent());
-                log.error("Session Id: " + session.getSessionId());
-                log.error("IP: " + session.getRequest().getRemoteAddr());
-                log.error("Referer: " + session.getRequest().getHeader("Referer"));
+            if (requestHelper != null) {
+                log.error("URI: " + requestHelper.getRequest().getRequestURI());
+                log.error("URL: " + requestHelper.getRequest().getRequestURL());
+                log.error("User Agent: " + requestHelper.getRequest().getHeader("user-agent"));
+                log.error("Session Id: " + requestHelper.getRequest().getSession().getId());
+                log.error("IP: " + requestHelper.getRequest().getRemoteAddr());
+                log.error("Referer: " + requestHelper.getRequest().getHeader("Referer"));
                 log.error("User: " + (userService.getUserName() != null ? userService.getUserName() : "unregistered"));
             }
         } catch (Exception e) {

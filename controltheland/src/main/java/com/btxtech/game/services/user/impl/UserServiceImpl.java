@@ -31,8 +31,8 @@ import com.btxtech.game.services.common.NameErrorPair;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
-import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
+import com.btxtech.game.services.mgmt.RequestHelper;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.statistics.StatisticsService;
@@ -92,6 +92,8 @@ import java.util.StringTokenizer;
 public class UserServiceImpl implements UserService {
     @Autowired
     private com.btxtech.game.services.connection.Session session;
+    @Autowired
+    private RequestHelper requestHelper;
     @Autowired
     private UserTrackingService userTrackingService;
     @Autowired
@@ -847,11 +849,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Session getSession4ExceptionHandler() {
+    public RequestHelper getRequestHelper4ExceptionHandler() {
         try {
             // To figure out if session is active
-            session.getTrackingCookieId();
-            return session;
+            requestHelper.getRequest();
+            return requestHelper;
         } catch (Throwable t) {
             return null;
         }

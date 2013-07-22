@@ -26,7 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchExc
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.common.NameErrorPair;
-import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.mgmt.RequestHelper;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import org.springframework.security.core.GrantedAuthority;
@@ -114,7 +114,7 @@ public interface UserService extends UserDetailsService {
 
     UserState createUserState(User user);
 
-    Session getSession4ExceptionHandler();
+    RequestHelper getRequestHelper4ExceptionHandler();
 
     void loginIfNotLoggedIn(User userToLogin);
 
