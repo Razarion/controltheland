@@ -1,6 +1,7 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
@@ -130,6 +131,32 @@ public class TestMessageIdPacketQueue extends AbstractServiceTest {
             assertRebootPacket(13 - i, 2, messageIdPackets.get(i));
         }
 
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void convertPacketIfNecessary() throws Exception {
+        configureSimplePlanetNoResources();
+        // Other package
+        Assert.assertNotNull(messageIdPacketQueue.convertPacketIfNecessary(new AccountBalancePacket(), null, null));
+        // Guild
+        int guildId = createGuildAnd2Users();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("member1");
+        int userId = getUserId();
+        // Same guild
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setUserId(userId);
+        chatMessage.setGuildId(guildId);
+        Assert.assertNotNull(messageIdPacketQueue.convertPacketIfNecessary(chatMessage, ChatMessageFilter.GUILD, getUserState()));
+        // Different guild
+        chatMessage = new ChatMessage();
+        chatMessage.setUserId(userId);
+        chatMessage.setGuildId(guildId + 1);
+        Assert.assertNull(messageIdPacketQueue.convertPacketIfNecessary(chatMessage, ChatMessageFilter.GUILD, getUserState()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

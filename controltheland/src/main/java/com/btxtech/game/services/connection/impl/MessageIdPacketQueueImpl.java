@@ -213,7 +213,7 @@ public class MessageIdPacketQueueImpl implements MessageIdPacketQueue {
                 }
             }
             case GUILD: {
-                SimpleGuild simpleGuild = guildService.getSimpleGuild();
+                SimpleGuild simpleGuild = guildService.getGuildId(userState);
                 if (simpleGuild == null) {
                     throw new IllegalStateException("User does not have a guild: " + userService.getUser(userState));
                 }
