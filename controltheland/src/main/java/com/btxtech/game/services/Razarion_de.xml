@@ -13,4 +13,5 @@
     <entry key="emailForgotPasswordSubjectMain2">Um den Vorgang abzuschliessen, klicke bitte auf den Link:</entry>
     <entry key="baseLost">Deine Basis wurde ausgelöscht. Eine neue Basis wurde gestartet.</entry>
     <entry key="guildOfferedOnlyRegistered">{0} hat dich in seine Gilde eingeladen. Nur registrierte Benutzer können Gilden beitreten.</entry>
+    <entry key="youDefeated">Du hast {0} besiegt</entry>
 </properties>

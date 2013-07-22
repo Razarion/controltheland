@@ -7,7 +7,6 @@
     <entry key="LOAD_JAVA_SCRIPT">Loading java script</entry>
     <entry key="registerThanks">Thanks for registering.</entry>
     <entry key="registerUserExists">The user already exists</entry>
-    <entry key="youDefeated">You defeated {0}</entry>
     <entry key="loginFailedTitle">Razarion login</entry>
     <entry key="loginFailed">Login failed. Please try again.</entry>
     <entry key="userEmailNoConfirmed">This account has not been confirmed by email. Please check your email and click the confirmation link.</entry>

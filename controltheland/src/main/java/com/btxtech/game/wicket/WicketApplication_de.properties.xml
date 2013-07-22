@@ -7,7 +7,6 @@
     <entry key="LOAD_JAVA_SCRIPT">Lade Java Script</entry>
     <entry key="registerThanks">Vielen Dank für die Registrierung</entry>
     <entry key="registerUserExists">Der gewünschte Benutzername existiert bereits</entry>
-    <entry key="youDefeated">Du hast {0} besiegt</entry>
     <entry key="loginFailedTitle">Razarion Anmeldung</entry>
     <entry key="loginFailed">Anmeldung fehlgeschlagen. Bitte versuche es erneut.</entry>
     <entry key="loginFailed">Einloggen fehlgeschlagen. Bitte erneut versuchen.</entry>
