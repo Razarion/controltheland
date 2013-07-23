@@ -332,7 +332,6 @@ public class TestWicketCommon extends AbstractServiceTest {
         // Pretty url with session
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals("/inventoryImage?type=art&id=1", ImageHandler.getInventoryArtifactUrl(1));
         getWicketTester().executeUrl("inventoryImage/type/art/id/1;jsessionid=4F3860F226027C271226CB572332C2DD");
         mockHttpServletResponse = getWicketTester().getLastResponse();
         Assert.assertEquals(200, mockHttpServletResponse.getStatus());

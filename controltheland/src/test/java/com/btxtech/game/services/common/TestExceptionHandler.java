@@ -38,10 +38,11 @@ public class TestExceptionHandler extends AbstractServiceTest {
     public void handleExceptionSession() throws Exception {
         String threadName = Thread.currentThread().getName();
         Exception exception = new Exception();
-
         Log mockLog = EasyMock.createStrictMock(Log.class);
         mockLog.error("--------------------------------------------------------------------");
         mockLog.error("Thread: " + threadName);
+        mockLog.error("URI: ");
+        mockLog.error("URL: http://localhost:80");
         mockLog.error("User Agent: null");
         mockLog.error(EasyMock.startsWith("Session Id: "));
         mockLog.error(EasyMock.startsWith("IP:"));

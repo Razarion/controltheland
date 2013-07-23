@@ -49,18 +49,22 @@ public class TestContentService extends AbstractServiceTest {
         DbBlogEntry dbBlogEntry = contentService.getBlogEntryCrudRootServiceHelper().createDbChild();
         dbBlogEntry.setName("title1");
         dbBlogEntry.setHtml("html1");
+        Thread.sleep(50);
         contentService.getBlogEntryCrudRootServiceHelper().updateDbChild(dbBlogEntry);
         dbBlogEntry = contentService.getBlogEntryCrudRootServiceHelper().createDbChild();
         dbBlogEntry.setName("title2");
         dbBlogEntry.setHtml("html2");
+        Thread.sleep(50);
         contentService.getBlogEntryCrudRootServiceHelper().updateDbChild(dbBlogEntry);
         dbBlogEntry = contentService.getBlogEntryCrudRootServiceHelper().createDbChild();
         dbBlogEntry.setName("title3");
         dbBlogEntry.setHtml("html3");
+        Thread.sleep(50);
         contentService.getBlogEntryCrudRootServiceHelper().updateDbChild(dbBlogEntry);
         dbBlogEntry = contentService.getBlogEntryCrudRootServiceHelper().createDbChild();
         dbBlogEntry.setName("title4");
         dbBlogEntry.setHtml("html4");
+        Thread.sleep(50);
         contentService.getBlogEntryCrudRootServiceHelper().updateDbChild(dbBlogEntry);
         dbBlogEntry = contentService.getBlogEntryCrudRootServiceHelper().createDbChild();
         dbBlogEntry.setName("title5");
@@ -71,6 +75,7 @@ public class TestContentService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        // TODO failed on: 23.07.20113
         NewsEntryInfo newsEntryInfo = contentService.getNewsEntry(0);
         Assert.assertEquals("title5", newsEntryInfo.getTitle());
         Assert.assertEquals("html5", newsEntryInfo.getContent());
