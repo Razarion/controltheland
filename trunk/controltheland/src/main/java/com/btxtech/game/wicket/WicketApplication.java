@@ -26,6 +26,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.FacebookAppStart;
 import com.btxtech.game.wicket.pages.FacebookAutoLogin;
 import com.btxtech.game.wicket.pages.Game;
+import com.btxtech.game.wicket.pages.InvitationStart;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import com.btxtech.game.wicket.pages.cms.CmsItemTypeImageResource;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
@@ -109,6 +110,7 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
         mountPage(CmsUtil.MOUNT_GAME, Game.class);
         mountPage(CmsUtil.MOUNT_GAME_FACEBOOK_APP, FacebookAppStart.class);
         mountPage(CmsUtil.MOUNT_GAME_FACEBOOK_AUTO_LOGIN, FacebookAutoLogin.class);
+        mountPage(CmsUtil.MOUNT_INVITATION_START, InvitationStart.class);
         mountPage(CmsUtil.MOUNT_MANAGEMENT, MgmtPage.class);
         if (!Utils.isTestModeStatic()) {
             getRequestCycleListeners().add(new MyRequestCycleListener());

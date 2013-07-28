@@ -873,6 +873,84 @@ public class HistoryServiceImpl implements HistoryService {
                 null));
     }
 
+    @Override
+    public void addFriendInvitationMailSent(User user, String emailAddress) {
+        save(new DbHistoryElement(DbHistoryElement.Type.FRIEND_INVITATION_EMAIL_SENT,
+                user,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                emailAddress));
+    }
+
+    @Override
+    public void addFriendInvitationFacebookSent(User user, String fbRequestId) {
+        save(new DbHistoryElement(DbHistoryElement.Type.FRIEND_INVITATION_FACEBOOK_SENT,
+                user,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                userService.getUserState(user).getSessionId(),
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                fbRequestId));
+    }
+
+    @Override
+    public void addFriendInvitationBonus(User host, User invitee, int bonus, int razarion) {
+        save(new DbHistoryElement(DbHistoryElement.Type.FRIEND_INVITATION_BONUS,
+                host,
+                invitee,
+                null,
+                null,
+                null,
+                null,
+                null,
+                planetSystemService,
+                null,
+                DbHistoryElement.Source.HUMAN,
+                null,
+                bonus,
+                razarion,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null));
+    }
+
     private String getSessionId(SimpleBase simpleBase) {
         if (simpleBase == null) {
             return null;
@@ -1093,6 +1171,12 @@ public class HistoryServiceImpl implements HistoryService {
                 return dbHistoryElement.getActorUserName() + " closed the " + dbHistoryElement.getGuildName() + " guild";
             case GUILD_CLOSED_MEMBER_KICKED:
                 return dbHistoryElement.getActorUserName() + " kicked " + dbHistoryElement.getTargetUserName() + " from the " + dbHistoryElement.getGuildName() + " guild. The guild will be closed";
+            case FRIEND_INVITATION_FACEBOOK_SENT:
+                return "You sent some friend invitations via Facebook";
+            case FRIEND_INVITATION_EMAIL_SENT:
+                return "You sent a friend invitation via mail to " + dbHistoryElement.getText();
+            case FRIEND_INVITATION_BONUS:
+                return "Friend invitation bonus received for " + dbHistoryElement.getTargetUserName() + ". Bonus: " + dbHistoryElement.getDeltaRazarion() + " Razarion";
             default:
                 log.warn("HistoryServiceImpl.convert() " + dbHistoryElement + " Unknown type: " + dbHistoryElement.getType());
                 return "Internal error 999999";

@@ -1063,4 +1063,41 @@ public class TestHistoryService extends AbstractServiceTest {
         return historyFilter;
     }
 
+    @Test
+    @DirtiesContext
+    public void friendInvitationServiceConvert() throws Exception {
+        configureSimplePlanetNoResources();
+        // Preparation
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("Host");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("Invitee");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Test
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        User host = userService.getUser("Host");
+        User invitee = userService.getUser("Invitee");
+        historyService.addFriendInvitationFacebookSent(host, "xxxeeerrr");
+        historyService.addFriendInvitationMailSent(host, "xxxx@yyy.com");
+        historyService.addFriendInvitationBonus(host, invitee, 10, 199);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("Host");
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Host"), 0, 1000);
+        Assert.assertEquals(3, displayHistoryElements.size());
+        Assert.assertEquals("Friend invitation bonus received for Invitee. Bonus: 10 Razarion", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("You sent a friend invitation via mail to xxxx@yyy.com", displayHistoryElements.get(1).getMessage());
+        Assert.assertEquals("You sent some friend invitations via Facebook", displayHistoryElements.get(2).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }

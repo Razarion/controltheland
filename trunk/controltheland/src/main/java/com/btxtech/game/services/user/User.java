@@ -89,6 +89,8 @@ public class User implements UserDetails, Serializable, CrudParent {
     private Date lastNews;
     @Embedded
     private DbFacebookSource dbFacebookSource;
+    @Embedded
+    private DbInvitationInfo dbInvitationInfo;
 
     public Integer getId() {
         return id;
@@ -110,17 +112,19 @@ public class User implements UserDetails, Serializable, CrudParent {
         return email;
     }
 
-    public void registerUser(String name, String password, String email) {
+    public void registerUser(String name, String password, String email, DbInvitationInfo dbInvitationInfo) {
         this.name = name;
         this.password = password;
         this.email = email;
+        this.dbInvitationInfo = dbInvitationInfo;
         registerDate = new Date();
         lastNews = registerDate;
     }
 
-    public void registerFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName, DbFacebookSource dbFacebookSource) {
+    public void registerFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName, DbFacebookSource dbFacebookSource, DbInvitationInfo dbInvitationInfo) {
         name = nickName;
         this.dbFacebookSource = dbFacebookSource;
+        this.dbInvitationInfo = dbInvitationInfo;
         socialNet = SocialNet.FACEBOOK;
         socialNetUserId = facebookSignedRequest.getUserId();
         email = facebookSignedRequest.getEmail();
@@ -264,6 +268,10 @@ public class User implements UserDetails, Serializable, CrudParent {
 
     public DbFacebookSource getDbFacebookSource() {
         return dbFacebookSource;
+    }
+
+    public DbInvitationInfo getDbInvitationInfo() {
+        return dbInvitationInfo;
     }
 
     @Override

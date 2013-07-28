@@ -14,4 +14,12 @@
     <entry key="baseLost">Deine Basis wurde ausgelöscht. Eine neue Basis wurde gestartet.</entry>
     <entry key="guildOfferedOnlyRegistered">{0} hat dich in seine Gilde eingeladen. Nur registrierte Benutzer können Gilden beitreten.</entry>
     <entry key="youDefeated">Du hast {0} besiegt</entry>
+    <entry key="invitationSubject">{0} will dass du Razarion spielst</entry>
+    <entry key="invitationTitle">Mach bei Razarion mit</entry>
+    <entry key="invitationLine1">{0} hat dich zum Razarion spielen eingeladen.</entry>
+    <entry key="invitationLine2">{0} glaubt, dass du Razarion magst und sendet dir diese Email von: </entry>
+    <entry key="invitationLinkText">Spiele</entry>
+    <entry key="invitationLine3">Razarion und tauche in eine neue Dimension von massiv Multiplayer online Echtzeit-Strategiespielen ein.</entry>
+    <entry key="invitationRazarionTeam">Dein Razarion-Team</entry>
+
 </properties>

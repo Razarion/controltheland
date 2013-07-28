@@ -36,6 +36,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryFilter;
+import com.btxtech.game.jsre.client.dialogs.incentive.FriendInvitationBonus;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
@@ -88,6 +89,7 @@ import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.GuildService;
+import com.btxtech.game.services.user.InvitationService;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.UserNameSuggestionFilter;
 import com.btxtech.game.services.user.UserService;
@@ -147,6 +149,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private HistoryService historyService;
     @Autowired
     private ContentService contentService;
+    @Autowired
+    private InvitationService invitationService;
 
     @Override
     public void sendCommands(List<BaseCommand> baseCommands) {
@@ -827,6 +831,34 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             guildService.closeGuild();
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
+        }
+    }
+
+    @Override
+    public void sendMailInvite(String emailAddress) {
+        try {
+            invitationService.sendMailInvite(emailAddress);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+        }
+    }
+
+    @Override
+    public void onFacebookInvite(String fbRequestId, Collection<String> fbUserIds) {
+        try {
+            invitationService.onFacebookInvite(fbRequestId, fbUserIds);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+        }
+    }
+
+    @Override
+    public List<FriendInvitationBonus> getFriendInvitationBonuses() {
+        try {
+            return invitationService.getFriendInvitationBonus();
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
         }
     }
 

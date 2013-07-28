@@ -24,8 +24,8 @@ import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
 import com.btxtech.game.wicket.uiservices.PlanetPanel;
-import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -47,7 +47,7 @@ public class DbLevelEditor extends MgmtWebPage {
     public DbLevelEditor(DbLevel dbLevel) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbLevel> form = new Form<>("form", new CompoundPropertyModel<DbLevel>(new RuModel<DbLevel>(dbLevel, DbLevel.class) {
+        final Form<DbLevel> form = new Form<>("form", new CompoundPropertyModel<>(new RuModel<DbLevel>(dbLevel, DbLevel.class) {
 
             @Override
             protected RuServiceHelper<DbLevel> getRuServiceHelper() {
@@ -59,6 +59,7 @@ public class DbLevelEditor extends MgmtWebPage {
         form.add(new Label("number"));
         form.add(new PlanetPanel("dbPlanet"));
         form.add(new TextField("xp"));
+        form.add(new TextField("friendInvitationBonus"));
         // Scope
         new CrudChildTableHelper<DbLevel, DbLevelItemTypeLimitation>("itemTypeLimitation", null, "createItemTypeLimitation", false, form, false) {
 

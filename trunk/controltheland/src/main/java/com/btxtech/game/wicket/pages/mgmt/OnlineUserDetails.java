@@ -11,12 +11,12 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.mgmt.tracking.SessionDetail;
 import com.btxtech.game.wicket.pages.mgmt.tracking.UserTracking;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.List;
@@ -68,7 +68,9 @@ public class OnlineUserDetails extends MgmtWebPage {
                 }
                 // Session link
                 PageParameters pageParameters = new PageParameters();
-                pageParameters.add(SessionDetail.SESSION_KEY, item.getModelObject().getSessionId());
+                if (item.getModelObject().getSessionId() != null) {
+                    pageParameters.add(SessionDetail.SESSION_KEY, item.getModelObject().getSessionId());
+                }
                 BookmarkablePageLink<SessionDetail> link = new BookmarkablePageLink<>("sessionLink", SessionDetail.class, pageParameters);
                 link.add(new Label("sessionId", item.getModelObject().getSessionId()));
                 item.add(link);
@@ -109,7 +111,9 @@ public class OnlineUserDetails extends MgmtWebPage {
                 }
                 // Session link
                 PageParameters pageParameters = new PageParameters();
-                pageParameters.add(SessionDetail.SESSION_KEY, item.getModelObject().getSessionId());
+                if (item.getModelObject().getSessionId() != null) {
+                    pageParameters.add(SessionDetail.SESSION_KEY, item.getModelObject().getSessionId());
+                }
                 BookmarkablePageLink<SessionDetail> link = new BookmarkablePageLink<>("sessionLink", SessionDetail.class, pageParameters);
                 link.add(new Label("sessionId", item.getModelObject().getSessionId()));
                 item.add(link);

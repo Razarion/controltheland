@@ -20,6 +20,9 @@ import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.user.DbInvitationInfo;
+import com.btxtech.game.services.user.InvitationService;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbFacebookSource;
@@ -54,11 +57,13 @@ public class SessionImpl implements Session, Serializable {
     @Autowired
     private HttpServletRequest request;
     @Autowired
-    UserTrackingService userTrackingService;
+    private UserTrackingService userTrackingService;
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
-    PropertyService propertyService;
+    private PropertyService propertyService;
+    @Autowired
+    private InvitationService invitationService;
     private String sessionId;
     private String userAgent;
     private boolean javaScriptDetected = false;
@@ -70,6 +75,7 @@ public class SessionImpl implements Session, Serializable {
     private boolean html5Support = true;
     private String trackingCookieId;
     private DbFacebookSource dbFacebookSource;
+    private DbInvitationInfo dbInvitationInfo;
 
     @Override
     public Connection getConnection() {
@@ -86,6 +92,7 @@ public class SessionImpl implements Session, Serializable {
         sessionId = request.getSession().getId();
         userAgent = request.getHeader("user-agent");
         handleFacebookTracking();
+        handleInvitation();
         boolean isNewUserTracking = false;
         try {
             RequestCycle requestCycle = RequestCycle.get();
@@ -126,7 +133,8 @@ public class SessionImpl implements Session, Serializable {
                 request.getRemoteAddr(),
                 request.getHeader("Referer"),
                 isNewUserTracking,
-                dbFacebookSource);
+                dbFacebookSource,
+                dbInvitationInfo);
         userTrackingService.saveBrowserDetails(dbSessionDetail);
     }
 
@@ -142,6 +150,46 @@ public class SessionImpl implements Session, Serializable {
                 } catch (Exception e) {
                     ExceptionHandler.handleException(e);
                 }
+            }
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+        }
+    }
+
+    private void handleInvitation() {
+        try {
+            if (request.getRequestURI().toLowerCase().contains(CmsUtil.MOUNT_INVITATION_START.toLowerCase())) {
+                // Mail or URL invitation
+                DbInvitationInfo dbInvitationInfo = new DbInvitationInfo();
+                String type = request.getParameter(CmsUtil.TYPE_KEY);
+                switch(type) {
+                   case CmsUtil.MAIL_VALUE:
+                       dbInvitationInfo.setSource(DbInvitationInfo.Source.MAIL);
+                       break;
+                    case CmsUtil.URL_VALUE:
+                        dbInvitationInfo.setSource(DbInvitationInfo.Source.URL);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invitation: unable to get source value from URI.");
+                }
+                String hostIdString = request.getParameter(CmsUtil.USER_KEY);
+                if (hostIdString != null) {
+                    User host = userService.getUser(Integer.parseInt(hostIdString));
+                    if (host != null) {
+                        dbInvitationInfo.setHost(host);
+                        this.dbInvitationInfo = dbInvitationInfo;
+                    } else {
+                        throw new IllegalArgumentException("Invitation: no user found for: " + hostIdString);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Invitation: no user id found in URI.");
+                }
+            } else if (request.getRequestURI().toLowerCase().contains(CmsUtil.MOUNT_GAME_FACEBOOK_APP.toLowerCase()) && request.getParameter("request_ids") != null) {
+               // Facebook invitation
+                DbInvitationInfo dbInvitationInfo = new DbInvitationInfo();
+                dbInvitationInfo.setSource(DbInvitationInfo.Source.FACEBOOK);
+                dbInvitationInfo.setHost(invitationService.getHost4FacebookRequest(request.getParameter("request_ids")));
+                this.dbInvitationInfo = dbInvitationInfo;
             }
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
@@ -234,5 +282,10 @@ public class SessionImpl implements Session, Serializable {
     @Override
     public DbFacebookSource getDbFacebookSource() {
         return dbFacebookSource;
+    }
+
+    @Override
+    public DbInvitationInfo getDbInvitationInfo() {
+        return dbInvitationInfo;
     }
 }

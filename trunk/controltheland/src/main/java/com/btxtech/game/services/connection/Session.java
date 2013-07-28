@@ -14,6 +14,7 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.services.cms.EditMode;
+import com.btxtech.game.services.user.DbInvitationInfo;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbFacebookSource;
 
@@ -56,4 +57,6 @@ public interface Session {
     void setEditMode(EditMode editMode);
 
     DbFacebookSource getDbFacebookSource();
+
+    DbInvitationInfo getDbInvitationInfo();
 }

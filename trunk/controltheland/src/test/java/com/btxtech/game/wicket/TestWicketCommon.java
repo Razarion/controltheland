@@ -136,6 +136,8 @@ public class TestWicketCommon extends AbstractServiceTest {
         getWicketTester().assertRenderedPage(CmsPage.class);
         getWicketTester().executeUrl("game_run");
         getWicketTester().assertRenderedPage(Game.class);
+        getWicketTester().executeUrl("game_cms_invitation");
+        getWicketTester().assertRenderedPage(Game.class);
         try {
             getWicketTester().executeUrl("game_cms_facebook_app");
             Assert.fail("WicketRuntimeException expected");

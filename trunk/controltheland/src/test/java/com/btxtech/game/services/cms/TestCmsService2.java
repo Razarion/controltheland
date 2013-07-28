@@ -1680,7 +1680,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         planet.setServerPlanetServices(serverPlanetServices);
 
         User user1 = new User();
-        user1.registerUser("aaa", null, null);
+        user1.registerUser("aaa", null, null, null);
         userState = new UserState();
         userState.setUser(1);
         Base base1 = new Base(userState, planet, 1);
@@ -1693,7 +1693,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         userStates.add(userState);
 
         User user2 = new User();
-        user2.registerUser("xxx", null, null);
+        user2.registerUser("xxx", null, null, null);
         userState = new UserState();
         userState.setUser(2);
         Base base2 = new Base(userState, planet, 2);
@@ -2028,7 +2028,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         planet.setServerPlanetServices(serverPlanetServices);
 
         User user1 = new User();
-        user1.registerUser("aaa", null, null);
+        user1.registerUser("aaa", null, null, null);
         UserState userState = new UserState();
         userState.setDbLevelId(TEST_LEVEL_1_SIMULATED_ID);
         userStates.add(userState);
@@ -2044,7 +2044,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         userStates.add(userState);
 
         User user2 = new User();
-        user2.registerUser("xxx", null, null);
+        user2.registerUser("xxx", null, null, null);
         userState = new UserState();
         userState.setUser(2);
         Base base2 = new Base(userState, planet, 2);

@@ -66,6 +66,7 @@ public class DbLevel implements CrudChild, CrudParent {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbLevelItemTypeLimitation> levelItemTypeLimitation;
     private int xp;
+    private int friendInvitationBonus;
 
     @Transient
     private CrudChildServiceHelper<DbLevelItemTypeLimitation> itemTypeLimitationCrud;
@@ -190,6 +191,14 @@ public class DbLevel implements CrudChild, CrudParent {
 
     public void setXp(int xp) {
         this.xp = xp;
+    }
+
+    public int getFriendInvitationBonus() {
+        return friendInvitationBonus;
+    }
+
+    public void setFriendInvitationBonus(int friendInvitationBonus) {
+        this.friendInvitationBonus = friendInvitationBonus;
     }
 
     public DbLevelTask getFirstTutorialLevelTask(Collection<Integer> levelTaskDone) {

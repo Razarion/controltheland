@@ -29,6 +29,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildsResult;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryFilter;
+import com.btxtech.game.jsre.client.dialogs.incentive.FriendInvitationBonus;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
@@ -190,4 +191,10 @@ public interface MovableService extends RemoteService {
     void leaveGuild();
 
     void closeGuild();
+
+    void sendMailInvite(String emailAddress);
+
+    void onFacebookInvite(String fbRequestId, Collection<String> fbUserIds);
+
+    List<FriendInvitationBonus> getFriendInvitationBonuses();
 }

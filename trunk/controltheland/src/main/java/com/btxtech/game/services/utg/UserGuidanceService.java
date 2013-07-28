@@ -17,12 +17,13 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
+import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -45,6 +46,8 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
     DbLevel getDbLevel();
 
     DbLevel getDbLevel(UserState userState);
+
+    DbLevel getDbLevel(User user);
 
     DbLevel getDbLevel(int levelId);
 

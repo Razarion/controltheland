@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.common;
 
 import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 
 /**
@@ -9,11 +10,13 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
  * Time: 15:55:09
  */
 public class CmsUtil {
+    public static final String RAZARION_URL = "http://www.razarion.com";
     // Mountings
     public static final String MOUNT_GAME_CMS = "game_cms";
     public static final String MOUNT_GAME = "game_run";
     public static final String MOUNT_GAME_FACEBOOK_APP = "game_cms_facebook_app";
     public static final String MOUNT_GAME_FACEBOOK_AUTO_LOGIN = "game_cms_facebook_auto_login";
+    public static final String MOUNT_INVITATION_START = "game_cms_invitation";
     public static final String MOUNT_MANAGEMENT = "game_mgmt";
     public static final String MOUNT_INVENTORY_IMAGES = "inventoryImage";
     public static final String MOUNT_CMS_IMAGES = "cmsimg";
@@ -37,6 +40,11 @@ public class CmsUtil {
     // Keys
     public static final String EMAIL_VERIFICATION_KEY = "verification_code";
     public static final String FORGOT_PASSWORD_UUID_KEY = "uuid";
+    public static final String USER_KEY = "user";
+    public static final String TYPE_KEY = "type";
+    // Values
+    public static final String MAIL_VALUE = "mail";
+    public static final String URL_VALUE = "url";
 
     public static String getChildUrlParameter(int level) {
         if (level == 0) {
@@ -69,7 +77,7 @@ public class CmsUtil {
         FORGOT_PASSWORD_REQUEST,
         FORGOT_PASSWORD_CHANGE,
         LOGIN_FAILED
-        }
+    }
 
     public static String getUrl4CmsPage(String id) {
         StringBuilder builder = new StringBuilder();
@@ -139,6 +147,22 @@ public class CmsUtil {
         builder.append("\" target=\"_blank\" style=\"color: #FFFFAA; text-decoration: none;\">");
         builder.append(text);
         builder.append("</a>");
+        return builder.toString();
+    }
+
+    public static String generateInviteUrl(SimpleUser simpleUser, String type) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(CmsUtil.RAZARION_URL);
+        builder.append("/");
+        builder.append(MOUNT_INVITATION_START);
+        builder.append("/?");
+        builder.append(USER_KEY);
+        builder.append('=');
+        builder.append(simpleUser.getId());
+        builder.append('&');
+        builder.append(TYPE_KEY);
+        builder.append('=');
+        builder.append(type);
         return builder.toString();
     }
 

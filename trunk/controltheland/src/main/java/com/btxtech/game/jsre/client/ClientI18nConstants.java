@@ -543,6 +543,10 @@ public interface ClientI18nConstants extends Messages {
 
     String menuGuildInvitations();
 
+    String menuInviteFriends();
+
+    String menuInviteFriendsTooltip();
+
     // News Dialog
     String newsDialogTitle();
 
@@ -666,4 +670,45 @@ public interface ClientI18nConstants extends Messages {
     String chatMessageFilter();
 
     String chatMessageFilterNoGuild();
+
+    // Invite friends
+    String inviteFriends();
+
+    String inviteFriendsOnlyRegisteredVerified();
+
+    String inviteFriendsOnlyRegistered();
+
+    String inviteFriendsDescription();
+
+    String inviteFriendsViaFacebook();
+
+    String inviteFriendsViaMail();
+
+    String inviteFriendsViaUrl();
+
+    String inviteUrlDescription();
+
+    String tabInvite();
+
+    String tabComplete();
+
+    String sendButton();
+
+    String generateButton();
+
+    String invitationRazarionBonus();
+
+    String razarionBonus();
+
+    String fbInviteTitle();
+
+    String fbInviteMessage();
+
+    String inviteFriendsEmailNotValid();
+
+    String invitationEmailSent(String address);
+
+    String invitationFacebookSent();
+
+    String noFriendInvited();
 }

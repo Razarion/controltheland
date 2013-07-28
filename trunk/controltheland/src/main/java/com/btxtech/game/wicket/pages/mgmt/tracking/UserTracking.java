@@ -98,6 +98,8 @@ public class UserTracking extends MgmtWebPage {
         add(new Label("dbFacebookSource.fbSource"));
         add(new Label("dbFacebookSource.optionalAdValue"));
         add(new Label("dbFacebookSource.wholeString"));
+        add(new Label("dbInvitationInfo.host.username"));
+        add(new Label("dbInvitationInfo.source"));
         add(new Label("inGameTime", new LoadableDetachableModel<String>() {
             @Override
             protected String load() {

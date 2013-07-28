@@ -42,6 +42,7 @@ import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbGuildMember;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.GuildService;
+import com.btxtech.game.services.user.InvitationService;
 import com.btxtech.game.services.user.NotAuthorizedException;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserNameSuggestionFilter;
@@ -118,6 +119,8 @@ public class UserServiceImpl implements UserService {
     private ServerGlobalConnectionService serverGlobalConnectionService;
     @Autowired
     private GuildService guildService;
+    @Autowired
+    private InvitationService invitationService;
     @Value(value = "${security.md5salt}")
     private String md5HashSalt;
     private final Collection<UserState> userStates = new ArrayList<>();
@@ -314,7 +317,7 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         String passwordHash = new Md5PasswordEncoder().encodePassword(password, md5HashSalt);
-        user.registerUser(name, passwordHash, email);
+        user.registerUser(name, passwordHash, email, session.getDbInvitationInfo());
         privateSave(user);
         userTrackingService.onUserCreated(user);
 
@@ -353,7 +356,7 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         String passwordHash = new Md5PasswordEncoder().encodePassword(password, md5HashSalt);
-        user.registerUser(name, passwordHash, email);
+        user.registerUser(name, passwordHash, email, session.getDbInvitationInfo());
         user.setAwaitingVerification();
         privateSave(user);
         userTrackingService.onUserCreated(user);
@@ -393,8 +396,9 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.registerFacebookUser(facebookSignedRequest, nickName, session.getDbFacebookSource());
+        user.registerFacebookUser(facebookSignedRequest, nickName, session.getDbFacebookSource(), session.getDbInvitationInfo());
         privateSave(user);
+        invitationService.onUserRegisteredAndVerified(user);
         userTrackingService.onUserCreated(user);
 
         getUserState().setUser(user.getId());
@@ -906,7 +910,7 @@ public class UserServiceImpl implements UserService {
     public DetailedUser createDetailedUser(User user) {
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(user);
         return new DetailedUser(user.createSimpleUser(),
-                userGuidanceService.getDbLevel(getUserState(user)).getNumber(),
+                userGuidanceService.getDbLevel(user).getNumber(),
                 serverPlanetServices != null ? serverPlanetServices.getPlanetInfo().getName() : null);
     }
 

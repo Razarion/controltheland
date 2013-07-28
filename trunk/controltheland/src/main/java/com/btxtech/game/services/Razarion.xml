@@ -14,4 +14,11 @@
     <entry key="baseLost">You lost your base. A new base was created.</entry>
     <entry key="guildOfferedOnlyRegistered">{0} invited you to his guild. Only registered user can can join guilds.</entry>
     <entry key="youDefeated">You defeated {0}</entry>
+    <entry key="invitationSubject">{0} wants you to join Razarion</entry>
+    <entry key="invitationTitle">Join Razarion</entry>
+    <entry key="invitationLine1">{0} has recruited you to play Razarion.</entry>
+    <entry key="invitationLine2">{0} thinks you will like Razarion and is sending you this e-mail from: </entry>
+    <entry key="invitationLinkText">Join</entry>
+    <entry key="invitationLine3">Razarion and experience an all-new way to play a massive multiplayer online real-time strategy game.</entry>
+    <entry key="invitationRazarionTeam">With kind regards your Razarion team</entry>
 </properties>

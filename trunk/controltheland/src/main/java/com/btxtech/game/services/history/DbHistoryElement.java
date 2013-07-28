@@ -93,7 +93,10 @@ public class DbHistoryElement implements Serializable {
         GUILD_TEXT_CHANGED,
         GUILD_LEFT,
         GUILD_CLOSED,
-        GUILD_CLOSED_MEMBER_KICKED
+        GUILD_CLOSED_MEMBER_KICKED,
+        FRIEND_INVITATION_EMAIL_SENT,
+        FRIEND_INVITATION_FACEBOOK_SENT,
+        FRIEND_INVITATION_BONUS
     }
 
     public static final Collection<?> ALL_GUILD_TYPES = Arrays.asList(Type.GUILD_CREATED,

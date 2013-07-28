@@ -28,6 +28,7 @@
         		<g:MenuItem text="{msg.menuGuildInvitations}" ui:field="guildInvitation"/>
         	</g:MenuBar>
         </g:MenuItem>
+        <g:MenuItem text="{msg.menuInviteFriends}" ui:field="inviteFriends" title="{msg.menuInviteFriendsTooltip}"/>
     </g:MenuBar>
     <!-- /g:HTMLPanel -->
 </ui:UiBinder> 
