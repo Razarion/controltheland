@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildInvitationsDialog;
 import com.btxtech.game.jsre.client.dialogs.guild.MyGuildDialog;
 import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildDialog;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryDialog;
+import com.btxtech.game.jsre.client.dialogs.incentive.InviteFriendsDialog;
 import com.btxtech.game.jsre.client.dialogs.news.NewsDialog;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.core.client.GWT;
@@ -57,6 +58,8 @@ public class MenuBarPanel extends Composite {
     MenuItem createGuild;
     @UiField
     MenuItem guildInvitation;
+    @UiField
+    MenuItem inviteFriends;
 
     interface MenuBarPanelUiBinder extends UiBinder<Widget, MenuBarPanel> {
     }
@@ -66,21 +69,21 @@ public class MenuBarPanel extends Composite {
 
         logout.setVisible(false);
 
-        register.setCommand(new Command() {
+        register.setScheduledCommand(new Command() {
 
             @Override
             public void execute() {
                 DialogManager.showDialog(new RegisterDialog(), DialogManager.Type.PROMPTLY);
             }
         });
-        login.setCommand(new Command() {
+        login.setScheduledCommand(new Command() {
 
             @Override
             public void execute() {
                 DialogManager.showDialog(new LoginDialog(), DialogManager.Type.PROMPTLY);
             }
         });
-        logout.setCommand(new Command() {
+        logout.setScheduledCommand(new Command() {
 
             @Override
             public void execute() {
@@ -90,7 +93,7 @@ public class MenuBarPanel extends Composite {
                         new ClickHandler() {
                             @Override
                             public void onClick(ClickEvent event) {
-                                if(Connection.getMovableServiceAsync() != null) {
+                                if (Connection.getMovableServiceAsync() != null) {
                                     Connection.getMovableServiceAsync().logout(new AsyncCallback<Void>() {
                                         @Override
                                         public void onFailure(Throwable caught) {
@@ -110,21 +113,21 @@ public class MenuBarPanel extends Composite {
                 ), DialogManager.Type.PROMPTLY);
             }
         });
-        newBase.setCommand(new Command() {
+        newBase.setScheduledCommand(new Command() {
 
             @Override
             public void execute() {
                 DialogManager.showDialog(new StartNewBaseDialog(), DialogManager.Type.STACK_ABLE);
             }
         });
-        news.setCommand(new Command() {
+        news.setScheduledCommand(new Command() {
 
             @Override
             public void execute() {
                 DialogManager.showDialog(new NewsDialog(), DialogManager.Type.STACK_ABLE);
             }
         });
-        history.setCommand(new Command() {
+        history.setScheduledCommand(new Command() {
 
             @Override
             public void execute() {
@@ -132,7 +135,7 @@ public class MenuBarPanel extends Composite {
             }
         });
 
-        myGuild.setCommand(new Command() {
+        myGuild.setScheduledCommand(new Command() {
 
             @Override
             public void execute() {
@@ -140,7 +143,7 @@ public class MenuBarPanel extends Composite {
             }
         });
 
-        searchGuild.setCommand(new Command() {
+        searchGuild.setScheduledCommand(new Command() {
 
             @Override
             public void execute() {
@@ -148,7 +151,7 @@ public class MenuBarPanel extends Composite {
             }
         });
 
-        createGuild.setCommand(new Command() {
+        createGuild.setScheduledCommand(new Command() {
 
             @Override
             public void execute() {
@@ -156,14 +159,19 @@ public class MenuBarPanel extends Composite {
             }
         });
 
-        guildInvitation.setCommand(new Command() {
+        guildInvitation.setScheduledCommand(new Command() {
 
             @Override
             public void execute() {
                 DialogManager.showDialog(new GuildInvitationsDialog(), DialogManager.Type.STACK_ABLE);
             }
         });
-
+        inviteFriends.setScheduledCommand(new Command() {
+            @Override
+            public void execute() {
+                InviteFriendsDialog.showDialog();
+            }
+        });
 
         setSimpleUser(null);
     }

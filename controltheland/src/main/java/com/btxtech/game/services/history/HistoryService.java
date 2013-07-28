@@ -110,6 +110,12 @@ public interface HistoryService {
 
     void addKickedGuildClosed(User actorUser, User targetUser, DbGuild dbGuild);
 
+    void addFriendInvitationMailSent(User user, String emailAddress);
+
+    void addFriendInvitationFacebookSent(User user, String fbRequestId);
+
+    void addFriendInvitationBonus(User host, User invitee, int bonus, int razarion);
+
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int start, int count);
 
     List<DisplayHistoryElement> getHistoryElements(GameHistoryFrame gameHistoryFrame, GameHistoryFilter gameHistoryFilter);

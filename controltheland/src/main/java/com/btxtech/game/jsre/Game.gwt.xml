@@ -24,7 +24,8 @@
     <!--inherits name="com.google.gwt.precompress.Precompress"/-->
     <!-- <inherits name='com.google.gwt.base.theme.chrome.Chrome'/> -->
     <!-- <inherits name='com.google.gwt.base.theme.dark.Dark'/>     -->
-
+    <add-linker name="xsiframe"/>
+    <set-configuration-property name="devModeRedirectEnabled" value="true"/>
     <!-- Other module inherits                                      -->
 
     <!-- Logging Properties-->

@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.common;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
@@ -10,12 +11,16 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.NickNameDialog;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
+import com.btxtech.game.jsre.client.dialogs.incentive.InviteFriendsDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 /**
@@ -31,19 +36,32 @@ public class FacebookUtils {
 
     public static void invite() {
         if (checkFbApiLoaded("invite")) {
-            nativeInvite("Play Razarion with me!", "Been having a blast playing Razarion, come check it out.");
+            nativeInvite(ClientI18nHelper.CONSTANTS.fbInviteTitle(), ClientI18nHelper.CONSTANTS.fbInviteMessage());
         }
     }
 
     native private static void nativeInvite(String title, String message)/*-{
-        $wnd.FB.ui({method:'apprequests',
-                    title:title,
-                    message:message},
-                $wnd.RazFacebookUtilFbCallback);
+        $wnd.FB.ui({method: 'apprequests',
+                title: title,
+                message: message},
+            $wnd.RazFacebookUtilFbCallback);
     }-*/;
 
     public static void fbUiCallBack(JavaScriptObject object) {
-        GwtCommon.sendDebug(GwtCommon.DEBUG_FACEBOOK_INVITE, new JSONObject(object).toString());
+        if (object != null) {
+            try {
+                JSONObject jsonObject = new JSONObject(object);
+                String fbRequestId = jsonObject.get("request").isString().stringValue();
+                JSONArray userIds = jsonObject.get("to").isArray();
+                Collection<String> fbUserIds = new ArrayList<String>();
+                for (int i = 0; i < userIds.size(); i++) {
+                    fbUserIds.add(userIds.get(i).isString().stringValue());
+                }
+                Connection.getInstance().sendFacebookInvite(fbRequestId, fbUserIds);
+            } catch (Exception e) {
+                ClientExceptionHandler.handleException("FacebookUtils invite handle return value", e);
+            }
+        }
     }
 
     public static void login(RegisterDialog registerDialog) {
@@ -63,7 +81,7 @@ public class FacebookUtils {
                             $wnd.RazFacebookUtilFbCallbackLogin(response1.authResponse.signedRequest, response2.email, registerDialog);
                         });
                     }
-                }, {scope:'email'});
+                }, {scope: 'email'});
             }
         });
     }-*/;
@@ -109,10 +127,11 @@ public class FacebookUtils {
                 return;
             }
             if (checkFbApiLoaded("postToFeedLevelTaskDone")) {
+                // TODO localise
                 nativePostToFeed(Connection.getInstance().getUserName() + " completed a level task on Razarion",
                         "'" + questInfo.getTitle() + "' completed on " + ClientPlanetServices.getInstance().getPlanetInfo().getName(),
                         "Build your base, attack other players and gather resources. A browser multiplayer real-time strategy game.",
-                        RAZARION_APP_URL,
+                        RAZARION_APP_URL, // TODO is this needed?
                         ImageHandler.getFacebookFeedImageUrl());
             }
         } catch (Exception e) {
@@ -129,10 +148,11 @@ public class FacebookUtils {
                 return;
             }
             if (checkFbApiLoaded("postToFeedLevelUp")) {
+                // TODO localise
                 nativePostToFeed(Connection.getInstance().getUserName() + " leveled up on Razarion",
                         "Reached level " + levelScope.getNumber() + " on " + ClientPlanetServices.getInstance().getPlanetInfo().getName(),
                         "Build your base, attack other players and gather resources. A browser multiplayer real-time strategy game.",
-                        RAZARION_APP_URL,
+                        RAZARION_APP_URL, // TODO is this needed?
                         ImageHandler.getFacebookFeedImageUrl());
             }
         } catch (Exception e) {
@@ -145,12 +165,12 @@ public class FacebookUtils {
         $wnd.FB.getLoginStatus(function (response) {
             if (response.status === 'connected') {
                 var obj = {
-                    method:'feed',
-                    link:link,
-                    picture:picture,
-                    name:name,
-                    caption:caption,
-                    description:description
+                    method: 'feed',
+                    link: link,
+                    picture: picture,
+                    name: name,
+                    caption: caption,
+                    description: description
                 };
                 $wnd.FB.ui(obj, $wnd.RazFacebookUtilFbCallbackPostToFeed);
             }

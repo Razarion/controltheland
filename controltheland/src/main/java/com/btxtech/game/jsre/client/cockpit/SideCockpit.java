@@ -95,8 +95,6 @@ public class SideCockpit {
     // Social net
     private static final int BNT_FB_COMMUNITY_X = 185;
     private static final int BNT_FB_COMMUNITY_Y = 213;
-    private static final int BNT_FB_INVITE_X = 177;
-    private static final int BNT_FB_INVITE_Y = 49;
     // Debug
     private static final int DEBUG_X = 10;
     private static final int DEBUG_Y = 200;
@@ -255,12 +253,6 @@ public class SideCockpit {
     private void setupSocialNetPanel() {
         WebBrowserCustomButton facebookCommunity = new WebBrowserCustomButton("facebookcommunity", ClientI18nHelper.CONSTANTS.tooltipFacebookCommunity(), "http://www.facebook.com/Razarion");
         mainPanel.add(facebookCommunity, BNT_FB_COMMUNITY_X, BNT_FB_COMMUNITY_Y);
-        mainPanel.add(new ExtendedCustomButton("facebookinvite", false, ClientI18nHelper.CONSTANTS.tooltipFacebookInvite(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                FacebookUtils.invite();
-            }
-        }), BNT_FB_INVITE_X, BNT_FB_INVITE_Y);
     }
 
     public void debugAbsoluteCursorPos(int x, int y) {

@@ -20,7 +20,7 @@ public class TestUser extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         // User 1
         User user1 = new User();
-        user1.registerUser("name1", null, null);
+        user1.registerUser("name1", null, null, null);
         saveOrUpdateInTransaction(user1);
         int user1Id = user1.getId();
         // Verify user 1
@@ -29,7 +29,7 @@ public class TestUser extends AbstractServiceTest {
         Assert.assertEquals("name1", simpleUser1.getName());
         // User 2
         User user2 = new User();
-        user2.registerUser("name2", null, null);
+        user2.registerUser("name2", null, null, null);
         saveOrUpdateInTransaction(user2);
         int user2Id = user2.getId();
         SimpleUser simpleUser2 = user2.createSimpleUser();

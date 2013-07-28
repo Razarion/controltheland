@@ -35,7 +35,9 @@ import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
+import com.btxtech.game.services.user.InvitationService;
 import com.btxtech.game.services.user.SecurityRoles;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
@@ -83,6 +85,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     private XpService xpService;
     @Autowired
     private ServerUnlockService serverUnlockService;
+    @Autowired
+    private InvitationService invitationService;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private Map<Integer, LevelScope> levelScopes = new HashMap<>();
     private final Map<UserState, Collection<Integer>> levelTaskDone = new HashMap<>();
@@ -132,6 +136,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         // Post processing
         userState.setXp(0);
         activateNextUnDoneLevelTask(userState, null, userState.getLocale());
+        invitationService.onLevelUp(userState, dbNextLevel);
     }
 
     private void activateNextUnDoneLevelTask(UserState userState, DbLevelTask oldLevelTaskId, Locale locale) {
@@ -353,6 +358,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Override
     public DbLevel getDbLevel(UserState userState) {
         return getDbLevel(userState.getDbLevelId());
+    }
+
+    @Override
+    public DbLevel getDbLevel(User user) {
+        return getDbLevel(userService.getUserState(user));
     }
 
     @Override

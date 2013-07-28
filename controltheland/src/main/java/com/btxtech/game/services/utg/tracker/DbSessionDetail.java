@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg.tracker;
 
+import com.btxtech.game.services.user.DbInvitationInfo;
 import com.btxtech.game.services.utg.DbFacebookSource;
 import org.hibernate.annotations.Index;
 
@@ -54,7 +55,8 @@ public class DbSessionDetail implements Serializable {
     private boolean html5Support;
     @Embedded
     private DbFacebookSource dbFacebookSource;
-
+    @Embedded
+    private DbInvitationInfo dbInvitationInfo;
 
     /**
      * Used by Hibernate
@@ -62,10 +64,11 @@ public class DbSessionDetail implements Serializable {
     public DbSessionDetail() {
     }
 
-    public DbSessionDetail(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String referer, boolean newUser, DbFacebookSource dbFacebookSource) {
+    public DbSessionDetail(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String referer, boolean newUser, DbFacebookSource dbFacebookSource, DbInvitationInfo dbInvitationInfo) {
         this.cookieId = cookieId;
         this.newUser = newUser;
         this.dbFacebookSource = dbFacebookSource;
+        this.dbInvitationInfo = dbInvitationInfo;
         timeStamp = new Date();
         this.sessionId = sessionId;
         this.userAgent = userAgent;
@@ -131,6 +134,10 @@ public class DbSessionDetail implements Serializable {
 
     public DbFacebookSource getDbFacebookSource() {
         return dbFacebookSource;
+    }
+
+    public DbInvitationInfo getDbInvitationInfo() {
+        return dbInvitationInfo;
     }
 
     @Override

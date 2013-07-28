@@ -2640,7 +2640,7 @@ public class TestCmsService extends AbstractServiceTest {
         SecurityCmsUiService securityCmsUiServiceMock = EasyMock.createMock(SecurityCmsUiService.class);
         securityCmsUiServiceMock.signIn("U1", "test");
         User user = new User();
-        user.registerUser("TestUser", "", "");
+        user.registerUser("TestUser", "", "", null);
         EasyMock.expectLastCall().andThrow(new AlreadyLoggedInException(null));
         EasyMock.replay(securityCmsUiServiceMock);
 
@@ -2675,7 +2675,7 @@ public class TestCmsService extends AbstractServiceTest {
         SecurityCmsUiService securityCmsUiServiceMock = EasyMock.createMock(SecurityCmsUiService.class);
         securityCmsUiServiceMock.signIn("U1", "test");
         User user = new User();
-        user.registerUser("TestUser", "", "");
+        user.registerUser("TestUser", "", "", null);
         EasyMock.expectLastCall().andThrow(new UserAlreadyExistsException());
         EasyMock.replay(securityCmsUiServiceMock);
 
@@ -2710,7 +2710,7 @@ public class TestCmsService extends AbstractServiceTest {
         SecurityCmsUiService securityCmsUiServiceMock = EasyMock.createMock(SecurityCmsUiService.class);
         securityCmsUiServiceMock.signIn("U1", "test");
         User user = new User();
-        user.registerUser("TestUser", "", "");
+        user.registerUser("TestUser", "", "", null);
         EasyMock.expectLastCall().andThrow(new PasswordNotMatchException());
         EasyMock.replay(securityCmsUiServiceMock);
 

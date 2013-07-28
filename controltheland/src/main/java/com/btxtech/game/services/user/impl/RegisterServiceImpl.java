@@ -15,6 +15,7 @@ import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.DbForgotPassword;
 import com.btxtech.game.services.user.EmailDoesNotExitException;
 import com.btxtech.game.services.user.EmailIsAlreadyVerifiedException;
+import com.btxtech.game.services.user.InvitationService;
 import com.btxtech.game.services.user.NoForgotPasswordEntryException;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.User;
@@ -79,6 +80,8 @@ public class RegisterServiceImpl implements RegisterService {
     private ServerI18nHelper serverI18nHelper;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private InvitationService invitationService;
     private ScheduledThreadPoolExecutor cleanupTimer;
 
     @PostConstruct
@@ -123,11 +126,11 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     private String generateVerificationLink(User user) {
-        return "http://www.razarion.com" + cmsUiService.getUrl4CmsPage(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION) + "/" + CmsUtil.EMAIL_VERIFICATION_KEY + "/" + user.getVerificationId();
+        return CmsUtil.RAZARION_URL + cmsUiService.getUrl4CmsPage(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION) + "/" + CmsUtil.EMAIL_VERIFICATION_KEY + "/" + user.getVerificationId();
     }
 
     private String generateForgotPasswordLink(String uuid) {
-        return "http://www.razarion.com" + cmsUiService.getUrl4CmsPage(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE) + "/" + CmsUtil.FORGOT_PASSWORD_UUID_KEY + "/" + uuid;
+        return CmsUtil.RAZARION_URL + cmsUiService.getUrl4CmsPage(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE) + "/" + CmsUtil.FORGOT_PASSWORD_UUID_KEY + "/" + uuid;
     }
 
     @Override
@@ -148,6 +151,7 @@ public class RegisterServiceImpl implements RegisterService {
         user.setVerified();
         sessionFactory.getCurrentSession().saveOrUpdate(user);
         userTrackingService.onUserVerified(user);
+        invitationService.onUserRegisteredAndVerified(user);
         sendRegistrationCompletedPacket(user);
         return user;
     }

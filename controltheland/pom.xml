@@ -372,7 +372,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <version>2.4.0</version>
+                <version>2.5.1</version>
                 <configuration>
                     <runTarget>http://localhost:8080</runTarget>
                     <noServer>true</noServer>
@@ -445,7 +445,7 @@
     <properties>
         <wicket.version>6.9.1</wicket.version>
         <jetty.version>6.1.25</jetty.version>
-        <gwtVersion>2.4.0</gwtVersion>
+        <gwtVersion>2.5.1</gwtVersion>
         <hibernateVersion>4.0.0.Final</hibernateVersion>
         <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
         <aspectj>1.6.10</aspectj>

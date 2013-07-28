@@ -41,6 +41,7 @@ import com.btxtech.game.jsre.client.dialogs.guild.GuildMemberInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.MyGuildDialog;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.HighscoreDialog;
+import com.btxtech.game.jsre.client.dialogs.incentive.InviteFriendsDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
@@ -100,7 +101,9 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.ValueBoxBase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -351,7 +354,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     }
 
     public void handleStorablePackets(Collection<StorablePacket> storablePackets) {
-        if(storablePackets == null) {
+        if (storablePackets == null) {
             return;
         }
         for (StorablePacket storablePacket : storablePackets) {
@@ -1029,4 +1032,47 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
             });
         }
     }
+
+    public void sendFacebookInvite(String fbRequestId, Collection<String> fbUserIds) {
+        if (movableServiceAsync != null) {
+            InviteFriendsDialog.enableFacebookButton(false);
+            movableServiceAsync.onFacebookInvite(fbRequestId, fbUserIds, new AsyncCallback<Void>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    ClientExceptionHandler.handleException("Connection sendFacebookInvite()", caught);
+                    InviteFriendsDialog.enableFacebookButton(true);
+                }
+
+                @Override
+                public void onSuccess(Void aVoid) {
+                    InviteFriendsDialog.enableFacebookButton(true);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(),ClientI18nHelper.CONSTANTS.invitationFacebookSent()), DialogManager.Type.STACK_ABLE);
+                }
+            });
+        }
+    }
+
+    public void sendMailInvite(final String emailAddress, final FocusWidget button, final ValueBoxBase textBox) {
+        if (movableServiceAsync != null) {
+            button.setEnabled(false);
+            movableServiceAsync.sendMailInvite(emailAddress, new AsyncCallback<Void>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    ClientExceptionHandler.handleException("Connection sendMailInvite()", caught);
+                    button.setEnabled(true);
+                }
+
+                @Override
+                public void onSuccess(Void aVoid) {
+                    textBox.setText("");
+                    button.setEnabled(true);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(),ClientI18nHelper.CONSTANTS.invitationEmailSent(emailAddress)), DialogManager.Type.STACK_ABLE);
+                }
+            });
+        }
+    }
+
+
 }

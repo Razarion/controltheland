@@ -113,6 +113,11 @@ public class NewUserTracking extends MgmtWebPage {
                     listItem.add(new Label("fbSource", ""));
                     listItem.add(new Label("optionalAdValue", ""));
                 }
+                if(user.getDbInvitationInfo() != null) {
+                    listItem.add(new Label("invited", user.getDbInvitationInfo().getHost().getUsername()));
+                } else {
+                    listItem.add(new Label("invited", ""));
+                }
             }
         };
         add(listView);

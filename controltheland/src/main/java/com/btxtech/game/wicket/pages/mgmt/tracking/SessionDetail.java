@@ -113,6 +113,13 @@ public class SessionDetail extends MgmtWebPage {
             add(new Label("dbFacebookSource.optionalAdValue", ""));
             add(new Label("dbFacebookSource.wholeString", ""));
         }
+        if(dbSessionDetail.getDbInvitationInfo() != null) {
+            add(new Label("dbInvitationInfo.host.username", dbSessionDetail.getDbInvitationInfo().getHost().getUsername()));
+            add(new Label("dbInvitationInfo.source", dbSessionDetail.getDbInvitationInfo().getSource()));
+        } else {
+            add(new Label("dbInvitationInfo.host.username", ""));
+            add(new Label("dbInvitationInfo.source", ""));
+        }
     }
 
     private void gameOverview(SessionDetailDto sessionDetailDto) {
