@@ -15,10 +15,11 @@ package com.btxtech.game.wicket.pages.cms;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsImage;
-import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.Utils;
+import com.btxtech.game.services.mgmt.MgmtService;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -31,9 +32,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CmsImageResource extends AbstractResource {
     public static final String ID = "id";
-
     @SpringBean
     private CmsService cmsService;
+    @SpringBean
+    private MgmtService mgmtService;
 
     public static Image createImage(String id, DbCmsImage imageId) {
         PageParameters pageParameters = new PageParameters();
@@ -62,7 +64,7 @@ public class CmsImageResource extends AbstractResource {
             return response;
 
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
+            mgmtService.saveServerDebug(MgmtService.SERVER_DEBUG_CMS, ((ServletWebRequest) attributes.getRequest()).getContainerRequest(), null, e);
             ResourceResponse response = new ResourceResponse();
             response.setError(HttpServletResponse.SC_NOT_FOUND);
             return response;

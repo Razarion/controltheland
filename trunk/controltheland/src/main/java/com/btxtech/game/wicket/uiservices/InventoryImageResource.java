@@ -14,13 +14,14 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
+import com.btxtech.game.services.mgmt.MgmtService;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -34,6 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 public class InventoryImageResource extends AbstractResource {
     @SpringBean
     private GlobalInventoryService globalInventoryService;
+    @SpringBean
+    private MgmtService mgmtService;
 
     public static Image createArtifactImage(String id, DbInventoryArtifact dbInventoryArtifact) {
         PageParameters pageParameters = new PageParameters();
@@ -93,7 +96,7 @@ public class InventoryImageResource extends AbstractResource {
             }
             throw new Exception("Can not deliver inventory image resource: " + attributes.getParameters().toString());
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
+            mgmtService.saveServerDebug(MgmtService.SERVER_DEBUG_CMS, ((ServletWebRequest) attributes.getRequest()).getContainerRequest(), null, e);
             ResourceResponse response = new ResourceResponse();
             response.setError(HttpServletResponse.SC_NOT_FOUND);
             return response;
