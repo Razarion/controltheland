@@ -62,6 +62,7 @@ public class TestSyncWeapon extends AbstractServiceTest {
         createBase(new Index(2000, 2000));
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
+        // TODO failed on 29.07.2013
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         assertWholeItemCount(TEST_PLANET_1_ID, 4);

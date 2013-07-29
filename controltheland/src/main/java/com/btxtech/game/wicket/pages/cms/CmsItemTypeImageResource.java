@@ -13,13 +13,14 @@
 package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
+import com.btxtech.game.services.mgmt.MgmtService;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -32,9 +33,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CmsItemTypeImageResource extends AbstractResource {
     private static final String ID = "id";
-
     @SpringBean
     private ServerItemTypeService serverItemTypeService;
+    @SpringBean
+    private MgmtService mgmtService;
 
     public static Image createImage(String id, DbItemType dbItemType) {
         PageParameters pageParameters = new PageParameters();
@@ -62,7 +64,7 @@ public class CmsItemTypeImageResource extends AbstractResource {
             });
             return response;
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
+            mgmtService.saveServerDebug(MgmtService.SERVER_DEBUG_CMS, ((ServletWebRequest) attributes.getRequest()).getContainerRequest(), null, e);
             ResourceResponse response = new ResourceResponse();
             response.setError(HttpServletResponse.SC_NOT_FOUND);
             return response;
