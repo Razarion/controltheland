@@ -41,10 +41,6 @@ public class MarketItem extends Composite implements HasText {
         itemNameLabel.setText(inventoryItemInfo.getInventoryItemName());
         inventoryItemId = inventoryItemInfo.getInventoryItemId();
         image.setUrl(ImageHandler.getInventoryItemUrl(inventoryItemId));
-        handleButtonState(razarion);
-    }
-
-    public void handleButtonState(int razarion) {
         buyItemButton.setEnabled(razarion >= inventoryItemInfo.getRazarionCoast());
     }
 

@@ -40,10 +40,6 @@ public class MarketArtifact extends Composite implements HasText {
         artifactNameLabel.setText(inventoryArtifactInfo.getInventoryArtifactName());
         inventoryArtifactId = inventoryArtifactInfo.getInventoryArtifactId();
         image.setUrl(ImageHandler.getInventoryArtifactUrl(inventoryArtifactId));
-        handleButtonState(razarion);
-    }
-
-    public void handleButtonState(int razarion) {
         buyArtifactButton.setEnabled(razarion >= inventoryArtifactInfo.getRazarionCoast());
     }
 
