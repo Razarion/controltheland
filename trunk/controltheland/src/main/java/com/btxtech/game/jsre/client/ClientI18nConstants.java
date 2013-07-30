@@ -394,20 +394,6 @@ public interface ClientI18nConstants extends Messages {
 
     String tooltipArtifact(String artifactName);
 
-    String buyRazarionPaypal();
-
-    String buyRazarionPaypal1000();
-
-    String buyRazarionPaypal2200();
-
-    String buyRazarionPaypal4600();
-
-    String buyRazarionPaypal12500();
-
-    String buyRazarionPaypalOnlyRegistered();
-
-    String buyRazarionPaypalOnlyRegisteredVerified();
-
     String youOwn(int ownCount);
 
     String useItemLimit(String itemName);
@@ -427,6 +413,14 @@ public interface ClientI18nConstants extends Messages {
     String cost(int razarionCost);
 
     String leaveBaseNextPlanet();
+
+    String getInventoryItemTitle();
+
+    String getInventoryItemNotEnough(String inventoryItemName);
+
+    String getArtifactItemTitle();
+
+    String getInventoryArtifactNotEnough(String inventoryArtifactName);
 
     // Startup
     String startupClearGame();
@@ -466,21 +460,17 @@ public interface ClientI18nConstants extends Messages {
 
     String unlockPlanetDialogTitle();
 
-    String itemDialogNoRazarionMessage(String itemTypeName, Integer unlockRazarion, Integer razarion);
+    String itemDialogNoRazarionMessage(String itemTypeName);
 
-    String questDialogNoRazarionMessage(String questName, Integer unlockRazarion, Integer razarion);
+    String questDialogNoRazarionMessage(String questName);
 
-    String planetDialogNoRazarionMessage(String planetName, Integer unlockRazarion, Integer razarion);
+    String planetDialogNoRazarionMessage(String planetName);
 
     String itemIsLocked(String itemTypeName);
 
     String questIsLocked(String title);
 
     String planetIsLocked(String planetName);
-
-    String unlockRazarionCost(int unlockRazarion);
-
-    String availableRazarion(int razarion);
 
     String unlockButton();
 
@@ -547,6 +537,14 @@ public interface ClientI18nConstants extends Messages {
 
     String menuInviteFriendsTooltip();
 
+    String menuGetRazarion();
+
+    String menuTooltipGetRazarion();
+
+    String menuBuyPaypal();
+
+    String menuOverviewGetRazarion();
+
     // News Dialog
     String newsDialogTitle();
 
@@ -586,7 +584,7 @@ public interface ClientI18nConstants extends Messages {
 
     String inviteMember();
 
-    String createGuildInsufficientRazarion(int cost, int available);
+    String createGuildInsufficientRazarion();
 
     String createGuildRazarionCost(int cost);
 
@@ -711,4 +709,36 @@ public interface ClientI18nConstants extends Messages {
     String invitationFacebookSent();
 
     String noFriendInvited();
+
+    // Razarion helper
+    String buyDialogCost(int razarionCost);
+
+    String buyDialogbalance(int razarionBalance);
+
+    String invite();
+
+    String howToGetRazarion();
+
+    String buyRazarionViaPayPal();
+
+    String invitationFriendsAndGetRazarion();
+
+    String collectBoxesAndGetRazarion();
+
+    // Buy Razarion dialog
+    String buyRazarionPaypal();
+
+    String buyRazarionPaypal1000();
+
+    String buyRazarionPaypal2200();
+
+    String buyRazarionPaypal4600();
+
+    String buyRazarionPaypal12500();
+
+    String buyRazarionPaypalOnlyRegistered();
+
+    String buyRazarionPaypalOnlyRegisteredVerified();
+
+    String buyRazarionDialogTitle();
 }

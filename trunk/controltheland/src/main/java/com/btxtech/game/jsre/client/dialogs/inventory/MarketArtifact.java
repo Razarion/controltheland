@@ -3,6 +3,8 @@ package com.btxtech.game.jsre.client.dialogs.inventory;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.dialogs.razarion.AffordableCallback;
+import com.btxtech.game.jsre.client.dialogs.razarion.RazarionHelper;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -27,6 +29,7 @@ public class MarketArtifact extends Composite implements HasText {
     Button buyArtifactButton;
     private int inventoryArtifactId;
     private InventoryArtifactInfo inventoryArtifactInfo;
+    private int razarion;
     private InventoryDialog inventoryDialog;
 
     interface MarketArtifactUiBinder extends UiBinder<Widget, MarketArtifact> {
@@ -34,18 +37,31 @@ public class MarketArtifact extends Composite implements HasText {
 
     public MarketArtifact(InventoryArtifactInfo inventoryArtifactInfo, int razarion, InventoryDialog inventoryDialog) {
         this.inventoryArtifactInfo = inventoryArtifactInfo;
+        this.razarion = razarion;
         this.inventoryDialog = inventoryDialog;
         initWidget(uiBinder.createAndBindUi(this));
         coastLabel.setText(ClientI18nHelper.CONSTANTS.cost(inventoryArtifactInfo.getRazarionCoast()));
         artifactNameLabel.setText(inventoryArtifactInfo.getInventoryArtifactName());
         inventoryArtifactId = inventoryArtifactInfo.getInventoryArtifactId();
         image.setUrl(ImageHandler.getInventoryArtifactUrl(inventoryArtifactId));
-        buyArtifactButton.setEnabled(razarion >= inventoryArtifactInfo.getRazarionCoast());
     }
 
     @UiHandler("buyArtifactButton")
     void onClick(ClickEvent e) {
-        Connection.getInstance().buyInventoryArtifact(inventoryArtifactId, inventoryDialog.getFilterPlanetId(), inventoryDialog.isFilterLevel(), inventoryDialog);
+        new RazarionHelper(ClientI18nHelper.CONSTANTS.getArtifactItemTitle(),ClientI18nHelper.CONSTANTS.getInventoryArtifactNotEnough(inventoryArtifactInfo.getInventoryArtifactName())) {
+
+            @Override
+            protected void askAffordable(AffordableCallback affordableCallback) {
+                affordableCallback.onDetermined(inventoryArtifactInfo.getRazarionCoast(), razarion);
+            }
+
+            @Override
+            protected void onBuySilent(int razarionCost, int razarionBalance) {
+                Connection.getInstance().buyInventoryArtifact(inventoryArtifactId, inventoryDialog.getFilterPlanetId(), inventoryDialog.isFilterLevel(), inventoryDialog);
+            }
+        };
+
+
     }
 
     public void setText(String text) {

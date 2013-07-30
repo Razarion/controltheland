@@ -74,9 +74,6 @@
                     </g:Tab>
                 </g:TabPanel>
             </g:Tab>
-            <g:Tab text="{msg.buy}">
-                <g:SimplePanel width="12cm" ui:field="buyPanel" styleName="{style.scrollpanel}"/>
-            </g:Tab>
         </g:TabPanel>
     </g:VerticalPanel>
 </ui:UiBinder> 

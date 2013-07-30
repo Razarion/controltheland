@@ -23,9 +23,9 @@ public class InviteFriendsDialog extends Dialog {
         if (Connection.getInstance().isRegisteredAndVerified()) {
             DialogManager.showDialog(new InviteFriendsDialog(), DialogManager.Type.STACK_ABLE);
         } else if (Connection.getInstance().isRegistered()) {
-            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(), ClientI18nHelper.CONSTANTS.inviteFriendsOnlyRegisteredVerified()), DialogManager.Type.QUEUE_ABLE);
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(), ClientI18nHelper.CONSTANTS.inviteFriendsOnlyRegisteredVerified()), DialogManager.Type.STACK_ABLE);
         } else {
-            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(), ClientI18nHelper.CONSTANTS.inviteFriendsOnlyRegistered()), DialogManager.Type.QUEUE_ABLE);
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(), ClientI18nHelper.CONSTANTS.inviteFriendsOnlyRegistered()), DialogManager.Type.STACK_ABLE);
         }
     }
 
