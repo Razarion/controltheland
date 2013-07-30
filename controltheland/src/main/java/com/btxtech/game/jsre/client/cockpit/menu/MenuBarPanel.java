@@ -19,6 +19,8 @@ import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildDialog;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryDialog;
 import com.btxtech.game.jsre.client.dialogs.incentive.InviteFriendsDialog;
 import com.btxtech.game.jsre.client.dialogs.news.NewsDialog;
+import com.btxtech.game.jsre.client.dialogs.razarion.BuyRazarionPaypalDialog;
+import com.btxtech.game.jsre.client.dialogs.razarion.HowToGetRazarionPanel;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -60,6 +62,10 @@ public class MenuBarPanel extends Composite {
     MenuItem guildInvitation;
     @UiField
     MenuItem inviteFriends;
+    @UiField
+    MenuItem buyPaypal;
+    @UiField
+    MenuItem overviewRazarion;
 
     interface MenuBarPanelUiBinder extends UiBinder<Widget, MenuBarPanel> {
     }
@@ -166,10 +172,16 @@ public class MenuBarPanel extends Composite {
                 DialogManager.showDialog(new GuildInvitationsDialog(), DialogManager.Type.STACK_ABLE);
             }
         });
-        inviteFriends.setScheduledCommand(new Command() {
+        buyPaypal.setScheduledCommand(new Command() {
             @Override
             public void execute() {
-                InviteFriendsDialog.showDialog();
+                DialogManager.showDialog(new BuyRazarionPaypalDialog(), DialogManager.Type.STACK_ABLE);
+            }
+        });
+        overviewRazarion.setScheduledCommand(new Command() {
+            @Override
+            public void execute() {
+                DialogManager.showDialog(new HowToGetRazarionPanel(ClientI18nHelper.CONSTANTS.howToGetRazarion()), DialogManager.Type.STACK_ABLE);
             }
         });
 

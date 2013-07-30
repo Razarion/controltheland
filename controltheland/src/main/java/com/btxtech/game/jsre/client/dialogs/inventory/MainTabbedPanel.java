@@ -49,7 +49,6 @@ public class MainTabbedPanel extends Composite {
     Label razarionLabel;
     @UiField
     ListBox filterListBox;
-    @UiField SimplePanel buyPanel;
     private InventoryDialog inventoryDialog;
     private Logger log = Logger.getLogger(MainTabbedPanel.class.getName());
 
@@ -62,11 +61,6 @@ public class MainTabbedPanel extends Composite {
         tabPanel.selectTab(0);
         dealerPanel.selectTab(0);
         setupFilter();
-        buyPanel.setWidget(new BuyPanel(inventoryDialog));
-    }
-
-    public void showBuyTab() {
-        tabPanel.selectTab(3);
     }
 
     private void setupFilter() {

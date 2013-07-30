@@ -8,9 +8,20 @@ import com.google.gwt.user.client.ui.Composite;
  * Time: 11:53
  */
 abstract public class DialogUiBinderWrapper extends Composite {
+    private Dialog dialog;
+
     public abstract String getDialogTitle();
 
     public void init(Dialog dialog){
 
+    }
+
+    public void setAndInit(Dialog dialog) {
+        this.dialog = dialog;
+        init(dialog);
+    }
+
+    public void close() {
+        dialog.hide(true);
     }
 }

@@ -40,7 +40,7 @@ public class DialogManager implements CloseHandler<PopupPanel> {
                 dialogVPanel.add(dialogUiBinderWrapper);
             }
         };
-        dialogUiBinderWrapper.init(dialog);
+        dialogUiBinderWrapper.setAndInit(dialog);
         showDialog(dialog, type);
     }
 

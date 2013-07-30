@@ -29,6 +29,12 @@
         	</g:MenuBar>
         </g:MenuItem>
         <g:MenuItem text="{msg.menuInviteFriends}" ui:field="inviteFriends" title="{msg.menuInviteFriendsTooltip}"/>
+        <g:MenuItem text="{msg.menuGetRazarion}" title="{msg.menuTooltipGetRazarion}">
+            <g:MenuBar vertical="true">
+                <g:MenuItem text="{msg.menuBuyPaypal}" ui:field="buyPaypal"/>
+                <g:MenuItem text="{msg.menuOverviewGetRazarion}" ui:field="overviewRazarion"/>
+            </g:MenuBar>
+        </g:MenuItem>
     </g:MenuBar>
     <!-- /g:HTMLPanel -->
 </ui:UiBinder> 

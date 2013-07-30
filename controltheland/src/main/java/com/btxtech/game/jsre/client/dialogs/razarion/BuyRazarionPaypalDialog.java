@@ -1,12 +1,14 @@
 /**
  *
  */
-package com.btxtech.game.jsre.client.dialogs.inventory;
+package com.btxtech.game.jsre.client.dialogs.razarion;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.common.PayPalButton;
 import com.btxtech.game.jsre.common.PayPalUtils;
 import com.google.gwt.dom.client.Style;
@@ -20,16 +22,21 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 /**
  * @author beat
  */
-public class BuyPanel extends VerticalPanel {
-    public BuyPanel(InventoryDialog inventoryDialog) {
-        add(createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal(), 16));
+public class BuyRazarionPaypalDialog extends Dialog {
+    public BuyRazarionPaypalDialog() {
+        super(ClientI18nHelper.CONSTANTS.buyRazarionDialogTitle());
+    }
+
+    @Override
+    protected void setupPanel(VerticalPanel dialogVPanel) {
+        dialogVPanel.add(createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal(), 16));
 
         if (Connection.getInstance().isRegisteredAndVerified()) {
-            fillBuyOptions();
+            fillBuyOptions(dialogVPanel);
         } else if (Connection.getInstance().isRegistered()) {
-            fillUnverified();
+            fillUnverified(dialogVPanel);
         } else {
-            fillUnregistered(inventoryDialog);
+            fillUnregistered(dialogVPanel);
         }
     }
 
@@ -41,7 +48,7 @@ public class BuyPanel extends VerticalPanel {
         return html;
     }
 
-    private void fillBuyOptions() {
+    private void fillBuyOptions(VerticalPanel dialogVPanel) {
         FlexTable flexTable = new FlexTable();
         // 1000 Razarion
         flexTable.setWidget(0, 0, PayPalUtils.createBuyNowButton(PayPalButton.B_1000));
@@ -55,23 +62,22 @@ public class BuyPanel extends VerticalPanel {
         // 12500 Razarion
         flexTable.setWidget(3, 0, PayPalUtils.createBuyNowButton(PayPalButton.B_12500));
         flexTable.setWidget(3, 1, createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal12500(), 14));
-        add(flexTable);
+        dialogVPanel.add(flexTable);
     }
 
-    private void fillUnverified() {
-        add(new HTML(ClientI18nHelper.CONSTANTS.buyRazarionPaypalOnlyRegisteredVerified()));
+    private void fillUnverified(VerticalPanel dialogVPanel) {
+        dialogVPanel.add(new HTML(ClientI18nHelper.CONSTANTS.buyRazarionPaypalOnlyRegisteredVerified()));
     }
 
-    private void fillUnregistered(final InventoryDialog inventoryDialog) {
-        add(new HTML(ClientI18nHelper.CONSTANTS.buyRazarionPaypalOnlyRegistered()));
-        add(new Button(ClientI18nHelper.CONSTANTS.register(), new ClickHandler() {
+    private void fillUnregistered(final VerticalPanel dialogVPanel) {
+        dialogVPanel.add(new HTML(ClientI18nHelper.CONSTANTS.buyRazarionPaypalOnlyRegistered()));
+        dialogVPanel.add(new Button(ClientI18nHelper.CONSTANTS.register(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                inventoryDialog.close();
+                close();
                 DialogManager.showDialog(new RegisterDialog(), DialogManager.Type.PROMPTLY);
             }
-
         }));
     }
 

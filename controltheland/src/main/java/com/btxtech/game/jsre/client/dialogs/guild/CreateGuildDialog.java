@@ -10,7 +10,8 @@ import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
-import com.btxtech.game.jsre.client.dialogs.MessageDialog;
+import com.btxtech.game.jsre.client.dialogs.razarion.AffordableCallback;
+import com.btxtech.game.jsre.client.dialogs.razarion.RazarionHelper;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -28,34 +29,37 @@ public class CreateGuildDialog extends Dialog {
         if (ClientBase.getInstance().isGuildMember()) {
             throw new IllegalStateException("CreateGuildDialog user is already member of a guild");
         }
-        if (Connection.getMovableServiceAsync() != null) {
-            Connection.getMovableServiceAsync().getCreateGuildRazarionCost(new AsyncCallback<RazarionCostInfo>() {
+        new RazarionHelper(ClientI18nHelper.CONSTANTS.createGuildDialogTitle(), ClientI18nHelper.CONSTANTS.createGuildInsufficientRazarion()) {
 
-                @Override
-                public void onFailure(Throwable caught) {
-                    ClientExceptionHandler.handleException("MovableServiceAsync.getCreateGuildRazarionCost()", caught);
-                }
+            @Override
+            protected void askAffordable(final AffordableCallback affordableCallback) {
+                Connection.getMovableServiceAsync().getCreateGuildRazarionCost(new AsyncCallback<RazarionCostInfo>() {
 
-                @Override
-                public void onSuccess(RazarionCostInfo razarionCostInfo) {
-                    if (razarionCostInfo.isAfordable()) {
-                        DialogManager.showDialog(new CreateGuildDialog(razarionCostInfo), DialogManager.Type.QUEUE_ABLE);
-                    } else {
-                        DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.createGuildDialogTitle(),
-                                ClientI18nHelper.CONSTANTS.createGuildInsufficientRazarion(razarionCostInfo.getCost(), razarionCostInfo.getRazarionAmount())),
-                                DialogManager.Type.QUEUE_ABLE);
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ClientExceptionHandler.handleException("MovableServiceAsync.getCreateGuildRazarionCost()", caught);
                     }
-                }
-            });
-        }
+
+                    @Override
+                    public void onSuccess(RazarionCostInfo razarionCostInfo) {
+                        affordableCallback.onDetermined(razarionCostInfo.getCost(), razarionCostInfo.getRazarionAmount());
+                    }
+                });
+            }
+
+            @Override
+            protected Dialog createBuyDialog(int razarionCost, int razarionBalance) {
+                return new CreateGuildDialog(razarionCost);
+            }
+        };
     }
 
-    private RazarionCostInfo razarionCostInfo;
     private CreateGuildPanel createGuildPanel;
+    private int razarionCost;
 
-    private CreateGuildDialog(RazarionCostInfo razarionCostInfo) {
+    private CreateGuildDialog(int razarionCost) {
         super(ClientI18nHelper.CONSTANTS.createGuildDialogTitle());
-        this.razarionCostInfo = razarionCostInfo;
+        this.razarionCost = razarionCost;
         setShowYesButton(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -82,7 +86,7 @@ public class CreateGuildDialog extends Dialog {
 
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
-        createGuildPanel = new CreateGuildPanel(razarionCostInfo, new VerificationRequestField.ValidListener() {
+        createGuildPanel = new CreateGuildPanel(razarionCost, new VerificationRequestField.ValidListener() {
             @Override
             public void onValidStateChanged(boolean isValid) {
                 setYesButtonEnabled(isValid);
