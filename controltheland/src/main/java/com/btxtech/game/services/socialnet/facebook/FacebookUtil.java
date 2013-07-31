@@ -1,6 +1,5 @@
 package com.btxtech.game.services.socialnet.facebook;
 
-import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.socialnet.SocialUtil;
 import com.google.gson.Gson;
 import org.apache.commons.lang.ArrayUtils;
@@ -46,7 +45,7 @@ public class FacebookUtil {
         try {
             return Base64.decodeBase64(makeUrlSafe(input).getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new FacebookUrlException(e);
         }
     }
 
@@ -55,7 +54,7 @@ public class FacebookUtil {
 
         FacebookSignedRequest facebookSignedRequest = FacebookUtil.getFacebookSignedRequest(signedRequestParts[1]);
         if (!facebookSignedRequest.getAlgorithm().toUpperCase().equals("HMAC-SHA256")) {
-            throw new IllegalArgumentException("Invalid signature algorithm received: " + facebookSignedRequest.getAlgorithm());
+            throw new FacebookUrlException("Invalid signature algorithm received: " + facebookSignedRequest.getAlgorithm());
         }
 
         FacebookUtil.checkSignature(facebookAppSecret, signedRequestParts[1], signedRequestParts[0]);
@@ -64,11 +63,11 @@ public class FacebookUtil {
 
     public static String[] splitSignedRequest(String signedRequestParameter) {
         if (signedRequestParameter == null || signedRequestParameter.isEmpty()) {
-            throw new IllegalArgumentException("Empty signed_request received");
+            throw new FacebookUrlException("Empty signed_request received");
         }
         String[] paramParts = signedRequestParameter.split("\\.");
         if (paramParts.length != 2) {
-            throw new IllegalArgumentException("Invalid signed request parameter received. Exactly one '.' expected. Received: " + (paramParts.length - 1) + " signedRequestParameter: " + signedRequestParameter);
+            throw new FacebookUrlException("Invalid signed request parameter received. Exactly one '.' expected. Received: " + (paramParts.length - 1) + " signedRequestParameter: " + signedRequestParameter);
         }
         return paramParts;
     }
@@ -85,7 +84,7 @@ public class FacebookUtil {
         byte[] signature = enhancedBase64UrlSafeDecode(base64UrlSafeSignature);
         byte[] calculatedSignature = SocialUtil.getHmacSha256Hash(secret, payload.getBytes());
         if (!ArrayUtils.isEquals(signature, calculatedSignature)) {
-            throw new IllegalArgumentException("Signature does not match");
+            throw new FacebookUrlException("Signature does not match");
         }
     }
 
@@ -94,10 +93,10 @@ public class FacebookUtil {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         try {
             if (facebookUserId == null) {
-                throw new IllegalArgumentException("facebookUserId == null");
+                throw new FacebookUrlException("facebookUserId == null");
             }
             if (accessToken == null) {
-                throw new IllegalArgumentException("accessToken == null");
+                throw new FacebookUrlException("accessToken == null");
             }
             StringBuilder builder = new StringBuilder();
             builder.append("https://graph.facebook.com");
@@ -113,10 +112,10 @@ public class FacebookUtil {
                 FacebookUserDetails facebookUserDetails = gson.fromJson(IOUtils.toString(clientHttpResponse.getBody()), FacebookUserDetails.class);
                 return facebookUserDetails.getEmail();
             } else {
-                throw new IllegalStateException("Facebook graph call fails: " + clientHttpResponse.getStatusText() + " " + clientHttpResponse.getStatusCode() + "|" + builder.toString());
+                throw new FacebookUrlException("Facebook graph call fails: " + clientHttpResponse.getStatusText() + " " + clientHttpResponse.getStatusCode() + "|" + builder.toString());
             }
-        } catch (IOException | URISyntaxException e){
-            throw new RuntimeException(e);
+        } catch (IOException | URISyntaxException e) {
+            throw new FacebookUrlException(e);
         } finally {
             if (clientHttpResponse != null) {
                 clientHttpResponse.close();

@@ -14,15 +14,8 @@
 package com.btxtech.game.wicket;
 
 import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.jsre.common.CommonJava;
-import com.btxtech.game.services.cms.InvalidUrlException;
-import com.btxtech.game.services.cms.NoDbContentInCacheException;
-import com.btxtech.game.services.cms.NoDbPageException;
 import com.btxtech.game.services.common.ExceptionHandler;
-import com.btxtech.game.services.common.NoSuchChildException;
 import com.btxtech.game.services.common.Utils;
-import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.FacebookAppStart;
 import com.btxtech.game.wicket.pages.FacebookAutoLogin;
 import com.btxtech.game.wicket.pages.Game;
@@ -32,10 +25,8 @@ import com.btxtech.game.wicket.pages.cms.CmsItemTypeImageResource;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
 import com.btxtech.game.wicket.uiservices.InventoryImageResource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.Application;
-import org.apache.wicket.Page;
+import org.apache.wicket.DefaultExceptionMapper;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.authorization.IUnauthorizedComponentInstantiationListener;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
@@ -43,17 +34,13 @@ import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.core.request.mapper.MountedMapper;
 import org.apache.wicket.core.request.mapper.ResourceMapper;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.protocol.http.PageExpiredException;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
-import org.apache.wicket.request.IRequestHandler;
-import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
-import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.IExceptionMapper;
 import org.apache.wicket.request.mapper.parameter.UrlPathPageParametersEncoder;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.apache.wicket.util.IProvider;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -63,13 +50,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class WicketApplication extends AuthenticatedWebApplication implements ApplicationContextAware {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private MgmtService mgmtService;
     private RuntimeConfigurationType configurationType;
-    private Log log = LogFactory.getLog(WicketApplication.class);
+    private IExceptionMapper exceptionMapper;
     private ApplicationContext applicationContext;
+    private IProvider<IExceptionMapper> exceptionMapperProvider;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -112,9 +96,19 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
         mountPage(CmsUtil.MOUNT_GAME_FACEBOOK_AUTO_LOGIN, FacebookAutoLogin.class);
         mountPage(CmsUtil.MOUNT_INVITATION_START, InvitationStart.class);
         mountPage(CmsUtil.MOUNT_MANAGEMENT, MgmtPage.class);
-        if (!Utils.isTestModeStatic()) {
-            getRequestCycleListeners().add(new MyRequestCycleListener());
-        }
+        exceptionMapperProvider = new IProvider<IExceptionMapper>() {
+            @Override
+            public IExceptionMapper get() {
+                if (exceptionMapper == null) {
+                    if (Utils.isTestModeStatic()) {
+                        exceptionMapper = new DefaultExceptionMapper();
+                    } else {
+                        exceptionMapper = new RazarionExceptionMapper();
+                    }
+                }
+                return exceptionMapper;
+            }
+        };
         getSecuritySettings().setUnauthorizedComponentInstantiationListener(new IUnauthorizedComponentInstantiationListener() {
             @Override
             public void onUnauthorizedInstantiation(org.apache.wicket.Component component) {
@@ -122,7 +116,6 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
                 WicketApplication.this.onUnauthorizedInstantiation(component);
             }
         });
-
     }
 
     @Override
@@ -152,44 +145,8 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
         return configurationType;
     }
 
-    public final class MyRequestCycleListener extends AbstractRequestCycleListener {
-        @Override
-        public IRequestHandler onException(RequestCycle cycle, Exception e) {
-            if (e instanceof PageExpiredException) {
-                log.error("------------------PageExpiredException---------------------------------");
-                ExceptionHandler.logParameters(log, userService);
-                log.error("URL: " + cycle.getRequest().getOriginalUrl());
-                // TODO log.error("Page: " + cycle.getRequest().get());
-                log.error(e.getMessage());
-                // TODO return cmsUiService.getPredefinedNotFound();
-            } else if (CommonJava.getMostInnerThrowable(e) instanceof NoSuchChildException) {
-                saveServerDebug(null, e, cycle);
-                // TODO return cmsUiService.getPredefinedNotFound();
-            } else if (CommonJava.getMostInnerThrowable(e) instanceof InvalidUrlException) {
-                saveServerDebug(null, e, cycle);
-                // TODO return cmsUiService.getPredefinedNotFound();
-            } else if (CommonJava.getMostInnerThrowable(e) instanceof NoDbContentInCacheException) {
-                saveServerDebug(null, e, cycle);
-                // TODO  return cmsUiService.getPredefinedNotFound();
-            } else if (CommonJava.getMostInnerThrowable(e) instanceof NoDbPageException) {
-                saveServerDebug(null, e, cycle);
-                // TODO return cmsUiService.getPredefinedNotFound();
-            } else if (CommonJava.getMostInnerThrowable(e) instanceof NumberFormatException) {
-                saveServerDebug(null, e, cycle);
-                // TODO return cmsUiService.getPredefinedNotFound();
-            } else {
-                log.error("------------------CMS Unknown Exception---------------------------------");
-                ExceptionHandler.logParameters(log, userService);
-                log.error("URL: " + cycle.getRequest().getOriginalUrl());
-                // TODO log.error("Page: " + cause);
-                log.error("", e);
-                // TODO return new CmsPage(new PageParameters());
-            }
-            return null;
-        }
-
-        private void saveServerDebug(final Page cause, Exception e, RequestCycle cycle) {
-            mgmtService.saveServerDebug(MgmtService.SERVER_DEBUG_CMS, ((ServletWebRequest) cycle.getRequest()).getContainerRequest(), cause, e);
-        }
+    @Override
+    public IProvider<IExceptionMapper> getExceptionMapperProvider() {
+        return exceptionMapperProvider;
     }
 }

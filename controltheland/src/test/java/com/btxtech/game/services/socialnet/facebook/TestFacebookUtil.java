@@ -29,29 +29,29 @@ public class TestFacebookUtil {
 
         try {
             FacebookUtil.splitSignedRequest(null);
-            Assert.fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException e) {
+            Assert.fail("FacebookUrlException expected");
+        } catch (FacebookUrlException e) {
             // Expected
         }
 
         try {
             FacebookUtil.splitSignedRequest("");
-            Assert.fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException e) {
+            Assert.fail("FacebookUrlException expected");
+        } catch (FacebookUrlException e) {
             // Expected
         }
 
         try {
             FacebookUtil.splitSignedRequest("sdjfsdf");
-            Assert.fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException e) {
+            Assert.fail("FacebookUrlException expected");
+        } catch (FacebookUrlException e) {
             // Expected
         }
 
         try {
             FacebookUtil.splitSignedRequest("sd.jfs.df");
-            Assert.fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException e) {
+            Assert.fail("FacebookUrlException expected");
+        } catch (FacebookUrlException e) {
             // Expected
         }
     }
@@ -100,20 +100,20 @@ public class TestFacebookUtil {
         FacebookUtil.checkSignature("secret", "eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsIjAiOiJwYXlsb2FkIn0", "vlXgu64BQGFSQrY0ZcJBZASMvYvTHu9GQ0YM9rjPSso");
         try {
             FacebookUtil.checkSignature("secret1", "eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsIjAiOiJwYXlsb2FkIn0", "vlXgu64BQGFSQrY0ZcJBZASMvYvTHu9GQ0YM9rjPSso");
-            Assert.fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException e) {
+            Assert.fail("FacebookUrlException expected");
+        } catch (FacebookUrlException e) {
             // Expected
         }
         try {
             FacebookUtil.checkSignature("secret", "XXeyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsIjAiOiJwYXlsb2FkIn0", "vlXgu64BQGFSQrY0ZcJBZASMvYvTHu9GQ0YM9rjPSso");
-            Assert.fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException e) {
+            Assert.fail("FacebookUrlException expected");
+        } catch (FacebookUrlException e) {
             // Expected
         }
         try {
             FacebookUtil.checkSignature("secret", "eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsIjAiOiJwYXlsb2FkIn0", "vlXgu64BQGFSQrY0ZcJBZASMvYvTHu9GQ0YM9rjPSqw");
-            Assert.fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException e) {
+            Assert.fail("FacebookUrlException expected");
+        } catch (FacebookUrlException e) {
             // Expected
         }
         FacebookUtil.checkSignature("efff51df6827177b030e01fdb402f697",
