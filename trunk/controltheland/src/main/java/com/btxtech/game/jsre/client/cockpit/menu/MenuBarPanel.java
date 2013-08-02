@@ -172,6 +172,12 @@ public class MenuBarPanel extends Composite {
                 DialogManager.showDialog(new GuildInvitationsDialog(), DialogManager.Type.STACK_ABLE);
             }
         });
+        inviteFriends.setScheduledCommand(new Command() {
+            @Override
+            public void execute() {
+                InviteFriendsDialog.showDialog();
+            }
+        });
         buyPaypal.setScheduledCommand(new Command() {
             @Override
             public void execute() {
