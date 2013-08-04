@@ -310,6 +310,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     SplashManager.getInstance().onLevelUp();
                     QuestDialog.updateQuestDialog();
                     FacebookUtils.postToFeedLevelUp(((LevelPacket) packet).getLevel());
+                    FacebookUtils.callConversationTrackingOnLevelPromotionDone();
                 } else if (packet instanceof LevelTaskPacket) {
                     QuestVisualisationModel.getInstance().setLevelTask((LevelTaskPacket) packet);
                     QuestDialog.updateQuestDialog();

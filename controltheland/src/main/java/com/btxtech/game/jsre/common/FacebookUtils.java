@@ -11,9 +11,9 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.NickNameDialog;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
-import com.btxtech.game.jsre.client.dialogs.incentive.InviteFriendsDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Window;
@@ -202,5 +202,46 @@ public class FacebookUtils {
 
     native private static boolean nativeCheckFbApiLoaded()/*-{
         return $wnd.FB != undefined && typeof $wnd.FB.getLoginStatus == 'function';
+    }-*/;
+
+    public static void callConversationRealRealGamePixel() {
+        try {
+            callConversionTrackingPixel("6008265624221", "0.00", "USD");
+        } catch (Exception e) {
+            ClientExceptionHandler.handleException("FacebookUtils.callConversationRealRealGamePixel()", e);
+        }
+    }
+
+    public static void callConversationTrackingOnTaskDone() {
+        try {
+            callConversionTrackingPixel("6008265623621", "0.00", "USD");
+        } catch (Exception e) {
+            ClientExceptionHandler.handleException("FacebookUtils.callConversationTrackingOnTaskDone()", e);
+        }
+    }
+
+    public static void callConversationTrackingOnLevelPromotionDone() {
+        try {
+            callConversionTrackingPixel("6008265539021", "0.00", "USD");
+        } catch (Exception e) {
+            ClientExceptionHandler.handleException("FacebookUtils.callConversationTrackingOnLevelPromotionDone()", e);
+        }
+    }
+
+    private static void callConversionTrackingPixel(String pixelId, String value, String currency) {
+        UrlBuilder builder = new UrlBuilder();
+        builder.setProtocol("https");
+        builder.setHost("www.facebook.com");
+        builder.setPath("offsite_event.php");
+        builder.setParameter("id", pixelId);
+        builder.setParameter("value", value);
+        builder.setParameter("currency", currency);
+        builder.setParameter("preventCaching", Long.toString(System.currentTimeMillis()));
+        loadConversionTrackingPixel(builder.buildString());
+    }
+
+    private static native void loadConversionTrackingPixel(String src) /*-{
+        var img = new Image();
+        img.src = src;
     }-*/;
 }
