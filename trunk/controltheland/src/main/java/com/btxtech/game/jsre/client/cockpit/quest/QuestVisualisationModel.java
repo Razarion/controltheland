@@ -61,6 +61,7 @@ public class QuestVisualisationModel {
             updateType();
         } else if (levelTaskPacket.isCompleted()) {
             FacebookUtils.postToFeedLevelTaskDone(currentQuest);
+            FacebookUtils.callConversationTrackingOnTaskDone();
             SplashManager.getInstance().onLevelTaskCone();
             currentQuest = null;
             currentQuestProgressInfo = null;
