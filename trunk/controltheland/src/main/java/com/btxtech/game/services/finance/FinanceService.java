@@ -2,7 +2,6 @@ package com.btxtech.game.services.finance;
 
 import com.btxtech.game.services.user.UserDoesNotExitException;
 import com.btxtech.game.services.user.UserState;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * User: beat
@@ -12,5 +11,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface FinanceService {
     void razarionBought(int razarionBought, UserState userState);
 
-    void razarionBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException, TransactionAlreadyProcessedException, PaymentStatusRefundedException;
+    void razarionBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException, TransactionAlreadyProcessedException, WrongPaymentStatusException;
 }
