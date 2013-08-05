@@ -6,7 +6,7 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.finance.DbPayPalTransaction;
 import com.btxtech.game.services.finance.FinanceService;
-import com.btxtech.game.services.finance.PaymentStatusRefundedException;
+import com.btxtech.game.services.finance.WrongPaymentStatusException;
 import com.btxtech.game.services.finance.TransactionAlreadyProcessedException;
 import com.btxtech.game.services.history.DisplayHistoryElement;
 import com.btxtech.game.services.history.HistoryService;
@@ -126,9 +126,23 @@ public class TestFinanceService extends AbstractServiceTest {
         // Payment status refunded
         try {
             financeService.razarionBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Refunded", "1");
-            Assert.fail("PaymentStatusRefundedException expected");
-        } catch (PaymentStatusRefundedException e) {
-            // Expected
+            Assert.fail("WrongPaymentStatusException expected");
+        } catch (WrongPaymentStatusException e) {
+            Assert.assertEquals("Refunded", e.getMessage());
+        }
+        // Payment status Pending
+        try {
+            financeService.razarionBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Pending", "1");
+            Assert.fail("WrongPaymentStatusException expected");
+        } catch (WrongPaymentStatusException e) {
+            Assert.assertEquals("Pending", e.getMessage());
+        }
+        // Payment status Denied
+        try {
+            financeService.razarionBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Denied", "1");
+            Assert.fail("WrongPaymentStatusException expected");
+        } catch (WrongPaymentStatusException e) {
+            Assert.assertEquals("Denied", e.getMessage());
         }
         // Quantity
         try {

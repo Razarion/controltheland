@@ -5,8 +5,8 @@ import com.btxtech.game.jsre.common.PayPalButton;
 import com.btxtech.game.jsre.common.PayPalUtils;
 import com.btxtech.game.services.finance.DbPayPalTransaction;
 import com.btxtech.game.services.finance.FinanceService;
-import com.btxtech.game.services.finance.PaymentStatusRefundedException;
 import com.btxtech.game.services.finance.TransactionAlreadyProcessedException;
+import com.btxtech.game.services.finance.WrongPaymentStatusException;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserDoesNotExitException;
@@ -32,6 +32,8 @@ public class FinanceServiceImpl implements FinanceService {
     private static final String SANDBOX_RECEIVER_EMAIL = "beat.k_1358507890_biz@btxtech.com";
     private static final String PAYMENT_STATUS_COMPLETED = "Completed";
     private static final String PAYMENT_STATUS_REFUNDED = "Refunded";
+    private static final String PAYMENT_STATUS_DENIED = "Denied";
+    private static final String PAYMENT_STATUS_PENDING = "Pending";
     @Autowired
     private HistoryService historyService;
     @Autowired
@@ -50,12 +52,16 @@ public class FinanceServiceImpl implements FinanceService {
 
     @Override
     @Transactional
-    public void razarionBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException, TransactionAlreadyProcessedException, PaymentStatusRefundedException {
+    public void razarionBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException, TransactionAlreadyProcessedException, WrongPaymentStatusException {
         if (!(PayPalUtils.IS_SANDBOX ? SANDBOX_RECEIVER_EMAIL : RECEIVER_EMAIL).equalsIgnoreCase(receiverEmail)) {
             throw new IllegalArgumentException("Receiver email is wrong: " + receiverEmail);
         }
         if (PAYMENT_STATUS_REFUNDED.equalsIgnoreCase(paymentStatus)) {
-            throw new PaymentStatusRefundedException();
+            throw new WrongPaymentStatusException(PAYMENT_STATUS_REFUNDED);
+        } else if (PAYMENT_STATUS_DENIED.equalsIgnoreCase(paymentStatus)) {
+            throw new WrongPaymentStatusException(PAYMENT_STATUS_DENIED);
+        } else if (PAYMENT_STATUS_PENDING.equalsIgnoreCase(paymentStatus)) {
+            throw new WrongPaymentStatusException(PAYMENT_STATUS_PENDING);
         } else if (!PAYMENT_STATUS_COMPLETED.equalsIgnoreCase(paymentStatus)) {
             throw new IllegalArgumentException("Payment Status is wrong: " + paymentStatus);
         }
