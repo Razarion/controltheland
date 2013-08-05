@@ -49,13 +49,41 @@ public class ExceptionHandler {
                 requestHelper = userService.getRequestHelper4ExceptionHandler();
             }
             if (requestHelper != null) {
-                log.error("URI: " + requestHelper.getRequest().getRequestURI());
-                log.error("URL: " + requestHelper.getRequest().getRequestURL());
-                log.error("User Agent: " + requestHelper.getRequest().getHeader("user-agent"));
-                log.error("Session Id: " + requestHelper.getRequest().getSession().getId());
-                log.error("IP: " + requestHelper.getRequest().getRemoteAddr());
-                log.error("Referer: " + requestHelper.getRequest().getHeader("Referer"));
-                log.error("User: " + (userService.getUserName() != null ? userService.getUserName() : "unregistered"));
+                try {
+                    log.error("URI: " + requestHelper.getRequest().getRequestURI());
+                } catch (Exception e) {
+                    log.error("URI: " + "Error: " + e.getMessage());
+                }
+                try {
+                    log.error("URL: " + requestHelper.getRequest().getRequestURL());
+                } catch (Exception e) {
+                    log.error("URL: " + "Error: " + e.getMessage());
+                }
+                try {
+                    log.error("User Agent: " + requestHelper.getRequest().getHeader("user-agent"));
+                } catch (Exception e) {
+                    log.error("User Agent: " + "Error: " + e.getMessage());
+                }
+                try {
+                    log.error("Session Id: " + requestHelper.getRequest().getSession().getId());
+                } catch (Exception e) {
+                    log.error("Session Id: " + "Error: " + e.getMessage());
+                }
+                try {
+                    log.error("IP: " + requestHelper.getRequest().getRemoteAddr());
+                } catch (Exception e) {
+                    log.error("IP: " + "Error: " + e.getMessage());
+                }
+                try {
+                    log.error("Referer: " + requestHelper.getRequest().getHeader("Referer"));
+                } catch (Exception e) {
+                    log.error("Referer: " + "Error: " + e.getMessage());
+                }
+                try {
+                    log.error("User: " + (userService.getUserName() != null ? userService.getUserName() : "unregistered"));
+                } catch (Exception e) {
+                    log.error("User: " + "Error: " + e.getMessage());
+                }
             }
         } catch (Exception e) {
             log.error("ExceptionHandler.logParameters()", e);
