@@ -29,6 +29,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -415,7 +416,8 @@ public class TestBotItemContainer extends AbstractServiceTest {
         BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
         Collection<SyncBaseItem> botItems = new ArrayList<>();
         botItems.add(syncBaseItem);
-        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(botItems).times(2);
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(Collections.<SyncBaseItem>emptyList());
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(botItems);
         testServices.setBaseService(baseServiceMock);
 
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
@@ -567,4 +569,50 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertFalse(botItemContainer.itemBelongsToMy(otherItem));
         EasyMock.verify(baseServiceMock, mockCollisionService, mockServerItemService);
     }
+
+    @Test
+    @DirtiesContext
+    public void killItemsOnOverCreated() throws Exception {
+        configureSimplePlanetNoResources();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SyncBaseItem syncBaseItem1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID));
+        SyncBaseItem syncBaseItem2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 500), new Id(2, Id.NO_ID));
+        SyncBaseItem syncBaseItem3 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 500), new Id(3, Id.NO_ID));
+
+        TestPlanetServices testServices = new TestPlanetServices();
+
+        BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
+        Collection<SyncBaseItem> botItems = new ArrayList<>();
+        botItems.add(syncBaseItem1);
+        botItems.add(syncBaseItem2);
+        botItems.add(syncBaseItem3);
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(Collections.<SyncBaseItem>emptyList());
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(botItems);
+        testServices.setBaseService(baseServiceMock);
+
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(300, 350), null, simpleBase)).andReturn(syncBaseItem1);
+        mockServerItemService.killSyncItem(EasyMock.eq(syncBaseItem2), EasyMock.<SimpleBase>isNull(), EasyMock.eq(true), EasyMock.eq(false));
+        mockServerItemService.killSyncItem(EasyMock.eq(syncBaseItem3), EasyMock.<SimpleBase>isNull(), EasyMock.eq(true), EasyMock.eq(false));
+        testServices.setItemService(mockServerItemService);
+
+        CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
+        Region region1 = createRegion(new Rectangle(0, 0, 1000, 1000), 1);
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem1.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(300, 350));
+        testServices.setCollisionService(mockCollisionService);
+
+        BaseItemType baseItemType = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
+        Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, region1, false, null, false, null));
+
+        EasyMock.replay(baseServiceMock, mockServerItemService, mockCollisionService);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, createRegion(new Rectangle(2000, 3000, 1000, 2000), 1), testServices, "Test Bot");
+        botItemContainer.work(simpleBase);
+        Thread.sleep(60);
+        botItemContainer.work(simpleBase);
+        EasyMock.verify(mockServerItemService, baseServiceMock, mockCollisionService);
+    }
+
 }

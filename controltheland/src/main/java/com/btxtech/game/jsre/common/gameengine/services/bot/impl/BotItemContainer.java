@@ -129,7 +129,12 @@ public class BotItemContainer {
                 if (botItemConfig != null) {
                     add(newItem, botItemConfig);
                 } else {
-                    log.warning("BotItemContainer.updateState() can not find BotItemConfig for new SyncBaseItem: " + newItem + " on bot: " + botName);
+                    log.warning("BotItemContainer.updateState() can not find BotItemConfig for new SyncBaseItem. Items will be destroyed: " + newItem + " on bot: " + botName);
+                    try {
+                        planetServices.getItemService().killSyncItem(newItem, null, true, false);
+                    } catch (Exception e) {
+                        log.log(Level.WARNING, "BotItemContainer.updateState() error destroing item: " + newItem + " on bot: " + botName, e);
+                    }
                 }
             }
         }
