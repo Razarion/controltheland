@@ -25,6 +25,7 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.DbGuild;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
 import org.junit.Assert;
 import org.junit.Test;
@@ -266,6 +267,58 @@ public class TestTracking extends AbstractServiceTest {
         userTrackingFilter.setJsEnabled(UserTrackingFilter.BOTH);
         sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
         Assert.assertEquals(3, sessionOverviewDto.size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testFacebookAd() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        saveOrUpdateInTransaction(new DbSessionDetail("123", null, "", "", "", "", false, null, null));
+        DbFacebookSource dbFacebookSource = new DbFacebookSource();
+        dbFacebookSource.setOptionalAdValue("xxx");
+        saveOrUpdateInTransaction(new DbSessionDetail("123", null, "", "", "", "", false, dbFacebookSource, null));
+        dbFacebookSource = new DbFacebookSource();
+        dbFacebookSource.setOptionalAdValue("qqq");
+        saveOrUpdateInTransaction(new DbSessionDetail("123", null, "", "", "", "", false, dbFacebookSource, null));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        UserTrackingFilter userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setJsEnabled(UserTrackingFilter.BOTH);
+        userTrackingFilter.setOptionalFacebookAdValue("xxx");
+        List<SessionOverviewDto> sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(1, sessionOverviewDto.size());
+
+        userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setJsEnabled(UserTrackingFilter.BOTH);
+        userTrackingFilter.setOptionalFacebookAdValue("qqq");
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(1, sessionOverviewDto.size());
+
+        userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setOptionalFacebookAdValue("qqq");
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(0, sessionOverviewDto.size());
+
+        userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setJsEnabled(UserTrackingFilter.BOTH);
+        userTrackingFilter.setOptionalFacebookAdValue("hhh");
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(0, sessionOverviewDto.size());
+
+        userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setJsEnabled(UserTrackingFilter.BOTH);
+        userTrackingFilter.setOptionalFacebookAdValue("%");
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(2, sessionOverviewDto.size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

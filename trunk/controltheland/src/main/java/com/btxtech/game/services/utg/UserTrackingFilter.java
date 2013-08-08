@@ -26,13 +26,14 @@ public class UserTrackingFilter implements Serializable {
     public static final String ENABLED = "Enabled";
     public static final String DISABLED = "Disabled";
     public static final String BOTH = "Both";
-    public static final List JS_ENABLED_CHOICES = Arrays.asList(ENABLED, DISABLED, BOTH);
+    public static final List<String> JS_ENABLED_CHOICES = Arrays.asList(ENABLED, DISABLED, BOTH);
     public static final List COOKIE_ENABLED_CHOICES = Arrays.asList(ENABLED, DISABLED, BOTH);
     private String jsEnabled;
     private int days;
     private Integer hits;
     private String sessionId;
     private String cookieId;
+    private String optionalFacebookAdValue;
 
     public static UserTrackingFilter newDefaultFilter() {
         UserTrackingFilter userTrackingFilter = new UserTrackingFilter();
@@ -79,5 +80,13 @@ public class UserTrackingFilter implements Serializable {
 
     public void setCookieId(String cookieId) {
         this.cookieId = cookieId;
+    }
+
+    public String getOptionalFacebookAdValue() {
+        return optionalFacebookAdValue;
+    }
+
+    public void setOptionalFacebookAdValue(String optionalFacebookAdValue) {
+        this.optionalFacebookAdValue = optionalFacebookAdValue;
     }
 }
