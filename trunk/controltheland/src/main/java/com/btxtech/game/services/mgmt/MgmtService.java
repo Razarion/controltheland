@@ -43,14 +43,6 @@ public interface MgmtService {
 
     void removeSavedQuery(String query);
 
-    void backup();
-
-    List<BackupSummary> getBackupSummary();
-
-    void restore(final Date date) throws NoSuchItemTypeException;
-
-    void deleteBackupEntry(final Date date) throws NoSuchItemTypeException;
-
     StartupData getStartupData();
 
     StartupData readStartupData();

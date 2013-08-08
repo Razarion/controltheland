@@ -22,8 +22,8 @@ import com.btxtech.game.services.ServerConnectionServiceTestHelper;
 import com.btxtech.game.services.TestPlanetHelper;
 import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.mgmt.BackupSummary;
-import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -61,7 +61,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private MgmtService mgmtService;
+    private BackupService backupService;
     @Autowired
     private PlanetSystemService planetSystemService;
     private UserState actor;
@@ -323,7 +323,8 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendMoveCommand(builder, new Index(700, 700));
         waitForActionServiceDone();
         // TODO test failed (expected:<UserState: user=null> but was:<null>) 24.01.2013
-        assertActorAndIdentifierAndClear(userService.getUserState(), 1);        itemTypes = new HashMap<>();
+        assertActorAndIdentifierAndClear(userService.getUserState(), 1);
+        itemTypes = new HashMap<>();
         itemTypes.put(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 1);
         serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null, false), userService.getUserState(), 1);
         sendBuildCommand(builder, new Index(900, 900), TEST_FACTORY_ITEM_ID);
@@ -383,14 +384,14 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         //Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -420,14 +421,14 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         //Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify & Complete last task
@@ -476,15 +477,15 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         //Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Thread.sleep(500);
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Complete task
@@ -547,14 +548,14 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         //Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Proceed task
@@ -576,14 +577,14 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         //Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Complete task

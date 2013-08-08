@@ -29,8 +29,6 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
-import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
-import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -81,8 +79,8 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
+import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.mgmt.BackupSummary;
-import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -107,6 +105,7 @@ import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.user.DbGuild;
 import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -164,14 +163,20 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.subethamail.wiser.Wiser;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.ServletRequest;
 import javax.sql.DataSource;
 import java.io.Serializable;
@@ -319,7 +324,7 @@ abstract public class AbstractServiceTest {
     private ResourceService resourceService;
     private ServerPlanetServices serverServices;
     @Autowired
-    private MgmtService mgmtService;
+    private BackupService backupService;
     @Autowired
     private PlatformTransactionManager transactionManager;
     @Autowired
@@ -338,6 +343,8 @@ abstract public class AbstractServiceTest {
     private GuildService guildService;
     @Autowired
     private PropertyService propertyService;
+    @PersistenceContext
+    private EntityManager entityManager;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
     private MockHttpSession mockHttpSession;
@@ -2238,16 +2245,19 @@ abstract public class AbstractServiceTest {
     // ------------------- History helpers --------------------
 
     protected List<DbHistoryElement> getAllHistoryEntriesOfType(DbHistoryElement.Type type) throws Exception {
-        List<DbHistoryElement> dbHistoryElements = HibernateUtil.loadAll(sessionFactory, DbHistoryElement.class);
-        for (Iterator<DbHistoryElement> iterator = dbHistoryElements.iterator(); iterator.hasNext(); ) {
-            DbHistoryElement dbHistoryElement = iterator.next();
-            if (dbHistoryElement.getType() != type) {
-                iterator.remove();
-            }
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        // Query for DbHistoryElement
+        CriteriaQuery<DbHistoryElement> query = criteriaBuilder.createQuery(DbHistoryElement.class);
+        Root<DbHistoryElement> from = query.from(DbHistoryElement.class);
+        CriteriaQuery<DbHistoryElement> select = query.select(from);
+        if(type != null) {
+            Predicate predicate = criteriaBuilder.equal(from.<DbHistoryElement.Type>get("type"), type);
+            query.where(predicate);
         }
-        return dbHistoryElements;
+        query.orderBy(criteriaBuilder.asc(from.<String>get("timeStampMs")), criteriaBuilder.asc(from.<String>get("id")));
+        TypedQuery<DbHistoryElement> typedQuery = entityManager.createQuery(select);
+        return typedQuery.getResultList();
     }
-
 
     protected void waitForHistoryType(DbHistoryElement.Type type) throws Exception {
         long maxTime = System.currentTimeMillis() + 100000;
@@ -2266,6 +2276,16 @@ abstract public class AbstractServiceTest {
         }
     }
 
+    protected void assertHistoryType(DbHistoryElement.Type type) throws Exception {
+        List<DbHistoryElement> dbHistoryElements = HibernateUtil.loadAll(sessionFactory, DbHistoryElement.class);
+        for (DbHistoryElement dbHistoryElement : dbHistoryElements) {
+            if (dbHistoryElement.getType() == type) {
+                return;
+            }
+        }
+        Assert.fail("History entry not found: " + type);
+    }
+
     protected void assertNoHistoryType(DbHistoryElement.Type type) throws Exception {
         List<DbHistoryElement> dbHistoryElements = HibernateUtil.loadAll(sessionFactory, DbHistoryElement.class);
         for (DbHistoryElement dbHistoryElement : dbHistoryElements) {
@@ -2278,7 +2298,7 @@ abstract public class AbstractServiceTest {
     // ------------------- Mgmt helpers --------------------
 
     protected void assertBackupSummery(int backupCount, int itemCount, int baseCount, int userStateCount) {
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
         Assert.assertEquals("backupCount", backupCount, backupSummaries.size());
         BackupSummary backupSummary = backupSummaries.get(0);
         Assert.assertEquals("itemCount", itemCount, backupSummary.getItemCount());
@@ -2350,7 +2370,7 @@ abstract public class AbstractServiceTest {
             throw new IllegalStateException("mockHttpSession is null");
         }
         mockHttpServletRequest = new MockHttpServletRequest();
-        if(httpUrl != null) {
+        if (httpUrl != null) {
             Url url = Url.parse(httpUrl);
             for (Url.QueryParameter queryParameter : url.getQueryParameters()) {
                 mockHttpServletRequest.setParameter(queryParameter.getName(), queryParameter.getValue());

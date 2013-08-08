@@ -2,8 +2,8 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.mgmt.BackupSummary;
-import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.impl.UserGuidanceServiceImpl;
 import org.junit.Assert;
@@ -25,7 +25,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private MgmtService mgmtService;
+    private BackupService backupService;
 
     @Test
     @DirtiesContext
@@ -42,14 +42,14 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -65,14 +65,14 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -104,7 +104,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -120,8 +120,8 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -147,7 +147,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -163,8 +163,8 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -191,15 +191,15 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -224,15 +224,15 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -264,15 +264,15 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -312,15 +312,15 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -356,15 +356,15 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -398,15 +398,15 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -433,8 +433,8 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Restore to old version
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(7).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(7).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

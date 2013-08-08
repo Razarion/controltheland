@@ -32,8 +32,8 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
+import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.mgmt.BackupSummary;
-import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.CollisionService;
@@ -76,7 +76,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @Autowired
     private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private MgmtService mgmtService;
+    private BackupService backupService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -99,10 +99,6 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         createDbBoxItemType1();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-        log.error("----------x1----------");
-
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
-        log.error("----------x2----------");
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -121,22 +117,19 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         planetSystemService.activatePlanet(TEST_PLANET_1_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-        log.error("----------x3----------");
 
-        Thread.sleep(150);
-        log.error("----------x4----------");
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
-        log.error("----------x5----------");
-        Thread.sleep(100);
-        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        Thread.sleep(1000);
 
-        List<SyncItem> allItems = serverPlanetServices.getItemService().getItemsCopy();
-        log.error("----------x6----------");
-        // TODO failed on 03.03.2013, 03.03.2013
-        Assert.assertEquals(1, allItems.size());
-        Assert.assertEquals(TEST_BOX_ITEM_1_ID, allItems.get(0).getItemType().getId());
-        Thread.sleep(100);
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbHistoryElement> dbHistoryElements = loadAll(DbHistoryElement.class);
+        Assert.assertEquals(DbHistoryElement.Type.BOX_DROPPED, dbHistoryElements.get(0).getType());
+        Assert.assertEquals(DbHistoryElement.Type.BOX_EXPIRED, dbHistoryElements.get(1).getType());
+        Assert.assertEquals(DbHistoryElement.Type.BOX_DROPPED, dbHistoryElements.get(2).getType());
+        Assert.assertEquals(DbHistoryElement.Type.BOX_EXPIRED, dbHistoryElements.get(3).getType());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
 
     @Test
@@ -442,19 +435,22 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        Thread.sleep(230);
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        waitForHistoryType(DbHistoryElement.Type.BOX_DROPPED);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
         List<SyncItem> syncItems = serverPlanetServices.getItemService().getItemsCopy();
-        // TODO failed 05.04.2013
-        Assert.assertEquals(1, syncItems.size());
         SyncBoxItem boxItem = (SyncBoxItem) syncItems.get(0);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         assertNoHistoryType(DbHistoryElement.Type.BOX_PICKED);
         sendPickupBoxCommand(TEST_PLANET_1_ID, getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), boxItem.getId());
-        // TODO failed 29.01.2013
-        waitForHistoryType(DbHistoryElement.Type.BOX_PICKED);
+        waitForActionServiceDone();
+        assertHistoryType(DbHistoryElement.Type.BOX_PICKED);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -675,8 +671,8 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
         DbBoxRegion dbBoxRegion = dbPlanet.getBoxRegionCrud().createDbChild();
         dbBoxRegion.setItemFreeRange(100);
-        dbBoxRegion.setMinInterval(200);
-        dbBoxRegion.setMaxInterval(200);
+        dbBoxRegion.setMinInterval(500);
+        dbBoxRegion.setMaxInterval(500);
         dbBoxRegion.setName("DbBoxRegion1");
         dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 1000)));
         DbBoxRegionCount dbBoxRegionCount = dbBoxRegion.getBoxRegionCountCrud().createDbChild();
@@ -688,35 +684,33 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        ServerItemService serverItemService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getItemService();
-
-        Thread.sleep(230);
-        List<SyncItem> syncItems = serverItemService.getItemsCopy();
-        // TODO failed on 15.08.2012, 21.08.2012
-        Assert.assertEquals(1, syncItems.size());
-        Assert.assertTrue(syncItems.get(0) instanceof SyncBoxItem);
-
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        waitForHistoryType(DbHistoryElement.Type.BOX_DROPPED);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        backupService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
         assertBackupSummery(1, 0, 0, 0);
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         assertWholeItemCount(TEST_PLANET_1_ID, 0);
 
-        Thread.sleep(230);
-        syncItems = serverItemService.getItemsCopy();
-        // TODO failed on 28.11.2012
-        Assert.assertEquals(1, syncItems.size());
-        Assert.assertTrue(syncItems.get(0) instanceof SyncBoxItem);
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        waitForHistoryType(DbHistoryElement.Type.BOX_DROPPED);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
@@ -777,15 +771,15 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         loginUser("U1", "xxx");
         sendPickupBoxCommand(TEST_PLANET_1_ID, target, syncBoxItem.getId());
         Assert.assertNotNull(((SyncBaseItem) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getItemService().getItem(target)).getSyncMovable().getSyncBoxItemId());
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
         assertBackupSummery(1, 1, 1, 1);
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -847,12 +841,14 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        Thread.sleep(230);
-        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        waitForHistoryType(DbHistoryElement.Type.BOX_DROPPED);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
         List<SyncItem> syncItems = serverPlanetServices.getItemService().getItemsCopy();
-        // TODO failed on 27.07.2012, 29.09.2012, 03.10.2012, 09.01.2013
-        Assert.assertEquals(1, syncItems.size());
         SyncBoxItem boxItem = (SyncBoxItem) syncItems.get(0);
 
         beginHttpSession();
@@ -860,7 +856,6 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         assertNoHistoryType(DbHistoryElement.Type.INVENTORY_ITEM_FROM_BOX);
         assertNoHistoryType(DbHistoryElement.Type.INVENTORY_ARTIFACT_FROM_BOX);
         assertNoHistoryType(DbHistoryElement.Type.RAZARION_FROM_BOX);
-        // TODO failed on 05.07.2013
         sendPickupBoxCommand(TEST_PLANET_1_ID, getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), boxItem.getId());
         waitForActionServiceDone();
         waitForHistoryType(DbHistoryElement.Type.INVENTORY_ITEM_FROM_BOX);
@@ -1027,15 +1022,15 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
         assertBackupSummery(1, 1, 1, 1);
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
