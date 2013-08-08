@@ -7,7 +7,6 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
-import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -15,16 +14,13 @@ import com.btxtech.game.services.TestPlanetHelper;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
-import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.TestGlobalServices;
-import com.btxtech.game.services.common.impl.ServerGlobalServicesImpl;
 import com.btxtech.game.services.item.ServerItemTypeService;
-import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.GuildService;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -51,7 +47,7 @@ public class TestBaseService extends AbstractServiceTest {
     @Autowired
     private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private MgmtService mgmtService;
+    private BackupService backupService;
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
@@ -249,13 +245,13 @@ public class TestBaseService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.restore(mgmtService.getBackupSummary().get(0).getDate());
+        backupService.restore(backupService.getBackupSummary().get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -496,7 +492,7 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
         Assert.assertEquals("president", baseAttributes.getName());
         Assert.assertFalse(baseAttributes.isBot());
-        Assert.assertEquals((int)guildId, baseAttributes.getSimpleGuild().getId());
+        Assert.assertEquals((int) guildId, baseAttributes.getSimpleGuild().getId());
         checkGuild(baseAttributes, allBaseAttributes);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

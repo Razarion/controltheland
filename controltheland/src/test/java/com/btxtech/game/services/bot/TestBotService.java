@@ -10,11 +10,10 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.item.ServerItemTypeService;
-import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.ServerItemService;
 import com.btxtech.game.services.planet.db.DbPlanet;
-import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +30,7 @@ public class TestBotService extends AbstractServiceTest {
     @Autowired
     private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private MgmtService mgmtService;
-    @Autowired
-    private UserService userService;
+    private BackupService backupService;
     @Autowired
     private PlanetSystemService planetSystemService;
 
@@ -162,7 +159,7 @@ public class TestBotService extends AbstractServiceTest {
         // Make sure backup still works
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

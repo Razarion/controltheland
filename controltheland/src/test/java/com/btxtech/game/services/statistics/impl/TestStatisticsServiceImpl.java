@@ -11,8 +11,8 @@ import com.btxtech.game.services.common.NestedNullSafeBeanComparator;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.mgmt.BackupSummary;
-import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
@@ -48,7 +48,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Autowired
     private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private MgmtService mgmtService;
+    private BackupService backupService;
     @Autowired
     private PlanetSystemService planetSystemService;
 
@@ -486,14 +486,14 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         //Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -518,14 +518,14 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         //Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -545,7 +545,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2", "test");
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
-        createBase(new Index(2000,2000));
+        createBase(new Index(2000, 2000));
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2300, 2300), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -573,14 +573,14 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
         assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         assertEntry(2, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -615,14 +615,14 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         //Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -640,8 +640,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         // Restore to previous date
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(3).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(3).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -659,8 +659,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         // Restore to previous date
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(2).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(2).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -678,8 +678,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         // Restore to previous date
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(1).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(1).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

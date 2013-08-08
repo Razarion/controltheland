@@ -58,10 +58,10 @@ import java.util.Set;
  * Date: Jul 11, 2009
  * Time: 12:00:44 PM
  */
-public class TestBackupRestoreMgmtService extends AbstractServiceTest {
+public class TestBackupService extends AbstractServiceTest {
     public static final int ITEM_COUNT = 100000;
     @Autowired
-    private MgmtService mgmtService;
+    private BackupService backupService;
     @Autowired
     private ServerItemTypeService serverItemTypeService;
     @Autowired
@@ -147,16 +147,16 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         List<Base> oldBases = serverPlanetServices.getBaseService().getBases();
         List<UserState> oldUserStates = userService.getAllUserStates();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
         // TODO failed 03.01.2012
         assertBackupSummery(1, 5, 3, 3);
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -174,14 +174,14 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         assertBackupSummery(2, 5, 3, 3);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         assertBackupSummery(3, 5, 3, 3);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -189,8 +189,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         newBases = serverPlanetServices.getBaseService().getBases();
         newUserStates = userService.getAllUserStates();
         Assert.assertEquals(3, newBases.size());
@@ -203,16 +203,16 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Delete backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
+        backupSummaries = backupService.getBackupSummary();
         Assert.assertEquals(3, backupSummaries.size());
-        mgmtService.deleteBackupEntry(backupSummaries.get(0).getDate());
+        backupService.deleteBackupEntry(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
+        backupSummaries = backupService.getBackupSummary();
         Assert.assertEquals(2, backupSummaries.size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -220,18 +220,18 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Delete backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
+        backupSummaries = backupService.getBackupSummary();
         Assert.assertEquals(2, backupSummaries.size());
-        mgmtService.deleteBackupEntry(backupSummaries.get(0).getDate());
+        backupService.deleteBackupEntry(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
+        backupSummaries = backupService.getBackupSummary();
         Assert.assertEquals(1, backupSummaries.size());
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupService.restore(backupSummaries.get(0).getDate());
         newBases = serverPlanetServices.getBaseService().getBases();
         newUserStates = userService.getAllUserStates();
         Assert.assertEquals(3, newBases.size());
@@ -253,7 +253,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         createBase(new Index(1000, 1000));
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -261,8 +261,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         assertBackupSummery(1, 1, 1, 0);
 
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -301,7 +301,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         Assert.assertEquals(1, serverPlanetServices.getBaseService().getBases().size());
         Assert.assertEquals(4, serverPlanetServices.getBaseService().getBases().get(0).getItems().size());
         Assert.assertEquals(0, userService.getAllUserStates().size());
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -309,8 +309,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         assertBackupSummery(1, 0, 0, 0);
 
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         waitForActionServiceDone(TEST_PLANET_1_ID);
         // TODO failed on: 21.06.2012, 03.07.2012, 07,07.2012
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
@@ -322,15 +322,15 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         assertBackupSummery(2, 0, 0, 0);
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         waitForActionServiceDone(TEST_PLANET_1_ID);
         // TODO failed on: 18.06.2012
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
@@ -376,17 +376,17 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         assertBackupSummery(1, 3, 1, 1);
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
         // TODO failed on: 11.01.2013
         // com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException: Can not find free position. itemType: ItemType: TestResourceItem region Id: 5 itemFreeRange: 100
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupService.restore(backupSummaries.get(0).getDate());
         waitForActionServiceDone(TEST_PLANET_1_ID);
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
         Assert.assertEquals(2, serverPlanetServices.getBaseService().getBases().size());
@@ -424,15 +424,15 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
             pathToDestination.add(new Index(i, i));
         }
         syncBaseItem.getSyncMovable().setPathToDestination(pathToDestination, MathHelper.WEST);
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         assertBackupSummery(1, 1, 1, 1);
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -451,15 +451,15 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
             pathToDestination.add(new Index(i, i));
         }
         syncMovable.setPathToDestination(pathToDestination, MathHelper.WEST);
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         assertBackupSummery(2, 1, 1, 1);
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -492,15 +492,15 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
         assertBackupSummery(1, 0, 0, 0);
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -545,15 +545,15 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         assertBackupSummery(1, 3, 1, 1);
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -596,15 +596,15 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         assertBackupSummery(1, 3, 1, 1);
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -632,15 +632,15 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         assertBackupSummery(2, 3, 1, 0);
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -659,8 +659,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Restore before user has been cleared
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(1).getDate());
+        backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(1).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -851,8 +851,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Restore before user unlocked something
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(5).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(5).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1012,8 +1012,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Restore before user unlocked something
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(5).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(5).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1179,8 +1179,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Restore before user unlocked something
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(5).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(5).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1278,14 +1278,14 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -1374,22 +1374,22 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     public void testBackup2() throws Exception {
         // userGuidanceService.promote(userService.getUserState(), 5);
         // userGuidanceService.promote(userService.getUserState(), 15);
-        // mgmtService.backup();
-        // List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        //  mgmtService.restore(backupSummaries.get(0).getDate());
+        // backupService.backup();
+        // List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        //  backupService.restore(backupSummaries.get(0).getDate());
     }
 
     // @Test
 
     public void testBackupSummary() {
-        mgmtService.getBackupSummary();
+        backupService.getBackupSummary();
     }
 
     // @Test
 
     public void testRestore() throws NoSuchItemTypeException {
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
+        List<BackupSummary> backupSummaries = backupService.getBackupSummary();
+        backupService.restore(backupSummaries.get(0).getDate());
     }
 
     // @Test
@@ -1401,7 +1401,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
             System.out.println("Creating: " + (i + 1) + " of " + ITEM_COUNT);
             serverPlanetServices.getItemService().createSyncObject(itemType, getRandomPosition(itemType), null, getBase(itemType));
         }
-        mgmtService.backup();
+        backupService.backup();
     }
 
     private SimpleBase getBase(ItemType itemType) throws NoSuchItemTypeException {

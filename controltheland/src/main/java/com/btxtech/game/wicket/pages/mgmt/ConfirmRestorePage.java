@@ -15,8 +15,8 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.services.common.DateUtil;
+import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.mgmt.BackupSummary;
-import com.btxtech.game.services.mgmt.MgmtService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.basic.Label;
@@ -33,7 +33,7 @@ import java.text.SimpleDateFormat;
  */
 public class ConfirmRestorePage extends MgmtWebPage {
     @SpringBean
-    private MgmtService mgmtService;
+    private BackupService backupService;
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
     private static Log log = LogFactory.getLog(ConfirmRestorePage.class);
@@ -55,7 +55,7 @@ public class ConfirmRestorePage extends MgmtWebPage {
             @Override
             public void onSubmit() {
                 try {
-                    mgmtService.restore(backupSummary.getDate());
+                    backupService.restore(backupSummary.getDate());
                     setResponsePage(BackupRestore.class);
                 } catch (NoSuchItemTypeException e) {
                     log.error("", e);

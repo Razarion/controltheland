@@ -14,8 +14,8 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.common.DateUtil;
+import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.mgmt.BackupSummary;
-import com.btxtech.game.services.mgmt.MgmtService;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class BackupRestore extends MgmtWebPage {
     @SpringBean
-    private MgmtService mgmtService;
+    private BackupService backupService;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
     private Collection<Date> toBeDeleted = new ArrayList<>();
 
@@ -96,7 +96,7 @@ public class BackupRestore extends MgmtWebPage {
             public void onSubmit() {
                 for (Date date : toBeDeleted) {
                     try {
-                        mgmtService.deleteBackupEntry(date);
+                        backupService.deleteBackupEntry(date);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -109,7 +109,7 @@ public class BackupRestore extends MgmtWebPage {
         Form form = new Form<DbView>("backup") {
             @Override
             protected void onSubmit() {
-                mgmtService.backup();
+                backupService.backup();
             }
         };
         add(form);
@@ -122,7 +122,7 @@ public class BackupRestore extends MgmtWebPage {
 
         @Override
         public Iterator<? extends BackupSummary> iterator(long first, long count) {
-            List<BackupSummary> backups = mgmtService.getBackupSummary();
+            List<BackupSummary> backups = backupService.getBackupSummary();
             if (first != 0 || count != backups.size()) {
                 throw new IllegalArgumentException();
             }
@@ -131,7 +131,7 @@ public class BackupRestore extends MgmtWebPage {
 
         @Override
         public long size() {
-            return mgmtService.getBackupSummary().size();
+            return backupService.getBackupSummary().size();
         }
 
         @Override

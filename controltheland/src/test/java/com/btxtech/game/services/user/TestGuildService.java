@@ -14,7 +14,7 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.history.HistoryService;
-import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.impl.GuildServiceImpl;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -41,7 +41,7 @@ public class TestGuildService extends AbstractServiceTest {
     @Autowired
     private PropertyService propertyService;
     @Autowired
-    private MgmtService mgmtService;
+    private BackupService backupService;
     @Autowired
     private PlanetSystemService planetSystemService;
 
@@ -2053,13 +2053,13 @@ public class TestGuildService extends AbstractServiceTest {
         // Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
+        backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.restore(mgmtService.getBackupSummary().get(0).getDate());
+        backupService.restore(backupService.getBackupSummary().get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
