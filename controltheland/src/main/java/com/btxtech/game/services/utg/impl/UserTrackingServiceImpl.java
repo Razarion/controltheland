@@ -151,6 +151,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         if (filter.getCookieId() != null && !filter.getCookieId().trim().isEmpty()) {
             criteria.add(Restrictions.eq("cookieId", filter.getCookieId()));
         }
+        if (filter.getOptionalFacebookAdValue() != null && !filter.getOptionalFacebookAdValue().trim().isEmpty()) {
+            criteria.add(Restrictions.like("dbFacebookSource.optionalAdValue", filter.getOptionalFacebookAdValue()));
+        }
 
         criteria.addOrder(Order.desc("timeStamp"));
         criteria.addOrder(Order.desc("id"));

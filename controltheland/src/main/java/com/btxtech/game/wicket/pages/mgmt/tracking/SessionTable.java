@@ -18,7 +18,6 @@ import com.btxtech.game.services.utg.SessionOverviewDto;
 import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioChoice;
@@ -29,6 +28,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.text.SimpleDateFormat;
@@ -54,13 +54,14 @@ public class SessionTable extends MgmtWebPage {
     private void filter() {
         add(new FeedbackPanel("msgs"));
 
-        Form<UserTrackingFilter> form = new Form<>("filterForm", new CompoundPropertyModel<UserTrackingFilter>(userTrackingFilter));
+        Form<UserTrackingFilter> form = new Form<>("filterForm", new CompoundPropertyModel<>(userTrackingFilter));
         add(form);
-        form.add(new RadioChoice<UserTrackingFilter>("jsEnabled", UserTrackingFilter.JS_ENABLED_CHOICES));
+        form.add(new RadioChoice<>("jsEnabled", UserTrackingFilter.JS_ENABLED_CHOICES));
         form.add(new TextField("days"));
         form.add(new TextField("hits"));
         form.add(new TextField("sessionId"));
         form.add(new TextField("cookieId"));
+        form.add(new TextField("optionalFacebookAdValue"));
     }
 
     private void resultTable() {
