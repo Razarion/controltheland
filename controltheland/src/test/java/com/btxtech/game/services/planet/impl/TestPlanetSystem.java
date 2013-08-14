@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.common.packets.LevelPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -224,5 +225,29 @@ public class TestPlanetSystem extends AbstractServiceTest {
         assertPackagesIgnoreSyncItemInfoAndClear(storablePacket1, storablePacket2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getStarMapImage() throws Exception {
+        configureSimplePlanetNoResources();
+        // Setup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
+        dbPlanet.setStarMapImageContentType("qaywsx");
+        dbPlanet.setStarMapImageData(new byte[]{1, 2, 3, 4, 5, 6});
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        ImageHolder imageHolder = planetSystemService.getStarMapImage(TEST_PLANET_1_ID);
+        org.junit.Assert.assertEquals("qaywsx", imageHolder.getContentType());
+        org.junit.Assert.assertArrayEquals(new byte[]{1, 2, 3, 4, 5, 6}, imageHolder.getData());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
 }

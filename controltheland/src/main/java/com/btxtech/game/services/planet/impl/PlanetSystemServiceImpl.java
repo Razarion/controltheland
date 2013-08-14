@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.OnlineUserDTO;
@@ -493,5 +494,11 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
             ExceptionHandler.handleException(e);
         }
         return null;
+    }
+
+    @Override
+    public ImageHolder getStarMapImage(int planetId) {
+        DbPlanet dbPlanet = getDbPlanetCrud().readDbChild(planetId);
+        return dbPlanet.getStarMapImage();
     }
 }

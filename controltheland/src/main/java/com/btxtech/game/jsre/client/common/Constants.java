@@ -83,4 +83,11 @@ public class Constants {
     public static final String INVENTORY_TYPE = "type";
     public static final String INVENTORY_TYPE_ARTIFACT = "art";
     public static final String INVENTORY_TYPE_ITEM = "item";
+
+    // Image controller
+    public static final String IMAGE_URL = "/spring/image";
+    public static final String IMAGE_TYPE_KEY = "type";
+    public static final String IMAGE_TYPE_VALUE_STAR_MAP = "star";
+    public static final String IMAGE_ID = "id";
+
 }
