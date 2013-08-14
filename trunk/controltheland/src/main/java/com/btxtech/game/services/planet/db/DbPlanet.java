@@ -8,6 +8,7 @@ import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.terrain.DbRegion;
@@ -17,6 +18,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.TypeDef;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -83,6 +85,10 @@ public class DbPlanet implements CrudChild, CrudParent {
     @JoinColumn(name = "dbPlanet_id")
     private Collection<DbRegionResource> dbRegionResources;
     private Integer unlockRazarion;
+    private String starMapImageContentType;
+    @Basic(fetch = FetchType.LAZY)
+    @Column(length = 500000)
+    private byte[] starMapImageData;
 
     @Transient
     private CrudChildServiceHelper<DbPlanetItemTypeLimitation> itemLimitationCrud;
@@ -267,6 +273,26 @@ public class DbPlanet implements CrudChild, CrudParent {
         return startPointInfo;
     }
 
+    public String getStarMapImageContentType() {
+        return starMapImageContentType;
+    }
+
+    public void setStarMapImageContentType(String starMapImageContentType) {
+        this.starMapImageContentType = starMapImageContentType;
+    }
+
+    public byte[] getStarMapImageData() {
+        return starMapImageData;
+    }
+
+    public void setStarMapImageData(byte[] starMapImageData) {
+        this.starMapImageData = starMapImageData;
+    }
+
+    public ImageHolder getStarMapImage() {
+        return new ImageHolder(starMapImageData, starMapImageContentType);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -286,6 +312,4 @@ public class DbPlanet implements CrudChild, CrudParent {
     public String toString() {
         return getClass().getName() + " " + name + " id: " + id;
     }
-
-
 }

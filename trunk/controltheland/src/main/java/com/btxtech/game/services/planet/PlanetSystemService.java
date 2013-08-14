@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosi
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.inventory.DbInventoryItem;
@@ -110,4 +111,6 @@ public interface PlanetSystemService {
     void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog);
 
     void setChatMessageFilter(UserState userState, ChatMessageFilter chatMessageFilter) throws NotAGuildMemberException;
+
+    ImageHolder getStarMapImage(int planetId);
 }

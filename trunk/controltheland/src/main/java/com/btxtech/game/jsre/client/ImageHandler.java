@@ -174,6 +174,20 @@ public class ImageHandler {
         return url.toString();
     }
 
+    public static String getStarMapPlanetImageUrl(int planetId) {
+        StringBuilder url = new StringBuilder();
+        url.append(Constants.IMAGE_URL);
+        url.append("?");
+        url.append(Constants.IMAGE_TYPE_KEY);
+        url.append("=");
+        url.append(Constants.IMAGE_TYPE_VALUE_STAR_MAP);
+        url.append("&");
+        url.append(Constants.IMAGE_ID);
+        url.append("=");
+        url.append(Integer.toString(planetId));
+        return url.toString();
+    }
+
     public static Image getButtonUpImage(String name) {
         return new Image(BTN_IMAGE_PATH + name + BTN_UP_IMAGE);
     }
