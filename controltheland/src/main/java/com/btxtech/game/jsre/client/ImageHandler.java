@@ -188,6 +188,10 @@ public class ImageHandler {
         return url.toString();
     }
 
+    public static Image getStarMapPlanetImage(int planetId) {
+        return new Image(getStarMapPlanetImageUrl(planetId));
+    }
+
     public static Image getButtonUpImage(String name) {
         return new Image(BTN_IMAGE_PATH + name + BTN_UP_IMAGE);
     }
