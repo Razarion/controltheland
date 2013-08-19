@@ -35,6 +35,7 @@
                 <g:MenuItem text="{msg.menuOverviewGetRazarion}" ui:field="overviewRazarion"/>
             </g:MenuBar>
         </g:MenuItem>
+        <g:MenuItem text="{msg.menuStarMap}" ui:field="starMap"/>
     </g:MenuBar>
     <!-- /g:HTMLPanel -->
 </ui:UiBinder> 

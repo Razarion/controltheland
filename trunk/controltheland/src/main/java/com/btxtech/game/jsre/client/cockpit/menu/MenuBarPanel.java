@@ -21,8 +21,10 @@ import com.btxtech.game.jsre.client.dialogs.incentive.InviteFriendsDialog;
 import com.btxtech.game.jsre.client.dialogs.news.NewsDialog;
 import com.btxtech.game.jsre.client.dialogs.razarion.BuyRazarionPaypalDialog;
 import com.btxtech.game.jsre.client.dialogs.razarion.HowToGetRazarionPanel;
+import com.btxtech.game.jsre.client.dialogs.starmap.StarMapDialog;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -66,6 +68,8 @@ public class MenuBarPanel extends Composite {
     MenuItem buyPaypal;
     @UiField
     MenuItem overviewRazarion;
+    @UiField
+    MenuItem starMap;
 
     interface MenuBarPanelUiBinder extends UiBinder<Widget, MenuBarPanel> {
     }
@@ -190,7 +194,12 @@ public class MenuBarPanel extends Composite {
                 DialogManager.showDialog(new HowToGetRazarionPanel(ClientI18nHelper.CONSTANTS.howToGetRazarion()), DialogManager.Type.STACK_ABLE);
             }
         });
-
+        starMap.setScheduledCommand(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                DialogManager.showDialog(new StarMapDialog(), DialogManager.Type.QUEUE_ABLE);
+            }
+        });
         setSimpleUser(null);
     }
 
@@ -243,6 +252,7 @@ public class MenuBarPanel extends Composite {
             guilds.setVisible(true);
             guilds.setTitle(ClientI18nHelper.CONSTANTS.menuTooltipGuilds());
             guilds.setEnabled(true);
+            starMap.setTitle(ClientI18nHelper.CONSTANTS.menuStarMapTooltip());
         }
     }
 
@@ -250,6 +260,7 @@ public class MenuBarPanel extends Composite {
         newBase.setEnabled(true);
         newBase.setTitle(ClientI18nHelper.CONSTANTS.tooltipMenuNewBaseRealGame());
         history.setEnabled(true);
+        starMap.setEnabled(true);
         if (Connection.getInstance().isRegisteredAndVerified()) {
             history.setTitle(ClientI18nHelper.CONSTANTS.menuTooltipHistory());
             updateGuild(gameInfo.getMySimpleGuild());
@@ -275,5 +286,7 @@ public class MenuBarPanel extends Composite {
         guilds.setVisible(true);
         guilds.setEnabled(false);
         guilds.setTitle(ClientI18nHelper.CONSTANTS.menuTooltipGuildsMission());
+        starMap.setEnabled(false);
+        starMap.setTitle(ClientI18nHelper.CONSTANTS.menuStarMapTooltipMission());
     }
 }

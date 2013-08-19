@@ -106,6 +106,10 @@ public interface ClientI18nConstants extends Messages {
 
     String message();
 
+    String featureNextRelease();
+
+    String featureComingSoon();
+
     // Login logout
     String login();
 
@@ -545,6 +549,12 @@ public interface ClientI18nConstants extends Messages {
 
     String menuOverviewGetRazarion();
 
+    String menuStarMap();
+
+    String menuStarMapTooltip();
+
+    String menuStarMapTooltipMission();
+
     // News Dialog
     String newsDialogTitle();
 
@@ -741,4 +751,27 @@ public interface ClientI18nConstants extends Messages {
     String buyRazarionPaypalOnlyRegisteredVerified();
 
     String buyRazarionDialogTitle();
+
+    // Star map
+    String starMapDialogTitle();
+
+    String minLevel();
+
+    String planetSize();
+
+    String allowedUnits();
+
+    String bases();
+
+    String bots();
+
+    String units();
+
+    String land();
+
+    String wrongLevelForLand();
+
+    String tooltipShowUnitsOnPlanet();
+
+    String tooltipLandOnPlanet();
 }
