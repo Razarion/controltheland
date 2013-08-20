@@ -5,6 +5,7 @@ import com.btxtech.game.services.common.TestGlobalServices;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
+import junit.framework.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -26,8 +27,8 @@ public class TestPlanet {
         AbstractServiceTest.setPrivateField(DbPlanet.class, dbPlanet, "dbPlanetItemTypeLimitations", new ArrayList<>());
         DbTerrainSetting dbTerrainSetting = new DbTerrainSetting();
         dbPlanet.setDbTerrainSetting(dbTerrainSetting);
-        dbTerrainSetting.setTileXCount(100);
-        dbTerrainSetting.setTileYCount(100);
+        dbTerrainSetting.setTileXCount(80);
+        dbTerrainSetting.setTileYCount(120);
         AbstractServiceTest.setPrivateField(DbTerrainSetting.class, dbTerrainSetting, "dbSurfaceRects", new HashSet<>());
         AbstractServiceTest.setPrivateField(DbTerrainSetting.class, dbTerrainSetting, "dbTerrainImagePositions", new HashSet<>());
         DbRegion dbRegion = new DbRegion();
@@ -38,5 +39,7 @@ public class TestPlanet {
         PlanetImpl planet = new PlanetImpl();
         planet.init(new TestGlobalServices());
         planet.activate(dbPlanet);
+
+        Assert.assertEquals(9600, dbPlanet.getSize());
     }
 }

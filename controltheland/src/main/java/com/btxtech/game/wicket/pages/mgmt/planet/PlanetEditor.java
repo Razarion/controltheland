@@ -17,6 +17,7 @@ import com.btxtech.game.wicket.pages.mgmt.inventory.BoxRegionEditor;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.IndexPanel;
+import com.btxtech.game.wicket.uiservices.LevelPanel;
 import com.btxtech.game.wicket.uiservices.MinutePanel;
 import com.btxtech.game.wicket.uiservices.RegionPanel;
 import com.btxtech.game.wicket.uiservices.ResourceItemTypePanel;
@@ -55,7 +56,6 @@ public class PlanetEditor extends MgmtWebPage {
 
     public PlanetEditor(DbPlanet dbPlanet) {
         add(new FeedbackPanel("msgs"));
-
         // Scope and limitation
         final Form<DbPlanet> form = new Form<>("form", new CompoundPropertyModel<>(new RuModel<DbPlanet>(dbPlanet, DbPlanet.class) {
             @Override
@@ -64,6 +64,7 @@ public class PlanetEditor extends MgmtWebPage {
             }
         }));
         add(form);
+        form.add(new LevelPanel("minLevel"));
         form.add(new TextField("maxMoney"));
         form.add(new TextField("houseSpace"));
         form.add(new DropDownChoice<>("radarMode", RadarMode.getList()));
@@ -113,6 +114,7 @@ public class PlanetEditor extends MgmtWebPage {
             }
         }));
         form.add(new ExternalLink("starMapPlanetView", ImageHandler.getStarMapPlanetImageUrl(dbPlanet.getId())).setPopupSettings(new PopupSettings().setWidth(300).setHeight(300)));
+        form.add(new IndexPanel("starMapImagePosition"));
         // Item Limit
         new CrudChildTableHelper<DbPlanet, DbPlanetItemTypeLimitation>("itemTypeLimitation", null, "createItemTypeLimitation", false, form, false) {
 

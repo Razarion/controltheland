@@ -11,11 +11,11 @@ import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Hyperlink;
 
 public class PlanetInfoPanel extends Composite {
     private static PlanetInfoPanelUiBinder uiBinder = GWT.create(PlanetInfoPanelUiBinder.class);
@@ -33,12 +33,15 @@ public class PlanetInfoPanel extends Composite {
     Button landingButton;
     @UiField
     Label wrongLevelLabel;
-    @UiField Hyperlink hyperlink;
+    @UiField
+    Anchor unitLink;
+    private StarMapPlanetInfo starMapPlanetInfo;
 
     interface PlanetInfoPanelUiBinder extends UiBinder<Widget, PlanetInfoPanel> {
     }
 
     public PlanetInfoPanel(StarMapPlanetInfo starMapPlanetInfo) {
+        this.starMapPlanetInfo = starMapPlanetInfo;
         initWidget(uiBinder.createAndBindUi(this));
         planetName.setText(starMapPlanetInfo.getPlanetLiteInfo().getName());
         levelLabel.setText(Integer.toString(starMapPlanetInfo.getMinLevel()));
@@ -65,8 +68,12 @@ public class PlanetInfoPanel extends Composite {
 
     }
 
-	@UiHandler("hyperlink")
-	void onHyperlinkClick(ClickEvent event) {
+    @UiHandler("unitLink")
+    void onUnitLinkClick(ClickEvent event) {
         DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.featureComingSoon(), ClientI18nHelper.CONSTANTS.featureNextRelease()), DialogManager.Type.STACK_ABLE);
-	}
+    }
+
+    public boolean isSame(StarMapPlanetInfo starMapPlanetInfo) {
+        return starMapPlanetInfo.getPlanetLiteInfo().equals(this.starMapPlanetInfo.getPlanetLiteInfo());
+    }
 }

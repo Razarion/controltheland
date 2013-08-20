@@ -37,16 +37,24 @@
             border: 1px solid rgba(0, 0, 90, 0.13);
         }
 
-        .unitLink a, .unitLink a:visited {
+        a.unitLink {
+            text-decoration: underline;
+            font-size: 13px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        a.unitLink, a.unitLink:visited {
             color: rgba(0, 0, 133, 0.68);
         }
 
-        .unitLink a:hover {
+        a.unitLink:hover {
             color: rgba(0, 0, 255, 0.37);
         }
     </ui:style>
     <ui:with field='msg' type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
-    <g:VerticalPanel styleName="{style.main}" width="20em">
+    <g:VerticalPanel styleName="{style.main}" width="17em">
         <g:Label styleName="{style.planetName}" ui:field="planetName"/>
         <g:Grid styleName="{style.infoTable}" width="100%">
             <g:row>
@@ -70,7 +78,7 @@
                     <g:Label text="{msg.allowedUnits}"/>
                 </g:customCell>
                 <g:customCell>
-                    <g:Hyperlink text="{msg.units}" styleName="{style.unitLink}" targetHistoryToken="newHistoryToken" ui:field="hyperlink" title="{msg.tooltipShowUnitsOnPlanet}"/>
+                    <g:Anchor text="{msg.units}" styleName="{style.unitLink}" ui:field="unitLink" title="{msg.tooltipShowUnitsOnPlanet}"/>
                 </g:customCell>
             </g:row>
             <g:row>

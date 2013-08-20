@@ -14,6 +14,7 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.DbLevel;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.TypeDef;
@@ -51,6 +52,8 @@ public class DbPlanet implements CrudChild, CrudParent {
     @Column(length = 50000)
     private String html;
     private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbLevel minLevel;
     // ----- Scope -----
     private int maxMoney;
     private int houseSpace;
@@ -89,6 +92,9 @@ public class DbPlanet implements CrudChild, CrudParent {
     @Basic(fetch = FetchType.LAZY)
     @Column(length = 500000)
     private byte[] starMapImageData;
+    @org.hibernate.annotations.Type(type = "index")
+    @Columns(columns = {@Column(name = "starMapImageXPos"), @Column(name = "starMapImageYPos")})
+    private Index starMapImagePosition;
 
     @Transient
     private CrudChildServiceHelper<DbPlanetItemTypeLimitation> itemLimitationCrud;
@@ -112,6 +118,14 @@ public class DbPlanet implements CrudChild, CrudParent {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    public DbLevel getMinLevel() {
+        return minLevel;
+    }
+
+    public void setMinLevel(DbLevel minLevel) {
+        this.minLevel = minLevel;
     }
 
     @Override
@@ -291,6 +305,18 @@ public class DbPlanet implements CrudChild, CrudParent {
 
     public ImageHolder getStarMapImage() {
         return new ImageHolder(starMapImageData, starMapImageContentType);
+    }
+
+    public Index getStarMapImagePosition() {
+        return starMapImagePosition;
+    }
+
+    public void setStarMapImagePosition(Index starMapImagePosition) {
+        this.starMapImagePosition = starMapImagePosition;
+    }
+
+    public int getSize() {
+        return dbTerrainSetting.getSize();
     }
 
     @Override

@@ -1,10 +1,13 @@
 package com.btxtech.game.services.planet;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation;
+import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +23,33 @@ public class TestPlanetCrud extends AbstractServiceTest {
     private PlanetSystemService planetSystemService;
     @Autowired
     private ServerItemTypeService serverItemTypeService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
 
     @Test
     @DirtiesContext
     public void testCreateModifyDelete() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        DbLevel level1 = userGuidanceService.getDbLevelCrud().createDbChild();
+        DbLevel level2 = userGuidanceService.getDbLevelCrud().createDbChild();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
         setupItemTypes();
         DbPlanet dbPlanet1 = planetSystemService.getDbPlanetCrud().createDbChild();
         dbPlanet1.setName("Planet 1");
         dbPlanet1.setHtml("HTML 1");
+        dbPlanet1.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(level1.getId()));
         dbPlanet1.setMaxMoney(1);
         dbPlanet1.setHouseSpace(2);
         dbPlanet1.setRadarMode(RadarMode.MAP);
         dbPlanet1.setStartItemFreeRange(3);
         dbPlanet1.setStarMapImageContentType("img");
         dbPlanet1.setStarMapImageData(new byte[]{1, 2, 3, 4});
+        dbPlanet1.setStarMapImagePosition(new Index(101, 99));
         dbPlanet1.setStartItemType(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
         DbPlanetItemTypeLimitation dbLimit11 = dbPlanet1.getItemLimitationCrud().createDbChild();
         dbLimit11.setCount(1);
@@ -56,12 +70,14 @@ public class TestPlanetCrud extends AbstractServiceTest {
         dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(dbPlanet1.getId());
         Assert.assertEquals("Planet 1", dbPlanet1.getName());
         Assert.assertEquals("HTML 1", dbPlanet1.getHtml());
+        Assert.assertEquals(level1.getId(), dbPlanet1.getMinLevel().getId());
         Assert.assertEquals(1, dbPlanet1.getMaxMoney());
         Assert.assertEquals(2, dbPlanet1.getHouseSpace());
         Assert.assertEquals(RadarMode.MAP, dbPlanet1.getRadarMode());
         Assert.assertEquals(3, dbPlanet1.getStartItemFreeRange());
         Assert.assertEquals("img", dbPlanet1.getStarMapImageContentType());
         Assert.assertArrayEquals(new byte[]{1, 2, 3, 4}, dbPlanet1.getStarMapImageData());
+        Assert.assertEquals(new Index(101, 99), dbPlanet1.getStarMapImagePosition());
         Assert.assertEquals(TEST_ATTACK_ITEM_ID, (int) dbPlanet1.getStartItemType().getId());
         Assert.assertEquals(3, dbPlanet1.getItemLimitationCrud().readDbChildren().size());
         Assert.assertEquals(TEST_CONTAINER_ITEM_ID, (int) dbPlanet1.getItemLimitationCrud().readDbChild(dbLimit11.getId()).getDbBaseItemType().getId());
@@ -99,11 +115,13 @@ public class TestPlanetCrud extends AbstractServiceTest {
         dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(dbPlanet1.getId());
         Assert.assertEquals("Planet 1", dbPlanet1.getName());
         Assert.assertEquals("HTML 1", dbPlanet1.getHtml());
+        Assert.assertEquals(level1.getId(), dbPlanet1.getMinLevel().getId());
         Assert.assertEquals(1, dbPlanet1.getMaxMoney());
         Assert.assertEquals(2, dbPlanet1.getHouseSpace());
         Assert.assertEquals(RadarMode.MAP, dbPlanet1.getRadarMode());
         Assert.assertEquals("img", dbPlanet1.getStarMapImageContentType());
         Assert.assertArrayEquals(new byte[]{1, 2, 3, 4}, dbPlanet1.getStarMapImageData());
+        Assert.assertEquals(new Index(101, 99), dbPlanet1.getStarMapImagePosition());
         Assert.assertEquals(3, dbPlanet1.getStartItemFreeRange());
         Assert.assertEquals(TEST_ATTACK_ITEM_ID, (int) dbPlanet1.getStartItemType().getId());
         Assert.assertEquals(3, dbPlanet1.getItemLimitationCrud().readDbChildren().size());
@@ -134,11 +152,13 @@ public class TestPlanetCrud extends AbstractServiceTest {
         dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(dbPlanet1.getId());
         dbPlanet1.setName("Planet 3");
         dbPlanet1.setHtml("HTML 3");
+        dbPlanet1.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(level2.getId()));
         dbPlanet1.setMaxMoney(10);
         dbPlanet1.setHouseSpace(20);
         dbPlanet1.setRadarMode(RadarMode.NONE);
         dbPlanet1.setStartItemFreeRange(40);
         dbPlanet1.setStarMapImageContentType("img2");
+        dbPlanet1.setStarMapImagePosition(new Index(202, 88));
         dbPlanet1.setStarMapImageData(new byte[]{3, 2, 3});
         dbPlanet1.setStartItemType(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
         dbPlanet1.getItemLimitationCrud().deleteDbChild(dbPlanet1.getItemLimitationCrud().readDbChild(dbLimit11.getId()));
@@ -160,11 +180,13 @@ public class TestPlanetCrud extends AbstractServiceTest {
         dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(dbPlanet1.getId());
         Assert.assertEquals("Planet 3", dbPlanet1.getName());
         Assert.assertEquals("HTML 3", dbPlanet1.getHtml());
+        Assert.assertEquals(level2.getId(), dbPlanet1.getMinLevel().getId());
         Assert.assertEquals(10, dbPlanet1.getMaxMoney());
         Assert.assertEquals(20, dbPlanet1.getHouseSpace());
         Assert.assertEquals(RadarMode.NONE, dbPlanet1.getRadarMode());
         Assert.assertEquals(40, dbPlanet1.getStartItemFreeRange());
         Assert.assertEquals("img2", dbPlanet1.getStarMapImageContentType());
+        Assert.assertEquals(new Index(202, 88), dbPlanet1.getStarMapImagePosition());
         Assert.assertArrayEquals(new byte[]{3, 2, 3}, dbPlanet1.getStarMapImageData());
         Assert.assertEquals(TEST_START_BUILDER_ITEM_ID, (int) dbPlanet1.getStartItemType().getId());
         Assert.assertEquals(2, dbPlanet1.getItemLimitationCrud().readDbChildren().size());

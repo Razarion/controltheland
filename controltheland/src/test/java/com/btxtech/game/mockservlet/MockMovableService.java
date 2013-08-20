@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.client.dialogs.incentive.FriendInvitationBonus;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
+import com.btxtech.game.jsre.client.dialogs.starmap.StarMapInfo;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -454,6 +455,11 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
 
     @Override
     public List<FriendInvitationBonus> getFriendInvitationBonuses() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public StarMapInfo getStarMapInfo() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

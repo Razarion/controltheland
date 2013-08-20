@@ -7,6 +7,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.StartPointInfo;
+import com.btxtech.game.jsre.client.dialogs.starmap.StarMapInfo;
+import com.btxtech.game.jsre.client.dialogs.starmap.StarMapPlanetInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
@@ -42,14 +44,12 @@ import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.user.impl.GuildServiceImpl;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -500,5 +500,25 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     public ImageHolder getStarMapImage(int planetId) {
         DbPlanet dbPlanet = getDbPlanetCrud().readDbChild(planetId);
         return dbPlanet.getStarMapImage();
+    }
+
+    @Override
+    public StarMapInfo getStarMapInfo() {
+        StarMapInfo starMapInfo = new StarMapInfo();
+        Collection<StarMapPlanetInfo> starMapPlanetInfos = new ArrayList<>();
+        synchronized (planetImpls) {
+            for (PlanetImpl planet : planetImpls.values()) {
+                StarMapPlanetInfo starMapPlanetInfo = new StarMapPlanetInfo();
+                starMapPlanetInfo.setPlanetLiteInfo(planet.getPlanetServices().getPlanetInfo().getPlanetLiteInfo());
+                DbPlanet dbPlanet = getDbPlanetCrud().readDbChild(planet.getPlanetServices().getPlanetInfo().getPlanetLiteInfo().getPlanetId());
+                starMapPlanetInfo.setPosition(dbPlanet.getStarMapImagePosition());
+                starMapPlanetInfo.setMinLevel(dbPlanet.getMinLevel().getNumber());
+                starMapPlanetInfo.setSize(dbPlanet.getSize());
+                planet.getPlanetServices().getBaseService().fillBaseStatistics(starMapPlanetInfo);
+                starMapPlanetInfos.add(starMapPlanetInfo);
+            }
+        }
+        starMapInfo.setStarMapPlanetInfos(starMapPlanetInfos);
+        return starMapInfo;
     }
 }

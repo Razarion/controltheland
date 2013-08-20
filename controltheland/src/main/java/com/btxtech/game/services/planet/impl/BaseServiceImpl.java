@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
+import com.btxtech.game.jsre.client.dialogs.starmap.StarMapPlanetInfo;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -573,5 +574,21 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         baseChangedPacket.setType(BaseChangedPacket.Type.CHANGED);
         baseChangedPacket.setBaseAttributes(new BaseAttributes(fakeBase, setupFakeBaseName(userState), false, simpleGuild));
         planetServices.getConnectionService().sendPacket(userState, baseChangedPacket);
+    }
+
+    @Override
+    public void fillBaseStatistics(StarMapPlanetInfo starMapPlanetInfo) {
+        int bases = 0;
+        int bots = 0;
+        Collection<BaseAttributes> baseAttributeses = getAllBaseAttributes();
+        for (BaseAttributes baseAttributes : baseAttributeses) {
+            if(baseAttributes.isBot()) {
+                bots++;
+            }   else {
+                bases++;
+            }
+        }
+        starMapPlanetInfo.setBases(bases);
+        starMapPlanetInfo.setBots(bots);
     }
 }

@@ -2,6 +2,7 @@ package com.btxtech.game.services.planet.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.dialogs.starmap.StarMapPlanetInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -548,4 +549,61 @@ public class TestBaseService extends AbstractServiceTest {
         }
     }
 
+    @Test
+    @DirtiesContext
+    public void fillBaseStatistics() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Preparation planet 1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        setupMinimalNoAttackBot(TEST_PLANET_1_ID, new Rectangle(0, 0, 500, 500));
+        setupMinimalNoAttackBot(TEST_PLANET_1_ID, new Rectangle(0, 0, 500, 500));
+        setupMinimalNoAttackBot(TEST_PLANET_1_ID, new Rectangle(0, 0, 500, 500));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        createBase(TEST_LEVEL_2_REAL_ID, new Index(1000, 1000));
+        createBase(TEST_LEVEL_2_REAL_ID, new Index(2000, 1000));
+        createBase(TEST_LEVEL_2_REAL_ID, new Index(3000, 1000));
+        createBase(TEST_LEVEL_2_REAL_ID, new Index(4000, 1000));
+        // Preparation planet 2
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        setupMinimalNoAttackBot(TEST_PLANET_2_ID, new Rectangle(0, 0, 500, 500));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        createBase(TEST_LEVEL_5_REAL, new Index(5000, 1000));
+        createBase(TEST_LEVEL_5_REAL, new Index(5000, 2000));
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Verify planet 1
+        BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
+        StarMapPlanetInfo starMapPlanetInfo = new StarMapPlanetInfo();
+        baseService.fillBaseStatistics(starMapPlanetInfo);
+        Assert.assertEquals(4, starMapPlanetInfo.getBases());
+        Assert.assertEquals(3, starMapPlanetInfo.getBots());
+        // Verify planet 2
+        baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_2_ID).getBaseService();
+        starMapPlanetInfo = new StarMapPlanetInfo();
+        baseService.fillBaseStatistics(starMapPlanetInfo);
+        Assert.assertEquals(2, starMapPlanetInfo.getBases());
+        Assert.assertEquals(1, starMapPlanetInfo.getBots());
+        // Verify planet 3
+        baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_3_ID).getBaseService();
+        starMapPlanetInfo = new StarMapPlanetInfo();
+        baseService.fillBaseStatistics(starMapPlanetInfo);
+        Assert.assertEquals(0, starMapPlanetInfo.getBases());
+        Assert.assertEquals(0, starMapPlanetInfo.getBots());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private void createBase(int levelId, Index startPoint) {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(getUserState(),levelId);
+        createBase(startPoint);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }
