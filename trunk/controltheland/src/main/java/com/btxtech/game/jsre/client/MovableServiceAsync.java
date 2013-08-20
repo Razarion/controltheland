@@ -32,6 +32,7 @@ import com.btxtech.game.jsre.client.dialogs.incentive.FriendInvitationBonus;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
+import com.btxtech.game.jsre.client.dialogs.starmap.StarMapInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.UserIsAlreadyGuildMemberException;
@@ -189,4 +190,6 @@ public interface MovableServiceAsync {
     void onFacebookInvite(String fbRequestId, Collection<String> fbUserIds, AsyncCallback<Void> asyncCallback);
 
     void getFriendInvitationBonuses(AsyncCallback<List<FriendInvitationBonus>> asyncCallback);
+
+    void getStarMapInfo(AsyncCallback<StarMapInfo> asyncCallback);
 }

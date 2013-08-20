@@ -40,6 +40,7 @@ import com.btxtech.game.jsre.client.dialogs.incentive.FriendInvitationBonus;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
+import com.btxtech.game.jsre.client.dialogs.starmap.StarMapInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
@@ -856,6 +857,16 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     public List<FriendInvitationBonus> getFriendInvitationBonuses() {
         try {
             return invitationService.getFriendInvitationBonus();
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public StarMapInfo getStarMapInfo() {
+        try {
+            return planetSystemService.getStarMapInfo();
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;

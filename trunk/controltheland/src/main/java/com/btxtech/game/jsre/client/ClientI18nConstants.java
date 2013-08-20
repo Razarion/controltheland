@@ -110,6 +110,10 @@ public interface ClientI18nConstants extends Messages {
 
     String featureComingSoon();
 
+    String loading();
+
+    String serverError();
+
     // Login logout
     String login();
 

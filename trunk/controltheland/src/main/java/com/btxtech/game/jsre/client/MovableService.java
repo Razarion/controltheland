@@ -33,6 +33,7 @@ import com.btxtech.game.jsre.client.dialogs.incentive.FriendInvitationBonus;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
+import com.btxtech.game.jsre.client.dialogs.starmap.StarMapInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
@@ -197,4 +198,6 @@ public interface MovableService extends RemoteService {
     void onFacebookInvite(String fbRequestId, Collection<String> fbUserIds);
 
     List<FriendInvitationBonus> getFriendInvitationBonuses();
+
+    StarMapInfo getStarMapInfo();
 }

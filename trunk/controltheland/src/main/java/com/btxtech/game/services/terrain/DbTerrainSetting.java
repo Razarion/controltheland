@@ -88,6 +88,10 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
         return new TerrainSettings(tileXCount, tileYCount);
     }
 
+    public int getSize() {
+        return tileXCount * tileYCount;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -3,6 +3,8 @@ package com.btxtech.game.services.planet.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.dialogs.starmap.StarMapInfo;
+import com.btxtech.game.jsre.client.dialogs.starmap.StarMapPlanetInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.packets.LevelPacket;
@@ -249,5 +251,71 @@ public class TestPlanetSystem extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+    }
+
+    @Test
+    @DirtiesContext
+    public void getStarMapInfo() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Preparation
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbPlanet dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
+        dbPlanet1.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID));
+        dbPlanet1.setStarMapImagePosition(new Index(100, 101));
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
+        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
+        dbPlanet2.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_5_REAL_ID));
+        dbPlanet2.setStarMapImagePosition(new Index(200, 201));
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
+        DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
+        dbPlanet3.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_6_REAL_ID));
+        dbPlanet3.setStarMapImagePosition(new Index(300, 301));
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Test
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        StarMapInfo starMapInfo = planetSystemService.getStarMapInfo();
+        Assert.assertEquals(3, starMapInfo.getStarMapPlanetInfos().size());
+        // Verify planet 1
+        StarMapPlanetInfo starMapPlanetInfo1 = getStarMapPlanetInfo(starMapInfo, TEST_PLANET_1_ID);
+        Assert.assertEquals(0, starMapPlanetInfo1.getBases());
+        Assert.assertEquals(0, starMapPlanetInfo1.getBots());
+        Assert.assertEquals(10000, starMapPlanetInfo1.getSize());
+        Assert.assertEquals(TEST_LEVEL_2_REAL, starMapPlanetInfo1.getMinLevel());
+        Assert.assertEquals(new Index(100, 101), starMapPlanetInfo1.getPosition());
+        Assert.assertEquals(TEST_PLANET_1, starMapPlanetInfo1.getPlanetLiteInfo().getName());
+        Assert.assertEquals(TEST_PLANET_1_ID, starMapPlanetInfo1.getPlanetLiteInfo().getPlanetId());
+        // Verify planet 2
+        StarMapPlanetInfo starMapPlanetInfo2 = getStarMapPlanetInfo(starMapInfo, TEST_PLANET_2_ID);
+        Assert.assertEquals(0, starMapPlanetInfo2.getBases());
+        Assert.assertEquals(0, starMapPlanetInfo2.getBots());
+        Assert.assertEquals(10000, starMapPlanetInfo2.getSize());
+        Assert.assertEquals(TEST_LEVEL_5_REAL, starMapPlanetInfo2.getMinLevel());
+        Assert.assertEquals(new Index(200, 201), starMapPlanetInfo2.getPosition());
+        Assert.assertEquals(TEST_PLANET_2, starMapPlanetInfo2.getPlanetLiteInfo().getName());
+        Assert.assertEquals(TEST_PLANET_2_ID, starMapPlanetInfo2.getPlanetLiteInfo().getPlanetId());
+        // Verify planet 3
+        StarMapPlanetInfo starMapPlanetInfo3 = getStarMapPlanetInfo(starMapInfo, TEST_PLANET_3_ID);
+        Assert.assertEquals(0, starMapPlanetInfo3.getBases());
+        Assert.assertEquals(0, starMapPlanetInfo3.getBots());
+        Assert.assertEquals(10000, starMapPlanetInfo3.getSize());
+        Assert.assertEquals(TEST_LEVEL_6_REAL, starMapPlanetInfo3.getMinLevel());
+        Assert.assertEquals(new Index(300, 301), starMapPlanetInfo3.getPosition());
+        Assert.assertEquals(TEST_PLANET_3, starMapPlanetInfo3.getPlanetLiteInfo().getName());
+        Assert.assertEquals(TEST_PLANET_3_ID, starMapPlanetInfo3.getPlanetLiteInfo().getPlanetId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private StarMapPlanetInfo getStarMapPlanetInfo(StarMapInfo starMapInfo, int planetId) {
+        for (StarMapPlanetInfo starMapPlanetInfo : starMapInfo.getStarMapPlanetInfos()) {
+            if (starMapPlanetInfo.getPlanetLiteInfo().getPlanetId() == planetId) {
+                return starMapPlanetInfo;
+            }
+        }
+        throw new IllegalArgumentException("planetId does not exist: " + planetId);
     }
 }
