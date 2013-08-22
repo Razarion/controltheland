@@ -2238,7 +2238,7 @@ public class TestCmsService extends AbstractServiceTest {
         getWicketTester().assertRenderedPage(CmsPage.class);
         getWicketTester().assertLabel("form:content", "-");
         // Enter game
-        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().getRealGameInfo(START_UID_1, null);
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertRenderedPage(CmsPage.class);
         getWicketTester().assertLabel("form:content:link:label", "2");

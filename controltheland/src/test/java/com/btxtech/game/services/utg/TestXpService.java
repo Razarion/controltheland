@@ -55,7 +55,7 @@ public class TestXpService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().getRealGameInfo(START_UID_1, null);
         Id builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(builder, new Index(500, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -109,7 +109,7 @@ public class TestXpService extends AbstractServiceTest {
         for (int i = 0; i < count; i++) {
             beginHttpSession();
             beginHttpRequestAndOpenSessionInViewFilter();
-            getMovableService().getRealGameInfo(START_UID_1);
+            getMovableService().getRealGameInfo(START_UID_1, null);
             Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
             sendMoveCommand(target, new Index(8000, 8000));
             targets.add(target);

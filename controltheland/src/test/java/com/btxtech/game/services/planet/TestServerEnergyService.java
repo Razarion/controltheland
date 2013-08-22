@@ -99,7 +99,7 @@ public class TestServerEnergyService extends AbstractServiceTest {
         waitForActionServiceDone();
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_GENERATOR_TYPE_ID);
         waitForActionServiceDone();
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
         Assert.assertEquals(80, realGameInfo.getEnergyConsuming());
         Assert.assertEquals(60, realGameInfo.getEnergyGenerating());
         endHttpRequestAndOpenSessionInViewFilter();

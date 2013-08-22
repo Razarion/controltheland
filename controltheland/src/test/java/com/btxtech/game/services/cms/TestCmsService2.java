@@ -1446,7 +1446,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Set Level and XP
-        getMovableService().getRealGameInfo(START_UID_1); // Connection is created here. Don't call movableService.getGameInfo() again!
+        getMovableService().getRealGameInfo(START_UID_1, null); // Connection is created here. Don't call movableService.getGameInfo() again!
 
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertLabel("form:content:container:1", "2");

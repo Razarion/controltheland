@@ -106,11 +106,12 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     }
 
     @Override
-    public void createBase(UserState userState, Index position) throws InvalidLevelStateException, PositionInBotException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        DbLevel dbLevel = userGuidanceService.getDbLevel(userState);
-        DbPlanet dbPlanet = getUnlockedPlanet(dbLevel, userState);
-        Planet planet = getPlanet(dbPlanet);
-        planet.getPlanetServices().getBaseService().createNewBase(userState, dbPlanet.getStartItemType(), dbPlanet.getStartMoney(), position, dbPlanet.getStartItemFreeRange());
+    public void createBase(ServerPlanetServices serverPlanetServices, UserState userState, Index position) throws InvalidLevelStateException, PositionInBotException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+        if(!hasMinimalLevel(serverPlanetServices.getPlanetInfo().getPlanetId())) {
+            throw new IllegalStateException("User does not have minimal Level for planet: " + serverPlanetServices.getPlanetInfo().getPlanetLiteInfo() + " user: " + userState);
+        }
+        DbPlanet dbPlanet = getDbPlanetCrud().readDbChild(serverPlanetServices.getPlanetInfo().getPlanetId());
+        serverPlanetServices.getBaseService().createNewBase(userState, dbPlanet.getStartItemType(), dbPlanet.getStartMoney(), position, dbPlanet.getStartItemFreeRange());
         log.debug("Base for user '" + userState + "' created on planet: " + dbPlanet);
     }
 
@@ -433,13 +434,13 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
         try {
             boolean sent = false;
             for (PlanetImpl planet : planetImpls.values()) {
-                if(planet.getPlanetServices().getConnectionService().sendPacket(userState, packet)) {
+                if (planet.getPlanetServices().getConnectionService().sendPacket(userState, packet)) {
                     sent = true;
                     break;
                 }
             }
-            if(!sent && packet instanceof StorablePacket) {
-                userState.saveStorablePackage((StorablePacket)packet);
+            if (!sent && packet instanceof StorablePacket) {
+                userState.saveStorablePackage((StorablePacket) packet);
             }
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
@@ -470,7 +471,7 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
 
     @Override
     public void setChatMessageFilter(UserState userState, ChatMessageFilter chatMessageFilter) throws NotAGuildMemberException {
-        if(chatMessageFilter == ChatMessageFilter.GUILD && guildService.getGuildId(userState) == null) {
+        if (chatMessageFilter == ChatMessageFilter.GUILD && guildService.getGuildId(userState) == null) {
             throw new NotAGuildMemberException();
         }
         try {
@@ -520,5 +521,11 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
         }
         starMapInfo.setStarMapPlanetInfos(starMapPlanetInfos);
         return starMapInfo;
+    }
+
+    @Override
+    public boolean hasMinimalLevel(Integer planetId) {
+        DbPlanet dbPlanet = getDbPlanetCrud().readDbChild(planetId);
+        return userGuidanceService.getLevelScope().getNumber() >= dbPlanet.getMinLevel().getNumber();
     }
 }

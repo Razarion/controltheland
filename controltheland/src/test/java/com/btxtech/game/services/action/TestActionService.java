@@ -35,7 +35,7 @@ public class TestActionService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         waitForActionServiceDone();
-        Assert.assertEquals(2, getMovableService().getAllSyncInfo().size());
+        Assert.assertEquals(2, getMovableService().getAllSyncInfo(START_UID_1).size());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -58,7 +58,7 @@ public class TestActionService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         waitForActionServiceDone();
-        Assert.assertEquals(2, getMovableService().getAllSyncInfo().size());
+        Assert.assertEquals(2, getMovableService().getAllSyncInfo(START_UID_1).size());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

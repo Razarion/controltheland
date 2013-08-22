@@ -591,14 +591,14 @@ public class TestGuildService2 extends AbstractServiceTest {
         // Unregistered
         try {
             guildService.inviteUserToGuild(new SimpleBase(-100, -100));
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             Assert.assertEquals(e.getMessage(), "User is not registered");
         }
         // Abandoned
         createAndLoginUser("U1");
         try {
             guildService.inviteUserToGuild(new SimpleBase(-100, TEST_PLANET_1_ID));
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             Assert.assertEquals(e.getMessage(), "Base is isAbandoned: Base Id: -100 Planet Id: 1");
         }
         // TODO UNregistered user which will be invited, can not be tested
@@ -614,7 +614,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("member");
-        SimpleBase simpleBase = createBase(new Index(1000,1000));
+        SimpleBase simpleBase = createBase(new Index(1000, 1000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1113,7 +1113,8 @@ public class TestGuildService2 extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("presi");
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_5_REAL_ID);
-        getMovableService().createBase(new Index(100, 100));
+        getMovableService().getRealGameInfo(START_UID_1, null);// Make connection
+        getMovableService().createBase(START_UID_1, new Index(100, 100));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -1174,7 +1175,8 @@ public class TestGuildService2 extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("member");
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        getMovableService().createBase(new Index(100, 100));
+        getMovableService().getRealGameInfo(START_UID_1, null);// Make connection
+        getMovableService().createBase(START_UID_1, new Index(100, 100));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify

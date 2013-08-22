@@ -74,7 +74,7 @@ import java.util.Map;
  */
 @RemoteServiceRelativePath("movableService")
 public interface MovableService extends RemoteService {
-    RealGameInfo getRealGameInfo(String startUuid) throws InvalidLevelStateException;
+    RealGameInfo getRealGameInfo(String startUuid, Integer planetId) throws InvalidLevelStateException;
 
     SimulationInfo getSimulationGameInfo(int levelTaskId) throws InvalidLevelStateException;
 
@@ -82,11 +82,11 @@ public interface MovableService extends RemoteService {
 
     void sendDebug(Date date, String category, String message);
 
-    void sendCommands(List<BaseCommand> baseCommands);
+    void sendCommands(String startUuid, List<BaseCommand> baseCommands) throws NoConnectionException;
 
     List<Packet> getSyncInfo(String startUuid, boolean resendLast) throws NoConnectionException;
 
-    Collection<SyncItemInfo> getAllSyncInfo();
+    Collection<SyncItemInfo> getAllSyncInfo(String startUuid) throws NoConnectionException;
 
     SimpleUser register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException;
 
@@ -151,7 +151,7 @@ public interface MovableService extends RemoteService {
 
     UnlockContainer unlockPlanet(int planetId);
 
-    RealGameInfo createBase(Index position) throws PositionInBotException;
+    RealGameInfo createBase(String startUuid, Index position) throws PositionInBotException, NoConnectionException;
 
     HistoryElementInfo getHistoryElements(HistoryFilter historyFilter);
 

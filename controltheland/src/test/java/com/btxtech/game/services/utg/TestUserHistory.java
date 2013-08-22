@@ -92,8 +92,8 @@ public class TestUserHistory extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
-        getMovableService().getRealGameInfo(START_UID_1);
-        getMovableService().createBase(new Index(1000, 1000));
+        getMovableService().getRealGameInfo(START_UID_1, null);
+        getMovableService().createBase(START_UID_1, new Index(1000, 1000));
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -119,8 +119,8 @@ public class TestUserHistory extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
-        getMovableService().getRealGameInfo(START_UID_1);
-        SimpleBase target = getMovableService().createBase(new Index(1000, 1000)).getBase();
+        getMovableService().getRealGameInfo(START_UID_1, null);
+        SimpleBase target = getMovableService().createBase(START_UID_1, new Index(1000, 1000)).getBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

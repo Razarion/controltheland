@@ -422,6 +422,8 @@ public interface ClientI18nConstants extends Messages {
 
     String leaveBaseNextPlanet();
 
+    String goNextPlanet();
+
     String getInventoryItemTitle();
 
     String getInventoryItemNotEnough(String inventoryItemName);
@@ -778,4 +780,12 @@ public interface ClientI18nConstants extends Messages {
     String tooltipShowUnitsOnPlanet();
 
     String tooltipLandOnPlanet();
+
+    String youAreAlreadyOnThisPlanet();
+
+    String moveToPlanetTitle();
+
+    String moveToPlanet(String name);
+
+    String leaveBaseMoveToPlanet(String name);
 }

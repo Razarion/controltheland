@@ -15,7 +15,7 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 
 /**
  * User: beat
@@ -31,6 +31,6 @@ public class LoadSimulationInfoStartupTask extends AbstractStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         deferredStartup.setDeferred();
-        Connection.INSTANCE.downloadSimulationGameInfo(ClientLevelHandler.getInstance().getLevelTaskId(), deferredStartup);
+        Connection.INSTANCE.downloadSimulationGameInfo(ClientUserGuidanceService.getInstance().getLevelTaskId(), deferredStartup);
     }
 }

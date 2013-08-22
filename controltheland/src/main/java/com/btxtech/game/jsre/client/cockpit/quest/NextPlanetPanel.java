@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.cockpit.quest;
 
+import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
@@ -23,6 +24,6 @@ public class NextPlanetPanel extends Composite {
 
     @UiHandler("startButton")
     void onStartButtonClick(ClickEvent event) {
-        QuestVisualisationModel.getInstance().moveToNextPlanet();
+        ClientUserGuidanceService.moveToNextPlanet();
     }
 }

@@ -1,14 +1,17 @@
 package com.btxtech.game.services.gwt;
 
-import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.DbClientDebugEntry;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
+import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -36,6 +39,10 @@ public class TestMovableService extends AbstractServiceTest {
     private RegisterService registerService;
     @Autowired
     private CmsUiService cmsUiService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
+    @Autowired
+    private ServerUnlockService unlockService;
 
     @Test
     @DirtiesContext
@@ -57,7 +64,7 @@ public class TestMovableService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
         assertWholeItemCount(TEST_PLANET_1_ID, 0);
         Assert.assertEquals(-3, realGameInfo.getBase().getBaseId());
         Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getBase().getPlanetId());
@@ -103,7 +110,7 @@ public class TestMovableService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createBase(new Index(1000, 1000));
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
         assertWholeItemCount(TEST_PLANET_1_ID, 1);
         Assert.assertEquals(1, realGameInfo.getBase().getBaseId());
         Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getBase().getPlanetId());
@@ -146,7 +153,7 @@ public class TestMovableService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        RealGameInfo realGameInfo = getMovableService().createBase(new Index(1000,1000));
+        RealGameInfo realGameInfo = getMovableService().createBase(START_UID_1, new Index(1000, 1000));
         assertWholeItemCount(TEST_PLANET_1_ID, 1);
         Assert.assertEquals(1, realGameInfo.getBase().getBaseId());
         Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getBase().getPlanetId());
@@ -171,13 +178,109 @@ public class TestMovableService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void getRealGameInfoLevel() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Preparation
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbPlanet dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
+        dbPlanet1.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID));
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
+        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
+        dbPlanet2.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_5_REAL_ID));
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
+        DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
+        dbPlanet3.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_6_REAL_ID));
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // In tutorial
+        try {
+            getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_1_ID);
+            Assert.fail("InvalidLevelStateException expected");
+        } catch (InvalidLevelStateException e) {
+            // Expected
+        }
+        // First real game planet level
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_1_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_2_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_3_ID).getPlanetInfo().getPlanetId());
+        // Second real game planet level
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_5_REAL_ID);
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_1_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_2_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_3_ID).getPlanetInfo().getPlanetId());
+        // Third real game planet level
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_6_REAL_ID);
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_1_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_2_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_3_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_3_ID).getPlanetInfo().getPlanetId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getRealGameInfoLevelLocked() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Preparation
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbPlanet dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
+        dbPlanet1.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID));
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
+        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
+        dbPlanet2.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_5_REAL_ID));
+        dbPlanet2.setUnlockRazarion(10);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
+        planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_2_ID);
+        DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
+        dbPlanet3.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_6_REAL_ID));
+        dbPlanet3.setUnlockRazarion(10);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
+        planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_3_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Planet 2 & 3 locket
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_6_REAL_ID);
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_1_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_2_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_3_ID).getPlanetInfo().getPlanetId());
+        // Unlock planet 2
+        getUserState().setRazarion(100);
+        unlockService.unlockPlanet(TEST_PLANET_2_ID);
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_1_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_2_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_3_ID).getPlanetInfo().getPlanetId());
+        // Unlock planet 3
+        unlockService.unlockPlanet(TEST_PLANET_3_ID);
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_1_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_2_ID).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_3_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_3_ID).getPlanetInfo().getPlanetId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
+
+    @Test
+    @DirtiesContext
     public void getSimulationGame() throws Exception {
         configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
         Assert.assertNotNull(realGameInfo);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -191,7 +294,7 @@ public class TestMovableService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
-            getMovableService().getRealGameInfo(START_UID_1);
+            getMovableService().getRealGameInfo(START_UID_1, null);
             Assert.fail("InvalidLevelStateException expected");
         } catch (InvalidLevelStateException invalidLevelStateException) {
             Assert.assertEquals(TEST_LEVEL_TASK_1_1_SIMULATED_ID, (int) invalidLevelStateException.getLevelTaskId());
@@ -227,7 +330,7 @@ public class TestMovableService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         registerService.register("U1", "xxx", "xxx", "fake");
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
         Assert.assertEquals("U1", realGameInfo.getSimpleUser().getName());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

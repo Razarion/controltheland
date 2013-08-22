@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
-import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
@@ -35,9 +34,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.client.dialogs.starmap.StarMapInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.UserIsAlreadyGuildMemberException;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
-import com.btxtech.game.jsre.common.gameengine.services.user.NoSuchUserException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
@@ -65,7 +62,7 @@ import java.util.Map;
  * The async counterpart of <code>MovableService</code>.
  */
 public interface MovableServiceAsync {
-    void getRealGameInfo(String startUuid, AsyncCallback<RealGameInfo> asyncCallback);
+    void getRealGameInfo(String startUuid, Integer planetId, AsyncCallback<RealGameInfo> asyncCallback);
 
     void getSimulationGameInfo(int levelTaskId, AsyncCallback<SimulationInfo> asyncCallback);
 
@@ -73,11 +70,11 @@ public interface MovableServiceAsync {
 
     void sendDebug(Date date, String category, String message, AsyncCallback async);
 
-    void sendCommands(List<BaseCommand> baseCommands, AsyncCallback async);
+    void sendCommands(String startUuid, List<BaseCommand> baseCommands, AsyncCallback async);
 
     void getSyncInfo(String startUuid, boolean resendLast, AsyncCallback<List<Packet>> async);
 
-    void getAllSyncInfo(AsyncCallback<Collection<SyncItemInfo>> async);
+    void getAllSyncInfo(String startUuid, AsyncCallback<Collection<SyncItemInfo>> async);
 
     void register(String userName, String password, String confirmPassword, String email, AsyncCallback<SimpleUser> asyncCallback);
 
@@ -138,14 +135,14 @@ public interface MovableServiceAsync {
     void unlockItemType(int itemTypeId, AsyncCallback<UnlockContainer> async);
 
     void unlockQuest(int questId, AsyncCallback<UnlockContainer> async);
-                                        
+
     void unlockPlanet(int planetId, AsyncCallback<UnlockContainer> async);
 
-    void createBase(Index position, AsyncCallback<RealGameInfo> async);
+    void createBase(String startUuid, Index position, AsyncCallback<RealGameInfo> async);
 
     void logout(AsyncCallback<Void> async);
 
-    void getHistoryElements(HistoryFilter historyFilter, 	AsyncCallback<HistoryElementInfo> callback);
+    void getHistoryElements(HistoryFilter historyFilter, AsyncCallback<HistoryElementInfo> callback);
 
     void getNewsEntry(int index, AsyncCallback<NewsEntryInfo> callback);
 

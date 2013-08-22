@@ -411,7 +411,7 @@ public class TestClipService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
         Assert.assertEquals(0, realGameInfo.getPreloadedImageSpriteMapInfo().getPreloadedImageSpriteMapInfo().size());
         Assert.assertEquals(0, realGameInfo.getClipLibrary().size());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -452,7 +452,7 @@ public class TestClipService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
         // Image sprite map
         Assert.assertEquals(2, realGameInfo.getImageSpriteMapLibrary().size());
         List<ImageSpriteMapInfo> imageSpriteMap = new ArrayList<>(realGameInfo.getImageSpriteMapLibrary());

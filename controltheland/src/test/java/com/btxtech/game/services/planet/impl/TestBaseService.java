@@ -98,7 +98,7 @@ public class TestBaseService extends AbstractServiceTest {
         clearPackets();
         getMovableService().sellItem(id);
 
-        Assert.assertNotNull(getMovableService().getRealGameInfo(START_UID_1).getStartPointInfo());
+        Assert.assertNotNull(getMovableService().getRealGameInfo(START_UID_1, null).getStartPointInfo());
         Assert.assertNotNull(getMovableService().getSyncInfo(START_UID_1, false));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

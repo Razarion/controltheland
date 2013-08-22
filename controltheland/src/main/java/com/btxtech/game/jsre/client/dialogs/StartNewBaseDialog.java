@@ -47,7 +47,7 @@ public class StartNewBaseDialog extends Dialog {
             @Override
             public void onClick(ClickEvent event) {
                 close();
-                Connection.getInstance().surrenderBase();
+                Connection.getInstance().surrenderBase(null);
             }
         });
         dialogVPanel.setCellHorizontalAlignment(button, HasHorizontalAlignment.ALIGN_CENTER);

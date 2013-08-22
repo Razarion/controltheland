@@ -154,9 +154,11 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private InvitationService invitationService;
 
     @Override
-    public void sendCommands(List<BaseCommand> baseCommands) {
+    public void sendCommands(String startUuid, List<BaseCommand> baseCommands) throws NoConnectionException {
         try {
-            planetSystemService.getUnlockedServerPlanetServices().getActionService().executeCommands(baseCommands);
+            serverGlobalConnectionService.getConnection(startUuid).getServerPlanetServices().getActionService().executeCommands(baseCommands);
+        } catch (NoConnectionException e) {
+            throw e;
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }
@@ -175,9 +177,11 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public Collection<SyncItemInfo> getAllSyncInfo() {
+    public Collection<SyncItemInfo> getAllSyncInfo(String startUuid) throws NoConnectionException {
         try {
-            return planetSystemService.getUnlockedServerPlanetServices().getItemService().getSyncInfo();
+            return serverGlobalConnectionService.getConnection(startUuid).getServerPlanetServices().getItemService().getSyncInfo();
+        } catch (NoConnectionException e) {
+            throw e;
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;
@@ -203,16 +207,19 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public RealGameInfo getRealGameInfo(String startUuid) throws InvalidLevelStateException {
+    public RealGameInfo getRealGameInfo(String startUuid, Integer planetId) throws InvalidLevelStateException {
         try {
             UserState userState = userService.getUserState();
-            ServerPlanetServices serverPlanetServices = planetSystemService.getUnlockedServerPlanetServices(userState);
+            ServerPlanetServices serverPlanetServices = getPlanetSystemService(userState, planetId);
             RealGameInfo realGameInfo = new RealGameInfo();
             setCommonInfo(realGameInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
             if (userState == null) {
                 throw new IllegalStateException("No UserState available: " + userState);
             }
             if (userState.getBase() != null) {
+                if (planetId != null && planetId != userState.getBase().getPlanet().getPlanetServices().getPlanetInfo().getPlanetId()) {
+                    throw new IllegalStateException("User has a base but given planet id is different. Base planet: " + userState.getBase().getPlanet().getPlanetServices().getPlanetInfo().getPlanetLiteInfo() + " given planet id: " + planetId);
+                }
                 continueBase(serverPlanetServices, realGameInfo);
             } else {
                 askForStartPosition(serverPlanetServices, userState, realGameInfo, planetSystemService, false);
@@ -233,6 +240,25 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             ExceptionHandler.handleException(t);
         }
         return null;
+    }
+
+    private ServerPlanetServices getPlanetSystemService(UserState userState, Integer planetId) throws InvalidLevelStateException {
+        if (planetId == null) {
+            return planetSystemService.getUnlockedServerPlanetServices(userState);
+        }
+        try {
+            ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(planetId);
+            if (serverUnlockService.isPlanetLocked(serverPlanetServices.getPlanetInfo().getPlanetLiteInfo(), userState)) {
+                throw new IllegalStateException("Planet is locked: " + serverPlanetServices.getPlanetInfo().getPlanetLiteInfo() + " user: " + userState);
+            }
+            if (!planetSystemService.hasMinimalLevel(planetId)) {
+                throw new IllegalStateException("User does not have minimal Level for planet: " + serverPlanetServices.getPlanetInfo().getPlanetLiteInfo() + " user: " + userState);
+            }
+            return serverPlanetServices;
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return planetSystemService.getUnlockedServerPlanetServices(userState);
+        }
     }
 
     public static void askForStartPosition(ServerPlanetServices serverPlanetServices, UserState userState, RealGameInfo realGameInfo, PlanetSystemService planetSystemService, boolean existingGame) {
@@ -612,17 +638,18 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public RealGameInfo createBase(Index position) throws PositionInBotException {
+    public RealGameInfo createBase(String startUuid, Index position) throws PositionInBotException, NoConnectionException{
         try {
             UserState userState = userService.getUserState();
-            if (planetSystemService.getUnlockedServerPlanetServices().getBaseService().getBase(userState) != null) {
+            if (userState.getBase() != null) {
                 throw new IllegalStateException("User does already have a base: " + userState);
             }
-            planetSystemService.createBase(userState, position);
+            ServerPlanetServices serverPlanetServices = serverGlobalConnectionService.getConnection(startUuid).getServerPlanetServices();
+            planetSystemService.createBase(serverPlanetServices, userState, position);
             RealGameInfo realGameInfo = new RealGameInfo();
             fillRealGameInfo(realGameInfo);
             return realGameInfo;
-        } catch (PositionInBotException e) {
+        } catch (NoConnectionException | PositionInBotException e) {
             throw e;
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);

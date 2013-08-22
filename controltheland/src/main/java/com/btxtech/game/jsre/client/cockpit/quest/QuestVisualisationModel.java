@@ -5,7 +5,6 @@ import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.StartPointMode;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -16,7 +15,7 @@ import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -25,7 +24,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -98,11 +96,11 @@ public class QuestVisualisationModel {
 
     public void startMission() {
         if (currentQuest == null || currentQuest.getType() != QuestInfo.Type.MISSION) {
-            log.warning("ClientLevelHandler.pressButtonWhenReady() currentQuest == null");
+            log.warning("ClientUserGuidanceService.pressButtonWhenReady() currentQuest == null");
             return;
         }
         if (currentQuest.getType() != QuestInfo.Type.MISSION) {
-            log.warning("ClientLevelHandler.pressButtonWhenReady() currentQuest.getType() != QuestInfo.Type.MISSION");
+            log.warning("ClientUserGuidanceService.pressButtonWhenReady() currentQuest.getType() != QuestInfo.Type.MISSION");
             return;
         }
         if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
@@ -113,7 +111,7 @@ public class QuestVisualisationModel {
         YesNoDialog yesNoDialog = new YesNoDialog(ClientI18nHelper.CONSTANTS.startMission(), ClientI18nHelper.CONSTANTS.competeMission(), ClientI18nHelper.CONSTANTS.start(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                ClientLevelHandler.getInstance().setNextTaskId(currentQuest.getId());
+                ClientUserGuidanceService.getInstance().setNextTaskId(currentQuest.getId());
                 StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_SIMULATED);
             }
         }, "Cancel", null);
@@ -133,28 +131,6 @@ public class QuestVisualisationModel {
         StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
     }
 
-    // Move to a user guidance class
-    public void moveToNextPlanet() {
-        if (StartPointMode.getInstance().isActive()) {
-            YesNoDialog yesNoDialog = new YesNoDialog(ClientI18nHelper.CONSTANTS.nextPlanet(), ClientI18nHelper.CONSTANTS.leaveBaseNextPlanet(), ClientI18nHelper.CONSTANTS.go(), new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    Window.Location.reload();
-                }
-            }, ClientI18nHelper.CONSTANTS.cancel(), null);
-            DialogManager.showDialog(yesNoDialog, DialogManager.Type.QUEUE_ABLE);
-        } else {
-            YesNoDialog yesNoDialog = new YesNoDialog(ClientI18nHelper.CONSTANTS.nextPlanet(), ClientI18nHelper.CONSTANTS.leaveBaseNextPlanet(), ClientI18nHelper.CONSTANTS.go(), new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    Connection.getInstance().surrenderBase();
-                    Window.Location.reload();
-                }
-            }, ClientI18nHelper.CONSTANTS.cancel(), null);
-            DialogManager.showDialog(yesNoDialog, DialogManager.Type.QUEUE_ABLE);
-        }
-    }
-
     public void onLevelChange(LevelScope levelScope) {
         if (levelScope.getPlanetLiteInfo() != null && levelScope.getPlanetLiteInfo().getPlanetId() != ClientPlanetServices.getInstance().getPlanetInfo().getPlanetId()) {
             nextPlanet = levelScope.getPlanetLiteInfo();
@@ -162,11 +138,11 @@ public class QuestVisualisationModel {
                 ClientUnlockServiceImpl.getInstance().askUnlockPlanet(nextPlanet, new Runnable() {
                     @Override
                     public void run() {
-                        moveToNextPlanet();
+                        ClientUserGuidanceService.moveToNextPlanet();
                     }
                 });
             } else {
-                moveToNextPlanet();
+                ClientUserGuidanceService.moveToNextPlanet();
             }
         } else {
             nextPlanet = null;

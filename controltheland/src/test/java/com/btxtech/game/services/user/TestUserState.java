@@ -116,14 +116,14 @@ public class TestUserState extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().getRealGameInfo(START_UID_1, null);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Unregistered user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_2);
+        getMovableService().getRealGameInfo(START_UID_2, null);
         Assert.assertEquals(2, userService.getAllUserStates().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
