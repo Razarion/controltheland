@@ -290,7 +290,7 @@ public class TestRegisterService extends AbstractServiceTest {
         user.setAwaitingVerification();
         String verificationId = userService.getUser().getVerificationId();
         saveOrUpdateInTransaction(user);
-        getMovableService().getRealGameInfo(START_UID_1); // Create connection
+        getMovableService().getRealGameInfo(START_UID_1, null); // Create connection
         clearPackets();
         registerService.onVerificationPageCalled(verificationId);
         // Check package
@@ -330,8 +330,8 @@ public class TestRegisterService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         registerService.register("U1", "xxx", "xxx", "fake");
-        getMovableService().getRealGameInfo(START_UID_1);
-        SimpleBase simpleBase = getMovableService().createBase(new Index(1000, 1000)).getBase();
+        getMovableService().getRealGameInfo(START_UID_1, null);
+        SimpleBase simpleBase = getMovableService().createBase(START_UID_1, new Index(1000, 1000)).getBase();
         User user = userService.getUser();
         user.setAwaitingVerification();
         String verificationId = userService.getUser().getVerificationId();
@@ -376,8 +376,8 @@ public class TestRegisterService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         registerService.register("U1", "xxx", "xxx", "fake");
-        getMovableService().getRealGameInfo(START_UID_2);
-        simpleBase = getMovableService().createBase(new Index(3000, 3000)).getBase();
+        getMovableService().getRealGameInfo(START_UID_1, null);// Make connection
+        simpleBase = getMovableService().createBase(START_UID_1, new Index(3000, 3000)).getBase();
         user = userService.getUser();
         user.setAwaitingVerification();
         verificationId = userService.getUser().getVerificationId();

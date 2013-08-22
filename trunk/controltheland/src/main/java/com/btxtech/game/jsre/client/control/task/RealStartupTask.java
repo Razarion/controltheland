@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 
 /**
  * User: beat
@@ -45,7 +45,7 @@ public class RealStartupTask extends GameEngineStartupTask {
         ClientBase.getInstance().setHouseSpace(realGameInfo.getHouseSpace());
         ClientPlanetServices.getInstance().setPlanetInfo(realGameInfo.getPlanetInfo());
         ClientUnlockServiceImpl.getInstance().setUnlockContainer(realGameInfo.getUnlockContainer());
-        ClientLevelHandler.getInstance().setLevel(realGameInfo.getLevelScope());
+        ClientUserGuidanceService.getInstance().setLevel(realGameInfo.getLevelScope());
     }
 
 }

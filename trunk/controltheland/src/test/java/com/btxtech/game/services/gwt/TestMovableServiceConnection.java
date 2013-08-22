@@ -49,7 +49,7 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);// Opens a connection
+        getMovableService().getRealGameInfo(START_UID_1, null);// Opens a connection
         Assert.assertTrue(getMovableService().getSyncInfo(START_UID_1, false).isEmpty());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -62,8 +62,8 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);// Opens a connection
-        getMovableService().createBase(new Index(1000, 1000));
+        getMovableService().getRealGameInfo(START_UID_1, null);// Opens a connection
+        getMovableService().createBase(START_UID_1, new Index(1000, 1000));
         Assert.assertFalse(getMovableService().getSyncInfo(START_UID_1, false).isEmpty());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -77,8 +77,8 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);// Opens a connection
-        getMovableService().createBase(new Index(1000, 1000));
+        getMovableService().getRealGameInfo(START_UID_1, null);// Opens a connection
+        getMovableService().createBase(START_UID_1, new Index(1000, 1000));
         Assert.assertFalse(getMovableService().getSyncInfo(START_UID_1, false).isEmpty());
         // Kill item
         SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
@@ -96,7 +96,7 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);// Opens a connection
+        getMovableService().getRealGameInfo(START_UID_1, null);// Opens a connection
         getMovableService().getSyncInfo(START_UID_1, false);
         try {
             getMovableService().getSyncInfo(START_UID_2, false);
@@ -115,7 +115,7 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);// Opens a connection
+        getMovableService().getRealGameInfo(START_UID_1, null);// Opens a connection
         getMovableService().getSyncInfo(START_UID_1, false);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -141,7 +141,7 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);// Opens a connection
+        getMovableService().getRealGameInfo(START_UID_1, null);// Opens a connection
         getMovableService().getSyncInfo(START_UID_1, false);
         Thread.sleep(500);
         try {
@@ -162,7 +162,7 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().getRealGameInfo(START_UID_1, null);
         getMovableService().getSyncInfo(START_UID_1, false);
         getMovableService().logout();
         try {
@@ -182,9 +182,9 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().getRealGameInfo(START_UID_1, null);
         getMovableService().getSyncInfo(START_UID_1, false);
-        getMovableService().getRealGameInfo(START_UID_2);
+        getMovableService().getRealGameInfo(START_UID_2, null);
         getMovableService().getSyncInfo(START_UID_2, false);
         try {
             getMovableService().getSyncInfo(START_UID_1, false);
@@ -193,7 +193,7 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
             Assert.assertEquals(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS, e.getType());
         }
         getMovableService().getSyncInfo(START_UID_2, false);
-        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().getRealGameInfo(START_UID_1, null);
         getMovableService().getSyncInfo(START_UID_1, false);
         try {
             getMovableService().getSyncInfo(START_UID_2, false);
@@ -213,8 +213,8 @@ public class TestMovableServiceConnection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);
-        getMovableService().createBase(new Index(1000, 1000));
+        getMovableService().getRealGameInfo(START_UID_1, null);
+        getMovableService().createBase(START_UID_1, new Index(1000, 1000));
         getMovableService().surrenderBase();
         Assert.assertNotNull(getMovableService().getSyncInfo(START_UID_1, false));
         endHttpRequestAndOpenSessionInViewFilter();

@@ -10,6 +10,7 @@ import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
@@ -105,7 +106,6 @@ import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
-import com.btxtech.game.services.user.DbGuild;
 import com.btxtech.game.services.user.GuildService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -170,7 +170,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.subethamail.wiser.Wiser;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -498,10 +497,10 @@ abstract public class AbstractServiceTest {
      */
     protected SimpleBase getOrCreateBase() {
         try {
-            if (getMovableService().getRealGameInfo(START_UID_1).getStartPointInfo() != null) {
+            if (getMovableService().getRealGameInfo(START_UID_1, null).getStartPointInfo() != null) {
                 return createBase(new Index(1000, 1000));
             }
-            SimpleBase simpleBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
+            SimpleBase simpleBase = getMovableService().getRealGameInfo(START_UID_1, null).getBase();
             if (simpleBase == null) {
                 throw new IllegalStateException("simpleBase == null");
             }
@@ -518,11 +517,12 @@ abstract public class AbstractServiceTest {
      */
     protected SimpleBase createBase(Index startPoint) {
         try {
-            RealGameInfo realGameInfo = getMovableService().createBase(startPoint);
+            getMovableService().getRealGameInfo(START_UID_1, null); // create connection
+            RealGameInfo realGameInfo = getMovableService().createBase(START_UID_1, startPoint);
             if (realGameInfo == null) {
                 throw new IllegalStateException("realGameInfo == null");
             }
-            SimpleBase simpleBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
+            SimpleBase simpleBase = getMovableService().getRealGameInfo(START_UID_1, null).getBase();
             if (simpleBase == null) {
                 throw new IllegalStateException("simpleBase == null");
             }
@@ -555,24 +555,28 @@ abstract public class AbstractServiceTest {
     }
 
     protected Id getFirstSynItemId(SimpleBase simpleBase, int itemTypeId, Rectangle region) {
-        for (SyncItemInfo syncItemInfo : getMovableService().getAllSyncInfo()) {
-            if (syncItemInfo.getBase() == null && syncItemInfo.getItemTypeId() == itemTypeId) {
-                if (region != null) {
-                    if (region.contains(syncItemInfo.getPosition())) {
+        try {
+            for (SyncItemInfo syncItemInfo : getMovableService().getAllSyncInfo(START_UID_1)) {
+                if (syncItemInfo.getBase() == null && syncItemInfo.getItemTypeId() == itemTypeId) {
+                    if (region != null) {
+                        if (region.contains(syncItemInfo.getPosition())) {
+                            return syncItemInfo.getId();
+                        }
+                    } else {
                         return syncItemInfo.getId();
                     }
-                } else {
-                    return syncItemInfo.getId();
-                }
-            } else if (syncItemInfo.getBase() != null && syncItemInfo.getBase().equals(simpleBase) && syncItemInfo.getItemTypeId() == itemTypeId) {
-                if (region != null) {
-                    if (region.contains(syncItemInfo.getPosition())) {
+                } else if (syncItemInfo.getBase() != null && syncItemInfo.getBase().equals(simpleBase) && syncItemInfo.getItemTypeId() == itemTypeId) {
+                    if (region != null) {
+                        if (region.contains(syncItemInfo.getPosition())) {
+                            return syncItemInfo.getId();
+                        }
+                    } else {
                         return syncItemInfo.getId();
                     }
-                } else {
-                    return syncItemInfo.getId();
                 }
             }
+        } catch (NoConnectionException e) {
+            throw new RuntimeException(e);
         }
         throw new IllegalStateException("No such sync item: ItemTypeID=" + itemTypeId + " simpleBase=" + simpleBase);
     }
@@ -591,7 +595,11 @@ abstract public class AbstractServiceTest {
         if (planetId != null) {
             allSyncInfos = planetSystemService.getServerPlanetServices(planetId).getItemService().getSyncInfo();
         } else {
-            allSyncInfos = getMovableService().getAllSyncInfo();
+            try {
+                allSyncInfos = getMovableService().getAllSyncInfo(START_UID_1);
+            } catch (NoConnectionException e) {
+                throw new RuntimeException(e);
+            }
         }
         for (SyncItemInfo syncItemInfo : allSyncInfos) {
             if (syncItemInfo.getBase() == null && syncItemInfo.getItemTypeId() == itemTypeId) {
@@ -1047,8 +1055,9 @@ abstract public class AbstractServiceTest {
         // Terrain
         setupMinimalTerrain(dbPlanet1);
         // QuestHubs
-        setupOneLevel(dbPlanet1);
+        DbLevel dbLevel = setupOneLevel(dbPlanet1);
 
+        dbPlanet1.setMinLevel(dbLevel);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
         planetSystemService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1065,10 +1074,11 @@ abstract public class AbstractServiceTest {
         // Terrain
         setupMinimalTerrain(dbPlanet1);
         // QuestHubs
-        setupOneLevel(dbPlanet1);
+        DbLevel dbLevel = setupOneLevel(dbPlanet1);
         // Resource
         setupResource1(dbPlanet1, 1, new Rectangle(5000, 5000, 300, 300));
 
+        dbPlanet1.setMinLevel(dbLevel);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
         planetSystemService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1100,8 +1110,11 @@ abstract public class AbstractServiceTest {
         setupResource1(dbPlanet2, 5, new Rectangle(5000, 5000, 1000, 1000));
         setupResource1(dbPlanet3, 6, new Rectangle(0, 0, 1000, 1000));
 
+        dbPlanet1.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID));
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
+        dbPlanet2.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_5_REAL_ID));
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
+        dbPlanet3.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_6_REAL_ID));
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.activate();
 
@@ -1782,7 +1795,7 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Setup Levels --------------------
 
-    private void setupOneLevel(DbPlanet dbPlanet) throws Exception {
+    private DbLevel setupOneLevel(DbPlanet dbPlanet) throws Exception {
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().createDbChild();
         dbLevel.setXp(Integer.MAX_VALUE);
         dbLevel.setNumber(TEST_LEVEL_2_REAL);
@@ -1821,6 +1834,7 @@ abstract public class AbstractServiceTest {
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         TEST_LEVEL_2_REAL_ID = dbLevel.getId();
+        return dbLevel;
     }
 
     private void setupMultipleLevels(DbPlanet dbPlanet) throws Exception {
@@ -2250,7 +2264,7 @@ abstract public class AbstractServiceTest {
         CriteriaQuery<DbHistoryElement> query = criteriaBuilder.createQuery(DbHistoryElement.class);
         Root<DbHistoryElement> from = query.from(DbHistoryElement.class);
         CriteriaQuery<DbHistoryElement> select = query.select(from);
-        if(type != null) {
+        if (type != null) {
             Predicate predicate = criteriaBuilder.equal(from.<DbHistoryElement.Type>get("type"), type);
             query.where(predicate);
         }

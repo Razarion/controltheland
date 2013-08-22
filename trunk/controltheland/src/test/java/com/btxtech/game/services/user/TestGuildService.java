@@ -1497,14 +1497,14 @@ public class TestGuildService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1).getMySimpleGuild());
+        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1, null).getMySimpleGuild());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1).getMySimpleGuild());
+        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1, null).getMySimpleGuild());
         propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
         guildService.createGuild("lkjlkj");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1513,7 +1513,7 @@ public class TestGuildService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        SimpleGuild simpleGuild = getMovableService().getRealGameInfo(START_UID_1).getMySimpleGuild();
+        SimpleGuild simpleGuild = getMovableService().getRealGameInfo(START_UID_1, null).getMySimpleGuild();
         Assert.assertNotNull(simpleGuild);
         Assert.assertEquals("lkjlkj", simpleGuild.getName());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1523,7 +1523,7 @@ public class TestGuildService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
         createBase(new Index(1000, 1000));
-        simpleGuild = getMovableService().getRealGameInfo(START_UID_1).getMySimpleGuild();
+        simpleGuild = getMovableService().getRealGameInfo(START_UID_1, null).getMySimpleGuild();
         Assert.assertNotNull(simpleGuild);
         Assert.assertEquals("lkjlkj", simpleGuild.getName());
         endHttpRequestAndOpenSessionInViewFilter();

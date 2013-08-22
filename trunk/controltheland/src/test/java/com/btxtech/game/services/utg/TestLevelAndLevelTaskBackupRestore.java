@@ -97,7 +97,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         createAndLoginUser("U1");
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
         Assert.assertEquals(4, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -113,7 +113,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -130,7 +130,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -140,7 +140,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         loginUser("U1", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         userGuidanceService.activateQuest(TEST_LEVEL_TASK_3_3_SIMULATED_ID, Locale.ENGLISH);
-        Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -156,7 +156,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
-        Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -177,14 +177,14 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(2).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(3).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         // Complete tutorial
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         Assert.assertEquals(3, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(2).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -211,13 +211,13 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(2).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         // Complete tutorial
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_4_3_SIMULATED_ID);
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -243,7 +243,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -257,7 +257,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(2).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(3).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -283,7 +283,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -298,14 +298,14 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(2).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(3).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         // Complete quest
         userGuidanceServiceImpl.conditionPassed(getUserState(), TEST_LEVEL_TASK_1_3_REAL_ID);
         Assert.assertEquals(3, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(2).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -331,7 +331,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -343,13 +343,13 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(2).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         // Change
         userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL_ID);
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -375,7 +375,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -386,12 +386,12 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         // Change
         userGuidanceServiceImpl.conditionPassed(getUserState(), TEST_LEVEL_TASK_1_4_REAL_ID);
         userGuidanceServiceImpl.conditionPassed(getUserState(), TEST_LEVEL_TASK_2_4_REAL_ID);
         Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
-        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket());
+        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -417,7 +417,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().get(1).getId());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -426,7 +426,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2", "test");
         Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
-        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket());
+        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -443,7 +443,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

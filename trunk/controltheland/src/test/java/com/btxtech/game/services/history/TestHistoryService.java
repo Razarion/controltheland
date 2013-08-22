@@ -152,7 +152,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         // Establish Connection
-        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().getRealGameInfo(START_UID_1, null);
 
         // Build Factory
         System.out.println("---- build unit ---");

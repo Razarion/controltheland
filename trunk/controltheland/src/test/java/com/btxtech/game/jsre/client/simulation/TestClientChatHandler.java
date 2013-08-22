@@ -7,7 +7,7 @@ import com.btxtech.game.jsre.client.cockpit.ChatListener;
 import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
@@ -32,7 +32,7 @@ public class TestClientChatHandler extends AbstractGwtTest implements GlobalComm
 
     public void testSimulatedToReal() throws Exception {
         lastMessageId = null;
-        ClientLevelHandler.getInstance().setLevel(new LevelScope(PlanetInfo.MISSION_PLANET_ID, 1, 0, null, 0));
+        ClientUserGuidanceService.getInstance().setLevel(new LevelScope(PlanetInfo.MISSION_PLANET_ID, 1, 0, null, 0));
         // TODO gameEngineMode = GameEngineMode.MASTER;
         assertEquals(0, sentMessages.size());
         assertNull(lastMessageId);

@@ -70,14 +70,14 @@ public class StartPointMode {
         startPointItemPlacer.onMove(relativeX, relativeY, absoluteX, absoluteY);
         if (startPointItemPlacer.isPositionValid()) {
             if (Connection.getMovableServiceAsync() != null) {
-                Connection.getMovableServiceAsync().createBase(new Index(absoluteX, absoluteY), new AsyncCallback<RealGameInfo>() {
+                Connection.getMovableServiceAsync().createBase(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(), new Index(absoluteX, absoluteY), new AsyncCallback<RealGameInfo>() {
                     @Override
                     public void onFailure(Throwable e) {
                         if (e instanceof PositionInBotException) {
                             DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.createBase(), ClientI18nHelper.CONSTANTS.createBaseInBotFailed()), DialogManager.Type.PROMPTLY);
                         } else {
                             log.log(Level.SEVERE, "MovableServiceAsync.createBase()", e);
-                        }
+                }
                     }
 
                     @Override

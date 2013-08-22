@@ -35,7 +35,7 @@ import java.util.List;
  * Time: 02:29
  */
 public interface PlanetSystemService {
-    void createBase(UserState userState, Index position) throws InvalidLevelStateException, PositionInBotException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
+    void createBase(ServerPlanetServices serverPlanetServices, UserState userState, Index position) throws InvalidLevelStateException, PositionInBotException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
 
     boolean hasPlanet(UserState userState);
 
@@ -116,4 +116,6 @@ public interface PlanetSystemService {
     ImageHolder getStarMapImage(int planetId);
 
     StarMapInfo getStarMapInfo();
+
+    boolean hasMinimalLevel(Integer planetId);
 }

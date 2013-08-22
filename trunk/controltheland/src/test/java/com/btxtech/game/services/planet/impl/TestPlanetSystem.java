@@ -112,7 +112,7 @@ public class TestPlanetSystem extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         UserState userState = userService.getUserState();
-        planetSystemService.createBase(userState, new Index(100, 100));
+        planetSystemService.createBase(planet.getPlanetServices(), userState, new Index(100, 100));
         Assert.assertEquals(1, planet.getPlanetServices().getBaseService().getBases().size());
         Assert.assertEquals(1, getAllSynItemId(TEST_START_BUILDER_ITEM_ID).size());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -148,7 +148,7 @@ public class TestPlanetSystem extends AbstractServiceTest {
         UserState userState = userService.getUserState();
         planetSystemService.sendPacket(userState, new LevelPacket());
 
-        getMovableService().getRealGameInfo(START_UID_1); // Create Connection
+        getMovableService().getRealGameInfo(START_UID_1, null); // Create Connection
         List<Packet> packets = getMovableService().getSyncInfo(START_UID_1, false);
         Assert.assertTrue(packets.isEmpty());
         planetSystemService.sendPacket(userState, new LevelPacket());
@@ -156,7 +156,7 @@ public class TestPlanetSystem extends AbstractServiceTest {
         Assert.assertEquals(1, packets.size());
         Assert.assertTrue(CommonJava.getFirst(packets) instanceof LevelPacket);
 
-        getMovableService().createBase(new Index(1000, 1000));
+        getMovableService().createBase(START_UID_1, new Index(1000, 1000));
         clearPackets();
 
         planetSystemService.sendPacket(userState, new LevelPacket());
@@ -190,7 +190,7 @@ public class TestPlanetSystem extends AbstractServiceTest {
         Assert.assertTrue(userState.getStorablePackets().contains(storablePacket1));
         Assert.assertTrue(userState.getStorablePackets().contains(storablePacket2));
         // Test Packet remove
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
         Assert.assertEquals(2, realGameInfo.getStorablePackets().size());
         Assert.assertTrue(realGameInfo.getStorablePackets().contains(storablePacket1));
         Assert.assertTrue(realGameInfo.getStorablePackets().contains(storablePacket2));
@@ -317,5 +317,45 @@ public class TestPlanetSystem extends AbstractServiceTest {
             }
         }
         throw new IllegalArgumentException("planetId does not exist: " + planetId);
+    }
+
+    @Test
+    @DirtiesContext
+    public void hasMinimalLevel() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Preparation
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbPlanet dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
+        dbPlanet1.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID));
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
+        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
+        dbPlanet2.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_5_REAL_ID));
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
+        DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
+        dbPlanet3.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_6_REAL_ID));
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertFalse(planetSystemService.hasMinimalLevel(TEST_PLANET_1_ID));
+        Assert.assertFalse(planetSystemService.hasMinimalLevel(TEST_PLANET_2_ID));
+        Assert.assertFalse(planetSystemService.hasMinimalLevel(TEST_PLANET_3_ID));
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        Assert.assertTrue(planetSystemService.hasMinimalLevel(TEST_PLANET_1_ID));
+        Assert.assertFalse(planetSystemService.hasMinimalLevel(TEST_PLANET_2_ID));
+        Assert.assertFalse(planetSystemService.hasMinimalLevel(TEST_PLANET_3_ID));
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_5_REAL_ID);
+        Assert.assertTrue(planetSystemService.hasMinimalLevel(TEST_PLANET_1_ID));
+        Assert.assertTrue(planetSystemService.hasMinimalLevel(TEST_PLANET_2_ID));
+        Assert.assertFalse(planetSystemService.hasMinimalLevel(TEST_PLANET_3_ID));
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_6_REAL_ID);
+        Assert.assertTrue(planetSystemService.hasMinimalLevel(TEST_PLANET_1_ID));
+        Assert.assertTrue(planetSystemService.hasMinimalLevel(TEST_PLANET_2_ID));
+        Assert.assertTrue(planetSystemService.hasMinimalLevel(TEST_PLANET_3_ID));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 }

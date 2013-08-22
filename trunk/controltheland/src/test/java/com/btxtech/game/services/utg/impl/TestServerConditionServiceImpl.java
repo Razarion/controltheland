@@ -398,7 +398,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getMissionsDone());
         Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getTotalMissions());
         Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestsDone());
@@ -411,7 +411,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         loginUser("U1", "test");
         simpleBase1 = getOrCreateBase();
         serverConditionService.onMoneyIncrease(simpleBase1, 1.0);
-        Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getMissionsDone());
         Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getTotalMissions());
         Assert.assertEquals(1, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestsDone());
@@ -438,7 +438,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         serverConditionService.onMoneyIncrease(simpleBase1, 1.0);
-        Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getMissionsDone());
         Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getTotalMissions());
         Assert.assertEquals(1, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestsDone());
@@ -466,11 +466,11 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         UserState userState1 = userService.getUserState();
         userGuidanceService.promote(userState1, TEST_LEVEL_4_REAL_ID);
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(600, 600), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         Thread.sleep(500);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -493,12 +493,12 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
-        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         // TODO failed 05.10.2012, 25.10.2012
         assertAndSetTimeRemaining();
         Thread.sleep(100);
         Assert.assertEquals(1, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
-        Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

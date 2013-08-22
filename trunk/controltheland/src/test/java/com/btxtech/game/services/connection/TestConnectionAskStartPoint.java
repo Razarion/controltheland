@@ -9,11 +9,8 @@ import com.btxtech.game.jsre.common.packets.BaseLostPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.user.UserService;
 import junit.framework.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
@@ -32,10 +29,10 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
         Assert.assertNotNull(realGameInfo.getStartPointInfo());
         clearPackets();
-        SimpleBase simpleBase = getMovableService().createBase(new Index(1000, 1000)).getBase();
+        SimpleBase simpleBase = getMovableService().createBase(START_UID_1, new Index(1000, 1000)).getBase();
         List<Packet> packets = getMovableService().getSyncInfo(START_UID_1, false);
         Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket) packets.get(0)).getType());
         Assert.assertEquals(simpleBase, ((BaseChangedPacket) packets.get(0)).getBaseAttributes().getSimpleBase());
@@ -61,7 +58,7 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
         Assert.assertEquals(300, realGameInfo.getStartPointInfo().getItemFreeRange());
         Assert.assertNull(realGameInfo.getStartPointInfo().getSuggestedPosition());
         // Create Base
-        simpleBase = getMovableService().createBase(new Index(1000, 1000)).getBase();
+        simpleBase = getMovableService().createBase(START_UID_1, new Index(1000, 1000)).getBase();
         packets = getMovableService().getSyncInfo(START_UID_1, false);
         Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket) packets.get(0)).getType());
         Assert.assertEquals(simpleBase, ((BaseChangedPacket) packets.get(0)).getBaseAttributes().getSimpleBase());
@@ -81,9 +78,9 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
         Assert.assertNotNull(realGameInfo.getStartPointInfo());
-        SimpleBase simpleBase = getMovableService().createBase(new Index(1000, 1000)).getBase();
+        SimpleBase simpleBase = getMovableService().createBase(START_UID_1, new Index(1000, 1000)).getBase();
         clearPackets();
         // Surrender
         getMovableService().surrenderBase();
@@ -103,7 +100,7 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
         Assert.assertEquals(300, realGameInfo.getStartPointInfo().getItemFreeRange());
         Assert.assertNull(realGameInfo.getStartPointInfo().getSuggestedPosition());
         // Create Base
-        simpleBase = getMovableService().createBase(new Index(2000, 2000)).getBase();
+        simpleBase = getMovableService().createBase(START_UID_1, new Index(2000, 2000)).getBase();
         packets = getMovableService().getSyncInfo(START_UID_1, false);
         Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket) packets.get(0)).getType());
         Assert.assertEquals(simpleBase, ((BaseChangedPacket) packets.get(0)).getBaseAttributes().getSimpleBase());
@@ -124,7 +121,8 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
         // Create Attacker
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().createBase(new Index(5000, 5000)).getBase();
+        getMovableService().getRealGameInfo(START_UID_1, null); // Make connection
+        getMovableService().createBase(START_UID_1, new Index(5000, 5000)).getBase();
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(5200, 5200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -137,9 +135,9 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
         Assert.assertNotNull(realGameInfo.getStartPointInfo());
-        SimpleBase simpleBase = getMovableService().createBase(new Index(1000, 1000)).getBase();
+        SimpleBase simpleBase = getMovableService().createBase(START_UID_1, new Index(1000, 1000)).getBase();
         sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(3800, 4000));
         clearPackets();
         waitForActionServiceDone();
@@ -160,7 +158,7 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
         Assert.assertEquals(300, realGameInfo.getStartPointInfo().getItemFreeRange());
         Assert.assertNull(realGameInfo.getStartPointInfo().getSuggestedPosition());
         // Create Base
-        simpleBase = getMovableService().createBase(new Index(1000, 1000)).getBase();
+        simpleBase = getMovableService().createBase(START_UID_1, new Index(1000, 1000)).getBase();
         packets = getMovableService().getSyncInfo(START_UID_1, false);
         Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket) packets.get(0)).getType());
         Assert.assertEquals(simpleBase, ((BaseChangedPacket) packets.get(0)).getBaseAttributes().getSimpleBase());

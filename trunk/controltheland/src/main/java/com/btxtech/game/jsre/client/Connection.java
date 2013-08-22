@@ -49,7 +49,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.CommonJava;
@@ -147,21 +147,23 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
     public void downloadRealGameInfo(final DeferredStartup deferredStartup) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.getRealGameInfo(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(), new AsyncCallback<RealGameInfo>() {
+            movableServiceAsync.getRealGameInfo(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
+                    ClientUserGuidanceService.getInstance().getAndClearNextPlanetId(),
+                    new AsyncCallback<RealGameInfo>() {
 
-                @Override
-                public void onFailure(Throwable caught) {
-                    handleGameInfoThrowable(caught, deferredStartup);
-                }
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            handleGameInfoThrowable(caught, deferredStartup);
+                        }
 
-                @Override
-                public void onSuccess(RealGameInfo realGameInfo) {
-                    disconnectionCount = 0;
-                    Connection.this.gameInfo = realGameInfo;
-                    gameEngineMode = GameEngineMode.SLAVE;
-                    deferredStartup.finished();
-                }
-            });
+                        @Override
+                        public void onSuccess(RealGameInfo realGameInfo) {
+                            disconnectionCount = 0;
+                            Connection.this.gameInfo = realGameInfo;
+                            gameEngineMode = GameEngineMode.SLAVE;
+                            deferredStartup.finished();
+                        }
+                    });
         } else {
             deferredStartup.failed(DeferredStartup.NO_CONNECTION);
         }
@@ -215,7 +217,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
     public void downloadAllSyncInfo(final DeferredStartup deferredStartup) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {
+            movableServiceAsync.getAllSyncInfo(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(), new AsyncCallback<Collection<SyncItemInfo>>() {
                 @Override
                 public void onFailure(Throwable throwable) {
                     deferredStartup.failed(throwable);
@@ -306,7 +308,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 } else if (packet instanceof ChatMessage) {
                     ClientMessageIdPacketHandler.getInstance().onMessageReceived((ChatMessage) packet);
                 } else if (packet instanceof LevelPacket) {
-                    ClientLevelHandler.getInstance().setLevel(((LevelPacket) packet).getLevel());
+                    ClientUserGuidanceService.getInstance().setLevel(((LevelPacket) packet).getLevel());
                     SplashManager.getInstance().onLevelUp();
                     QuestDialog.updateQuestDialog();
                     FacebookUtils.postToFeedLevelUp(((LevelPacket) packet).getLevel());
@@ -381,7 +383,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
     public void sendCommandQueue() {
         if (movableServiceAsync != null && !commandQueue.isEmpty() && gameEngineMode == GameEngineMode.SLAVE) {
-            movableServiceAsync.sendCommands(commandQueue, new VoidAsyncCallback("sendCommandQueue"));
+            movableServiceAsync.sendCommands(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(), commandQueue, new VoidAsyncCallback("sendCommandQueue"));
         }
         commandQueue.clear();
     }
@@ -827,9 +829,21 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void surrenderBase() {
+    public void surrenderBase(final Runnable runnable) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.surrenderBase(new VoidAsyncCallback("surrenderBase"));
+            movableServiceAsync.surrenderBase(new AsyncCallback<Void>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    ClientExceptionHandler.handleException("MovableServiceAsync.surrenderBase()", caught);
+                }
+
+                @Override
+                public void onSuccess(Void result) {
+                    if (runnable != null) {
+                        runnable.run();
+                    }
+                }
+            });
         }
     }
 
@@ -1048,7 +1062,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 @Override
                 public void onSuccess(Void aVoid) {
                     InviteFriendsDialog.enableFacebookButton(true);
-                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(),ClientI18nHelper.CONSTANTS.invitationFacebookSent()), DialogManager.Type.STACK_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(), ClientI18nHelper.CONSTANTS.invitationFacebookSent()), DialogManager.Type.STACK_ABLE);
                 }
             });
         }
@@ -1069,7 +1083,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 public void onSuccess(Void aVoid) {
                     textBox.setText("");
                     button.setEnabled(true);
-                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(),ClientI18nHelper.CONSTANTS.invitationEmailSent(emailAddress)), DialogManager.Type.STACK_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(), ClientI18nHelper.CONSTANTS.invitationEmailSent(emailAddress)), DialogManager.Type.STACK_ABLE);
                 }
             });
         }

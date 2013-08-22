@@ -63,12 +63,12 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         getOrCreateBase();
         xpService.onReward(getUserState(), 100001);
         getMovableService().surrenderBase();
-        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, null).getPlanetInfo().getPlanetId());
         getUserState().setRazarion(100);
         UnlockContainer unlockContainer = unlockService.unlockPlanet(TEST_PLANET_2_ID);
         Assert.assertEquals(87, getUserState().getRazarion());
         getMovableService().surrenderBase();
-        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, null).getPlanetInfo().getPlanetId());
         Assert.assertTrue(unlockContainer.containsPlanetId(TEST_PLANET_2_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -99,7 +99,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         Assert.assertTrue(unlockContainer.containsPlanetId(TEST_PLANET_2_ID));
         xpService.onReward(getUserState(), 100001);
         getMovableService().surrenderBase();
-        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, null).getPlanetInfo().getPlanetId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -125,7 +125,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         userGuidanceService.promote(getUserState(), TEST_LEVEL_6_REAL);
         createBase(new Index(500, 500));
         getUserState().setRazarion(100);
-        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, null).getPlanetInfo().getPlanetId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -155,7 +155,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         userGuidanceService.promote(getUserState(), TEST_LEVEL_6_REAL);
         getOrCreateBase();
         getUserState().setRazarion(100);
-        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, null).getPlanetInfo().getPlanetId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

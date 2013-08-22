@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.client.item.ItemTypeContainer;
 import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.common.ImageLoader;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -513,7 +513,7 @@ public class ItemTypeEditorModel {
                     planetInfo.setRadarMode(RadarMode.NONE);
                     planetInfo.setPlanetIdAndName(PlanetInfo.EDITOR_PLANET_ID.getPlanetId(), null, null);
                     ClientPlanetServices.getInstance().setPlanetInfo(planetInfo);
-                    ClientLevelHandler.getInstance().setLevel(new LevelScope(new PlanetLiteInfo(PlanetInfo.EDITOR_PLANET_ID.getPlanetId(), "", null), 0, 0, null, 0));
+                    ClientUserGuidanceService.getInstance().setLevel(new LevelScope(new PlanetLiteInfo(PlanetInfo.EDITOR_PLANET_ID.getPlanetId(), "", null), 0, 0, null, 0));
                     // /--- Setup terrain
                     ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
                     if (itemType.getTerrainType() == null) {

@@ -102,7 +102,7 @@ public class StarMapDialog extends Dialog {
     }
 
     private void createPlanetPopUp(StarMapPlanetInfo starMapPlanetInfo, Image image) {
-        planetInfoPopUp = new PlanetInfoPanel(starMapPlanetInfo);
+        planetInfoPopUp = new PlanetInfoPanel(this, starMapPlanetInfo);
         solarSystemPanel.add(planetInfoPopUp, 0, 0);
         Index planetPanelPosition = planetInfoPanelPlacer(image, starMapPlanetInfo.getPosition());
         solarSystemPanel.setWidgetPosition(planetInfoPopUp, planetPanelPosition.getX(), planetPanelPosition.getY());

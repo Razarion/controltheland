@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.PositionInBotException;
 import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
@@ -111,7 +112,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public RealGameInfo getRealGameInfo(String startUuid) {
+    public RealGameInfo getRealGameInfo(String startUuid, Integer planetId) throws InvalidLevelStateException {
         return null;
     }
 
@@ -167,7 +168,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public void sendCommands(List<BaseCommand> baseCommands) {
+    public void sendCommands(String startUuid, List<BaseCommand> baseCommands) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -177,7 +178,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public Collection<SyncItemInfo> getAllSyncInfo() {
+    public Collection<SyncItemInfo> getAllSyncInfo(String startUuid) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -339,7 +340,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public RealGameInfo createBase(Index position) throws PositionInBotException {
+    public RealGameInfo createBase(String startUuid, Index position) throws PositionInBotException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

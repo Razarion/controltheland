@@ -67,7 +67,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         assertWholeBaseItemCount(TEST_PLANET_1_ID, 4);
-        Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         // Unlock quest
         getUserState().setRazarion(100);
         UnlockContainer unlockContainer = unlockService.unlockQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
@@ -78,7 +78,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         assertWholeBaseItemCount(TEST_PLANET_1_ID, 6);
-        Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -156,14 +156,14 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         UnlockContainer unlockContainer = unlockService.unlockQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
         Assert.assertTrue(unlockContainer.containsQuestId(TEST_LEVEL_TASK_2_2_REAL_ID));
         userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_2_REAL_ID, Locale.ENGLISH);
-        Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         // Fulfill quest
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         assertWholeBaseItemCount(TEST_PLANET_1_ID, 3);
-        Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

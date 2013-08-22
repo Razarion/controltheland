@@ -23,7 +23,7 @@ public class PacketSendingTest extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         System.out.println("----- testSimple -----");
 
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1); // Connection is created here. Don't call movableService.getGameInfo() again!
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null); // Connection is created here. Don't call movableService.getGameInfo() again!
         SimpleBase simpleBase = getOrCreateBase();
         Thread.sleep(1000); // Get rid of unpredictable account balance package
         clearPackets();

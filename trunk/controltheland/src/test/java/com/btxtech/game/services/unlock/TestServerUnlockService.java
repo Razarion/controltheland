@@ -88,7 +88,7 @@ public class TestServerUnlockService extends AbstractServiceTest {
         unlockService.unlockPlanet(TEST_PLANET_2_ID);
         unlockService.unlockPlanet(TEST_PLANET_3_ID);
         // Verify
-        UnlockContainer unlockContainer = getMovableService().getRealGameInfo(START_UID_1).getUnlockContainer();
+        UnlockContainer unlockContainer = getMovableService().getRealGameInfo(START_UID_1, null).getUnlockContainer();
         Assert.assertNotNull(unlockContainer);
         // Verify items
         Assert.assertEquals(2, unlockContainer.getItemTypes().size());
@@ -104,7 +104,7 @@ public class TestServerUnlockService extends AbstractServiceTest {
         Assert.assertTrue(unlockContainer.getPlanets().contains(TEST_PLANET_2_ID));
         Assert.assertTrue(unlockContainer.getPlanets().contains(TEST_PLANET_3_ID));
         // Verify planet
-        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1).getLevelScope().getPlanetLiteInfo().getUnlockRazarion());
+        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1, null).getLevelScope().getPlanetLiteInfo().getUnlockRazarion());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -180,7 +180,7 @@ public class TestServerUnlockService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
         // Verify
-        UnlockContainer unlockContainer = getMovableService().getRealGameInfo(START_UID_1).getUnlockContainer();
+        UnlockContainer unlockContainer = getMovableService().getRealGameInfo(START_UID_1, null).getUnlockContainer();
         Assert.assertNotNull(unlockContainer);
         // Verify items
         Assert.assertEquals(2, unlockContainer.getItemTypes().size());

@@ -25,7 +25,7 @@ import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
@@ -90,7 +90,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         }
         ClientBase.getInstance().createOwnSimulationBaseIfNotExist(tutorialConfig.getOwnBaseName());
         ClientPlanetServices.getInstance().setPlanetInfo(taskConfig.createPlanetInfo());
-        ClientLevelHandler.getInstance().setLevel(taskConfig.createLevelScope(simulationInfo.getLevelNumber()));
+        ClientUserGuidanceService.getInstance().setLevel(taskConfig.createLevelScope(simulationInfo.getLevelNumber()));
         if (taskConfig.hasBots()) {
             ClientBotService.getInstance().setBotConfigs(taskConfig.getBotConfigs());
             ClientBotService.getInstance().start();
@@ -140,7 +140,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         ClientUserTracker.getInstance().onTutorialFinished(simulationInfo.getLevelTaskId(), time - tutorialTime, time, new ParametrisedRunnable<GameFlow>() {
             @Override
             public void run(GameFlow gameFlow) {
-                ClientLevelHandler.getInstance().onTutorialFlow(gameFlow);
+                ClientUserGuidanceService.getInstance().onTutorialFlow(gameFlow);
             }
         });
     }
