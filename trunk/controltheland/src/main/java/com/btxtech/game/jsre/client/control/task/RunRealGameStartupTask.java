@@ -48,7 +48,6 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
         ClientBase.getInstance().setMySimpleGuild(((RealGameInfo)Connection.getInstance().getGameInfo()).getMySimpleGuild());
         Connection.getInstance().handleStorablePackets(((RealGameInfo)Connection.getInstance().getGameInfo()).getStorablePackets());
         MenuBarCockpit.getInstance().initRealGame((RealGameInfo)Connection.getInstance().getGameInfo());
-        QuestVisualisationModel.getInstance().setLevelTask(((RealGameInfo) Connection.getInstance().getGameInfo()).getLevelTaskPacket());
         Connection.getInstance().startSyncInfoPoll();
         RegisterDialog.showDialogRepeating();
         SideCockpit.getInstance().updateItemLimit();
@@ -61,6 +60,7 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
             ClientDeadEndProtection.getInstance().start();
         }
         ClientUserGuidanceService.getInstance().setLevel(((RealGameInfo) Connection.getInstance().getGameInfo()).getLevelScope());
+        QuestVisualisationModel.getInstance().setLevelTask(((RealGameInfo) Connection.getInstance().getGameInfo()).getLevelTaskPacket());
         FacebookUtils.callConversationRealRealGamePixel();
     }
 }
