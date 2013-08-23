@@ -136,6 +136,7 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        // TODO failed on 23.08.2013
         createBase(new Index(4000, 4000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
