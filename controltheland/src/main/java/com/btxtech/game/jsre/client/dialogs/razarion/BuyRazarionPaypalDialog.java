@@ -66,7 +66,9 @@ public class BuyRazarionPaypalDialog extends Dialog {
     }
 
     private void fillUnverified(VerticalPanel dialogVPanel) {
-        dialogVPanel.add(new HTML(ClientI18nHelper.CONSTANTS.buyRazarionPaypalOnlyRegisteredVerified()));
+        HTML html = new HTML(ClientI18nHelper.CONSTANTS.buyRazarionPaypalOnlyRegisteredVerified());
+        html.setWidth("20em");
+        dialogVPanel.add(html);
     }
 
     private void fillUnregistered(final VerticalPanel dialogVPanel) {
