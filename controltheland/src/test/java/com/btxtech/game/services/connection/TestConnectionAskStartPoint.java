@@ -41,7 +41,7 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
         Assert.assertEquals(TEST_START_BUILDER_ITEM_ID, ((SyncItemInfo) packets.get(3)).getItemTypeId());
         Assert.assertEquals(simpleBase, ((SyncItemInfo) packets.get(3)).getBase());
         // Sell
-        getMovableService().sellItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         Thread.sleep(200);
         packets = getMovableService().getSyncInfo(START_UID_1, false);
         Assert.assertEquals(BaseChangedPacket.Type.REMOVED, ((BaseChangedPacket) packets.get(0)).getType());

@@ -74,7 +74,7 @@ public class TestBaseService extends AbstractServiceTest {
         waitForActionServiceDone();
         Assert.assertEquals(998, baseService.getBase(simpleBase).getAccountBalance(), 0.1);
         clearPackets();
-        getMovableService().sellItem(id);
+        getMovableService().sellItem(START_UID_1, id);
         // $999
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
         accountBalancePacket.setAccountBalance(998.5);
@@ -96,7 +96,7 @@ public class TestBaseService extends AbstractServiceTest {
         SimpleBase simpleBase = getOrCreateBase(); // Setup connection
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
-        getMovableService().sellItem(id);
+        getMovableService().sellItem(START_UID_1, id);
 
         Assert.assertNotNull(getMovableService().getRealGameInfo(START_UID_1, null).getStartPointInfo());
         Assert.assertNotNull(getMovableService().getSyncInfo(START_UID_1, false));
@@ -196,17 +196,17 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, attackType, 12));
         Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, attackType, 13));
         // Sell
-        getMovableService().sellItem(getFirstSynItemId(TEST_FACTORY_ITEM_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(TEST_FACTORY_ITEM_ID));
         assertWholeItemCount(TEST_PLANET_1_ID, 3);
         Assert.assertEquals(3, baseService.getUsedHouseSpace(simpleBase));
         Assert.assertEquals(10, baseService.getHouseSpace(simpleBase));
         // Sell
-        getMovableService().sellItem(getFirstSynItemId(TEST_ATTACK_ITEM_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(TEST_ATTACK_ITEM_ID));
         assertWholeItemCount(TEST_PLANET_1_ID, 2);
         Assert.assertEquals(1, baseService.getUsedHouseSpace(simpleBase));
         Assert.assertEquals(10, baseService.getHouseSpace(simpleBase));
         // Sell
-        getMovableService().sellItem(getFirstSynItemId(TEST_HOUSE_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(TEST_HOUSE_ID));
         assertWholeItemCount(TEST_PLANET_1_ID, 1);
         Assert.assertEquals(1, baseService.getUsedHouseSpace(simpleBase));
         Assert.assertEquals(0, baseService.getHouseSpace(simpleBase));

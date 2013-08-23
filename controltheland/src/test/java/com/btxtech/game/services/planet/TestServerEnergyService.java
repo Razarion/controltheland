@@ -41,11 +41,11 @@ public class TestServerEnergyService extends AbstractServiceTest {
         Assert.assertEquals(20, serverEnergyService.getConsuming());
         Assert.assertEquals(30, serverEnergyService.getGenerating());
         // Sell consumer
-        getMovableService().sellItem(getFirstSynItemId(getOrCreateBase(), TEST_CONSUMER_TYPE_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(getOrCreateBase(), TEST_CONSUMER_TYPE_ID));
         Assert.assertEquals(0, serverEnergyService.getConsuming());
         Assert.assertEquals(30, serverEnergyService.getGenerating());
         // Sell generator
-        getMovableService().sellItem(getFirstSynItemId(getOrCreateBase(), TEST_GENERATOR_TYPE_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(getOrCreateBase(), TEST_GENERATOR_TYPE_ID));
         Assert.assertEquals(0, serverEnergyService.getConsuming());
         Assert.assertEquals(0, serverEnergyService.getGenerating());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -132,12 +132,12 @@ public class TestServerEnergyService extends AbstractServiceTest {
         energyPacket.setGenerating(30);
         assertPackagesIgnoreSyncItemInfoAndClear(true, energyPacket);
         // Sell consumer
-        getMovableService().sellItem(getFirstSynItemId(getOrCreateBase(), TEST_CONSUMER_TYPE_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(getOrCreateBase(), TEST_CONSUMER_TYPE_ID));
         energyPacket = new EnergyPacket();
         energyPacket.setConsuming(0);
         energyPacket.setGenerating(30);
         // Sell consumer
-        getMovableService().sellItem(getFirstSynItemId(getOrCreateBase(), TEST_GENERATOR_TYPE_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(getOrCreateBase(), TEST_GENERATOR_TYPE_ID));
         energyPacket = new EnergyPacket();
         energyPacket.setConsuming(0);
         energyPacket.setGenerating(0);
@@ -165,7 +165,7 @@ public class TestServerEnergyService extends AbstractServiceTest {
         // Verify
         Assert.assertTrue(syncBaseItem.getSyncConsumer().isOperating());
         // Sell generator
-        getMovableService().sellItem(getFirstSynItemId(getOrCreateBase(), TEST_GENERATOR_TYPE_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(getOrCreateBase(), TEST_GENERATOR_TYPE_ID));
         // Verify
         Assert.assertFalse(syncBaseItem.getSyncConsumer().isOperating());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -195,7 +195,7 @@ public class TestServerEnergyService extends AbstractServiceTest {
         waitForActionServiceDone();
         Assert.assertEquals(new Index(3000,3000), consumerMovableAttacker.getSyncItemArea().getPosition());
         // Sell generator & Verify
-        getMovableService().sellItem(getFirstSynItemId(getOrCreateBase(), TEST_GENERATOR_TYPE_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(getOrCreateBase(), TEST_GENERATOR_TYPE_ID));
         sendMoveCommand(consumerMovableAttacker.getId(), new Index(500, 500));
         waitForActionServiceDone();
         Assert.assertEquals(new Index(3000,3000), consumerMovableAttacker.getSyncItemArea().getPosition());

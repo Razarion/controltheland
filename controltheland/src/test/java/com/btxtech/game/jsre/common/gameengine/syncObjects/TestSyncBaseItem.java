@@ -63,6 +63,7 @@ public class TestSyncBaseItem extends AbstractServiceTest {
         Base base5 = createBase(planetServices, new Index(5000, 5000));
         SimpleBase botBase1 = createBotBase(planetServices);
         SimpleBase botBase2 = createBotBase(planetServices);
+        createConnection();
         SyncBaseItem syncBaseItem1 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base1.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
         SyncBaseItem syncBaseItem2 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base2.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
         SyncBaseItem syncBaseItem3 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base3.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));

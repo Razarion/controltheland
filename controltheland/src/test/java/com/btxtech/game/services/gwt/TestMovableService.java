@@ -6,6 +6,11 @@ import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.common.NoConnectionException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.DbClientDebugEntry;
@@ -22,6 +27,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -153,6 +161,7 @@ public class TestMovableService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        createConnection();
         RealGameInfo realGameInfo = getMovableService().createBase(START_UID_1, new Index(1000, 1000));
         assertWholeItemCount(TEST_PLANET_1_ID, 1);
         Assert.assertEquals(1, realGameInfo.getBase().getBaseId());
@@ -180,20 +189,6 @@ public class TestMovableService extends AbstractServiceTest {
     @DirtiesContext
     public void getRealGameInfoLevel() throws Exception {
         configureMultiplePlanetsAndLevels();
-        // Preparation
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        DbPlanet dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
-        dbPlanet1.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID));
-        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
-        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_5_REAL_ID));
-        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
-        DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_6_REAL_ID));
-        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -230,17 +225,12 @@ public class TestMovableService extends AbstractServiceTest {
         // Preparation
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbPlanet dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
-        dbPlanet1.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID));
-        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
         DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_5_REAL_ID));
         dbPlanet2.setUnlockRazarion(10);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_6_REAL_ID));
         dbPlanet3.setUnlockRazarion(10);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
@@ -421,4 +411,42 @@ public class TestMovableService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+
+    @Test
+    @DirtiesContext
+    public void sendCommands() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BaseCommand> baseCommands = new ArrayList<>();
+        try {
+            getMovableService().sendCommands(START_UID_1, baseCommands);
+            Assert.fail("NoConnectionException expected");
+        } catch (NoConnectionException e) {
+            // Expected
+        }
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        createBase(new Index(2000, 2000));
+        MoveCommand moveCommand = new MoveCommand();
+        moveCommand.setId(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
+        moveCommand.setTimeStamp();
+        Path path = new Path(new Index(2000, 2000), new Index(4000, 4000), true);
+        path.setDestinationAngel(0);
+        List<Index> pathElements = new ArrayList<>();
+        pathElements.add(new Index(3000, 3000));
+        pathElements.add(new Index(4000, 4000));
+        path.setPath(pathElements);
+        moveCommand.setPathToDestination(path);
+        baseCommands.add(moveCommand);
+        getMovableService().sendCommands(START_UID_1, baseCommands);
+        waitForActionServiceDone();
+        SyncBaseItem syncBaseItem = (SyncBaseItem) planetSystemService.getServerPlanetServices(getUserState()).getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
+        Assert.assertEquals(new Index(4000, 4000), syncBaseItem.getSyncItemArea().getPosition());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
 }

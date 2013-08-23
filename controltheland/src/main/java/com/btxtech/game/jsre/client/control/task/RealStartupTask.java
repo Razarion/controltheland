@@ -45,7 +45,6 @@ public class RealStartupTask extends GameEngineStartupTask {
         ClientBase.getInstance().setHouseSpace(realGameInfo.getHouseSpace());
         ClientPlanetServices.getInstance().setPlanetInfo(realGameInfo.getPlanetInfo());
         ClientUnlockServiceImpl.getInstance().setUnlockContainer(realGameInfo.getUnlockContainer());
-        ClientUserGuidanceService.getInstance().setLevel(realGameInfo.getLevelScope());
     }
 
 }

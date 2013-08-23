@@ -222,22 +222,6 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     }
 
     @Override
-    public ServerPlanetServices getUnlockedServerPlanetServices(UserState userState) throws InvalidLevelStateException {
-        if (userState.getBase() != null) {
-            return getServerPlanetServices(userState.getBase().getSimpleBase());
-        }
-        DbLevel dbLevel = userGuidanceService.getDbLevel(userState);
-        DbPlanet dbPlanet = getUnlockedPlanet(dbLevel, userState);
-        Planet planet = getPlanet(dbPlanet);
-        return planet.getPlanetServices();
-    }
-
-    @Override
-    public ServerPlanetServices getUnlockedServerPlanetServices() throws InvalidLevelStateException {
-        return getUnlockedServerPlanetServices(userService.getUserState());
-    }
-
-    @Override
     public ServerPlanetServices getServerPlanetServices(User user) {
         UserState userState = userService.getUserState(user);
         if (userState == null) {
@@ -247,6 +231,36 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
             return null;
         }
         return getServerPlanetServices(userState);
+    }
+
+    @Override
+    public ServerPlanetServices getPlanetSystemService(UserState userState, Integer planetId) throws InvalidLevelStateException {
+        if (planetId == null) {
+            return getUnlockedServerPlanetServices(userState);
+        }
+        try {
+            ServerPlanetServices serverPlanetServices = getServerPlanetServices(planetId);
+            if (serverUnlockService.isPlanetLocked(serverPlanetServices.getPlanetInfo().getPlanetLiteInfo(), userState)) {
+                throw new IllegalStateException("Planet is locked: " + serverPlanetServices.getPlanetInfo().getPlanetLiteInfo() + " user: " + userState);
+            }
+            if (!hasMinimalLevel(planetId)) {
+                throw new IllegalStateException("User does not have minimal Level for planet: " + serverPlanetServices.getPlanetInfo().getPlanetLiteInfo() + " user: " + userState);
+            }
+            return serverPlanetServices;
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            return getUnlockedServerPlanetServices(userState);
+        }
+    }
+
+    private ServerPlanetServices getUnlockedServerPlanetServices(UserState userState) throws InvalidLevelStateException {
+        if (userState.getBase() != null) {
+            return getServerPlanetServices(userState.getBase().getSimpleBase());
+        }
+        DbLevel dbLevel = userGuidanceService.getDbLevel(userState);
+        DbPlanet dbPlanet = getUnlockedPlanet(dbLevel, userState);
+        Planet planet = getPlanet(dbPlanet);
+        return planet.getPlanetServices();
     }
 
     @Override

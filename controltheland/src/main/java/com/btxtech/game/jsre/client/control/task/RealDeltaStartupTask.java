@@ -40,7 +40,6 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
         setCommon(realGameInfo);
         ClientPlanetServices.getInstance().setPlanetInfo(realGameInfo.getPlanetInfo());
         ClientUnlockServiceImpl.getInstance().setUnlockContainer(realGameInfo.getUnlockContainer());
-        ClientUserGuidanceService.getInstance().setLevel(realGameInfo.getLevelScope()); // TODO
     }
 
     public static void setCommon(RealGameInfo realGameInfo) {

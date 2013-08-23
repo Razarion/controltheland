@@ -361,7 +361,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("Actor");
         SimpleBase simpleBase = getOrCreateBase();
-        getMovableService().sellItem(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

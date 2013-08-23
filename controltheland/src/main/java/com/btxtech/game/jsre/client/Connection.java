@@ -468,7 +468,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     public void sellItem(SyncBaseItem syncBaseItem) {
         if (gameEngineMode == GameEngineMode.SLAVE) {
             if (movableServiceAsync != null) {
-                movableServiceAsync.sellItem(syncBaseItem.getId(), new VoidAsyncCallback("sellItem"));
+                movableServiceAsync.sellItem(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(), syncBaseItem.getId(), new VoidAsyncCallback("sellItem"));
             }
         } else if (gameEngineMode == GameEngineMode.MASTER) {
             try {

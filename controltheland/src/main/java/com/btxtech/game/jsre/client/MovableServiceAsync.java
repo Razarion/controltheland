@@ -106,7 +106,7 @@ public interface MovableServiceAsync {
                                Collection<DialogTracking> dialogTrackings,
                                AsyncCallback<Void> asyncCallback);
 
-    void sellItem(Id id, AsyncCallback<Void> asyncCallback);
+    void sellItem(String startUuid, Id id, AsyncCallback<Void> asyncCallback);
 
     void sendStartupTask(StartupTaskInfo startupTaskInfo, String startUuid, Integer levelTaskId, AsyncCallback<Void> asyncCallback);
 

@@ -55,7 +55,6 @@ public class TestPlanetItemTypeLimitation extends AbstractServiceTest {
         planetLimitS.setCount(1);
         planetLimitS.setDbBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
-        planetSystemService.activate();
         // Level
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().createDbChild();
         dbLevel.setXp(1);
@@ -74,6 +73,10 @@ public class TestPlanetItemTypeLimitation extends AbstractServiceTest {
         dbLevel.setDbPlanet(dbPlanet);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
+        // Post init
+        dbPlanet.setMinLevel(dbLevel);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        planetSystemService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

@@ -40,7 +40,7 @@ public class PacketSendingTest extends AbstractServiceTest {
         assertPackagesIgnoreSyncItemInfoAndClear(accountBalancePacket1, accountBalancePacket2, accountBalancePacket3);
 
         // Sell
-        getMovableService().sellItem(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID));
         waitForActionServiceDone();
         accountBalancePacket1 = new AccountBalancePacket();
         accountBalancePacket1.setAccountBalance(999);

@@ -2,6 +2,7 @@ package com.btxtech.game.services.planet.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.dialogs.starmap.StarMapInfo;
 import com.btxtech.game.jsre.client.dialogs.starmap.StarMapPlanetInfo;
@@ -81,6 +82,7 @@ public class TestPlanetSystem extends AbstractServiceTest {
         planetItemTypeLimitation.setCount(1);
         planetItemTypeLimitation.setDbBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
         dbPlanet.setHouseSpace(1);
+        dbPlanet.setMinLevel(realGameLevel);
         // Terrain
         DbTerrainSetting dbTerrainSetting = new DbTerrainSetting();
         dbTerrainSetting.init(null);
@@ -323,20 +325,6 @@ public class TestPlanetSystem extends AbstractServiceTest {
     @DirtiesContext
     public void hasMinimalLevel() throws Exception {
         configureMultiplePlanetsAndLevels();
-        // Preparation
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        DbPlanet dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
-        dbPlanet1.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID));
-        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
-        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_5_REAL_ID));
-        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
-        DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_6_REAL_ID));
-        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -355,6 +343,45 @@ public class TestPlanetSystem extends AbstractServiceTest {
         Assert.assertTrue(planetSystemService.hasMinimalLevel(TEST_PLANET_1_ID));
         Assert.assertTrue(planetSystemService.hasMinimalLevel(TEST_PLANET_2_ID));
         Assert.assertTrue(planetSystemService.hasMinimalLevel(TEST_PLANET_3_ID));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getPlanetSystemService() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Preparation
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
+        dbPlanet3.setUnlockRazarion(10);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
+        planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_3_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Test tutorial level
+        try {
+            planetSystemService.getPlanetSystemService(getUserState(), null);
+            Assert.fail("InvalidLevelStateException expected");
+        } catch (InvalidLevelStateException e) {
+            // Expected
+        }
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        Assert.assertEquals(TEST_PLANET_1_ID, planetSystemService.getPlanetSystemService(getUserState(), null).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_1_ID, planetSystemService.getPlanetSystemService(getUserState(), TEST_PLANET_1_ID).getPlanetInfo().getPlanetId());
+        // Test level too low
+        Assert.assertEquals(TEST_PLANET_1_ID, planetSystemService.getPlanetSystemService(getUserState(), TEST_PLANET_2_ID).getPlanetInfo().getPlanetId());
+        // Test planet locked
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_6_REAL_ID);
+        Assert.assertEquals(TEST_PLANET_2_ID, planetSystemService.getPlanetSystemService(getUserState(), null).getPlanetInfo().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_2_ID, planetSystemService.getPlanetSystemService(getUserState(), TEST_PLANET_3_ID).getPlanetInfo().getPlanetId());
+        // Test level too low
+        Assert.assertEquals(TEST_PLANET_2_ID, planetSystemService.getPlanetSystemService(getUserState(), TEST_PLANET_3_ID).getPlanetInfo().getPlanetId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

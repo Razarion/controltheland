@@ -265,7 +265,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public void sellItem(Id id) {
+    public void sellItem(String startUuid, Id id) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
