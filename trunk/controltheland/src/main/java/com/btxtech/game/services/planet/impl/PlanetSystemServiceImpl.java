@@ -107,7 +107,7 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
 
     @Override
     public void createBase(ServerPlanetServices serverPlanetServices, UserState userState, Index position) throws InvalidLevelStateException, PositionInBotException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        if(!hasMinimalLevel(serverPlanetServices.getPlanetInfo().getPlanetId())) {
+        if (!hasMinimalLevel(serverPlanetServices.getPlanetInfo().getPlanetId())) {
             throw new IllegalStateException("User does not have minimal Level for planet: " + serverPlanetServices.getPlanetInfo().getPlanetLiteInfo() + " user: " + userState);
         }
         DbPlanet dbPlanet = getDbPlanetCrud().readDbChild(serverPlanetServices.getPlanetInfo().getPlanetId());
@@ -523,14 +523,21 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
         Collection<StarMapPlanetInfo> starMapPlanetInfos = new ArrayList<>();
         synchronized (planetImpls) {
             for (PlanetImpl planet : planetImpls.values()) {
-                StarMapPlanetInfo starMapPlanetInfo = new StarMapPlanetInfo();
-                starMapPlanetInfo.setPlanetLiteInfo(planet.getPlanetServices().getPlanetInfo().getPlanetLiteInfo());
-                DbPlanet dbPlanet = getDbPlanetCrud().readDbChild(planet.getPlanetServices().getPlanetInfo().getPlanetLiteInfo().getPlanetId());
-                starMapPlanetInfo.setPosition(dbPlanet.getStarMapImagePosition());
-                starMapPlanetInfo.setMinLevel(dbPlanet.getMinLevel().getNumber());
-                starMapPlanetInfo.setSize(dbPlanet.getSize());
-                planet.getPlanetServices().getBaseService().fillBaseStatistics(starMapPlanetInfo);
-                starMapPlanetInfos.add(starMapPlanetInfo);
+                try {
+                    DbPlanet dbPlanet = getDbPlanetCrud().readDbChild(planet.getPlanetServices().getPlanetInfo().getPlanetLiteInfo().getPlanetId());
+                    if(dbPlanet.getStarMapImagePosition() == null || dbPlanet.getMinLevel()== null) {
+                        continue;
+                    }
+                    StarMapPlanetInfo starMapPlanetInfo = new StarMapPlanetInfo();
+                    starMapPlanetInfo.setPlanetLiteInfo(planet.getPlanetServices().getPlanetInfo().getPlanetLiteInfo());
+                    starMapPlanetInfo.setPosition(dbPlanet.getStarMapImagePosition());
+                    starMapPlanetInfo.setMinLevel(dbPlanet.getMinLevel().getNumber());
+                    starMapPlanetInfo.setSize(dbPlanet.getSize());
+                    planet.getPlanetServices().getBaseService().fillBaseStatistics(starMapPlanetInfo);
+                    starMapPlanetInfos.add(starMapPlanetInfo);
+                } catch (Exception e) {
+                    ExceptionHandler.handleException(e, "Unable setting up planet '" + planet.getPlanetServices().getPlanetInfo().getName() + "' for star map");
+                }
             }
         }
         starMapInfo.setStarMapPlanetInfos(starMapPlanetInfos);
