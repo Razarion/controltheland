@@ -22,8 +22,7 @@
     <option name="historyRevisionsNumber" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" readonly="true" id="aa425869-f3f3-412e-b776-9f3eeb27573b" name="Default" comment="" />
-    <list id="7b717cc2-9e06-4dea-ae1e-fad3cb02e93b" name="IDEA" comment="">
+    <list default="true" readonly="true" id="aa425869-f3f3-412e-b776-9f3eeb27573b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/preview/" />
@@ -340,7 +339,7 @@
     <ignored path="src/main/webapp/regioneditor/gwt/" />
     <ignored path="src/main/webapp/Page4GwtExperiments.html" />
     <file path="/a.dummy" changelist="aa425869-f3f3-412e-b776-9f3eeb27573b" time="1377007724278" ignored="false" />
-    <file path="/Dummy.txt" changelist="aa425869-f3f3-412e-b776-9f3eeb27573b" time="1377273420948" ignored="false" />
+    <file path="/Dummy.txt" changelist="aa425869-f3f3-412e-b776-9f3eeb27573b" time="1377273802956" ignored="false" />
     <file path="/WysiwygEditor.java" changelist="aa425869-f3f3-412e-b776-9f3eeb27573b" time="1373294399098" ignored="false" />
     <file path="/WicketAuthenticatedWebSession.java" changelist="aa425869-f3f3-412e-b776-9f3eeb27573b" time="1373389735735" ignored="false" />
     <file path="/TestWicketAuthenticatedWebSession.java" changelist="aa425869-f3f3-412e-b776-9f3eeb27573b" time="1373299388255" ignored="false" />
@@ -4080,7 +4079,7 @@
       <recent name="C:\dev\projects\game\controltheland\src\main\java\com\btxtech\game\wicket\pages\cms\content\plugin\login" />
     </key>
   </component>
-  <component name="RunManager" selected="Maven.GWT Codeserver">
+  <component name="RunManager" selected="Maven.Clean Package">
     <configuration default="false" name="TestPlanetSystem.getPlanetSystemService" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false" runner="emma">
         <pattern>
@@ -5304,23 +5303,23 @@
       <item index="25" class="java.lang.String" itemvalue="JUnit.TestConnection.validConnection" />
       <item index="26" class="java.lang.String" itemvalue="JUnit.com.btxtech.game.services.cms in controltheland" />
       <item index="27" class="java.lang.String" itemvalue="JUnit.TestCmsService2" />
-      <item index="28" class="java.lang.String" itemvalue="Maven.GWT Codeserver" />
-      <item index="29" class="java.lang.String" itemvalue="Maven.GWT Compile" />
-      <item index="30" class="java.lang.String" itemvalue="Maven.Clean Package" />
-      <item index="31" class="java.lang.String" itemvalue="Maven.Clean Compile War" />
-      <item index="32" class="java.lang.String" itemvalue="Maven.GWT Single Compile" />
-      <item index="33" class="java.lang.String" itemvalue="Maven.GWT Hosted Debug" />
-      <item index="34" class="java.lang.String" itemvalue="Maven.Test Single" />
-      <item index="35" class="java.lang.String" itemvalue="Maven.GWT Hosted" />
-      <item index="36" class="java.lang.String" itemvalue="Maven.Tomcat run" />
-      <item index="37" class="java.lang.String" itemvalue="Maven.Compile War" />
-      <item index="38" class="java.lang.String" itemvalue="Maven.GWT Compile Game" />
-      <item index="39" class="java.lang.String" itemvalue="Remote.Debug" />
-      <item index="40" class="java.lang.String" itemvalue="JUnit.TestPlanetSystem.getPlanetSystemService" />
-      <item index="41" class="java.lang.String" itemvalue="JUnit.TestMovableService.getRealGameInfoLevelLocked" />
-      <item index="42" class="java.lang.String" itemvalue="JUnit.TestMovableService.sendCommands" />
-      <item index="43" class="java.lang.String" itemvalue="JUnit.TestPlanetSystem" />
-      <item index="44" class="java.lang.String" itemvalue="JUnit.TestPlanetItemTypeLimitation" />
+      <item index="28" class="java.lang.String" itemvalue="JUnit.TestPlanetSystem.getPlanetSystemService" />
+      <item index="29" class="java.lang.String" itemvalue="JUnit.TestMovableService.getRealGameInfoLevelLocked" />
+      <item index="30" class="java.lang.String" itemvalue="JUnit.TestMovableService.sendCommands" />
+      <item index="31" class="java.lang.String" itemvalue="JUnit.TestPlanetSystem" />
+      <item index="32" class="java.lang.String" itemvalue="JUnit.TestPlanetItemTypeLimitation" />
+      <item index="33" class="java.lang.String" itemvalue="Maven.GWT Codeserver" />
+      <item index="34" class="java.lang.String" itemvalue="Maven.GWT Compile" />
+      <item index="35" class="java.lang.String" itemvalue="Maven.Clean Package" />
+      <item index="36" class="java.lang.String" itemvalue="Maven.Clean Compile War" />
+      <item index="37" class="java.lang.String" itemvalue="Maven.GWT Single Compile" />
+      <item index="38" class="java.lang.String" itemvalue="Maven.GWT Hosted Debug" />
+      <item index="39" class="java.lang.String" itemvalue="Maven.Test Single" />
+      <item index="40" class="java.lang.String" itemvalue="Maven.GWT Hosted" />
+      <item index="41" class="java.lang.String" itemvalue="Maven.Tomcat run" />
+      <item index="42" class="java.lang.String" itemvalue="Maven.Compile War" />
+      <item index="43" class="java.lang.String" itemvalue="Maven.GWT Compile Game" />
+      <item index="44" class="java.lang.String" itemvalue="Remote.Debug" />
     </list>
     <recent_temporary>
       <list size="5">
@@ -5396,7 +5395,7 @@
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="aa425869-f3f3-412e-b776-9f3eeb27573b" name="Default" comment="" />
-      <changelist id="7b717cc2-9e06-4dea-ae1e-fad3cb02e93b" name="IDEA" comment="" />
+      <changelist id="" name="IDEA" comment="" />
       <created>1297458484758</created>
       <updated>1298804785942</updated>
     </task>
@@ -7496,7 +7495,11 @@
       <created>1377273443103</created>
       <updated>1377273443103</updated>
     </task>
-    <option name="localTasksCounter" value="549" />
+    <task id="LOCAL-00549" summary="IDEA">
+      <created>1377273692103</created>
+      <updated>1377273692103</updated>
+    </task>
+    <option name="localTasksCounter" value="550" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -7603,7 +7606,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bugfix" />
+    <option name="LAST_COMMIT_MESSAGE" value="IDEA" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -7628,7 +7631,6 @@
     <MESSAGE value="Logging improved&#10;Failed tests marked" />
     <MESSAGE value="code cosmetics" />
     <MESSAGE value="How the get razarion improved" />
-    <MESSAGE value="IDEA" />
     <MESSAGE value="Wicket exception handling" />
     <MESSAGE value="Facebook conversation tracking added" />
     <MESSAGE value="Paypal IPN improved" />
@@ -7642,6 +7644,7 @@
     <MESSAGE value="Star map part 3" />
     <MESSAGE value="Star map part 4" />
     <MESSAGE value="Bugfix" />
+    <MESSAGE value="IDEA" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
