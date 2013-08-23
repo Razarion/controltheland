@@ -210,7 +210,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     public RealGameInfo getRealGameInfo(String startUuid, Integer planetId) throws InvalidLevelStateException {
         try {
             UserState userState = userService.getUserState();
-            ServerPlanetServices serverPlanetServices = getPlanetSystemService(userState, planetId);
+            ServerPlanetServices serverPlanetServices = planetSystemService.getPlanetSystemService(userState, planetId);
             RealGameInfo realGameInfo = new RealGameInfo();
             setCommonInfo(realGameInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
             if (userState == null) {
@@ -240,25 +240,6 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             ExceptionHandler.handleException(t);
         }
         return null;
-    }
-
-    private ServerPlanetServices getPlanetSystemService(UserState userState, Integer planetId) throws InvalidLevelStateException {
-        if (planetId == null) {
-            return planetSystemService.getUnlockedServerPlanetServices(userState);
-        }
-        try {
-            ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(planetId);
-            if (serverUnlockService.isPlanetLocked(serverPlanetServices.getPlanetInfo().getPlanetLiteInfo(), userState)) {
-                throw new IllegalStateException("Planet is locked: " + serverPlanetServices.getPlanetInfo().getPlanetLiteInfo() + " user: " + userState);
-            }
-            if (!planetSystemService.hasMinimalLevel(planetId)) {
-                throw new IllegalStateException("User does not have minimal Level for planet: " + serverPlanetServices.getPlanetInfo().getPlanetLiteInfo() + " user: " + userState);
-            }
-            return serverPlanetServices;
-        } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-            return planetSystemService.getUnlockedServerPlanetServices(userState);
-        }
     }
 
     public static void askForStartPosition(ServerPlanetServices serverPlanetServices, UserState userState, RealGameInfo realGameInfo, PlanetSystemService planetSystemService, boolean existingGame) {
@@ -491,9 +472,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public void sellItem(Id id) {
+    public void sellItem(String startUuid, Id id) {
         try {
-            planetSystemService.getUnlockedServerPlanetServices().getItemService().sellItem(id);
+            serverGlobalConnectionService.getConnection(startUuid).getServerPlanetServices().getItemService().sellItem(id);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }

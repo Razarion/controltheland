@@ -1244,7 +1244,7 @@ public class TestBackupService extends AbstractServiceTest {
         serverEnergyService = planetSystemService.getServerPlanetServices().getEnergyService();
         Assert.assertEquals(20, serverEnergyService.getConsuming());
         Assert.assertEquals(30, serverEnergyService.getGenerating());
-        getMovableService().sellItem(getFirstSynItemId(getOrCreateBase(), TEST_CONSUMER_TYPE_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(getOrCreateBase(), TEST_CONSUMER_TYPE_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1257,7 +1257,7 @@ public class TestBackupService extends AbstractServiceTest {
         serverEnergyService = planetSystemService.getServerPlanetServices().getEnergyService();
         Assert.assertEquals(0, serverEnergyService.getConsuming());
         Assert.assertEquals(30, serverEnergyService.getGenerating());
-        getMovableService().sellItem(getFirstSynItemId(getOrCreateBase(), TEST_GENERATOR_TYPE_ID));
+        getMovableService().sellItem(START_UID_1, getFirstSynItemId(getOrCreateBase(), TEST_GENERATOR_TYPE_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

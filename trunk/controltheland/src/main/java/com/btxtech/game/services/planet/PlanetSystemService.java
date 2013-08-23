@@ -75,9 +75,7 @@ public interface PlanetSystemService {
 
     ServerPlanetServices getServerPlanetServices(UserState userState) throws NoSuchPlanetException;
 
-    ServerPlanetServices getUnlockedServerPlanetServices(UserState userState) throws InvalidLevelStateException;
-
-    ServerPlanetServices getUnlockedServerPlanetServices() throws InvalidLevelStateException;
+    ServerPlanetServices getPlanetSystemService(UserState userState, Integer planetId) throws InvalidLevelStateException;
 
     void activate();
 

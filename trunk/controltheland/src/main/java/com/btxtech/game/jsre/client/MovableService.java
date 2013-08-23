@@ -123,7 +123,7 @@ public interface MovableService extends RemoteService {
                                Collection<BrowserWindowTracking> browserWindowTrackings,
                                Collection<DialogTracking> dialogTrackings);
 
-    void sellItem(Id id);
+    void sellItem(String startUuid, Id id);
 
     InventoryInfo getInventory(Integer filterPlanetId, boolean filterLevel);
 

@@ -911,7 +911,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected void createConnection() throws InvalidLevelStateException {
-        ServerPlanetServices serverPlanetServices = planetSystemService.getUnlockedServerPlanetServices(getUserState());
+        ServerPlanetServices serverPlanetServices = planetSystemService.getPlanetSystemService(getUserState(), null);
         serverPlanetServices.getConnectionService().createConnection(getUserState(), START_UID_1);
     }
     // ------------------- Action Service --------------------

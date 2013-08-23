@@ -28,6 +28,7 @@ import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientDeadEndProtection;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.common.FacebookUtils;
 
 /**
@@ -59,6 +60,7 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
         if(!StartPointMode.getInstance().isActive()) {
             ClientDeadEndProtection.getInstance().start();
         }
+        ClientUserGuidanceService.getInstance().setLevel(((RealGameInfo) Connection.getInstance().getGameInfo()).getLevelScope());
         FacebookUtils.callConversationRealRealGamePixel();
     }
 }
