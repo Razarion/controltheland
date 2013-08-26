@@ -133,4 +133,6 @@ public interface UserTrackingService {
     long calculateInGameTime(User user);
 
     int getLoginCount(User user);
+
+    List<NewUserDailyDto> getNewUserDailyDto(NewUserDailyTrackingFilter newUserDailyTrackingFilter);
 }

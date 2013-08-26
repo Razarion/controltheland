@@ -20,6 +20,7 @@ import com.btxtech.game.wicket.pages.mgmt.inventory.InventoryEditor;
 import com.btxtech.game.wicket.pages.mgmt.items.ItemTypeTable;
 import com.btxtech.game.wicket.pages.mgmt.level.LevelTable;
 import com.btxtech.game.wicket.pages.mgmt.planet.PlanetTable;
+import com.btxtech.game.wicket.pages.mgmt.tracking.NewUserDailyTracking;
 import com.btxtech.game.wicket.pages.mgmt.tracking.NewUserTracking;
 import com.btxtech.game.wicket.pages.mgmt.tracking.SessionTable;
 import com.btxtech.game.wicket.pages.mgmt.tracking.UserTracking;
@@ -138,6 +139,7 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Session Tracking", SessionTable.class));
         toolPages.add(new LinkAndName("User Tracking", UserTracking.class));
         toolPages.add(new LinkAndName("New User Tracking", NewUserTracking.class));
+        toolPages.add(new LinkAndName("New User Daily Tracking", NewUserDailyTracking.class));
         toolPages.add(new LinkAndName("Bases", BasesTable.class));
         toolPages.add(new LinkAndName("Levels", LevelTable.class));
         toolPages.add(new LinkAndName("Planets", PlanetTable.class));

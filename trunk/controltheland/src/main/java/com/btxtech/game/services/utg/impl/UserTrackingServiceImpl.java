@@ -44,8 +44,11 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbChatMessage;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
+import com.btxtech.game.services.utg.NewUserDailyDto;
+import com.btxtech.game.services.utg.NewUserDailyTrackingFilter;
 import com.btxtech.game.services.utg.NewUserTrackingFilter;
 import com.btxtech.game.services.utg.RealGameTrackingInfo;
 import com.btxtech.game.services.utg.SessionDetailDto;
@@ -70,6 +73,7 @@ import com.btxtech.game.services.utg.tracker.DbUserCommand;
 import com.btxtech.game.services.utg.tracker.DbUserHistory;
 import com.btxtech.game.services.utg.tracker.DbWindowClosed;
 import com.btxtech.game.wicket.pages.Game;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -80,17 +84,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -111,8 +121,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private SessionFactory sessionFactory;
     @Autowired
     private PlanetSystemService planetSystemService;
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     @Transactional
@@ -367,7 +377,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     public List<User> getNewUsers(NewUserTrackingFilter newUserTrackingFilter) {
-        CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         // Query for total row count in invitations
         CriteriaQuery<User> userQuery = criteriaBuilder.createQuery(User.class);
         Root<User> from = userQuery.from(User.class);
@@ -380,7 +390,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         }
         userQuery.orderBy(criteriaBuilder.desc(from.<String>get("registerDate")));
         CriteriaQuery<User> userSelect = userQuery.select(from);
-        TypedQuery<User> typedUserQuery = entityManagerFactory.createEntityManager().createQuery(userSelect);
+        TypedQuery<User> typedUserQuery = entityManager.createQuery(userSelect);
         return typedUserQuery.getResultList();
     }
 
@@ -869,5 +879,97 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         criteria.add(Restrictions.eq("startUuid", startUuid));
         criteria.addOrder(Order.asc("clientTimeStamp"));
         return criteria.list();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<NewUserDailyDto> getNewUserDailyDto(NewUserDailyTrackingFilter newUserDailyTrackingFilter) {
+        Map<Date, NewUserDailyDto> map = new HashMap<>();
+        for (User user : getUsers(newUserDailyTrackingFilter)) {
+            Date date = DateUtils.truncate(newUserDailyTrackingFilter.correctTimeZoneOffsetSub(user.getRegisterDate()), Calendar.DAY_OF_MONTH);
+            NewUserDailyDto newUserDailyDto = map.get(date);
+            if (newUserDailyDto == null) {
+                newUserDailyDto = new NewUserDailyDto(date);
+                map.put(date, newUserDailyDto);
+            }
+            newUserDailyDto.increaseRegistered();
+            try {
+                DbLevel dbLevel = userGuidanceService.getDbLevel(user);
+                newUserDailyDto.increaseLevelNumber(dbLevel.getNumber());
+            } catch (Exception e) {
+                ExceptionHandler.handleException(e, "Unable getting level for user: " + user);
+            }
+        }
+        fillSessionTracking(newUserDailyTrackingFilter, map);
+        List<NewUserDailyDto> list = new ArrayList<>(map.values());
+        Collections.sort(list, new Comparator<NewUserDailyDto>() {
+            @Override
+            public int compare(NewUserDailyDto o1, NewUserDailyDto o2) {
+                return o1.getDate().compareTo(o2.getDate());
+            }
+        });
+        return list;
+    }
+
+    private void fillSessionTracking(NewUserDailyTrackingFilter newUserDailyTrackingFilter, Map<Date, NewUserDailyDto> map) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        // Query for total row count in invitations
+        CriteriaQuery<DbSessionDetail> sessionQuery = criteriaBuilder.createQuery(DbSessionDetail.class);
+        Root<DbSessionDetail> from = sessionQuery.from(DbSessionDetail.class);
+        Predicate predicate = null;
+        // criteriaBuilder.
+        if (newUserDailyTrackingFilter.hasFromDate()) {
+            predicate = criteriaBuilder.greaterThanOrEqualTo(from.<Date>get("timeStamp"), newUserDailyTrackingFilter.getCorrectedFromDate());
+        }
+        if (newUserDailyTrackingFilter.hasToDate()) {
+            Predicate tmpPredict = criteriaBuilder.lessThan(from.<Date>get("timeStamp"), newUserDailyTrackingFilter.getCorrectedExclusiveToDate());
+            if (predicate != null) {
+                predicate = criteriaBuilder.and(predicate, tmpPredict);
+            } else {
+                predicate = tmpPredict;
+            }
+        }
+        if (newUserDailyTrackingFilter.hasFacebookAdId()) {
+            Predicate tmpPredict = criteriaBuilder.like(from.<String>get("dbFacebookSource").<String>get("optionalAdValue"), newUserDailyTrackingFilter.getFacebookAdId());
+            if (predicate != null) {
+                predicate = criteriaBuilder.and(predicate, tmpPredict);
+            } else {
+                predicate = tmpPredict;
+            }
+        }
+        if (predicate != null) {
+            sessionQuery.where(predicate);
+        }
+        for (DbSessionDetail dbSessionDetail : entityManager.createQuery(sessionQuery.select(from)).getResultList()) {
+            Date date = DateUtils.truncate(newUserDailyTrackingFilter.correctTimeZoneOffsetSub(dbSessionDetail.getTimeStamp()), Calendar.DAY_OF_MONTH);
+            NewUserDailyDto newUserDailyDto = map.get(date);
+            if (newUserDailyDto == null) {
+                newUserDailyDto = new NewUserDailyDto(date);
+                map.put(date, newUserDailyDto);
+            }
+            newUserDailyDto.increaseSessions();
+        }
+    }
+
+    private List<User> getUsers(NewUserDailyTrackingFilter newUserDailyTrackingFilter) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        // Query for total row count in invitations
+        CriteriaQuery<User> userQuery = criteriaBuilder.createQuery(User.class);
+        Root<User> from = userQuery.from(User.class);
+        Predicate predicate = criteriaBuilder.equal(from.<Boolean>get("accountNonLocked"), true);
+        // criteriaBuilder.
+        if (newUserDailyTrackingFilter.hasFromDate()) {
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(from.<Date>get("registerDate"), newUserDailyTrackingFilter.getCorrectedFromDate()));
+        }
+        if (newUserDailyTrackingFilter.hasToDate()) {
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThan(from.<Date>get("registerDate"), newUserDailyTrackingFilter.getCorrectedExclusiveToDate()));
+        }
+        if (newUserDailyTrackingFilter.hasFacebookAdId()) {
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(from.<String>get("dbFacebookSource").<String>get("optionalAdValue"), newUserDailyTrackingFilter.getFacebookAdId()));
+        }
+        userQuery.where(predicate);
+        userQuery.orderBy(criteriaBuilder.asc(from.<String>get("registerDate")));
+        CriteriaQuery<User> userSelect = userQuery.select(from);
+        return entityManager.createQuery(userSelect).getResultList();
     }
 }
