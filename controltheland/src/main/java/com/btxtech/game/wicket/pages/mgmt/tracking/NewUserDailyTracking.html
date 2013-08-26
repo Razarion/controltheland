@@ -1,0 +1,105 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>New User Daily Tracking</title>
+    <style>
+        .dataTable th, .dataTable td {
+            border: 1px solid #717171;
+        }
+
+        table.dataTable {
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+<h1>New User Daily Tracking</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="filterForm">
+    <table style="border: 2px dotted #000000; padding: 5px;">
+        <tr>
+            <td valign="top">Timezone</td>
+            <td valign="top">
+                <select wicket:id="timeZone" size="1"></select>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">Timezone</td>
+            <td valign="top" wicket:id="timeZoneRo">
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">From</td>
+            <td valign="top"><input type="text" wicket:id="fromDate"/></td>
+        </tr>
+        <tr>
+            <td valign="top">To</td>
+            <td valign="top"><input type="text" wicket:id="toDate"/></td>
+        </tr>
+        <tr>
+            <td valign="top">Facebook Ad Id</td>
+            <td valign="top"><input type="text" wicket:id="facebookAdId"/></td>
+        </tr>
+        <tr>
+            <td valign="top">Corrected From</td>
+            <td valign="top" wicket:id="correctedFromDate"></td>
+        </tr>
+        <tr>
+            <td valign="top">Corrected exclusive To</td>
+            <td valign="top" wicket:id="correctedExclusiveToDate"></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <input wicket:id="search" type="submit" value="Search"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+
+<h2>New Users</h2>
+<table border="0" class="dataTable">
+    <tr>
+        <th bgcolor="#dadada">Date</th>
+        <th bgcolor="#dadada">Sessions</th>
+        <th bgcolor="#dadada">Registered</th>
+        <th bgcolor="#dadada">Level 1</th>
+        <th bgcolor="#dadada">Level 1 %</th>
+        <th bgcolor="#dadada">Level 2</th>
+        <th bgcolor="#dadada">Level 3</th>
+        <th bgcolor="#dadada">Level 4</th>
+        <th bgcolor="#dadada">Level 5</th>
+        <th bgcolor="#dadada">Level 6</th>
+    </tr>
+    <tr wicket:id="dailyNewUsers">
+        <td wicket:id="date"/>
+        <td align="right" wicket:id="sessions"/>
+        <td align="right" wicket:id="registered"/>
+        <td align="right" wicket:id="level1"/>
+        <td align="right" wicket:id="level1Percent"/>
+        <td align="right" wicket:id="level2"/>
+        <td align="right" wicket:id="level3"/>
+        <td align="right" wicket:id="level4"/>
+        <td align="right" wicket:id="level5"/>
+        <td align="right" wicket:id="level6"/>
+    </tr>
+</table>
+
+</body>
+</html>

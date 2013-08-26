@@ -17,11 +17,13 @@ import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.jsre.playback.PlaybackInfo;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.history.GameHistoryFilter;
 import com.btxtech.game.services.history.GameHistoryFrame;
 import com.btxtech.game.services.history.HistoryService;
+import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.user.DbGuild;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -32,10 +34,13 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * User: beat
@@ -1359,4 +1364,183 @@ public class TestTracking extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void getNewUserDailyDto() throws Exception {
+        SimpleDateFormat simpleDateTimeFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
+        configureMultiplePlanetsAndLevels();
+        // Prepare users
+        createFacebookAdUser(null, null, "25.05.2012 21:59:00", null);
+        createFacebookAdUser(null, "AD01", "25.05.2012 21:59:00", null);
+        createFacebookAdUser("U01", "AD01", "25.05.2012 21:59:00", TEST_LEVEL_2_REAL_ID);
+        createFacebookAdUser("U901", "AD99", "25.05.2012 21:59:00", null);
+        createFacebookAdUser("U02", "AD01", "25.05.2012 22:00:00", TEST_LEVEL_2_REAL_ID);
+        createFacebookAdUser("U03", "AD01", "25.05.2012 23:00:00", TEST_LEVEL_5_REAL_ID);
+        createFacebookAdUser("U04", "AD01", "26.05.2012 00:00:00", TEST_LEVEL_3_REAL_ID);
+        createFacebookAdUser(null, null, "26.05.2012 00:00:00", null);
+        createFacebookAdUser(null, "AD01", "26.05.2012 01:03:00", TEST_LEVEL_3_REAL_ID);
+        createFacebookAdUser(null, "AD01", "26.05.2012 01:05:00", null);
+        createFacebookAdUser(null, "AD01", "26.05.2012 01:05:00", TEST_LEVEL_2_REAL_ID);
+        createFacebookAdUser("U05", "AD01", "26.05.2012 01:03:00", null);
+        createFacebookAdUser("U06", "AD01", "26.05.2012 05:02:06", TEST_LEVEL_5_REAL_ID);
+        createFacebookAdUser("U906", "AD99", "26.05.2012 05:02:06", null);
+        createFacebookAdUser("U07", "AD01", "26.05.2012 08:12:06", TEST_LEVEL_2_REAL_ID);
+        createFacebookAdUser("U08", "AD01", "26.05.2012 12:12:16", null);
+        createFacebookAdUser("U09", "AD01", "26.05.2012 16:22:16", TEST_LEVEL_6_REAL_ID);
+        createFacebookAdUser(null, null, "26.05.2012 16:22:16", null);
+        createFacebookAdUser("U10", "AD01", "26.05.2012 20:22:16", TEST_LEVEL_2_REAL_ID);
+        createFacebookAdUser("U11", "AD01", "26.05.2012 21:59:00", null);
+        createFacebookAdUser("U12", "AD01", "26.05.2012 22:00:00", TEST_LEVEL_3_REAL_ID);
+        createFacebookAdUser("U912", "AD99", "26.05.2012 22:00:00", null);
+        createFacebookAdUser("U13", "AD01", "26.05.2012 23:00:00", TEST_LEVEL_2_REAL_ID);
+        createFacebookAdUser(null, "AD01", "26.05.2012 23:00:00", TEST_LEVEL_5_REAL_ID);
+        createFacebookAdUser(null, "AD01", "26.05.2012 23:00:01", null);
+        createFacebookAdUser("U14", "AD01", "27.05.2012 00:00:00", TEST_LEVEL_2_REAL_ID);
+        createFacebookAdUser("U15", "AD01", "27.05.2012 01:00:00", null);
+        createFacebookAdUser(null, null, "27.05.2012 01:00:00", null);
+        createFacebookAdUser("U16", "AD01", "27.05.2012 02:00:00", TEST_LEVEL_6_REAL_ID);
+        createFacebookAdUser("U17", "AD01", "27.05.2012 03:00:00", TEST_LEVEL_3_REAL_ID);
+        createFacebookAdUser("U917", "AD99", "27.05.2012 03:00:00", null);
+
+        // Test
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Check no date no time zone no FacebookAdId
+        NewUserDailyTrackingFilter newUserDailyTrackingFilter = new NewUserDailyTrackingFilter();
+        newUserDailyTrackingFilter.setFromDate(simpleDateTimeFormat.parse("25.05.2012 02:00:00"));
+        newUserDailyTrackingFilter.setToDate(simpleDateTimeFormat.parse("27.05.2012 02:00:00"));
+        List<NewUserDailyDto> dtos = userTrackingService.getNewUserDailyDto(newUserDailyTrackingFilter);
+        Assert.assertEquals(3, dtos.size());
+        assertNewUserDailyTrackingFilter("25.05.2012", 6, 4, 4, 3, 1, 1, 1, 0, 0, dtos);
+        assertNewUserDailyTrackingFilter("26.05.2012", 19, 12, 12, 7, 4, 2, 2, 1, 1, dtos);
+        assertNewUserDailyTrackingFilter("27.05.2012", 6, 5, 5, 3, 2, 1, 1, 1, 2, dtos);
+        // Check no date no time zone
+        newUserDailyTrackingFilter = new NewUserDailyTrackingFilter();
+        newUserDailyTrackingFilter.setFacebookAdId("AD01");
+        dtos = userTrackingService.getNewUserDailyDto(newUserDailyTrackingFilter);
+        Assert.assertEquals(3, dtos.size());
+        assertNewUserDailyTrackingFilter("25.05.2012", 4, 3, 3, 3, 1, 1, 1, 0, 0, dtos);
+        assertNewUserDailyTrackingFilter("26.05.2012", 15, 10, 10, 7, 4, 2, 2, 1, 1, dtos);
+        assertNewUserDailyTrackingFilter("27.05.2012", 4, 4, 4, 3, 2, 1, 1, 1, 2, dtos);
+        // Check from date no time zone
+        newUserDailyTrackingFilter = new NewUserDailyTrackingFilter();
+        newUserDailyTrackingFilter.setFacebookAdId("AD01");
+        newUserDailyTrackingFilter.setFromDate(simpleDateTimeFormat.parse("27.05.2012 02:00:00"));
+        dtos = userTrackingService.getNewUserDailyDto(newUserDailyTrackingFilter);
+        Assert.assertEquals(1, dtos.size());
+        assertNewUserDailyTrackingFilter("27.05.2012", 4, 4, 4, 3, 2, 1, 1, 1, 0, dtos);
+        // Check to date no time zone
+        newUserDailyTrackingFilter = new NewUserDailyTrackingFilter();
+        newUserDailyTrackingFilter.setFacebookAdId("AD01");
+        newUserDailyTrackingFilter.setToDate(simpleDateTimeFormat.parse("26.05.2012 23:00:00"));
+        dtos = userTrackingService.getNewUserDailyDto(newUserDailyTrackingFilter);
+        Assert.assertEquals(2, dtos.size());
+        assertNewUserDailyTrackingFilter("25.05.2012", 4, 3, 3, 3, 1, 1, 1, 0, 0, dtos);
+        assertNewUserDailyTrackingFilter("26.05.2012", 15, 10, 10, 7, 4, 2, 2, 1, 1, dtos);
+        // Check from & to no time zone
+        newUserDailyTrackingFilter = new NewUserDailyTrackingFilter();
+        newUserDailyTrackingFilter.setFacebookAdId("AD01");
+        newUserDailyTrackingFilter.setFromDate(simpleDateTimeFormat.parse("26.05.2012 23:10:00"));
+        newUserDailyTrackingFilter.setToDate(simpleDateTimeFormat.parse("26.05.2012 23:20:00"));
+        dtos = userTrackingService.getNewUserDailyDto(newUserDailyTrackingFilter);
+        Assert.assertEquals(1, dtos.size());
+        assertNewUserDailyTrackingFilter("26.05.2012",  15, 10, 10, 7, 4, 2, 2, 1, 0, dtos);
+        // Check no date time zone
+        newUserDailyTrackingFilter = new NewUserDailyTrackingFilter();
+        newUserDailyTrackingFilter.setFacebookAdId("AD01");
+        newUserDailyTrackingFilter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        dtos = userTrackingService.getNewUserDailyDto(newUserDailyTrackingFilter);
+        Assert.assertEquals(3, dtos.size());
+        assertNewUserDailyTrackingFilter("25.05.2012", 9, 5, 5, 4, 2, 1, 1, 0, 0, dtos);
+        assertNewUserDailyTrackingFilter("26.05.2012", 12, 10, 10, 7, 3, 2, 2, 1, 1, dtos);
+        assertNewUserDailyTrackingFilter("27.05.2012", 2, 2, 2, 2, 2, 1, 1, 1, 2, dtos);
+        // Check from date time zone
+        newUserDailyTrackingFilter = new NewUserDailyTrackingFilter();
+        newUserDailyTrackingFilter.setFacebookAdId("AD01");
+        newUserDailyTrackingFilter.setFromDate(simpleDateTimeFormat.parse("27.05.2012 02:00:00"));
+        newUserDailyTrackingFilter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        dtos = userTrackingService.getNewUserDailyDto(newUserDailyTrackingFilter);
+        Assert.assertEquals(1, dtos.size());
+        assertNewUserDailyTrackingFilter("27.05.2012", 2, 2, 2, 2, 2, 1, 1, 1, 0, dtos);
+        // Check to date and time zone
+        newUserDailyTrackingFilter = new NewUserDailyTrackingFilter();
+        newUserDailyTrackingFilter.setFacebookAdId("AD01");
+        newUserDailyTrackingFilter.setToDate(simpleDateTimeFormat.parse("25.05.2012 02:00:00"));
+        newUserDailyTrackingFilter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        dtos = userTrackingService.getNewUserDailyDto(newUserDailyTrackingFilter);
+        Assert.assertEquals(1, dtos.size());
+        assertNewUserDailyTrackingFilter("25.05.2012", 9, 5, 5, 4, 2, 1, 1, 0, 0, dtos);
+        // Check to date2 and time zone
+        newUserDailyTrackingFilter = new NewUserDailyTrackingFilter();
+        newUserDailyTrackingFilter.setFacebookAdId("AD01");
+        newUserDailyTrackingFilter.setToDate(simpleDateTimeFormat.parse("26.05.2012 02:00:00"));
+        newUserDailyTrackingFilter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        dtos = userTrackingService.getNewUserDailyDto(newUserDailyTrackingFilter);
+        Assert.assertEquals(2, dtos.size());
+        assertNewUserDailyTrackingFilter("25.05.2012", 9, 5, 5, 4, 2, 1, 1, 0, 0, dtos);
+        assertNewUserDailyTrackingFilter("26.05.2012", 12, 10, 10, 7, 3, 2, 2, 1, 1, dtos);
+        // Check from & to date and time zone
+        newUserDailyTrackingFilter = new NewUserDailyTrackingFilter();
+        newUserDailyTrackingFilter.setFacebookAdId("AD01");
+        newUserDailyTrackingFilter.setFromDate(simpleDateTimeFormat.parse("26.05.2012 02:00:00"));
+        newUserDailyTrackingFilter.setToDate(simpleDateTimeFormat.parse("26.05.2012 02:00:00"));
+        newUserDailyTrackingFilter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        dtos = userTrackingService.getNewUserDailyDto(newUserDailyTrackingFilter);
+        Assert.assertEquals(1, dtos.size());
+        assertNewUserDailyTrackingFilter("26.05.2012", 12, 10, 10, 7, 3, 2, 2, 1, 0, dtos);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private void createFacebookAdUser(String userName, String facebookAdId, String dateString, Integer levelId) throws Exception {
+        SimpleDateFormat simpleDateTimeFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Create Session
+        DbFacebookSource dbFacebookSourceSession = new DbFacebookSource();
+        if (facebookAdId != null) {
+            dbFacebookSourceSession.setOptionalAdValue(facebookAdId);
+        }
+        DbSessionDetail dbSessionDetail = new DbSessionDetail("", "", "", "", "", "", true, dbFacebookSourceSession, null);
+        setPrivateField(DbSessionDetail.class, dbSessionDetail, "timeStamp", simpleDateTimeFormat.parse(dateString));
+        saveOrUpdateInTransaction(dbSessionDetail);
+        // Create User
+        if (userName != null) {
+            userService.createUser(userName, "xxx", "xxx", "");
+            User user = userService.getUser(userName);
+            if (facebookAdId != null) {
+                DbFacebookSource dbFacebookSourceUser = new DbFacebookSource();
+                dbFacebookSourceUser.setOptionalAdValue(facebookAdId);
+                user.registerFacebookUser(new FacebookSignedRequest("", 0, null, null, null), userName, dbFacebookSourceUser, null);
+            }
+            setPrivateField(User.class, user, "registerDate", simpleDateTimeFormat.parse(dateString));
+            saveOrUpdateInTransaction(user);
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        if (levelId != null && userName != null) {
+            beginHttpSession();
+            beginHttpRequestAndOpenSessionInViewFilter();
+            userService.login(userName, "xxx");
+            userGuidanceService.promote(getUserState(),levelId);
+            endHttpRequestAndOpenSessionInViewFilter();
+            endHttpSession();
+        }
+    }
+
+    private void assertNewUserDailyTrackingFilter(String dateString, int sessions, int registered, int level1, int level2, int level3, int level4, int level5, int level6, int index, List<NewUserDailyDto> dtos) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtil.DATE_FORMAT_STRING);
+        NewUserDailyDto newUserDailyDto = dtos.get(index);
+        Assert.assertEquals(simpleDateFormat.parse(dateString), newUserDailyDto.getDate());
+        Assert.assertEquals(sessions, newUserDailyDto.getSessions());
+        Assert.assertEquals(registered, newUserDailyDto.getRegistered());
+        Assert.assertEquals(level1, newUserDailyDto.getLevel1());
+        Assert.assertEquals(level2, newUserDailyDto.getLevel2());
+        Assert.assertEquals(level3, newUserDailyDto.getLevel3());
+        Assert.assertEquals(level4, newUserDailyDto.getLevel4());
+        Assert.assertEquals(level5, newUserDailyDto.getLevel5());
+        Assert.assertEquals(level6, newUserDailyDto.getLevel6());
+    }
 }
