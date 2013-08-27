@@ -1,6 +1,7 @@
 package com.btxtech.game.services.utg;
 
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 
@@ -11,6 +12,7 @@ import javax.persistence.FetchType;
  */
 @Embeddable
 public class DbFacebookSource {
+    @Column(length = 2000)
     @Basic(fetch= FetchType.LAZY)
     private String wholeString;
     @Basic(fetch=FetchType.LAZY)
