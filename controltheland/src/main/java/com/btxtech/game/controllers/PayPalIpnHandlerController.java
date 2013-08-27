@@ -3,8 +3,8 @@ package com.btxtech.game.controllers;
 import com.btxtech.game.jsre.common.PayPalUtils;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.finance.FinanceService;
-import com.btxtech.game.services.finance.WrongPaymentStatusException;
 import com.btxtech.game.services.finance.TransactionAlreadyProcessedException;
+import com.btxtech.game.services.finance.WrongPaymentStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -66,7 +66,7 @@ public class PayPalIpnHandlerController implements Controller {
         } catch (TransactionAlreadyProcessedException e) {
             ExceptionHandler.handleException(e, "PayPal IPN received. Transaction has already been processed: URL: " + url + " encoding: " + encoding + " params:" + params);
         } catch (WrongPaymentStatusException e) {
-            ExceptionHandler.handleException(e, "Wrong PayPal payment status received: " + e.getMessage() + " URL: " +url + " encoding: " + encoding + " params:" + params);
+            ExceptionHandler.handleException(e, "Wrong PayPal payment status received: " + e.getMessage() + " URL: " + url + " encoding: " + encoding + " params:" + params);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, "PayPal IPN failed: URL: " + url + " encoding: " + encoding + " params:" + params);
             httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -79,7 +79,11 @@ public class PayPalIpnHandlerController implements Controller {
         if (encodings == null || encodings.length == 0) {
             throw new IllegalArgumentException("No encoding (charset) in IPN request found");
         }
-        return encodings[0];
+        String encoding = encodings[0];
+        if (encoding == null || !encoding.equalsIgnoreCase("UTF-8")) {
+            ExceptionHandler.handleException("********** PayPalIpnHandlerController: encoding is not UTF-8. This may leads to problems **********");
+        }
+        return encoding;
     }
 
     protected String sendVerification(URL url, String params) throws IOException {
