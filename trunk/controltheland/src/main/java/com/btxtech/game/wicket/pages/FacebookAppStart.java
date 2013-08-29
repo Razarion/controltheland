@@ -76,19 +76,12 @@ public class FacebookAppStart extends RazarionPage {
                         }
                         error(new StringResourceModel("facebookAlreadyLoggedIn", null, new Object[]{user.getUsername()}).getString());
                     } else {
-                        String email;
-                        if (postParameters.getParameterValue("email").isNull()) {
-                            email = FacebookUtil.doGraphApiCall4Email(facebookSignedRequest.getUserId(), facebookSignedRequest.getOAuthToken());
-                        } else {
-                            email = postParameters.getParameterValue("email").toString();
-                        }
-                        facebookSignedRequest.setEmail(email);
                         try {
                             userTrackingService.pageAccess(getClass().getName(), "---User Authorized by Facebook but NOT registered by Game--- Parameters: " + parameters.toString());
                         } catch (Exception e) {
                             ExceptionHandler.handleException(e);
                         }
-                        setResponsePage(new FacebookAppNickName(facebookSignedRequest));
+                        setGameResponsePage();
                     }
                 }
             } else {
@@ -102,22 +95,12 @@ public class FacebookAppStart extends RazarionPage {
                     error(new StringResourceModel("facebookAlreadyLoggedIn", null, new Object[]{user.getUsername()}).getString());
                 } else {
                     // Is NOT authorized by facebook
-                    add(new Behavior() {
-                        @Override
-                        public void renderHead(Component component, IHeaderResponse response) {
-                            PackageTextTemplate jsTemplate = new PackageTextTemplate(FacebookAppStart.class, "FacebookOAuthDialogRedirect.js");
-                            Map<String, Object> jsParameters = new HashMap<>();
-                            jsParameters.put("FACEBOOK_APP_ID", cmsUiService.getFacebookAppId());
-                            jsParameters.put("FACEBOOK_REDIRECT_URI", cmsUiService.getFacebookRedirectUri());
-                            jsParameters.put("FACEBOOK_PERMISSIONS", "email");
-                            response.render(new JavaScriptContentHeaderItem(jsTemplate.asString(jsParameters), null, null));
-                        }
-                    });
                     try {
                         userTrackingService.pageAccess(getClass().getName(), "---User NOT Authorized by Facebook--- Query Parameters: " + parameters.toString());
                     } catch (Exception e) {
                         ExceptionHandler.handleException(e);
                     }
+                    setGameResponsePage();
                 }
             }
         }

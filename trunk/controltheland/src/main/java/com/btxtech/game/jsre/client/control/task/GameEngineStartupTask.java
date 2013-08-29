@@ -15,7 +15,7 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientClipHandler;
 import com.btxtech.game.jsre.client.ClientEnergyService;
-import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
@@ -33,7 +33,7 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
     }
 
     protected void setupGameStructure(GameInfo gameInfo) {
-        Connection.getInstance().setSimpleUser(gameInfo.getSimpleUser());
+        ClientUserService.getInstance().setSimpleUser(gameInfo.getSimpleUser());
         ClientEnergyService.getInstance().init();
         TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),
@@ -47,7 +47,7 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
     }
 
     protected void deltaSetupGameStructure(GameInfo gameInfo) {
-        Connection.getInstance().setSimpleUser(gameInfo.getSimpleUser());
+        ClientUserService.getInstance().setSimpleUser(gameInfo.getSimpleUser());
         ClientEnergyService.getInstance().init();
         TerrainView.getInstance().deltaSetupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),

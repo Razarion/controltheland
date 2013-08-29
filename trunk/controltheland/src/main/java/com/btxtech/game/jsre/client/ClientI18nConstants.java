@@ -114,6 +114,8 @@ public interface ClientI18nConstants extends Messages {
 
     String serverError();
 
+    String connectWithFacebook();
+
     // Login logout
     String login();
 
@@ -127,13 +129,13 @@ public interface ClientI18nConstants extends Messages {
 
     String logoutText(String name);
 
+    String logoutTextFacebook(String name);
+
     String tooltipNotRegistered();
 
     String tooltipNotVerified(String userName);
 
     String tooltipLoggedIn(String userName);
-
-    String tooltipLoggedInViaFacebook(String userName);
 
     String forgotPassword();
 
@@ -191,6 +193,8 @@ public interface ClientI18nConstants extends Messages {
 
     // Register dialog
     String registerText();
+
+    String registerFacebookNickname();
 
     String registerThanks();
 

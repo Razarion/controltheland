@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.client.dialogs.guild;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
@@ -34,7 +35,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -127,7 +127,7 @@ public class MyGuildPanel extends Composite {
     }
 
     public void onFullGuildInfo(FullGuildInfo fullGuildInfo) {
-        myRank = fullGuildInfo.getMember(Connection.getInstance().getSimpleUser()).getRank();
+        myRank = fullGuildInfo.getMember(ClientUserService.getInstance().getSimpleUser()).getRank();
         if (myRank == null) {
             throw new IllegalStateException("MyGuildPanel.onFullGuildInfo(): My rank has not been set");
         }
@@ -206,7 +206,7 @@ public class MyGuildPanel extends Composite {
 
                 @Override
                 public String getValue(GuildMemberInfo guildMemberInfo) {
-                    if (guildMemberInfo.getDetailedUser().getSimpleUser().equals(Connection.getInstance().getSimpleUser())) {
+                    if (guildMemberInfo.getDetailedUser().getSimpleUser().equals(ClientUserService.getInstance().getSimpleUser())) {
                         return null;
                     } else {
                         return ClientI18nHelper.CONSTANTS.change();
@@ -230,7 +230,7 @@ public class MyGuildPanel extends Composite {
                     if (myRank == null) {
                         throw new IllegalStateException("MyGuildPanel.setupMemberTable() kick Column: My rank has not been set");
                     }
-                    if (guildMemberInfo.getDetailedUser().getSimpleUser().equals(Connection.getInstance().getSimpleUser())) {
+                    if (guildMemberInfo.getDetailedUser().getSimpleUser().equals(ClientUserService.getInstance().getSimpleUser())) {
                         return null;
                     } else if (myRank.isHigher(guildMemberInfo.getRank())) {
                         return ClientI18nHelper.CONSTANTS.kick();

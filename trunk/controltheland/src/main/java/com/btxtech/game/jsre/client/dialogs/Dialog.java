@@ -69,8 +69,7 @@ public abstract class Dialog extends DialogBox {
             HorizontalPanel horizontalPanel = new HorizontalPanel();
             horizontalPanel.setWidth("100%");
             dialogVPanel.add(horizontalPanel);
-            horizontalPanel.add(yesButton);
-            horizontalPanel.setCellHorizontalAlignment(yesButton, HasHorizontalAlignment.ALIGN_CENTER);
+            // Add now button
             Button noButton = new Button(ClientI18nHelper.CONSTANTS.close(), new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
@@ -82,7 +81,10 @@ public abstract class Dialog extends DialogBox {
             horizontalPanel.add(noButton);
             horizontalPanel.setCellHorizontalAlignment(noButton, HasHorizontalAlignment.ALIGN_CENTER);
             noButton.setFocus(true);
-        } else if (!showCloseButton && yesButtonClickHandler != null) {
+            // Add yes button
+            horizontalPanel.add(yesButton);
+            horizontalPanel.setCellHorizontalAlignment(yesButton, HasHorizontalAlignment.ALIGN_CENTER);
+       } else if (!showCloseButton && yesButtonClickHandler != null) {
             dialogVPanel.add(yesButton);
             dialogVPanel.setCellHorizontalAlignment(yesButton, HasHorizontalAlignment.ALIGN_CENTER);
             yesButton.setFocus(true);

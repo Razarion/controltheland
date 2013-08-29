@@ -1,13 +1,12 @@
 package com.btxtech.game.jsre.client.dialogs;
 
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,6 +15,12 @@ import java.util.List;
  * Time: 09:40:34
  */
 public class DialogManager implements CloseHandler<PopupPanel> {
+    public interface DialogListener {
+        void onDialogShown(Dialog dialog);
+
+        void onDialogHidden(Dialog dialog);
+    }
+
     private static final DialogManager INSTANCE = new DialogManager();
 
     public enum Type {
@@ -28,9 +33,14 @@ public class DialogManager implements CloseHandler<PopupPanel> {
     private Dialog activeDialog;
     private List<Dialog> dialogQueue = new ArrayList<Dialog>();
     private List<Dialog> stackedDialogs = new ArrayList<Dialog>();
+    private Collection<DialogListener> dialogListeners = new ArrayList<DialogListener>();
 
     public static void showDialog(Dialog dialog, Type type) {
         INSTANCE.showDialogPrivate(dialog, type);
+    }
+
+    public static DialogManager getInstance() {
+        return INSTANCE;
     }
 
     public static void showDialog(final DialogUiBinderWrapper dialogUiBinderWrapper, Type type) {
@@ -77,12 +87,17 @@ public class DialogManager implements CloseHandler<PopupPanel> {
         dialog.addCloseHandler(this);
         stackedDialogs.add(dialog);
         dialog.setupDialog();
-        ClientUserTracker.getInstance().onDialogAppears(dialog, "Dialog");
+        for (DialogListener dialogListener : dialogListeners) {
+            dialogListener.onDialogShown(dialog);
+        }
     }
 
     @Override
     public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
         Dialog dialog = (Dialog) popupPanelCloseEvent.getTarget();
+        for (DialogListener dialogListener : dialogListeners) {
+            dialogListener.onDialogHidden(dialog);
+        }
         if (dialog.equals(activeDialog)) {
             removeAllStackedDialogs();
             activeDialog = null;
@@ -93,7 +108,6 @@ public class DialogManager implements CloseHandler<PopupPanel> {
         } else if (stackedDialogs.contains(dialog)) {
             stackedDialogs.remove(dialog);
         }
-        ClientUserTracker.getInstance().onDialogDisappears(dialog);
     }
 
     private void removeAllStackedDialogs() {
@@ -103,5 +117,11 @@ public class DialogManager implements CloseHandler<PopupPanel> {
         }
     }
 
+    public void addDialogListener(DialogListener dialogListener) {
+        dialogListeners.add(dialogListener);
+    }
 
+    public void removeDialogListener(DialogListener dialogListener) {
+        dialogListeners.remove(dialogListener);
+    }
 }

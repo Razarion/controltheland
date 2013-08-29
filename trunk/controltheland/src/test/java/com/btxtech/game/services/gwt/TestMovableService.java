@@ -13,6 +13,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.PropertyService;
+import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.connection.DbClientDebugEntry;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.db.DbPlanet;
@@ -51,16 +53,47 @@ public class TestMovableService extends AbstractServiceTest {
     private PlanetSystemService planetSystemService;
     @Autowired
     private ServerUnlockService unlockService;
+    @Autowired
+    private PropertyService propertyService;
 
     @Test
     @DirtiesContext
     public void getRealGameInfo() throws Exception {
         configureMultiplePlanetsAndLevels();
-
+        // Preparation
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        propertyService.createProperty(PropertyServiceEnum.REGISTER_DIALOG_DELAY, 8889999);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Test
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         SimulationInfo simulationInfo = getMovableService().getSimulationGameInfo(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
         Assert.assertNotNull(simulationInfo);
+        Assert.assertEquals(8889999, simulationInfo.getRegisterDialogDelay());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+
+    @Test
+    @DirtiesContext
+    public void getSimulationGame() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Preparation
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        propertyService.createProperty(PropertyServiceEnum.REGISTER_DIALOG_DELAY, 999888);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Test
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
+        Assert.assertNotNull(realGameInfo);
+        Assert.assertEquals(999888, realGameInfo.getRegisterDialogDelay());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -259,21 +292,6 @@ public class TestMovableService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-    }
-
-
-    @Test
-    @DirtiesContext
-    public void getSimulationGame() throws Exception {
-        configureMultiplePlanetsAndLevels();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1, null);
-        Assert.assertNotNull(realGameInfo);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
     }
 
     @Test

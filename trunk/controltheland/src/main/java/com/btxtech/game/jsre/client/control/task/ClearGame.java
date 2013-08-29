@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.SoundHandler;
@@ -59,5 +60,6 @@ public class ClearGame extends AbstractStartupTask {
         ClientUnlockServiceImpl.getInstance().setUnlockContainer(null);
         Connection.getInstance().clear();
         StartPointMode.getInstance().deactivate();
+        ClientUserService.getInstance().cleanup();
     }
 }

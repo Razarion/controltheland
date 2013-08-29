@@ -1,4 +1,4 @@
-package com.btxtech.game.jsre.client.dialogs;
+package com.btxtech.game.jsre.client.dialogs.register;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.Connection;

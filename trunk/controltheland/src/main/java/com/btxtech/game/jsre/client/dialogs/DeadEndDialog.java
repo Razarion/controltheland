@@ -34,7 +34,7 @@ public class DeadEndDialog extends PeriodicDialog {
             @Override
             public void onClick(ClickEvent event) {
                 close();
-                DialogManager.showDialog(new StartNewBaseDialog(), DialogManager.Type.STACK_ABLE);
+                StartNewBaseDialog.show();
             }
         });
         dialogVPanel.add(button);

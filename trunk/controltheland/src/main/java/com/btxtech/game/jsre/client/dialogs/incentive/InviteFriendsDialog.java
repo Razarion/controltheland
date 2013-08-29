@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.client.dialogs.incentive;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
-import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
@@ -20,9 +20,9 @@ public class InviteFriendsDialog extends Dialog {
     }
 
     public static void showDialog() {
-        if (Connection.getInstance().isRegisteredAndVerified()) {
+        if (ClientUserService.getInstance().isRegisteredAndVerified()) {
             DialogManager.showDialog(new InviteFriendsDialog(), DialogManager.Type.STACK_ABLE);
-        } else if (Connection.getInstance().isRegistered()) {
+        } else if (ClientUserService.getInstance().isRegistered()) {
             DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(), ClientI18nHelper.CONSTANTS.inviteFriendsOnlyRegisteredVerified()), DialogManager.Type.STACK_ABLE);
         } else {
             DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inviteFriends(), ClientI18nHelper.CONSTANTS.inviteFriendsOnlyRegistered()), DialogManager.Type.STACK_ABLE);

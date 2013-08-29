@@ -1,0 +1,89 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:p1="urn:import:com.btxtech.game.jsre.client.dialogs.register">
+    <ui:style>
+        Button.fbconnectbutton {
+            -moz-box-shadow:inset 1px 1px 2px 0px #afbede;
+            -webkit-box-shadow:inset 1px 1px 2px 0px #afbede;
+            box-shadow:inset 1px 1px 2px 0px #afbede;
+            background:#5b73a8;
+            border:1px solid #394ea3;
+            display:inline-block;
+            color:#ffffff;
+            font-family:'lucida grande',tahoma,verdana,arial,sans-serif;
+            font-size:13px;
+            padding:4px 6px;
+            text-decoration:none;
+            -moz-border-radius: 0px;
+            -webkit-border-radius: 0px;
+            border-radius: 0px;
+            width: auto;
+        }
+
+        Button.fbconnectbutton:hover {
+            background:#3d537d;
+        }
+
+        Button.fbconnectbutton:active {
+            position:relative;
+            top:1px;
+        }
+    </ui:style>
+    <ui:with field='msg' type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+    <g:VerticalPanel width="32em" spacing="10">
+        <g:HTML HTML="{msg.registerText}" />
+        <g:CaptionPanel captionText="{msg.userName}">
+            <g:Button ui:field="facebookRegisterButton" HTML="{msg.connectWithFacebook}" styleName="{style.fbconnectbutton}"/>
+        </g:CaptionPanel>
+        <g:CaptionPanel captionText="{msg.registerDirect}">
+            <g:VerticalPanel>
+                <g:Grid>
+                    <g:row>
+                        <g:customCell>
+                            <g:Label text="{msg.userName}"/>
+                        </g:customCell>
+                        <g:customCell>
+                            <p1:NickNameField ui:field="nickNameField"/>
+                        </g:customCell>
+                    </g:row>
+                    <g:row>
+                        <g:customCell>
+                            <g:Label text="{msg.email}"/>
+                        </g:customCell>
+                        <g:customCell>
+                            <g:TextBox ui:field="emailField"/>
+                        </g:customCell>
+                    </g:row>
+                    <g:row>
+                        <g:customCell>
+                            <g:Label text="{msg.confirmEmail}"/>
+                        </g:customCell>
+                        <g:customCell>
+                            <g:TextBox ui:field="confirmEmailField"/>
+                        </g:customCell>
+                    </g:row>
+                    <g:row>
+                        <g:customCell>
+                            <g:Label text="{msg.password}"/>
+                        </g:customCell>
+                        <g:customCell>
+                            <g:PasswordTextBox ui:field="passwordField"/>
+                        </g:customCell>
+                    </g:row>
+                    <g:row>
+                        <g:customCell>
+                            <g:Label text="{msg.confirmPassword}"/>
+                        </g:customCell>
+                        <g:customCell>
+                            <g:PasswordTextBox ui:field="confirmPasswordField"/>
+                        </g:customCell>
+                    </g:row>
+                </g:Grid>
+                <g:Cell horizontalAlignment="ALIGN_CENTER">
+                    <g:Button text="{msg.register}" ui:field="normalRegisterButton"/>
+                </g:Cell>
+            </g:VerticalPanel>
+        </g:CaptionPanel>
+    </g:VerticalPanel>
+</ui:UiBinder> 

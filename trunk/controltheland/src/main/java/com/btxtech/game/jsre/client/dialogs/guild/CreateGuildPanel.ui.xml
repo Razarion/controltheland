@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:p1="urn:import:com.btxtech.game.jsre.client.dialogs.guild">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:p1="urn:import:com.btxtech.game.jsre.client.dialogs.guild">
 	<ui:style>
 		
 	</ui:style>

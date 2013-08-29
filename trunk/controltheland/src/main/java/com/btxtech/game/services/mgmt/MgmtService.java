@@ -43,12 +43,6 @@ public interface MgmtService {
 
     void removeSavedQuery(String query);
 
-    StartupData getStartupData();
-
-    StartupData readStartupData();
-
-    void saveStartupData(StartupData startupData);
-
     MemoryUsageHistory getHeapMemoryUsageHistory();
 
     MemoryUsageHistory getNoHeapMemoryUsageHistory();

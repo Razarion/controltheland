@@ -24,7 +24,6 @@ import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MemoryUsageHistory;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.RequestHelper;
-import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -97,7 +96,6 @@ public class MgmtServiceImpl implements MgmtService {
     @Autowired
     private RequestHelper requestHelper;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
-    private StartupData startupData;
     private MemoryUsageContainer heapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
     private MemoryUsageContainer noHeapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
     private ScheduledThreadPoolExecutor memoryGrabberThreadPool;
@@ -221,48 +219,9 @@ public class MgmtServiceImpl implements MgmtService {
     @PostConstruct
     public void startup() {
         ExceptionHandler.init(applicationContext);
-        HibernateUtil.openSession4InternalCall(sessionFactory);
-        try {
-            if (!Utils.isTestModeStatic()) {
-                LogManager.getLogger("com.btxtech").setLevel(Level.INFO);
-            }
-            startupData = readStartupData();
-        } catch (Throwable t) {
-            log.error("", t);
-        } finally {
-            HibernateUtil.closeSession4InternalCall(sessionFactory);
+        if (!Utils.isTestModeStatic()) {
+            LogManager.getLogger("com.btxtech").setLevel(Level.INFO);
         }
-    }
-
-    @Override
-    public StartupData getStartupData() {
-        return startupData;
-    }
-
-    @Override
-    public StartupData readStartupData() {
-        @SuppressWarnings("unchecked")
-        List<StartupData> startups = HibernateUtil.loadAll(sessionFactory, StartupData.class);
-        if (startups.isEmpty()) {
-            log.info("Startup data does not exist. Create default.");
-            StartupData startupData = new StartupData();
-            startupData.setRegisterDialogDelay(2 * 60);
-            saveStartupData(startupData);
-            return startupData;
-        } else {
-            if (startups.size() > 1) {
-                log.error("More than one startup data detected. Get first");
-            }
-            return startups.get(0);
-        }
-    }
-
-    @Override
-    @Transactional
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveStartupData(StartupData startupData) {
-        this.startupData = startupData;
-        sessionFactory.getCurrentSession().saveOrUpdate(startupData);
     }
 
     @Override

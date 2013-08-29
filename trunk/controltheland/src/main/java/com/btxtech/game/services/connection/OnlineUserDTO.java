@@ -13,10 +13,16 @@ public class OnlineUserDTO {
     private String baseName;
     private String planetName;
     private User user;
+    private int userStateId;
 
     public OnlineUserDTO(UserState userState, String planetName) {
+        userStateId = System.identityHashCode(userState);
         this.planetName = planetName;
         sessionId = userState.getSessionId();
+    }
+
+    public int getUserStateId() {
+        return userStateId;
     }
 
     public String getBaseName() {

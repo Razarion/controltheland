@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -51,7 +52,7 @@ public class MessageDialog extends Dialog {
             Button button = new Button(ClientI18nHelper.CONSTANTS.register(), new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    DialogManager.showDialog(new RegisterDialog(), DialogManager.Type.PROMPTLY);
+                    ClientUserService.getInstance().promptRegister();
                 }
             });
             button.getElement().getStyle().setMarginTop(20, Style.Unit.PX);

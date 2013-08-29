@@ -3,21 +3,17 @@ package com.btxtech.game.jsre.common;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.client.dialogs.DialogManager;
-import com.btxtech.game.jsre.client.dialogs.NickNameDialog;
-import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +30,15 @@ public class FacebookUtils {
     private static boolean isLoadedChecked = false;
     private static boolean isLoaded = false;
 
+    public static native void init() /*-{
+        $wnd.RazFacebookUtilFbCallbackInvite = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackInvite(Lcom/google/gwt/core/client/JavaScriptObject;));
+        $wnd.RazFacebookUtilFbCallbackLogin = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackLogin(Ljava/lang/String;));
+        $wnd.RazFacebookUtilFbCallbackPostToFeed = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackPostToFeed(Lcom/google/gwt/core/client/JavaScriptObject;));
+        $wnd.RazFacebookUtilFbCallCheckAppConnectionState = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackCheckAppConnectionState(ZLjava/lang/String;));
+        $wnd.RazFacebookUtilFbCallbackGetEmail = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackReadEmail(Ljava/lang/String;));
+        $wnd.RazFacebookUtilFbCallbackLogout = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallLogout());
+    }-*/;
+
     public static void invite() {
         if (checkFbApiLoaded("invite")) {
             nativeInvite(ClientI18nHelper.CONSTANTS.fbInviteTitle(), ClientI18nHelper.CONSTANTS.fbInviteMessage());
@@ -44,10 +49,10 @@ public class FacebookUtils {
         $wnd.FB.ui({method: 'apprequests',
                 title: title,
                 message: message},
-            $wnd.RazFacebookUtilFbCallback);
+            $wnd.RazFacebookUtilFbCallbackInvite);
     }-*/;
 
-    public static void fbUiCallBack(JavaScriptObject object) {
+    public static void fbUiCallBackInvite(JavaScriptObject object) {
         if (object != null) {
             try {
                 JSONObject jsonObject = new JSONObject(object);
@@ -64,58 +69,77 @@ public class FacebookUtils {
         }
     }
 
-    public static void login(RegisterDialog registerDialog) {
-        if (checkFbApiLoaded("login")) {
-            nativeLogin(registerDialog);
+    public static void checkAppConnectionState() {
+        if (checkFbApiLoaded("checkAppConnectionState")) {
+            nativeCheckAppConnectionState();
+        } else {
+            ClientUserService.getInstance().setFacebookAppConnected(false, null);
         }
     }
 
-    native private static void nativeLogin(RegisterDialog registerDialog)/*-{
+    native private static void nativeCheckAppConnectionState()/*-{
         $wnd.FB.getLoginStatus(function (response) {
             if (response.status === 'connected') {
-                $wnd.RazFacebookUtilFbCallbackLogin(response.authResponse.signedRequest, registerDialog);
+                $wnd.RazFacebookUtilFbCallCheckAppConnectionState(true, response.authResponse.signedRequest);
             } else {
-                $wnd.FB.login(function (response1) {
-                    if (response1.authResponse) {
-                        $wnd.FB.api('/me', function (response2) {
-                            $wnd.RazFacebookUtilFbCallbackLogin(response1.authResponse.signedRequest, response2.email, registerDialog);
-                        });
-                    }
-                }, {scope: 'email'});
+                $wnd.RazFacebookUtilFbCallCheckAppConnectionState(false, null);
             }
+        }, true);
+    }-*/;
+
+    public static void fbUiCallBackCheckAppConnectionState(boolean connected, String signedRequest) {
+        ClientUserService.getInstance().setFacebookAppConnected(connected, signedRequest);
+    }
+
+    public static void login() {
+        if (checkFbApiLoaded("login")) {
+            nativeLogin();
+        }
+    }
+
+    native private static void nativeLogin()/*-{
+        $wnd.FB.login(function (response1) {
+            if (response1.authResponse) {
+                $wnd.RazFacebookUtilFbCallbackLogin(response1.authResponse.signedRequest);
+            }
+        }, {scope: 'email'});
+    }-*/;
+
+    public static void fbUiCallBackLogin(String signedRequest) {
+        ClientUserService.getInstance().onFacebookLoggedIn(signedRequest);
+    }
+
+
+    public static void logout() {
+        if (checkFbApiLoaded("logout")) {
+            nativeLogout();
+        }
+    }
+
+    native private static void nativeLogout() /*-{
+        $wnd.FB.logout(function (response) {
+            $wnd.RazFacebookUtilFbCallbackLogout();
         });
     }-*/;
 
-    public static void fbUiCallBackLoginResponse(final String signedRequest, final String email, final RegisterDialog registerDialog) {
-        if (Connection.getMovableServiceAsync() != null) {
-            Connection.getMovableServiceAsync().isFacebookUserRegistered(signedRequest, new AsyncCallback<Boolean>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    ClientExceptionHandler.handleException("FacebookUtils.fbUiCallBackLoginResponse()", caught);
-                }
+    public static void fbUiCallLogout() {
+        ClientUserService.getInstance().onFacebookLoggedout();
+    }
 
-                @Override
-                public void onSuccess(Boolean result) {
-                    if (result) {
-                        if (Connection.getMovableServiceAsync() != null) {
-                            Connection.getMovableServiceAsync().loginFacebookUser(signedRequest, new AsyncCallback<Void>() {
-                                @Override
-                                public void onFailure(Throwable caught) {
-                                    ClientExceptionHandler.handleException("FacebookUtils.fbUiCallBackLoginResponse() loginFacebookUser", caught);
-                                }
-
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    Window.Location.reload();
-                                }
-                            });
-                        }
-                    } else {
-                        DialogManager.showDialog(new NickNameDialog(signedRequest, email, registerDialog), DialogManager.Type.STACK_ABLE);
-                    }
-                }
-            });
+    public static void readEmail() {
+        if (checkFbApiLoaded("readEmail")) {
+            nativeReadEmail();
         }
+    }
+
+    native private static void nativeReadEmail() /*-{
+        $wnd.FB.api('/me', function (response2) {
+            $wnd.RazFacebookUtilFbCallbackGetEmail(response2.email);
+        });
+    }-*/;
+
+    public static void fbUiCallBackReadEmail(String email) {
+        ClientUserService.getInstance().onFacebookEmailReceived(email);
     }
 
     public static void postToFeedLevelTaskDone(QuestInfo questInfo) {
@@ -128,7 +152,7 @@ public class FacebookUtils {
             }
             if (checkFbApiLoaded("postToFeedLevelTaskDone")) {
                 // TODO localise
-                nativePostToFeed(Connection.getInstance().getUserName() + " completed a level task on Razarion",
+                nativePostToFeed(ClientUserService.getInstance().getUserName() + " completed a level task on Razarion",
                         "'" + questInfo.getTitle() + "' completed on " + ClientPlanetServices.getInstance().getPlanetInfo().getName(),
                         "Build your base, attack other players and gather resources. A browser multiplayer real-time strategy game.",
                         RAZARION_APP_URL, // TODO is this needed?
@@ -149,7 +173,7 @@ public class FacebookUtils {
             }
             if (checkFbApiLoaded("postToFeedLevelUp")) {
                 // TODO localise
-                nativePostToFeed(Connection.getInstance().getUserName() + " leveled up on Razarion",
+                nativePostToFeed(ClientUserService.getInstance().getUserName() + " leveled up on Razarion",
                         "Reached level " + levelScope.getNumber() + " on " + ClientPlanetServices.getInstance().getPlanetInfo().getName(),
                         "Build your base, attack other players and gather resources. A browser multiplayer real-time strategy game.",
                         RAZARION_APP_URL, // TODO is this needed?
@@ -180,13 +204,6 @@ public class FacebookUtils {
     public static void fbUiCallBackPostToFeed(JavaScriptObject object) {
         GwtCommon.sendDebug(GwtCommon.DEBUG_FACEBOOK_POST_FEED, new JSONObject(object).toString());
     }
-
-
-    public static native void exportStaticMethod() /*-{
-        $wnd.RazFacebookUtilFbCallback = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBack(Lcom/google/gwt/core/client/JavaScriptObject;));
-        $wnd.RazFacebookUtilFbCallbackLogin = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackLoginResponse(Ljava/lang/String;Ljava/lang/String;Lcom/btxtech/game/jsre/client/dialogs/RegisterDialog;));
-        $wnd.RazFacebookUtilFbCallbackPostToFeed = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackPostToFeed(Lcom/google/gwt/core/client/JavaScriptObject;));
-    }-*/;
 
 
     private static boolean checkFbApiLoaded(String debugInfo) {

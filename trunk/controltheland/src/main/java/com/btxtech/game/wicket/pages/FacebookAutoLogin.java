@@ -45,15 +45,12 @@ public class FacebookAutoLogin extends RazarionPage {
                 if (!userService.isFacebookLoggedIn(facebookSignedRequest)) {
                     userService.loginFacebookUser(facebookSignedRequest);
                 }
-                PageParameters gamePageParameters = new PageParameters();
-                if (!userGuidanceService.isStartRealGame()) {
-                    gamePageParameters.add(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(userGuidanceService.getDefaultLevelTaskId()));
-                }
-                setResponsePage(Game.class, gamePageParameters);
-            } else {
-                // Not possible get the email -> accessToken == null: facebookSignedRequest.setEmail(FacebookUtil.doGraphApiCall4Email(facebookSignedRequest.getUserId(), facebookSignedRequest.getOAuthToken()));
-                setResponsePage(new FacebookAppNickName(facebookSignedRequest));
             }
+            PageParameters gamePageParameters = new PageParameters();
+            if (!userGuidanceService.isStartRealGame()) {
+                gamePageParameters.add(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(userGuidanceService.getDefaultLevelTaskId()));
+            }
+            setResponsePage(Game.class, gamePageParameters);
         } else {
             // Is NOT authorized by facebook. This should never happen
             throw new IllegalStateException("User not Authorized by Facebook. Query parameters: " + parameters.toString() + " Post parameters: " + postParameters.toString());

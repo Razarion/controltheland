@@ -123,7 +123,6 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     public static final int MIN_DELAY_BETWEEN_POLL = 200;
     public static final int STATISTIC_DELAY = 10000;
     public static final Connection INSTANCE = new Connection();
-    private SimpleUser simpleUser;
     private GameInfo gameInfo;
     private Collection<SyncItemInfo> syncInfos;
     private ArrayList<BaseCommand> commandQueue = new ArrayList<BaseCommand>();
@@ -333,15 +332,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 } else if (packet instanceof BaseLostPacket) {
                     StartPointMode.getInstance().onBaseLost((BaseLostPacket) packet);
                 } else if (packet instanceof UserPacket) {
-                    SimpleUser oldSimpleUser = Connection.getInstance().getSimpleUser();
-                    SimpleUser simpleUser = ((UserPacket) packet).getSimpleUser();
-                    Connection.getInstance().setSimpleUser(simpleUser);
-                    MenuBarCockpit.getInstance().setSimpleUser(simpleUser);
-                    if ((oldSimpleUser == null || !oldSimpleUser.isVerified()) && simpleUser.isVerified()) {
-                        DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registerThanks(),
-                                ClientI18nHelper.CONSTANTS.registerThanksLong()
-                        ), DialogManager.Type.QUEUE_ABLE);
-                    }
+                    ClientUserService.getInstance().onUserPacket((UserPacket)packet);
                 } else if (packet instanceof UserAttentionPacket) {
                     MenuBarCockpit.getInstance().onUserAttentionPacket((UserAttentionPacket) packet);
                 } else if (packet instanceof StorablePacket) {
@@ -560,30 +551,6 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
     public static boolean isConnected() {
         return INSTANCE.movableServiceAsync != null;
-    }
-
-    public boolean isRegistered() {
-        return simpleUser != null;
-    }
-
-    public boolean isRegisteredAndVerified() {
-        return isRegistered() && simpleUser.isVerified();
-    }
-
-    public void setSimpleUser(SimpleUser simpleUser) {
-        this.simpleUser = simpleUser;
-    }
-
-    public String getUserName() {
-        if (simpleUser != null) {
-            return simpleUser.getName();
-        } else {
-            return null;
-        }
-    }
-
-    public SimpleUser getSimpleUser() {
-        return simpleUser;
     }
 
     public GameInfo getGameInfo() {

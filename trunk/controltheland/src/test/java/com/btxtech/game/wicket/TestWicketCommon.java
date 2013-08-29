@@ -23,7 +23,6 @@ import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.wicket.pages.FacebookAppNickName;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
@@ -168,6 +167,8 @@ public class TestWicketCommon extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLscErrorHandler() throws Exception {
+        Assert.fail();
+        /*
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         FacebookAge facebookAge = new FacebookAge(20);
@@ -178,12 +179,15 @@ public class TestWicketCommon extends AbstractServiceTest {
         assertStringInHeader(LSC_SCRIPT);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+        */
     }
 
     @Test
     @DirtiesContext
     public void testHtml5Detection() throws Exception {
-        beginHttpSession();
+        Assert.fail();
+        /*
+    beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         FacebookAge facebookAge = new FacebookAge(20);
         FacebookUser facebookUser = new FacebookUser("", "", facebookAge);
@@ -199,11 +203,14 @@ public class TestWicketCommon extends AbstractServiceTest {
         getWicketTester().assertRenderedPage(FacebookAppNickName.class);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+        */
     }
 
     @Test
     @DirtiesContext
     public void testHtml5DetectionNoHtml5() throws Exception {
+        Assert.fail();
+        /*
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         FacebookAge facebookAge = new FacebookAge(20);
@@ -220,6 +227,7 @@ public class TestWicketCommon extends AbstractServiceTest {
         getWicketTester().assertRenderedPage(FacebookAppNickName.class);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+        */
     }
 
     @Test

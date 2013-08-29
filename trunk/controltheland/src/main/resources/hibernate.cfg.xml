@@ -36,7 +36,6 @@
         <mapping class="com.btxtech.game.services.user.DbContentAccessControl"/>
         <mapping class="com.btxtech.game.services.user.DbPageAccessControl"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.SavedQuery"/>
-        <mapping class="com.btxtech.game.services.mgmt.StartupData"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbResourceItemType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbBoxItemType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility"/>

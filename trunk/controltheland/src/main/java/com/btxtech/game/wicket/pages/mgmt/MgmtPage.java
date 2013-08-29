@@ -130,7 +130,6 @@ public class MgmtPage extends MgmtWebPage {
         toolPages = new ArrayList<>();
         toolPages.add(new LinkAndName("Game Properties", GamePropertyEditor.class));
         toolPages.add(new LinkAndName("Online utils", OnlineUtils.class));
-        toolPages.add(new LinkAndName("Startup", Startup.class));
         toolPages.add(new LinkAndName("DB View", DbView.class));
         toolPages.add(new LinkAndName("Terrain Tile Editor", TerrainTileEditor.class));
         toolPages.add(new LinkAndName("Backup/Restore", BackupRestore.class));

@@ -1,6 +1,7 @@
 package com.btxtech.game.services.common.impl;
 
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.NoSuchPropertyException;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
@@ -41,6 +42,16 @@ public class PropertyServiceImpl implements PropertyService {
             throw new WrongPropertyTypeException(Integer.class, propertyServiceEnum);
         }
         return getProperty(propertyServiceEnum).getIntegerValue();
+    }
+
+    @Override
+    public int getIntPropertyFallback(PropertyServiceEnum propertyServiceEnum) {
+        try {
+            return getIntProperty(propertyServiceEnum);
+        } catch (NoSuchPropertyException | WrongPropertyTypeException e) {
+            ExceptionHandler.handleException(e, "No property defined for: " + propertyServiceEnum + " using default value: " + propertyServiceEnum.getFallbackValue());
+            return (int) propertyServiceEnum.getFallbackValue();
+        }
     }
 
     @Override
