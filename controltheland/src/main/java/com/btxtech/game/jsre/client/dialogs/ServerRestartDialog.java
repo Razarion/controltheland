@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
@@ -46,14 +47,14 @@ public class ServerRestartDialog extends Dialog {
             dialogVPanel.add(new Label(ClientI18nHelper.CONSTANTS.serverRebootMissionNotSaved()));
         }
 
-        if (!Connection.getInstance().isRegistered()) {
+        if (!ClientUserService.getInstance().isRegistered()) {
             dialogVPanel.add(new Label(ClientI18nHelper.CONSTANTS.serverRebootNotRegistered()));
             dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
             dialogVPanel.add(new Button(ClientI18nHelper.CONSTANTS.register(), new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     ServerRestartDialog.this.close();
-                    DialogManager.showDialog(new RegisterDialog(), DialogManager.Type.PROMPTLY);
+                    ClientUserService.getInstance().promptRegister();
                 }
             }));
         }

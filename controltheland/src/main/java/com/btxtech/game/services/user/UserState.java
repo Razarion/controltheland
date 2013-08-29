@@ -26,7 +26,7 @@ import java.util.Locale;
  * Date: 19.01.2011
  * Time: 10:42:00
  */
-public class UserState implements Serializable {
+public class UserState {
     private Integer userId;
     private Base base;
     private int dbLevelId;

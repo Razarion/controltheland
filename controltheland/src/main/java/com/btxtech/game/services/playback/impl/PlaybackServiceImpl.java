@@ -21,11 +21,11 @@ import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.jsre.playback.Playback;
 import com.btxtech.game.jsre.playback.PlaybackInfo;
+import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.gwt.AutowiredRemoteServiceServlet;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.media.ClipService;
-import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.media.SoundService;
 import com.btxtech.game.services.terrain.TerrainDbUtil;
 import com.btxtech.game.services.terrain.TerrainImageService;
@@ -63,7 +63,7 @@ public class PlaybackServiceImpl extends AutowiredRemoteServiceServlet implement
     @Autowired
     private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private MgmtService mgmtService;
+    private PropertyService propertyService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -80,7 +80,7 @@ public class PlaybackServiceImpl extends AutowiredRemoteServiceServlet implement
             PlaybackInfo playbackInfo = new PlaybackInfo();
 
             // Tutorial
-            MovableServiceImpl.setCommonInfo(playbackInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
+            MovableServiceImpl.setCommonInfo(playbackInfo, userService, serverItemTypeService, propertyService, cmsUiService, soundService, clipService);
             LifecycleTrackingInfo lifecycleTrackingInfo = userTrackingService.getLifecycleTrackingInfo(startUuid);
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig4Tracking(lifecycleTrackingInfo.getLevelTaskId());
             playbackInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService, Locale.ENGLISH));

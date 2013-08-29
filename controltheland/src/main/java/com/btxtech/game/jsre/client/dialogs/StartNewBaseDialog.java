@@ -26,31 +26,20 @@ import com.google.gwt.user.client.ui.*;
  * Date: Jul 2, 2009
  * Time: 3:23:47 PM
  */
-public class StartNewBaseDialog extends Dialog {
-
-    public StartNewBaseDialog() {
-        super(ClientI18nHelper.CONSTANTS.newBase());
+public class StartNewBaseDialog {
+    public static void show() {
         if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
             throw new IllegalArgumentException("StartNewBaseDialog: only allowed if real game");
         }
+        YesNoDialog yesNoDialog = new YesNoDialog(ClientI18nHelper.CONSTANTS.newBase(),
+                ClientI18nHelper.CONSTANTS.startNewBase(),
+                ClientI18nHelper.CONSTANTS.startOver(),
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        Connection.getInstance().surrenderBase(null);
+                    }
+                }, ClientI18nHelper.CONSTANTS.close(), null);
+        DialogManager.showDialog(yesNoDialog, DialogManager.Type.STACK_ABLE);
     }
-
-    @Override
-    protected void setupPanel(VerticalPanel dialogVPanel) {
-        Label label = new Label(ClientI18nHelper.CONSTANTS.startNewBase());
-        dialogVPanel.add(label);
-        label.getElement().getStyle().setWidth(17, Style.Unit.EM);
-        Button button = new Button(ClientI18nHelper.CONSTANTS.startOver());
-        dialogVPanel.add(new HTML("&nbsp;"));
-        dialogVPanel.add(button);
-        button.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                close();
-                Connection.getInstance().surrenderBase(null);
-            }
-        });
-        dialogVPanel.setCellHorizontalAlignment(button, HasHorizontalAlignment.ALIGN_CENTER);
-    }
-
 }

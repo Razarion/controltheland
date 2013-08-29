@@ -111,8 +111,8 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
         this.simpleUser = simpleUser;
     }
 
-    public int getRegisterDialogDelayInS() {
-        return registerDialogDelay * 1000;
+    public int getRegisterDialogDelay() {
+        return registerDialogDelay;
     }
 
     public void setRegisterDialogDelay(int registerDialogDelay) {

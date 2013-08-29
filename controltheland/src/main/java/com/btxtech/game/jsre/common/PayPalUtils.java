@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.common;
 
-import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -35,7 +35,7 @@ public class PayPalUtils {
         FlowPanel flowPanel = new FlowPanel();
         form.setWidget(flowPanel);
         flowPanel.add(new Hidden("cmd", "_s-xclick"));
-        flowPanel.add(new Hidden("custom", Integer.toString(Connection.getInstance().getSimpleUser().getId())));
+        flowPanel.add(new Hidden("custom", Integer.toString(ClientUserService.getInstance().getSimpleUser().getId())));
 
         if (IS_SANDBOX) {
             form.setAction(SANDBOX_ACTION_URL);

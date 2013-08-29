@@ -4,11 +4,8 @@
 package com.btxtech.game.jsre.client.dialogs.razarion;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
-import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
-import com.btxtech.game.jsre.client.dialogs.DialogManager;
-import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
-import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.common.PayPalButton;
 import com.btxtech.game.jsre.common.PayPalUtils;
 import com.google.gwt.dom.client.Style;
@@ -31,9 +28,9 @@ public class BuyRazarionPaypalDialog extends Dialog {
     protected void setupPanel(VerticalPanel dialogVPanel) {
         dialogVPanel.add(createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal(), 16));
 
-        if (Connection.getInstance().isRegisteredAndVerified()) {
+        if (ClientUserService.getInstance().isRegisteredAndVerified()) {
             fillBuyOptions(dialogVPanel);
-        } else if (Connection.getInstance().isRegistered()) {
+        } else if (ClientUserService.getInstance().isRegistered()) {
             fillUnverified(dialogVPanel);
         } else {
             fillUnregistered(dialogVPanel);
@@ -78,7 +75,7 @@ public class BuyRazarionPaypalDialog extends Dialog {
             @Override
             public void onClick(ClickEvent event) {
                 close();
-                DialogManager.showDialog(new RegisterDialog(), DialogManager.Type.PROMPTLY);
+                ClientUserService.getInstance().promptRegister();
             }
         }));
     }

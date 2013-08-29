@@ -6,15 +6,18 @@ package com.btxtech.game.services.common;
  * Time: 18:23
  */
 public enum PropertyServiceEnum {
-    GUILD_RAZARION_COST("Razarion cost for creating a guild", Integer.class),
-    FACEBOOK_OPTIONAL_AD_URL_KEY("Facebook optional ad key", String.class);
+    GUILD_RAZARION_COST("Razarion cost for creating a guild", Integer.class, null),
+    FACEBOOK_OPTIONAL_AD_URL_KEY("Facebook optional ad key", String.class, null),
+    REGISTER_DIALOG_DELAY("Register dialog delay in milliseconds", Integer.class, 240000);
 
     private String displayName;
     private Class type;
+    private Object fallbackValue;
 
-    private PropertyServiceEnum(String displayName, Class type) {
+    private <T>PropertyServiceEnum(String displayName, Class<T> type, T fallbackValue) {
         this.displayName = displayName;
         this.type = type;
+        this.fallbackValue = fallbackValue;
     }
 
     public String getDisplayName() {
@@ -25,11 +28,16 @@ public enum PropertyServiceEnum {
         return type;
     }
 
+    public Object getFallbackValue() {
+        return fallbackValue;
+    }
+
     @Override
     public String toString() {
         return "PropertyServiceEnum{" +
                 "displayName='" + displayName + '\'' +
                 ", type=" + type +
+                ", fallbackValue=" + fallbackValue +
                 '}';
     }
 }

@@ -15,14 +15,14 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.SoundHandler;
-import com.btxtech.game.jsre.client.cockpit.chat.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
-import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -41,7 +41,7 @@ public class RunSimulationStartupTask extends AbstractStartupTask {
         SideCockpit.getInstance().initMission(((SimulationInfo) Connection.getInstance().getGameInfo()));
         ClientBase.getInstance().setMySimpleGuild(null);
         MenuBarCockpit.getInstance().initSimulated(Connection.getInstance().getGameInfo());
-        RegisterDialog.showDialogRepeating();
+        ClientUserService.getInstance().init();
         Simulation.getInstance().start();
         SideCockpit.getInstance().updateItemLimit();
         ClientMessageIdPacketHandler.getInstance().runSimulatedGame(Connection.getInstance(), ChatCockpit.getInstance(), ClientMessageIdPacketHandler.START_DELAY, ClientMessageIdPacketHandler.POLL_DELAY);

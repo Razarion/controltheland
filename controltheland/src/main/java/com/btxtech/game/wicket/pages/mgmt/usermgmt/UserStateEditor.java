@@ -45,6 +45,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ import java.util.Map;
  * Time: 16:30:59
  */
 public class UserStateEditor extends MgmtWebPage {
+    public static final String USER_STATE_HASH = "userSateHash";
     @SpringBean
     private UserService userService;
     @SpringBean
@@ -77,11 +79,11 @@ public class UserStateEditor extends MgmtWebPage {
     private Integer xp;
     private Integer razarionBought;
 
-    public UserStateEditor(UserState userState) {
-        final int userStateHash = userState.hashCode();
+    public UserStateEditor(PageParameters pageParameters) {
+        final int userStateHash = pageParameters.get(USER_STATE_HASH).toInt();
         add(new FeedbackPanel("msgs"));
 
-        final Form<UserState> form = new Form<>("form", new CompoundPropertyModel<UserState>(new IModel<UserState>() {
+        final Form<UserState> form = new Form<>("form", new CompoundPropertyModel<>(new IModel<UserState>() {
             private UserState userState;
 
             @Override
@@ -105,7 +107,7 @@ public class UserStateEditor extends MgmtWebPage {
         add(form);
 
         form.add(new Label("sessionId"));
-        form.add(new Label("userName", userService.getUserName(userState)));
+        form.add(new Label("userName", userService.getUserName(userService.getUserState4Hash(userStateHash))));
         form.add(new Label("userId"));
         setupRazarionBought(form);
         setupLevel(form);
@@ -370,7 +372,7 @@ public class UserStateEditor extends MgmtWebPage {
     }
 
     private void setupHighScore(final Form<UserState> userStateForm) {
-        final Form<StatisticsEntry> form = new Form<>("formStatistics", new CompoundPropertyModel<StatisticsEntry>(new IModel<StatisticsEntry>() {
+        final Form<StatisticsEntry> form = new Form<>("formStatistics", new CompoundPropertyModel<>(new IModel<StatisticsEntry>() {
             private StatisticsEntry statisticsEntry;
 
             @Override

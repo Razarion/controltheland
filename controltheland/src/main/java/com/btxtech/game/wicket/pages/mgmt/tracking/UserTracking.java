@@ -116,7 +116,9 @@ public class UserTracking extends MgmtWebPage {
             protected void onSubmit() {
                 User user = (User) UserTracking.this.getDefaultModelObject();
                 if (user != null) {
-                    setResponsePage(new UserStateEditor(userService.getUserState(user)));
+                    PageParameters userStatePageParameters = new PageParameters();
+                    userStatePageParameters.add(UserStateEditor.USER_STATE_HASH, System.identityHashCode(userService.getUserState(user)));
+                    setResponsePage(UserStateEditor.class, userStatePageParameters);
                 }
             }
         });

@@ -87,39 +87,4 @@ public class FacebookUtil {
             throw new FacebookUrlException("Signature does not match");
         }
     }
-
-    public static String doGraphApiCall4Email(String facebookUserId, String accessToken) {
-        ClientHttpResponse clientHttpResponse = null;
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        try {
-            if (facebookUserId == null) {
-                throw new FacebookUrlException("facebookUserId == null");
-            }
-            if (accessToken == null) {
-                throw new FacebookUrlException("accessToken == null");
-            }
-            StringBuilder builder = new StringBuilder();
-            builder.append("https://graph.facebook.com");
-            builder.append("/");
-            builder.append(facebookUserId);
-            builder.append("?access_token=");
-            builder.append(accessToken);
-            builder.append("&fields=name,email");
-            ClientHttpRequest clientHttpRequest = factory.createRequest(new URI(builder.toString()), HttpMethod.GET);
-            clientHttpResponse = clientHttpRequest.execute();
-            if (clientHttpResponse.getStatusCode() == HttpStatus.OK) {
-                Gson gson = new Gson();
-                FacebookUserDetails facebookUserDetails = gson.fromJson(IOUtils.toString(clientHttpResponse.getBody()), FacebookUserDetails.class);
-                return facebookUserDetails.getEmail();
-            } else {
-                throw new FacebookUrlException("Facebook graph call fails: " + clientHttpResponse.getStatusText() + " " + clientHttpResponse.getStatusCode() + "|" + builder.toString());
-            }
-        } catch (IOException | URISyntaxException e) {
-            throw new FacebookUrlException(e);
-        } finally {
-            if (clientHttpResponse != null) {
-                clientHttpResponse.close();
-            }
-        }
-    }
 }

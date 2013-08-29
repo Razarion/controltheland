@@ -21,6 +21,8 @@ import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
+import com.btxtech.game.jsre.client.dialogs.Dialog;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.simulation.Task;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
@@ -54,7 +56,7 @@ import java.util.List;
  * Date: 13.01.2010
  * Time: 15:12:08
  */
-public class ClientUserTracker implements SelectionListener, TerrainScrollListener {
+public class ClientUserTracker implements SelectionListener, TerrainScrollListener, DialogManager.DialogListener {
     public static final String WINDOW_CLOSE = "Window closed -> move to DB";
     public static final String START_UUID = "uuid";
     private static final int SEND_TIMEOUT = 1000 * 5;
@@ -140,10 +142,12 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
                 addBrowserWindowTracking();
             }
         });
+        DialogManager.getInstance().addDialogListener(this);
     }
 
     public void stopEventTracking() {
         isCollecting = false;
+        DialogManager.getInstance().removeDialogListener(this);
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -273,5 +277,15 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
             dialogTrackings.add(new DialogTracking(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     GwtCommon.checkInt(System.identityHashCode(widget), "onDialogDisappears System.identityHashCode(widget)")));
         }
+    }
+
+    @Override
+    public void onDialogShown(Dialog dialog) {
+        onDialogAppears(dialog, "Dialog: " + dialog.getTitle());
+    }
+
+    @Override
+    public void onDialogHidden(Dialog dialog) {
+        onDialogDisappears(dialog);
     }
 }

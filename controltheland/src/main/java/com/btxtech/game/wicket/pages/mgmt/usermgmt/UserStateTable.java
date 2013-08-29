@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.List;
@@ -84,7 +85,9 @@ public class UserStateTable extends MgmtWebPage {
 
                     @Override
                     public void onSubmit() {
-                        setResponsePage(new UserStateEditor(item.getModelObject()));
+                        PageParameters userStatePageParameters = new PageParameters();
+                        userStatePageParameters.add(UserStateEditor.USER_STATE_HASH, System.identityHashCode(item.getModelObject()));
+                        setResponsePage(UserStateEditor.class, userStatePageParameters);
                     }
                 });
             }

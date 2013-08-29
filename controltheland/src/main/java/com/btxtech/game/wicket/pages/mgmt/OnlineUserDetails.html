@@ -24,6 +24,7 @@
         <th bgcolor="#dadada">Planet</th>
         <th bgcolor="#dadada">Base</th>
         <th bgcolor="#dadada">User</th>
+        <th bgcolor="#dadada">User State</th>
         <th bgcolor="#dadada">Session</th>
     </tr>
     <tr wicket:id="realGameTable">
@@ -31,6 +32,9 @@
         <td wicket:id="baseName"></td>
         <td>
             <a href="" wicket:id="userLink" target="_blank"><span wicket:id="userName">xxx</span></a>
+        </td>
+        <td>
+            <a href="" wicket:id="userStateLink" target="_blank">User State</a>
         </td>
         <td align="right">
             <a href="" wicket:id="sessionLink" target="_blank"><span wicket:id="sessionId">xxx</span></a>
@@ -43,13 +47,17 @@
     <tr>
         <th bgcolor="#dadada">Mission</th>
         <th bgcolor="#dadada">User</th>
-        <th bgcolor="#dadada">userName</th>
+        <th bgcolor="#dadada">User State</th>
+        <th bgcolor="#dadada">Session</th>
     </tr>
     <tr wicket:id="missionTable">
         <td wicket:id="mission"></td>
         <td>
             <a href="" wicket:id="userLink" target="_blank"><span wicket:id="userName">xxx</span></a>
             <span wicket:id="baseName">xxx</span>
+        </td>
+        <td>
+            <a href="" wicket:id="userStateLink" target="_blank">User State</a>
         </td>
         <td align="right">
             <a href="" wicket:id="sessionLink" target="_blank"><span wicket:id="sessionId">xxx</span></a>

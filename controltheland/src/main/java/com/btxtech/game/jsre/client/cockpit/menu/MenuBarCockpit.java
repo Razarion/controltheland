@@ -40,19 +40,17 @@ public class MenuBarCockpit {
     }
 
     public void initRealGame(RealGameInfo gameInfo) {
-        setSimpleUser(gameInfo.getSimpleUser());
         menuBarPanel.initRealGame(gameInfo);
         onUserAttentionPacket(gameInfo.getUserAttentionPacket());
     }
 
     public void initSimulated(GameInfo gameInfo) {
-        setSimpleUser(gameInfo.getSimpleUser());
         menuBarPanel.initSimulated();
         onUserAttentionPacket(gameInfo.getUserAttentionPacket());
     }
 
-    public void setSimpleUser(SimpleUser simpleUser) {
-        menuBarPanel.setSimpleUser(simpleUser);
+    public void updateUser() {
+        menuBarPanel.updateUser();
     }
 
     public void blinkNewBase(boolean blink) {

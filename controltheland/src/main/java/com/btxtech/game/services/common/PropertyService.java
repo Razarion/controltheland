@@ -14,5 +14,7 @@ public interface PropertyService {
 
     int getIntProperty(PropertyServiceEnum propertyServiceEnum) throws NoSuchPropertyException, WrongPropertyTypeException;
 
+    int getIntPropertyFallback(PropertyServiceEnum propertyServiceEnum);
+
     String getStringProperty(PropertyServiceEnum propertyServiceEnum) throws NoSuchPropertyException, WrongPropertyTypeException;
 }

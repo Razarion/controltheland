@@ -15,16 +15,16 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.StartPointMode;
-import com.btxtech.game.jsre.client.cockpit.chat.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
-import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientDeadEndProtection;
@@ -45,18 +45,18 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         SideCockpit.getInstance().initRealGame((RealGameInfo) Connection.getInstance().getGameInfo());
-        ClientBase.getInstance().setMySimpleGuild(((RealGameInfo)Connection.getInstance().getGameInfo()).getMySimpleGuild());
-        Connection.getInstance().handleStorablePackets(((RealGameInfo)Connection.getInstance().getGameInfo()).getStorablePackets());
-        MenuBarCockpit.getInstance().initRealGame((RealGameInfo)Connection.getInstance().getGameInfo());
+        ClientBase.getInstance().setMySimpleGuild(((RealGameInfo) Connection.getInstance().getGameInfo()).getMySimpleGuild());
+        Connection.getInstance().handleStorablePackets(((RealGameInfo) Connection.getInstance().getGameInfo()).getStorablePackets());
+        MenuBarCockpit.getInstance().initRealGame((RealGameInfo) Connection.getInstance().getGameInfo());
         Connection.getInstance().startSyncInfoPoll();
-        RegisterDialog.showDialogRepeating();
+        ClientUserService.getInstance().init();
         SideCockpit.getInstance().updateItemLimit();
         ClientMessageIdPacketHandler.getInstance().runRealGame(Connection.getInstance(), ChatCockpit.getInstance(), ClientMessageIdPacketHandler.START_DELAY);
         Renderer.getInstance().start();
         SoundHandler.getInstance().start(Connection.getInstance().getGameInfo().getCommonSoundInfo());
         TerrainView.getInstance().setFocus();
         StartPointMode.getInstance().activateIfNeeded();
-        if(!StartPointMode.getInstance().isActive()) {
+        if (!StartPointMode.getInstance().isActive()) {
             ClientDeadEndProtection.getInstance().start();
         }
         ClientUserGuidanceService.getInstance().setLevel(((RealGameInfo) Connection.getInstance().getGameInfo()).getLevelScope());

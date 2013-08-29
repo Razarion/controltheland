@@ -1,18 +1,12 @@
-package com.btxtech.game.jsre.client.dialogs;
+package com.btxtech.game.jsre.client.dialogs.register;
 
-import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
-import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.common.info.SimpleUser;
-import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
+import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
-import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -23,13 +17,13 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
- * Created with IntelliJ IDEA.
  * User: beat
  * Date: 07.12.12
  * Time: 16:35
  */
 public class LoginDialog extends Dialog {
     private TextBox name;
+    private Button loginButton;
 
     public LoginDialog() {
         super(ClientI18nHelper.CONSTANTS.login());
@@ -47,35 +41,13 @@ public class LoginDialog extends Dialog {
         grid.setWidget(1, 0, new Label(ClientI18nHelper.CONSTANTS.password()));
         grid.setWidget(1, 1, password);
         // Login button
-        final Button loginButton = new Button(ClientI18nHelper.CONSTANTS.login());
+        loginButton = new Button(ClientI18nHelper.CONSTANTS.login());
         grid.setWidget(2, 0, loginButton);
         loginButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 loginButton.setEnabled(false);
-                if (Connection.getMovableServiceAsync() != null) {
-                    Connection.getMovableServiceAsync().login(name.getText(), password.getText(), new AsyncCallback<SimpleUser>() {
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            loginButton.setEnabled(true);
-                            if (caught instanceof LoginFailedException) {
-                                DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.loginFailed(), ClientI18nHelper.CONSTANTS.loginFailedText()), DialogManager.Type.STACK_ABLE);
-                            } else if (caught instanceof LoginFailedNotVerifiedException) {
-                                DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.loginFailed(), ClientI18nHelper.CONSTANTS.loginFailedNotVerifiedText()), DialogManager.Type.STACK_ABLE);
-                            } else {
-                                ClientExceptionHandler.handleException("LoginDialog.setupPanel() login", caught);
-                            }
-                        }
-
-                        @Override
-                        public void onSuccess(SimpleUser simpleUser) {
-                            Connection.getInstance().setSimpleUser(simpleUser);
-                            MenuBarCockpit.getInstance().setSimpleUser(simpleUser);
-                            LoginDialog.this.hide();
-                            Window.Location.reload();
-                        }
-                    });
-                }
+                ClientUserService.getInstance().proceedLogin(name.getText(), password.getText());
             }
         });
         grid.getFlexCellFormatter().setColSpan(2, 0, 2);
@@ -93,5 +65,9 @@ public class LoginDialog extends Dialog {
         super.setupDialog();
         // Field must be added before focus can be set
         name.setFocus(true);
+    }
+
+    public void setLoginButtonEnabled() {
+        loginButton.setEnabled(true);
     }
 }

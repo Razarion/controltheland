@@ -56,6 +56,16 @@ public class TestPropertyService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void testIntPropertyFallback() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(240000, propertyService.getIntPropertyFallback(PropertyServiceEnum.REGISTER_DIALOG_DELAY));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
     public void testStringPropertyNoProperty() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

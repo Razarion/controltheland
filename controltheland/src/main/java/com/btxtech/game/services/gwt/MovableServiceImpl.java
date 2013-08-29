@@ -69,6 +69,8 @@ import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.cms.ContentService;
 import com.btxtech.game.services.common.ExceptionHandler;
+import com.btxtech.game.services.common.PropertyService;
+import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
@@ -78,7 +80,6 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.media.ClipService;
 import com.btxtech.game.services.media.SoundService;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
@@ -152,6 +153,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private ContentService contentService;
     @Autowired
     private InvitationService invitationService;
+    @Autowired
+    private PropertyService propertyService;
 
     @Override
     public void sendCommands(String startUuid, List<BaseCommand> baseCommands) throws NoConnectionException {
@@ -212,7 +215,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             UserState userState = userService.getUserState();
             ServerPlanetServices serverPlanetServices = planetSystemService.getPlanetSystemService(userState, planetId);
             RealGameInfo realGameInfo = new RealGameInfo();
-            setCommonInfo(realGameInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
+            setCommonInfo(realGameInfo, userService, serverItemTypeService, propertyService, cmsUiService, soundService, clipService);
             if (userState == null) {
                 throw new IllegalStateException("No UserState available: " + userState);
             }
@@ -272,7 +275,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             SimulationInfo simulationInfo = new SimulationInfo();
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig(levelTaskId);
             // Common
-            setCommonInfo(simulationInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
+            setCommonInfo(simulationInfo, userService, serverItemTypeService, propertyService, cmsUiService, soundService, clipService);
             simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService, request.getLocale()));
             simulationInfo.setLevelTaskId(levelTaskId);
             simulationInfo.setLevelNumber(userGuidanceService.getDbLevel().getNumber());
@@ -299,11 +302,10 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         }
     }
 
-    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ServerItemTypeService serverItemTypeService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService, ClipService clipService) {
+    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ServerItemTypeService serverItemTypeService, PropertyService propertyService, CmsUiService cmsUiService, SoundService soundService, ClipService clipService) {
         gameInfo.setSimpleUser(userService.getSimpleUser());
         gameInfo.setItemTypes(serverItemTypeService.getItemTypes());
-        StartupData startupData = mgmtService.getStartupData();
-        gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
+        gameInfo.setRegisterDialogDelay(propertyService.getIntPropertyFallback(PropertyServiceEnum.REGISTER_DIALOG_DELAY));
         gameInfo.setPredefinedUrls(cmsUiService.getPredefinedUrls());
         gameInfo.setCommonSoundInfo(soundService.getCommonSoundInfo());
         gameInfo.setImageSpriteMapLibrary(clipService.getImageSpriteMapLibrary());

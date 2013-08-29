@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.dialogs.guild;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
@@ -14,7 +15,7 @@ public class SearchGuildDialog extends Dialog {
         if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
             throw new IllegalStateException("SearchGuildDialog wrong game engine mode: " + Connection.getInstance().getGameEngineMode());
         }
-        if (!Connection.getInstance().isRegisteredAndVerified()) {
+        if (!ClientUserService.getInstance().isRegisteredAndVerified()) {
             throw new IllegalStateException("SearchGuildDialog user is not registered");
         }
         if (ClientBase.getInstance().isGuildMember()) {

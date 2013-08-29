@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -112,13 +113,13 @@ public class OtherInfoPanel extends Composite {
 
     @UiHandler("inviteGuildButton")
     void onInviteGuildButtonClick(ClickEvent event) {
-        if (Connection.getInstance().isRegisteredAndVerified()) {
+        if (ClientUserService.getInstance().isRegisteredAndVerified()) {
             if (ClientBase.getInstance().isAbandoned(simpleBase)) {
                 DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.guildInvitationBaseAbandoned(enemyName)), DialogManager.Type.QUEUE_ABLE);
             } else {
                 Connection.getInstance().inviteGuildMember(simpleBase, enemyName);
             }
-        } else if (Connection.getInstance().isRegistered()) {
+        } else if (ClientUserService.getInstance().isRegistered()) {
             DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.guildsOnlyRegisteredVerified()), DialogManager.Type.QUEUE_ABLE);
         } else {
             DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.guildsOnlyRegistered()), DialogManager.Type.QUEUE_ABLE);
@@ -128,9 +129,9 @@ public class OtherInfoPanel extends Composite {
 
     @UiHandler("requestMembership")
     void onRequestMembershipClick(ClickEvent event) {
-        if (Connection.getInstance().isRegisteredAndVerified()) {
+        if (ClientUserService.getInstance().isRegisteredAndVerified()) {
             DialogManager.showDialog(new MembershipRequestPanel(simpleGuild.getId(), simpleGuild.getName()), DialogManager.Type.STACK_ABLE);
-        } else if (Connection.getInstance().isRegistered()) {
+        } else if (ClientUserService.getInstance().isRegistered()) {
             DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.guildsOnlyRegisteredVerified()), DialogManager.Type.QUEUE_ABLE);
         } else {
             DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.gildMemberInvited(), ClientI18nHelper.CONSTANTS.guildsOnlyRegistered()), DialogManager.Type.QUEUE_ABLE);

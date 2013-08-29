@@ -31,7 +31,7 @@ public class Game implements EntryPoint {
     public void onModuleLoad() {
         try {
             GwtCommon.setUncaughtExceptionHandler();
-            FacebookUtils.exportStaticMethod();
+            FacebookUtils.init();
             ClientUserTracker.getInstance().registerWindowsCloseHandler();
             isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
             ClientGlobalServices.getInstance().connectStartupListeners();

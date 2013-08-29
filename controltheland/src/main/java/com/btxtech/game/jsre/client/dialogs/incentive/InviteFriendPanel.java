@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.dialogs.incentive;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
+import com.btxtech.game.jsre.client.ClientUserService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
@@ -51,7 +52,7 @@ public class InviteFriendPanel extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
         tabPanel.selectTab(0);
         setupCompleteTable();
-        urlField.setValue(CmsUtil.generateInviteUrl(Connection.getInstance().getSimpleUser(), CmsUtil.URL_VALUE));
+        urlField.setValue(CmsUtil.generateInviteUrl(ClientUserService.getInstance().getSimpleUser(), CmsUtil.URL_VALUE));
     }
 
     private void setupCompleteTable() {

@@ -10,6 +10,7 @@ import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.mgmt.tracking.SessionDetail;
 import com.btxtech.game.wicket.pages.mgmt.tracking.UserTracking;
+import com.btxtech.game.wicket.pages.mgmt.usermgmt.UserStateEditor;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -66,14 +67,18 @@ public class OnlineUserDetails extends MgmtWebPage {
                 } else {
                     item.add(new BookmarkablePageLink<UserTracking>("userLink", UserTracking.class).setVisible(false));
                 }
+                // User State link
+                PageParameters userStatePageParameters = new PageParameters();
+                userStatePageParameters.add(UserStateEditor.USER_STATE_HASH, item.getModelObject().getUserStateId());
+                item.add(new BookmarkablePageLink<>("userStateLink", UserStateEditor.class, userStatePageParameters));
                 // Session link
-                PageParameters pageParameters = new PageParameters();
+                PageParameters sessionPageParameters = new PageParameters();
                 if (item.getModelObject().getSessionId() != null) {
-                    pageParameters.add(SessionDetail.SESSION_KEY, item.getModelObject().getSessionId());
+                    sessionPageParameters.add(SessionDetail.SESSION_KEY, item.getModelObject().getSessionId());
                 }
-                BookmarkablePageLink<SessionDetail> link = new BookmarkablePageLink<>("sessionLink", SessionDetail.class, pageParameters);
-                link.add(new Label("sessionId", item.getModelObject().getSessionId()));
-                item.add(link);
+                BookmarkablePageLink<SessionDetail> sessionLink = new BookmarkablePageLink<>("sessionLink", SessionDetail.class, sessionPageParameters);
+                sessionLink.add(new Label("sessionId", item.getModelObject().getSessionId()));
+                item.add(sessionLink);
             }
         });
     }
@@ -109,6 +114,10 @@ public class OnlineUserDetails extends MgmtWebPage {
                     item.add(new BookmarkablePageLink<UserTracking>("userLink", UserTracking.class).setVisible(false));
                     item.add(new Label("baseName").setVisible(false));
                 }
+                // User State link
+                PageParameters userStatePageParameters = new PageParameters();
+                userStatePageParameters.add(UserStateEditor.USER_STATE_HASH, System.identityHashCode(item.getModelObject()));
+                item.add(new BookmarkablePageLink<>("userStateLink", UserStateEditor.class, userStatePageParameters));
                 // Session link
                 PageParameters pageParameters = new PageParameters();
                 if (item.getModelObject().getSessionId() != null) {

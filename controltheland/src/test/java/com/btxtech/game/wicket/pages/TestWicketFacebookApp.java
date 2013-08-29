@@ -37,6 +37,8 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void newUserRegisterEnterGame() throws Exception {
+        Assert.fail();
+        /*
         configureMultiplePlanetsAndLevels();
 
         // Do not rejoice too quickly Just... this is just a test secret.
@@ -71,6 +73,7 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
         Assert.assertEquals("fakeEmail", user.getEmail());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+        */
     }
 
     @Test
@@ -105,7 +108,9 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void unregisteredUserEnterGame() throws Exception {
-        configureMultiplePlanetsAndLevels();
+        Assert.fail();
+        /*
+      configureMultiplePlanetsAndLevels();
         // Do not rejoice too quickly... this is just a test secret.
         setPrivateField(CmsUiServiceImpl.class, cmsUiService, "facebookAppSecret", "029a30fb9677d35c79c44d8a505d8fe1");
         // Login
@@ -131,6 +136,7 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
         Assert.assertEquals("100003634094139", user.getSocialNetUserId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+        */
     }
 
     @Test
