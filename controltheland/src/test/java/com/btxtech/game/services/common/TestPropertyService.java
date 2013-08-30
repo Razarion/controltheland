@@ -48,7 +48,7 @@ public class TestPropertyService extends AbstractServiceTest {
             propertyService.getIntProperty(PropertyServiceEnum.GUILD_RAZARION_COST);
             Assert.fail("NoSuchPropertyException expected");
         } catch (NoSuchPropertyException e) {
-            Assert.assertEquals("No such property: PropertyServiceEnum{displayName='Razarion cost for creating a guild', type=class java.lang.Integer}", e.getMessage());
+            Assert.assertEquals("No such property: PropertyServiceEnum{displayName='Razarion cost for creating a guild', type=class java.lang.Integer, fallbackValue=null}", e.getMessage());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -73,7 +73,7 @@ public class TestPropertyService extends AbstractServiceTest {
             propertyService.getStringProperty(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY);
             Assert.fail("NoSuchPropertyException expected");
         } catch (NoSuchPropertyException e) {
-            Assert.assertEquals("No such property: PropertyServiceEnum{displayName='Facebook optional ad key', type=class java.lang.String}", e.getMessage());
+            Assert.assertEquals("No such property: PropertyServiceEnum{displayName='Facebook optional ad key', type=class java.lang.String, fallbackValue=null}", e.getMessage());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -120,7 +120,7 @@ public class TestPropertyService extends AbstractServiceTest {
             propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, "Hallo");
             Assert.fail("WrongPropertyTypeException expected");
         } catch (WrongPropertyTypeException e) {
-            Assert.assertEquals("Wrong property type exception. Expected: class java.lang.String Property: PropertyServiceEnum{displayName='Razarion cost for creating a guild', type=class java.lang.Integer}", e.getMessage());
+            Assert.assertEquals("Wrong property type exception. Expected: class java.lang.String Property: PropertyServiceEnum{displayName='Razarion cost for creating a guild', type=class java.lang.Integer, fallbackValue=null}", e.getMessage());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

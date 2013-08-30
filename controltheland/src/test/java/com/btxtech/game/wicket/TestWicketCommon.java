@@ -16,14 +16,12 @@ import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.socialnet.facebook.FacebookAge;
-import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
-import com.btxtech.game.services.socialnet.facebook.FacebookUser;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.Game;
+import com.btxtech.game.wicket.pages.InvitationStart;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
 import org.apache.wicket.WicketRuntimeException;
@@ -56,7 +54,7 @@ public class TestWicketCommon extends AbstractServiceTest {
             "\n" +
             "window.onerror = function (message, file, lineNumber) {\n" +
             "    if (message != 'Script error' && lineNumber != 0 && isNotChromeCommand(file)) {\n" +
-            "        var errorMessage = encodeURI(\"FacebookAppNickName\\nMessage: \" + message + \"\\nFile: \" + file + \"\\nLinenumber: \" + lineNumber);\n" +
+            "        var errorMessage = encodeURI(\"Game\\nMessage: \" + message + \"\\nFile: \" + file + \"\\nLinenumber: \" + lineNumber);\n" +
             "        var pathName = encodeURI(window.location.pathname);\n" +
             "        var img = document.createElement('img');\n" +
             "        img.src = '/spring/lsc?e=' + errorMessage + '&t=' + new Date().getTime() + '&p=' + pathName;\n" +
@@ -167,67 +165,31 @@ public class TestWicketCommon extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLscErrorHandler() throws Exception {
-        Assert.fail();
-        /*
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        FacebookAge facebookAge = new FacebookAge(20);
-        FacebookUser facebookUser = new FacebookUser("", "", facebookAge);
-        FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest("", 0, facebookUser, "", "1234");
-        facebookSignedRequest.setEmail("muu@ggg.com");
-        getWicketTester().startPage(new FacebookAppNickName(facebookSignedRequest));
+        // Game.class not really adequate fpr this test.
+        getWicketTester().startPage(Game.class);
         assertStringInHeader(LSC_SCRIPT);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-        */
     }
 
     @Test
     @DirtiesContext
     public void testHtml5Detection() throws Exception {
-        Assert.fail();
-        /*
-    beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        FacebookAge facebookAge = new FacebookAge(20);
-        FacebookUser facebookUser = new FacebookUser("", "", facebookAge);
-        FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest("", 0, facebookUser, "", "1234");
-        facebookSignedRequest.setEmail("muu@ggg.com");
-        getWicketTester().startPage(new FacebookAppNickName(facebookSignedRequest));
-        assertStringInHeader(HTML5_DETECT);
-        getWicketTester().startPage(new FacebookAppNickName(facebookSignedRequest));
-        assertStringInHeader(HTML5_DETECT);
-        userTrackingService.onJavaScriptDetected(true);
-        getWicketTester().startPage(new FacebookAppNickName(facebookSignedRequest));
-        assertStringNotInHeader(HTML5_DETECT);
-        getWicketTester().assertRenderedPage(FacebookAppNickName.class);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        */
-    }
-
-    @Test
-    @DirtiesContext
-    public void testHtml5DetectionNoHtml5() throws Exception {
-        Assert.fail();
-        /*
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        FacebookAge facebookAge = new FacebookAge(20);
-        FacebookUser facebookUser = new FacebookUser("", "", facebookAge);
-        FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest("", 0, facebookUser, "", "1234");
-        facebookSignedRequest.setEmail("muu@ggg.com");
-        getWicketTester().startPage(new FacebookAppNickName(facebookSignedRequest));
+        // Game.class not really adequate fpr this test.
+        getWicketTester().startPage(Game.class);
         assertStringInHeader(HTML5_DETECT);
-        getWicketTester().startPage(new FacebookAppNickName(facebookSignedRequest));
+        getWicketTester().startPage(Game.class);
         assertStringInHeader(HTML5_DETECT);
-        userTrackingService.onJavaScriptDetected(false);
-        getWicketTester().startPage(new FacebookAppNickName(facebookSignedRequest));
+        userTrackingService.onJavaScriptDetected(true);
+        getWicketTester().startPage(Game.class);
         assertStringNotInHeader(HTML5_DETECT);
-        getWicketTester().assertRenderedPage(FacebookAppNickName.class);
+        getWicketTester().assertRenderedPage(Game.class);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-        */
     }
 
     @Test
@@ -429,7 +391,7 @@ public class TestWicketCommon extends AbstractServiceTest {
         dbCmsImage.setContentType("ich/gegel");
         cmsService.getImageCrudRootServiceHelper().updateDbChild(dbCmsImage);
         cmsService.activateCms();
-        Assert.assertEquals(1, (int)dbCmsImage.getId());
+        Assert.assertEquals(1, (int) dbCmsImage.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
  /*       // Normal Parameter
