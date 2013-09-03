@@ -1,0 +1,66 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title></title>
+</head>
+<body>
+
+<wicket:panel>
+    <h3>Lifecycle</h3>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">User Name</td>
+            <td wicket:id="userName"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Level</td>
+            <td wicket:id="level"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">LevelTaskName</td>
+            <td wicket:id="levelTaskName"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Startup Begin</td>
+            <td wicket:id="startTime"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Uuid</td>
+            <td wicket:id="startUuid"/>
+        </tr>
+    </table>
+    <h3>Startup</h3>
+    <table border="0">
+        <tr>
+            <th bgcolor="#dadada">Task</th>
+            <th bgcolor="#dadada">Time [s]</th>
+            <th bgcolor="#dadada">Error</th>
+        </tr>
+        <tr wicket:id="startup">
+            <td wicket:id="task"/>
+            <td wicket:id="time" align="right"/>
+            <td wicket:id="failureText"/>
+        </tr>
+        <tr>
+            <td><b>Total</b></td>
+            <td wicket:id="totalStartup" align="right"/>
+        </tr>
+    </table>
+</wicket:panel>
+
+</body>
+</html>

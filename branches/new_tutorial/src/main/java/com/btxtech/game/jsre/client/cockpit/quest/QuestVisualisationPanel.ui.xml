@@ -1,0 +1,15 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .description {
+            color: #C7C4BB;
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </ui:style>
+	<g:VerticalPanel>
+        <g:FlexTable ui:field="progressTable" styleName="{style.description}" />
+		<g:HTML ui:field="descriptionHtml" styleName="{style.description}" />
+	</g:VerticalPanel>
+</ui:UiBinder> 

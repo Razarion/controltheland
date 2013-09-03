@@ -1,0 +1,92 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Session Tracking</title>
+</head>
+<body>
+<h1>Session Tracking</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="filterForm">
+    <table style="border: 2px dotted #000000; padding: 5px;">
+        <tr>
+            <td valign="top">JavaScript enabled</td>
+            <td><span valign="top" wicket:id="jsEnabled"></span></td>
+        </tr>
+        <tr>
+            <td valign="top">Show last days</td>
+            <td valign="top"><input wicket:id="days" type="text" size="6" maxlength="6"></td>
+        </tr>
+        <tr>
+            <td valign="top">Page Hits (>=)</td>
+            <td valign="top"><input wicket:id="hits" type="text" size="6" maxlength="6"></td>
+        </tr>
+        <tr>
+            <td valign="top">Session Id</td>
+            <td valign="top"><input wicket:id="sessionId" type="text" size="40"></td>
+        </tr>
+        <tr>
+            <td valign="top">Cookie Id</td>
+            <td valign="top"><input wicket:id="cookieId" type="text" size="40"></td>
+        </tr>
+        <tr>
+            <td valign="top">Facebook Ad [%]</td>
+            <td valign="top"><input wicket:id="optionalFacebookAdValue" type="text" size="40"></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <input type="submit" value="Search"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<h2>History</h2>
+<table border="0">
+    <tr>
+        <th bgcolor="#dadada">Date</th>
+        <th bgcolor="#dadada">Pages Hits</th>
+        <th bgcolor="#dadada">New Cookie</th>
+        <th bgcolor="#dadada">Enter Game</th>
+        <th bgcolor="#dadada">St Attempts</th>
+        <th bgcolor="#dadada">St Success</th>
+        <th bgcolor="#dadada">F</th>
+        <th bgcolor="#dadada">Promotions</th>
+        <th bgcolor="#dadada">Commands</th>
+        <th bgcolor="#dadada">Session Id</th>
+        <th bgcolor="#dadada">Referer</th>
+    </tr>
+    <tr wicket:id="visits">
+        <td wicket:id="date"/>
+        <td align="right" wicket:id="pageHits"/>
+        <td align="right" wicket:id="newUser"/>
+        <td align="right" wicket:id="enterGame"/>
+        <td align="right" wicket:id="startAttempts"/>
+        <td align="right" wicket:id="successfulStarts"/>
+        <td align="right" style="font-weight:bold;color:red;" wicket:id="startupFailure"/>
+        <td align="right" wicket:id="levelPromotions"/>
+        <td align="right" wicket:id="commands"/>
+        <td align="right">
+            <a href="" wicket:id="visitorLink" target="_blank"><span wicket:id="sessionId">xxx</span></a>
+        </td>
+        <td align="right" wicket:id="referer"/>
+    </tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <link rel="stylesheet" type="text/css" href="GameEditor.css">
+    <title>Base Item Type Editor</title>
+</head>
+<body>
+
+<h1>Item Type Editor</h1>
+
+<h2>Config</h2>
+<span wicket:id="msgs"/>
+
+<form wicket:id="itemTypeForm">
+    <table border="0" cellSpacing="1" cellPadding="0">
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Image Editor</td>
+            <td valign="top" wicket:id="itemTypeImagePanel"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Name (internationalized)</td>
+            <td valign="top" wicket:id="dbI18nName"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Description (internationalized)</td>
+            <td valign="top" wicket:id="dbI18nDescription"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Health</td>
+            <td valign="top"><input wicket:id="health" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Price
+                <br>
+                <span style="color:red;font-size: 12px">
+                If this item is a money collector, this price is used in the DeadEnd detection
+                <br>
+                Make price 0 if this item price should be omitted (e.g. item shop)
+            </span>
+            </td>
+            <td valign="top"><input wicket:id="price" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Xp on Killing</td>
+            <td valign="top"><input wicket:id="xpOnKilling" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Consuming House Space</td>
+            <td valign="top"><input wicket:id="consumingHouseSpace" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Buildup</td>
+            <td valign="top"><input wicket:id="buildup" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Terrain type</td>
+            <td valign="top"><select wicket:id="terrainType" name="top5" size="1"></select></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Explosion Clip Id</td>
+            <td valign="top" wicket:id="explosionClip"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Unlock Razarion</td>
+            <td valign="top"><input wicket:id="unlockRazarion" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#BBBBBB">
+            <td colspan="3" valign="top">Upgradeable</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Upgradeable</td>
+            <td wicket:id="upgradable"/>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Upgrade progress</td>
+            <td valign="top"><input wicket:id="upgradeProgress" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#BBBBBB">
+            <td colspan="3" valign="top">Boxes</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Box Pickup Range</td>
+            <td valign="top"><input wicket:id="boxPickupRange" type="text" size="6"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Drop Box Possibility[0..100%]</td>
+            <td wicket:id="dropBoxPossibility"/>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Drop Box Item Type Id</td>
+            <td wicket:id="dbBoxItemType"/>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" wicket:id="editAbilities" value="Abilities">
+    <input type="submit" wicket:id="editSounds" value="Sounds">
+    <br>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="cancel" value="Cancel">
+    <br>
+    <br>
+</form>
+
+</body>
+</html>

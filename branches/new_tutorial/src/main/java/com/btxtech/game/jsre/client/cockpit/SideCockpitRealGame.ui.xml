@@ -1,0 +1,58 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .planetText {
+            color: #C7C4BB;
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+        }
+
+        .multiplayerText {
+            color: #C7C4BB;
+            font-size: 9px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .title {
+            color: #C7C4BB;
+            font-size: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            margin-right: 5px;
+        }
+
+        .label {
+            color: #C7C4BB;
+            font-size: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </ui:style>
+    <ui:with field='res'
+             type='com.btxtech.game.jsre.client.cockpit.images.SideCockpitImageBundle'/>
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+    <g:AbsolutePanel>
+        <g:at left="0" top="0">
+            <g:Image resource='{res.planet}'/>
+        </g:at>
+        <g:at left="30" top="0">
+            <g:InlineLabel ui:field="planetNameLabel" styleName="{style.planetText}" text="Planet Name"/>
+        </g:at>
+        <g:at left="30" top="12">
+            <g:InlineLabel text="{msg.multiplayer}" styleName="{style.multiplayerText}"/>
+        </g:at>
+        <g:at left="0" top="27">
+            <g:InlineLabel text="{msg.level}:" styleName="{style.title}" title="{msg.tooltipLevel}"/>
+        </g:at>
+        <g:at left="30" top="27">
+            <g:InlineLabel ui:field="levelLabel" styleName="{style.label}" text="1000" title="{msg.tooltipLevel}"/>
+        </g:at>
+        <g:at left="13" top="40">
+            <g:InlineLabel text="{msg.xp}:" styleName="{style.title}" title="{msg.tooltipXp}"/>
+        </g:at>
+        <g:at left="30" top="40">
+            <g:InlineLabel ui:field="xpLabel" styleName="{style.label}" text="100" title="{msg.tooltipXp}"/>
+        </g:at>
+    </g:AbsolutePanel>
+</ui:UiBinder> 

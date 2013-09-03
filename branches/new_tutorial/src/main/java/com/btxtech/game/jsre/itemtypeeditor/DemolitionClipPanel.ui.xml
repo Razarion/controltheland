@@ -1,0 +1,46 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		
+	</ui:style>
+	<g:VerticalPanel>
+		<g:Grid>
+			<g:row>
+				<g:customCell>
+					<g:Label text="Current Clip"/>
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel spacing="3">
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Label ui:field="currentClipLabel"/>
+						</g:Cell>
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Button text="-" ui:field="previousClipButton"></g:Button>
+						</g:Cell>
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Button text="+" ui:field="nextClipButton"></g:Button>
+						</g:Cell>
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:Label text="Create Clip"/>
+				</g:customCell>
+				<g:customCell>
+					<g:Button text="Create" ui:field="createClipButton"/>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:Label text="Delete current Clip"/>
+				</g:customCell>
+				<g:customCell>
+					<g:Button ui:field="deleteClipButton">Delete</g:Button>
+				</g:customCell>
+			</g:row>
+		</g:Grid>
+		<g:CaptionPanel ui:field="clipPositionPanel" captionText="Clip &amp; Position"/>
+	</g:VerticalPanel>
+</ui:UiBinder> 

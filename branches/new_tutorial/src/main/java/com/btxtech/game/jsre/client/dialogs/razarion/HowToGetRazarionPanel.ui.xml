@@ -1,0 +1,57 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .message {
+            padding-bottom: 5px;
+        }
+
+        .howToGet {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            font-size: 150%;
+        }
+
+        .howToTable {
+            border-collapse: collapse;
+        }
+
+        .howToTable td {
+            border: 1px solid #575757;
+        }
+    </ui:style>
+    <ui:with field='res' type='com.btxtech.game.jsre.client.dialogs.razarion.images.RazarionHelperImages'/>
+    <ui:with field='msg' type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+    <g:VerticalPanel width="30em">
+        <g:Label ui:field="messageLabel" styleName="{style.message}"/>
+        <g:Label ui:field="costLabel"/>
+        <g:Label ui:field="balanceLabel"/>
+        <g:Label text="{msg.howToGetRazarion}" styleName="{style.howToGet}"/>
+        <g:Grid cellPadding="5" cellSpacing="5" styleName="{style.howToTable}">
+            <g:row>
+                <g:customCell>
+                    <g:Button text="{msg.buy}" ui:field="buyButton"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="{msg.buyRazarionViaPayPal}"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:Button text="{msg.invite}" ui:field="buyInvite"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="{msg.invitationFriendsAndGetRazarion}"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:Image resource="{res.box}"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="{msg.collectBoxesAndGetRazarion}"/>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+    </g:VerticalPanel>
+</ui:UiBinder> 

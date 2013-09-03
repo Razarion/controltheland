@@ -1,0 +1,21 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.platte {
+			margin: 5px;
+			-webkit-box-shadow: 1px 1px 1px 1px rgba(100, 100, 100, 1);
+			box-shadow: 1px 1px 1px 1px rgba(100, 100, 100, 1);
+		}
+		
+		.price {
+			font-size: 12px;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		
+	</ui:style>
+	<g:VerticalPanel styleName="{style.platte}">
+		<g:Button ui:field="button"/>
+		<g:Label ui:field="priceLabel" styleName="{style.price}" />
+	</g:VerticalPanel>
+</ui:UiBinder>

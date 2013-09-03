@@ -1,0 +1,13 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:p1="urn:import:com.btxtech.game.jsre.client.dialogs.register">
+	<ui:style>
+		
+	</ui:style>
+    <ui:with field='msg' type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+	<g:VerticalPanel width="20em" spacing="10">
+		<g:Label text="{msg.registerFacebookNickname}"/>
+        <p1:NickNameField ui:field="nickNameField" />
+	</g:VerticalPanel>
+</ui:UiBinder> 

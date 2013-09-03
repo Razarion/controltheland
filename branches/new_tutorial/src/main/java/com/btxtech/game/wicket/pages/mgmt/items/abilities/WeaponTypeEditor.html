@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket>
+<head>
+    <title></title>
+</head>
+<body>
+<wicket:extend>
+    <table>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Damage</td>
+            <td valign="top"><input wicket:id="damage" type="text" size="6"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Range</td>
+            <td valign="top"><input wicket:id="range" type="text" size="6"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Reload Time</td>
+            <td valign="top"><input wicket:id="reloadTime" type="text" size="6"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Muzzle Flash Clip Id</td>
+            <td valign="top" wicket:id="muzzleFlashClip"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Projectile Clip Id</td>
+            <td valign="top" wicket:id="projectileClip"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Projectile Speed<span style="font-size: 12px"><br>Empty for fix projectile<br>Laser, Tesla</span></td>
+            <td valign="top"><input wicket:id="projectileSpeed" type="text" size="6"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Projectile Detonation Clip Id</td>
+            <td valign="top" wicket:id="projectileDetonationClip"></td>
+        </tr>
+    </table>
+</wicket:extend>
+</body>
+</html>

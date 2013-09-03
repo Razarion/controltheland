@@ -1,0 +1,58 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		
+	</ui:style>
+	<g:VerticalPanel>
+		<g:Grid>
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel text="Demolition Steps" />
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel>
+						<g:IntegerBox ui:field="demolitionStepField" />
+						<g:Button ui:field="demolitionStepButton">Apply (!)</g:Button>
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:Label text="Current Step" />
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel spacing="3">
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Label ui:field="currentStepLabel" />
+						</g:Cell>
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Button text="-" ui:field="previousStepButton" />
+						</g:Cell>
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Button text="+" ui:field="nextStepButton" />
+						</g:Cell>
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel text="Rotation" />
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel>
+						<g:Button text="Left" ui:field="rotationLeftButton" />
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Label text="New Label" ui:field="currentAngelIndexFiled"
+								horizontalAlignment="ALIGN_CENTER" />
+						</g:Cell>
+						<g:Button text="Right" ui:field="rotationRightButton" />
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+		</g:Grid>
+		<g:CaptionPanel ui:field="demolitionClipPanel"
+			captionText="Clips" />
+		<g:CaptionPanel captionText="Item Images" ui:field="itemImagePanel" />
+	</g:VerticalPanel>
+</ui:UiBinder> 

@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket>
+<head>
+    <title>Sound Library</title>
+</head>
+<body>
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <h2>Sound Library</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Name [Internal]</th>
+            <th bgcolor="#dadada">MP3</th>
+            <th bgcolor="#dadada">MP3 upload</th>
+            <th bgcolor="#dadada">Ogg [Firefox]</th>
+            <th bgcolor="#dadada">Ogg upload</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="sounds">
+            <td wicket:id="id"/>
+            <td><input wicket:id="name" type="text" size="20"></td>
+            <td>
+                <audio controls="controls">
+                    <source wicket:id="mp3Source" type="audio/mp3"/>
+                </audio>
+            </td>
+            <td valign="center">
+                <input type="file" wicket:id="mp3File"/>
+            </td>
+            <td>
+                <audio controls="controls">
+                    <source wicket:id="oggSource" type="audio/ogg"/>
+                </audio>
+            </td>
+            <td valign="center">
+                <input type="file" wicket:id="oggFile"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Save" wicket:id="saveSounds"/>
+    <input type="submit" value="Create" wicket:id="createSound"/>
+</form>
+
+</body>
+</html>

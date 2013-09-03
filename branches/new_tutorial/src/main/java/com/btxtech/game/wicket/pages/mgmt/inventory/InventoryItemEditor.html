@@ -1,0 +1,83 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Inventory Item Editor</title>
+</head>
+<body>
+<h1>Inventory Item Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="inventoryItemForm">
+    <table border="0" cellSpacing="1" cellPadding="0">
+        <tr bgcolor="#BBBBBB">
+            <td colspan="3" valign="top">[Use Item] Gold</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Amount</td>
+            <td><input wicket:id="goldAmount" type="text" size="6"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Level</td>
+            <td wicket:id="goldLevel"></td>
+        </tr>
+        <tr bgcolor="#BBBBBB">
+            <td colspan="3" valign="top">[Use Item] Item Type (BaseItemType is decision)</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Base Item Type</td>
+            <td wicket:id="dbBaseItemType"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Count</td>
+            <td valign="top"><input wicket:id="baseItemTypeCount" type="text" size="6"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Item Free Range</td>
+            <td valign="top"><input wicket:id="itemFreeRange" type="text" size="6"></td>
+        </tr>
+        <tr bgcolor="#BBBBBB">
+            <td colspan="3" valign="top">Artifacts</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Artifacts</td>
+            <td valign="top">
+                <table cellpadding="1" cellspacing="1" border="1">
+                    <tr>
+                        <th bgcolor="#dadada">Artifact Id</th>
+                        <th bgcolor="#dadada">Count</th>
+                        <th bgcolor="#dadada">Delete</th>
+                    </tr>
+                    <tr wicket:id="artifacts">
+                        <td wicket:id="dbInventoryArtifact"/>
+                        <td><input wicket:id="count" type="text" size="6"></td>
+                        <td valign="center">
+                            <input type="submit" value="Delete" wicket:id="delete"/>
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" wicket:id="createArtifact" value="Create">
+            </td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="back" value="Back">
+</form>
+
+</body>
+</html>

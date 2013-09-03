@@ -1,0 +1,53 @@
+package com.btxtech.game.jsre.client.renderer;
+
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
+import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.dom.client.ImageElement;
+
+import java.util.Collection;
+
+/**
+ * User: beat
+ * Date: 29.07.12
+ * Time: 12:11
+ */
+public class ItemRenderTask extends AbstractRenderTask {
+    private Context2d context2d;
+
+    public ItemRenderTask(Context2d context2d) {
+        this.context2d = context2d;
+    }
+
+    @Override
+    public void render(long timeStamp, Collection<SyncItem> itemsInView, Rectangle viewRect, Rectangle tileViewRect) {
+        context2d.setFillStyle("#999999");
+        for (SyncItem syncItem : itemsInView) {
+            ImageElement imageElement = ItemTypeImageLoaderContainer.getInstance().getImage(syncItem.getItemType());
+            if (imageElement == null) {
+                continue;
+            }
+            SyncItemArea syncItemArea = syncItem.getSyncItemArea();
+            ItemTypeSpriteMap itemTypeSpriteMap = syncItem.getItemType().getItemTypeSpriteMap();
+            Index absoluteImagePosition = syncItemArea.getTopLeftFromImagePosition();
+            Index relativeImagePosition = new Index(absoluteImagePosition.getX() - viewRect.getX(), absoluteImagePosition.getY() - viewRect.getY());
+
+            Index offset = itemTypeSpriteMap.getItemTypeImageOffset(syncItem, timeStamp);
+            context2d.drawImage(imageElement,
+                    offset.getX(), // the x coordinate of the upper-left corner of the source rectangle
+                    offset.getY(), // the y coordinate of the upper-left corner of the source rectangle
+                    itemTypeSpriteMap.getImageWidth(),// the width of the source rectangle
+                    itemTypeSpriteMap.getImageHeight(),// sh the width of the source rectangle
+                    relativeImagePosition.getX(),// the x coordinate of the upper-left corner of the destination rectangle
+                    relativeImagePosition.getY(),// the y coordinate of the upper-left corner of the destination rectangle
+                    itemTypeSpriteMap.getImageWidth(),// the width of the destination rectangle
+                    itemTypeSpriteMap.getImageHeight()// the height of the destination rectangle
+            );
+        }
+
+        ItemTypeImageLoaderContainer.getInstance().startLoad();
+    }
+}

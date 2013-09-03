@@ -1,0 +1,55 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
+	ui:generateKeys="com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator"
+	ui:generateLocales="default">
+
+
+	<ui:style>
+		.planetText {
+			color: #C7C4BB;
+			font-size: 12px;
+			font-family: Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		
+		.singleplayerText {
+			color: #C7C4BB;
+			font-size: 9px;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		
+		.abort {
+			color: #FF0000;
+			font-size: 14px;
+			font-family: Arial, Helvetica, sans-serif;
+			font-weight: bold;
+			cursor: pointer;
+		}
+	</ui:style>
+	<ui:with field='res'
+		type='com.btxtech.game.jsre.client.cockpit.images.SideCockpitImageBundle' />
+	<ui:with field='msg'
+		type='com.btxtech.game.jsre.client.ClientI18nConstants' />
+	<g:AbsolutePanel>
+		<g:at left="0" top="0">
+			<g:Image resource='{res.planet2}' width="28px" />
+		</g:at>
+		<g:at left="30" top="0">
+			<g:InlineLabel text='{msg.mission}' styleName="{style.planetText}" />
+		</g:at>
+		<g:at left="30" top="12">
+			<g:InlineLabel text='{msg.singlePlayer}' styleName="{style.singleplayerText}" />
+		</g:at>
+		<g:at left="0" top="27">
+			<g:HorizontalPanel title="{msg.tooltipAbortMission}">
+				<g:Image resource='{res.abort}' width="28px" styleName="{style.abort}"
+					ui:field="abortImage" />
+				<g:Cell verticalAlignment="ALIGN_MIDDLE">
+					<g:InlineLabel text='{msg.stop}' styleName="{style.abort}"
+						ui:field="abortLabel" />
+				</g:Cell>
+			</g:HorizontalPanel>
+		</g:at>
+	</g:AbsolutePanel>
+</ui:UiBinder>

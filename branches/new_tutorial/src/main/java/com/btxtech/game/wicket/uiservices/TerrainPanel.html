@@ -1,0 +1,46 @@
+<!--
+  ~ Copyright (c) 2011.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title></title>
+</head>
+<body>
+<wicket:panel>
+    <table>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Id</td>
+            <td wicket:id="id" />
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Tile X Count</td>
+            <td><input type="text" size="6" wicket:id="tileXCount"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Tile Y Count</td>
+            <td><input type="text" size="6" wicket:id="tileYCount"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Editor</td>
+            <td><input type="submit" wicket:id="edit" value="Edit"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Path Finding</td>
+            <td><input type="submit" wicket:id="pathfinding" value="Pathfinding"></td>
+        </tr>
+    </table>
+</wicket:panel>
+</body>
+</html>

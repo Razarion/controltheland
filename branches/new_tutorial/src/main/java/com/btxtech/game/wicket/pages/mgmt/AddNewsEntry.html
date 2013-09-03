@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC>
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+<html xmlns:wicket>
+<head>
+    <title>Add News Entry</title>
+</head>
+<body>
+<h2>Add News Entry</h2>
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Title</td>
+            <td>
+                <input type="text" wicket:id="title"/>
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Content</td>
+            <td>
+                <div wicket:id="content"></div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" wicket:id="add" value="Post"/></td>
+        </tr>
+    </table>
+</form>
+
+</body>
+</html>

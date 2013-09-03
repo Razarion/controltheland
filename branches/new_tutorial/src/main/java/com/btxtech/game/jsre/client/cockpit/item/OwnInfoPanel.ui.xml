@@ -1,0 +1,47 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.itemtypeimage {
+			margin: 5px;
+			-webkit-box-shadow: 1px 1px 1px 1px rgba(100, 100, 100, 1);
+			box-shadow: 1px 1px 1px 1px rgba(100, 100, 100, 1);
+		}
+		
+		.itemtypename {
+			font-size: 13px;
+			font-family: Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		
+		.countlabel {
+			font-size: 12px;
+			font-family: Arial, Helvetica, sans-serif;
+            text-shadow: 1px 1px 1px #FFFFFF;
+			font-weight: bold;
+		}
+		
+		.itemtypedescr {
+			font-size: 12px;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+	</ui:style>
+	<g:HorizontalPanel width="100%">
+		<g:Cell>
+			<g:AbsolutePanel width="60px" height="60px">
+				<g:at left="0" top="0">
+					<g:Image ui:field="image" styleName="{style.itemtypeimage}" />
+				</g:at>
+				<g:at left="7" top="5">
+					<g:Label ui:field="countLabel" styleName="{style.countlabel}" />
+				</g:at>
+			</g:AbsolutePanel>
+		</g:Cell>
+		<g:Cell width="100%">
+			<g:VerticalPanel>
+				<g:Label ui:field="itemTypeName" styleName="{style.itemtypename}" />
+				<g:HTML ui:field="itemTypeDescr" styleName="{style.itemtypedescr}" />
+			</g:VerticalPanel>
+		</g:Cell>
+	</g:HorizontalPanel>
+</ui:UiBinder>

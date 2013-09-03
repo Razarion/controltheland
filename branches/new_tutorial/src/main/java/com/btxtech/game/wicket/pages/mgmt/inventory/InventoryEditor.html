@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <link rel="stylesheet" type="text/css" href="GameEditor.css">
+    <title>Inventory</title>
+</head>
+<body>
+<h1>Inventory</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <h2>Artifacts</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Image</th>
+            <th bgcolor="#dadada">Name [Tooltip Dialog]</th>
+            <th bgcolor="#dadada">Razarion Cost<br/>(If empty not in market)</th>
+            <th bgcolor="#dadada">Rareness</th>
+            <th bgcolor="#dadada">Planets<br/>(Box Regions)</th>
+            <th bgcolor="#dadada">Item Types<br/>(Can drop)</th>
+            <th bgcolor="#dadada">Image Upload (40x40)</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="artifacts">
+            <td wicket:id="id"/>
+            <td><img wicket:id="image"/></td>
+            <td><input wicket:id="name" type="text" size="30"></td>
+            <td><input wicket:id="razarionCoast" type="text" size="6"></td>
+            <td valign="center"><select wicket:id="rareness" size="1"></select></td>
+            <td wicket:id="planets"></td>
+            <td wicket:id="baseItemTypes"></td>
+            <td valign="center">
+                <input type="file" value="Upload" wicket:id="upload"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Save" wicket:id="saveArtifacts"/>
+    <input type="submit" value="Create" wicket:id="createArtifact"/>
+    <br/>
+    <br/>
+
+    <h2>Items</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada"></th>
+            <th bgcolor="#dadada">Name [Text in Dialog]</th>
+            <th bgcolor="#dadada">Razarion Cost<br/>(If empty not in market)</th>
+            <th bgcolor="#dadada">Razarion Cost<br/>(Via Artifacts)</th>
+            <th bgcolor="#dadada">Planets<br/>(Via Artifacts)</th>
+            <th bgcolor="#dadada">Item Types<br/>(Via Artifacts)</th>
+            <th bgcolor="#dadada">Planets<br/>(Box Regions)</th>
+            <th bgcolor="#dadada">Item Types<br/>(Can drop)</th>
+            <th bgcolor="#dadada">Image Upload (50x50)</th>
+            <th bgcolor="#dadada">Edit</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="items">
+            <td wicket:id="id"/>
+            <td><img wicket:id="image"/></td>
+            <td><input wicket:id="name" type="text" size="30"></td>
+            <td><input wicket:id="razarionCoast" type="text" size="6"></td>
+            <td wicket:id="razarionCostViaArtifacts"></td>
+            <td wicket:id="planetsViaArtifact"></td>
+            <td wicket:id="baseItemTypesViaArtifact"></td>
+            <td wicket:id="planets"></td>
+            <td wicket:id="baseItemTypes"></td>
+            <td valign="center">
+                <input type="file" value="Upload" wicket:id="upload"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Save" wicket:id="saveItems"/>
+    <input type="submit" value="Create" wicket:id="createItem"/>
+    <br/>
+    <br/>
+
+    <h2>Inventory for new Users</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Razarion</th>
+            <th bgcolor="#dadada">Count (Item & Artifact)</th>
+            <th bgcolor="#dadada">Item Id</th>
+            <th bgcolor="#dadada">Artifact Id</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="newUserItems">
+            <td><input wicket:id="razarion" type="text" size="6"></td>
+            <td><input wicket:id="count" type="text" size="6"></td>
+            <td wicket:id="dbInventoryItem"/>
+            <td wicket:id="dbInventoryArtifact"/>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Save" wicket:id="saveNewUserItems"/>
+    <input type="submit" value="Create" wicket:id="createNewUserItem"/>
+</form>
+
+</body>
+</html>

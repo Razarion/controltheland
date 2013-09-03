@@ -1,0 +1,90 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title></title>
+</head>
+<body>
+<h1>Management</h1>
+<h2>Tools</h2>
+<ul>
+    <li wicket:id="toolLinkList"><a href="" wicket:id="toolLink"><span wicket:id="toolLinkName">toolLinkName</span></a>
+    </li>
+</ul>
+
+<h2>System properties</h2>
+<table border="1">
+    <tr>
+        <td>System running since</td>
+        <td wicket:id="sysstart">sysstart</td>
+    </tr>
+    <tr>
+        <td>System time</td>
+        <td wicket:id="systemTime">systemTime</td>
+    </tr>
+    <tr>
+        <td>Time zone</td>
+        <td wicket:id="timeZone">timeZone</td>
+    </tr>
+</table>
+
+<h2>Memory</h2>
+<table border="1">
+    <tr>
+        <td rowspan="4" valign="top">Heap [M]</td>
+        <td>Init</td>
+        <td wicket:id="heapInit">heapInit</td>
+    </tr>
+    <tr>
+        <td>Used</td>
+        <td wicket:id="heapUsed">heapUsed</td>
+    </tr>
+    <tr>
+        <td>Committed</td>
+        <td wicket:id="heapCommitted">heapCommitted</td>
+    </tr>
+    <tr>
+        <td>Max</td>
+        <td wicket:id="heapMax">heapMax</td>
+    </tr>
+    <tr>
+        <td rowspan="4" valign="top">No Heap [M]</td>
+        <td>Init</td>
+        <td wicket:id="noHeapInit">noHeapInit</td>
+    </tr>
+    <tr>
+        <td>Used</td>
+        <td wicket:id="noHeapUsed">noHeapUsed</td>
+    </tr>
+    <tr>
+        <td>Committed</td>
+        <td wicket:id="noHeapCommitted">noHeapCommitted</td>
+    </tr>
+    <tr>
+        <td>Max</td>
+        <td wicket:id="noHeapMax">noHeapMax</td>
+    </tr>
+    <tr>
+        <form wicket:id="gcForm">
+            <td colspan="3" align="center"><input type="submit" wicket:id="runGc" value="Run GC"></td>
+        </form>
+    </tr>
+</table>
+<br>
+<div wicket:id="heapMemory"></div>
+<div wicket:id="noHeapMemory"></div>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Planet Editor</title>
+</head>
+<body>
+<h1>Planet Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+<table cellpadding="1" cellspacing="1" border="0">
+    <td bgcolor="#aaaaaa" colspan="2" valign="top">Miscellaneous</td>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Min Level Id
+            <br>
+            <span style="color:red;font-size: 12px">
+            This is not the game flow.<br>Game flow is configured in the level editor.
+            </span>
+        </td>
+        <td wicket:id="minLevel"/>
+    </tr>
+    <td bgcolor="#aaaaaa" colspan="2" valign="top">Scope and Limitation</td>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Max Money</td>
+        <td><input type="text" wicket:id="maxMoney" size="20"/></td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">House Space</td>
+        <td><input type="text" wicket:id="houseSpace" size="20"/></td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Radar Mode</td>
+        <td><select wicket:id="radarMode" size="1"></select></td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Item Limitation</td>
+        <td>
+            <table cellpadding="1" cellspacing="1" border="0">
+                <tr>
+                    <th bgcolor="#dadada">Item Type</th>
+                    <th bgcolor="#dadada">Count</th>
+                    <th bgcolor="#dadada">Delete</th>
+                </tr>
+                <tr wicket:id="itemTypeLimitation">
+                    <td wicket:id="dbBaseItemType" size="20"></td>
+                    <td><input type="text" wicket:id="count" size="4"></td>
+                    <td valign="center">
+                        <input type="submit" value="Delete" wicket:id="delete"/>
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" wicket:id="createItemTypeLimitation" value="Add Limitation">
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Consumed House Space</td>
+        <td wicket:id="consumedHouseSpace"></td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Unlock Razarion<br>Levels must be activated</td>
+        <td><input type="text" wicket:id="unlockRazarion" size="20"/></td>
+    </tr>
+    <tr>
+        <td bgcolor="#aaaaaa" colspan="2" valign="top">Starmap</td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Starmap planet image</td>
+        <td><input type="file" value="Upload" wicket:id="starMapPlanetUpload"/></td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Starmap planet position</td>
+        <td><a wicket:id="starMapPlanetView">Click here</a></td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Start Position
+            <br>
+            <span style="font-size: 12px">
+            Top left corner
+            </span>
+        </td>
+        <td wicket:id="starMapImagePosition"/>
+    </tr>
+    <tr>
+        <td bgcolor="#aaaaaa" colspan="2" valign="top">New Base</td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Start Region<br>Veraltet</td>
+        <td wicket:id="startRegion"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Start Position</td>
+        <td wicket:id="startPosition"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Start Item Type</td>
+        <td wicket:id="startItemType"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Start Item free Range</td>
+        <td><input type="text" wicket:id="startItemFreeRange"></td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Start Money</td>
+        <td><input type="text" wicket:id="startMoney"></td>
+    </tr>
+    <tr>
+        <td bgcolor="#aaaaaa" colspan="2" valign="top">Terrain</td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Terrain</td>
+        <td wicket:id="dbTerrainSetting"></td>
+    </tr>
+    <tr>
+        <td bgcolor="#aaaaaa" colspan="2" valign="top">Resources</td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Region Resources</td>
+        <td>
+            <table cellpadding="1" cellspacing="1" border="0">
+                <tr>
+                    <th bgcolor="#dadada">Name [internal only]</th>
+                    <th bgcolor="#dadada">Count</th>
+                    <th bgcolor="#dadada">Resource item type</th>
+                    <th bgcolor="#dadada">Region</th>
+                    <th bgcolor="#dadada">Item free range</th>
+                    <th bgcolor="#dadada">Delete</th>
+                </tr>
+
+                <tr wicket:id="regionResources">
+                    <td><input type="text" wicket:id="name" size="20" maxlength="500"/></td>
+                    <td><input type="text" wicket:id="count" size="5" maxlength="20"/></td>
+                    <td wicket:id="resourceItemType"/>
+                    <td wicket:id="region"/>
+                    <td><input type="text" wicket:id="minDistanceToItems" size="5" maxlength="20"/></td>
+                    <td valign="center">
+                        <input type="submit" value="Delete" wicket:id="delete"/>
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" wicket:id="createRegionResource" value="Create">
+            <br>
+            <input type="submit" wicket:id="reactivateRegionResource" value="Reactivate">
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#aaaaaa" colspan="2" valign="top">Bots</td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Bots</td>
+        <td>
+            <table cellpadding="1" cellspacing="1" border="0">
+                <tr>
+                    <th bgcolor="#dadada">Id</th>
+                    <th bgcolor="#dadada">Name</th>
+                    <th bgcolor="#dadada">Edit</th>
+                    <th bgcolor="#dadada">Delete</th>
+                </tr>
+                <tr wicket:id="bots">
+                    <td wicket:id="id"></td>
+                    <td><input wicket:id="name" type="text" size="30"></td>
+                    <td valign="center">
+                        <input type="submit" value="Edit" wicket:id="edit"/>
+                    </td>
+                    <td valign="center">
+                        <input type="submit" value="Delete" wicket:id="delete"/>
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" value="Create" wicket:id="createBot"/>
+            <br>
+            <input type="submit" wicket:id="reactivateBot" value="Reactivate">
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#aaaaaa" colspan="2" valign="top">Inventory Boxes</td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada" valign="top">Box Regions</td>
+        <td>
+            <table cellpadding="1" cellspacing="1" border="0">
+                <tr>
+                    <th bgcolor="#dadada">Id</th>
+                    <th bgcolor="#dadada">Name [Internal only]</th>
+                    <th bgcolor="#dadada">Min Interval [Minutes]</th>
+                    <th bgcolor="#dadada">Max Interval [Minutes]</th>
+                    <th bgcolor="#dadada">Region</th>
+                    <th bgcolor="#dadada">Item Free Range</th>
+                    <th bgcolor="#dadada">Edit</th>
+                    <th bgcolor="#dadada">Delete</th>
+                </tr>
+                <tr wicket:id="boxRegions">
+                    <td wicket:id="id"/>
+                    <td><input wicket:id="name" type="text" size="30"></td>
+                    <td wicket:id="minInterval"/>
+                    <td wicket:id="maxInterval"/>
+                    <td wicket:id="region"/>
+                    <td><input wicket:id="itemFreeRange" type="text" size="6"></td>
+                    <td valign="center">
+                        <input type="submit" value="Edit" wicket:id="edit"/>
+                    </td>
+                    <td valign="center">
+                        <input type="submit" value="Delete" wicket:id="delete"/>
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" value="Create" wicket:id="createBoxRegion"/>
+            <br>
+            <input type="submit" wicket:id="reactivateBoxRegion" value="Reactivate">
+        </td>
+    </tr>
+</table>
+<br>
+<br/>
+<input type="submit" wicket:id="save" value="Save">
+<br/>
+<input type="submit" wicket:id="activate" value="Activate">
+<input type="submit" wicket:id="deactivate" value="Deactivate">
+<br/>
+<input type="submit" wicket:id="back" value="Back">
+</form>
+</body>
+</html>

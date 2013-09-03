@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /game_cms_facebook_app/
+Disallow: /game_cms_facebook_auto_login/
+Disallow: /game_cms_invitation/

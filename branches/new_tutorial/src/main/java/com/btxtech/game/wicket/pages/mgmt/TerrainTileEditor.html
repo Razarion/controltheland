@@ -1,0 +1,97 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <link rel="stylesheet" type="text/css" href="GameEditor.css">
+    <title>Tile Editor</title>
+</head>
+<body>
+
+<h1>Tile Editor</h1>
+
+<form wicket:id="tileForm">
+    <h2>Surface Images</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Image</th>
+            <th bgcolor="#dadada">Upload</th>
+            <th bgcolor="#dadada">Image Sprite Map Id<br>(Overrides Image)</th>
+            <th bgcolor="#dadada">Size in K</th>
+            <th bgcolor="#dadada">Surface type</th>
+            <th bgcolor="#dadada">HTML Bg Color</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+
+        <tr wicket:id="surfaceImages">
+            <td wicket:id="id"/>
+            <td valign="center">
+                <img border="1" wicket:id="image"/>
+            </td>
+            <td valign="center">
+                <input type="file" wicket:id="upload"/>
+                <input type="submit" value="Clear" wicket:id="clear"/>
+            </td>
+            <td wicket:id="imageSpriteMap"/>
+            <td wicket:id="size" align="right" valign="center"/>
+            <td valign="center">
+                <select wicket:id="surfaceType" size="1"></select>
+            </td>
+            <td>
+                <input type="text" wicket:id="htmlBackgroundColor" size="20"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" wicket:id="createSurfaceImage" value="Add">
+    <input type="submit" wicket:id="updateSurfaceImages" value="Save">
+
+    <h2>Terrain Image Groups</h2>
+    Total image size in K: <span wicket:id="totalSize">totalSize</span>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Name</th>
+            <th bgcolor="#dadada">Edit</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+
+        <tr wicket:id="terrainImageGroups">
+            <td wicket:id="id"/>
+            <td><input type="text" wicket:id="name" size="20"/></td>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" wicket:id="createTerrainImageGroup" value="Add Group">
+    <input type="submit" wicket:id="updateTerrainImageGroups" value="Save">
+    <br/>
+    <br/>
+    <br/>
+
+    <input type="submit" wicket:id="activateTerrain" value="Activate">
+
+
+</form>
+
+</body>
+</html>

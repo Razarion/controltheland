@@ -1,0 +1,91 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Level Task Editor</title>
+</head>
+<body>
+<h1>Level Task Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <table border="0" cellSpacing="1" cellPadding="0">
+        <tr>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">Description</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Title
+                <ul>
+                    <li>Displayed in Quest dialog</li>
+                    <li>Quest progress cockpit if is not a mission</li>
+                </ul>
+            </td>
+            <td wicket:id="i18nTitle">content</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Mission Target Description
+                <ul>
+                    <li>Displayed in Quest dialog</li>
+                </ul>
+            </td>
+            <td wicket:id="i18nDescription">content</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Quest Type
+                <ul>
+                    <li>Displayed in Quest dialog</li>
+                </ul>
+            </td>
+            <td><select wicket:id="questTypeEnum" size="1"></select></td>
+        </tr>
+        <tr>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">Tutorial or Condition</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Condition</td>
+            <td wicket:id="dbConditionConfig"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Tutorial</td>
+            <td wicket:id="dbTutorialConfig"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">General</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Unlock Razarion</td>
+            <td><input type="text" wicket:id="unlockRazarion" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">Rewards</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Money</td>
+            <td><input type="text" wicket:id="money" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">XP</td>
+            <td><input type="text" wicket:id="xp" size="6"/></td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="back" value="Back">
+</form>
+</body>
+</html>

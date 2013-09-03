@@ -1,0 +1,32 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		
+	</ui:style>
+	<ui:with field='res'
+		type='com.btxtech.game.jsre.client.cockpit.item.ItemCokpitBundle' />
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:VerticalPanel>
+		<g:HorizontalPanel>
+			<g:PushButton ui:field="unloadButton" title="{msg.tooltipUnloadContainer}">
+				<g:upFace image='{res.unloadButtonUp}' />
+				<g:downFace image='{res.unloadButtonDown}' />
+			</g:PushButton>
+			<g:Cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_RIGHT">
+				<g:Label ui:field="containedItems" />
+			</g:Cell>
+		</g:HorizontalPanel>
+		<g:PushButton ui:field="launchButton" title="{msg.tooltipLaunchMissile}">
+			<g:upFace image='{res.launchButtonUp}' />
+			<g:downFace image='{res.launchButtonDown}' />
+		</g:PushButton>
+		<g:PushButton ui:field="upgradeButton" title="{msg.tooltipUpgrade}">
+			<g:upFace image='{res.upgradeButtonUp}' />
+			<g:upDisabledFace image='{res.upgradeButtonDisabledUp}' />
+			<g:downFace image='{res.upgradeButtonDown}' />
+		</g:PushButton>
+	</g:VerticalPanel>
+</ui:UiBinder>

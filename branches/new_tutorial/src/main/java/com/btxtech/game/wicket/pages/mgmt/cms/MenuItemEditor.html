@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Menu Item Editor</title>
+</head>
+<body>
+<h1>Menu Item Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <h2>Config</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Name</td>
+            <td wicket:id="dbI18nName"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Page</td>
+            <td wicket:id="page"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Sub Menu</td>
+            <td>
+                <table border="0">
+                    <td>
+                        <input type="submit" value="Create" wicket:id="createSubMenu"/>
+                    </td>
+                    <td>
+                        <input type="submit" value="Edit" wicket:id="editSubMenu"/>
+                    </td>
+                    <td>
+                        <input type="submit" value="Delete" wicket:id="deleteSubMenu"/>
+                    </td>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">CSS Class</td>
+            <td><input type="text" wicket:id="cssClass"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Selected CSS Class</td>
+            <td><input type="text" wicket:id="selectedCssClass"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">CSS Link Class</td>
+            <td><input type="text" wicket:id="cssLinkClass"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Selected CSS Link Class</td>
+            <td><input type="text" wicket:id="selectedCssLinkClass"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">CSS TR Class</td>
+            <td><input type="text" wicket:id="cssTrClass"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Selected CSS TR Class</td>
+            <td><input type="text" wicket:id="selectedCssTrClass"/></td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" value="CMS" wicket:id="cms"/>
+    <br>
+    <input type="submit" value="Save" wicket:id="save"/>
+</form>
+
+</body>
+</html>

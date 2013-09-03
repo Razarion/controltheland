@@ -1,0 +1,67 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .itemplate {
+            padding: 3px;
+            border: 1px solid #ccc;
+            border-bottom: 1px solid #888;
+            border-right: 1px solid #888;
+            border-top: 1px solid #ddd;
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(206, 206, 206, 1)), color-stop(51%, rgba(239, 245, 247, 1)), color-stop(95%, rgba(198, 198, 198, 1)));
+            background: -webkit-linear-gradient(top, rgba(206, 206, 206, 1) 0%, rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95%);
+            background: -moz-linear-gradient(top, rgba(206, 206, 206, 1) 0%, rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95%);
+            background: -ms-linear-gradient(top, rgba(206, 206, 206, 1) 0%, rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95%);
+            background: -o-linear-gradient(top, rgba(206, 206, 206, 1) 0%, rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95%);
+            filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr = '#F8F8F8', endColorstr = '#A0A0A0')");
+        }
+
+        .image {
+            margin-right: 2px;
+            border: 1px solid #ccc;
+            border-bottom: 1px solid #888;
+            border-right: 1px solid #888;
+            border-top: 1px solid #ddd;
+        }
+
+        .itemlabel {
+            color: black;
+            font-size: 14px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+        }
+
+        .coastLabel {
+            color: black;
+            font-size: 11px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+        }
+    </ui:style>
+
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:VerticalPanel styleName="{style.itemplate}"  width="120px" height="90px">
+    	<g:Cell horizontalAlignment="ALIGN_CENTER">
+    		<g:Label styleName="{style.itemlabel}" ui:field="artifactNameLabel"/>
+    	</g:Cell>
+        <g:Cell verticalAlignment="ALIGN_BOTTOM">
+            <g:HorizontalPanel>
+            	<g:Cell verticalAlignment="ALIGN_BOTTOM">
+            		<g:Image ui:field="image" styleName="{style.image}" width="40px" height="40px" />
+            	</g:Cell>
+                <g:Cell verticalAlignment="ALIGN_MIDDLE">
+                    <g:VerticalPanel>
+                        <g:Cell verticalAlignment="ALIGN_MIDDLE">
+                            <g:Label styleName="{style.coastLabel}" ui:field="coastLabel"/>
+                        </g:Cell>
+                        <g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+                            <g:Button text="{msg.buy}" ui:field="buyArtifactButton"/>
+                        </g:Cell>
+                    </g:VerticalPanel>
+                </g:Cell>
+            </g:HorizontalPanel>
+        </g:Cell>
+    </g:VerticalPanel>
+</ui:UiBinder> 

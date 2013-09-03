@@ -1,0 +1,92 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:p1="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style>
+		.text {
+			background: #FFFFFF;
+			border-top: 2px solid #6f7277;
+			color: black;
+		}
+        .simplepager {
+            background: #FFFFFF;
+            border-top: 2px solid #6f7277;
+            color: black;
+        }
+
+        .tablePanel {
+            background: #FFFFFF;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+    </ui:style>
+
+	<ui:with field='msg'
+		type='com.btxtech.game.jsre.client.ClientI18nConstants' />
+
+	<g:TabPanel width="40em" ui:field="tabPanel">
+		<g:Tab width="100%" text="{msg.guildTab}">
+			<g:AbsolutePanel height="400px">
+				<g:at left="0" top="0">
+					<g:Label ui:field="guildName" height="28px" width="115px" />
+				</g:at>
+				<g:at left="0" top="20"  width="200px" height="75px">
+					<g:HTML ui:field="guildTextRo" styleName="{style.text}" width="200px" height="75px"/>
+				</g:at>
+				<g:at left="0" top="20"  width="221px" height="108px">
+					<g:HorizontalPanel ui:field="guildTextPanelRw" width="300px" height="108px">
+						<g:RichTextArea ui:field="guildTextRw" styleName="{style.text}" width="200px" height="101px" />
+						<g:Button text="{msg.save}" ui:field="saveGuildTextBtn" />
+					</g:HorizontalPanel>
+				</g:at>
+				<g:at left="0" top="134"  width="160px" height="30px">
+					<g:Button ui:field="leaveGuildBtn" text="{msg.leaveGuild}"/>
+				</g:at>
+				<g:at left="0" top="134" width="160px" height="30px">
+					<g:Button ui:field="closeGuildBtn"  text="{msg.closeGuild}"/>
+				</g:at>
+				<g:at left="0" top="164">
+                    <g:VerticalPanel width="100%">
+                        <g:SimplePanel width="100%" height="15em" styleName="{style.tablePanel}">
+                            <p1:CellTable ui:field="historyTable" width="100%"/>
+                        </g:SimplePanel>
+                        <g:Cell horizontalAlignment="ALIGN_CENTER">
+                            <g:SimplePanel styleName="{style.simplepager}">
+                                <p1:SimplePager location="CENTER" ui:field="historyPager"/>
+                            </g:SimplePanel>
+                        </g:Cell>
+                    </g:VerticalPanel>
+                </g:at>
+			</g:AbsolutePanel>
+		</g:Tab>
+		<g:Tab text="{msg.guildMemberTab}">
+			<g:ScrollPanel width="100%" height="400px">
+				<p1:CellTable width="100%" ui:field="memberTable" />
+			</g:ScrollPanel>
+		</g:Tab>
+		<g:Tab text="{msg.guildRecruitingTab}">
+			<g:AbsolutePanel width="100%" height="400px">
+				<g:at left="0" top="0">
+					<g:Label text="{msg.guildInviteMessage}" />
+				</g:at>
+				<g:at left="0" top="25">
+					<g:HorizontalPanel width="267px" height="28px">
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:SuggestBox ui:field="userSearch" width="140px" />
+						</g:Cell>
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Button ui:field="inviteButton" text="{msg.inviteMember}" />
+						</g:Cell>
+					</g:HorizontalPanel>
+				</g:at>
+				<g:at left="0" top="75">
+					<g:Label text="{msg.guildMembershipRequestText}" />
+				</g:at>
+				<g:at left="0" top="100">
+					<g:ScrollPanel width="100%" height="193px">
+						<p1:CellTable ui:field="requestTable" width="100%" />
+					</g:ScrollPanel>
+				</g:at>
+			</g:AbsolutePanel>
+		</g:Tab>
+	</g:TabPanel>
+</ui:UiBinder> 

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket>
+<head>
+    <title>Clip Library</title>
+</head>
+<body>
+<span wicket:id="msgs"/>
+
+<form wicket:id="clipLibraryForm">
+    <h2>Clip Library</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Name [Internal]</th>
+            <th bgcolor="#dadada">Image Sprite Map</th>
+            <th bgcolor="#dadada">Sound</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="clipLibrary">
+            <td wicket:id="id"/>
+            <td><input wicket:id="name" type="text" size="20"></td>
+            <td wicket:id="dbImageSpriteMap"></td>
+            <td wicket:id="dbSound"></td>
+            <td valign="center"><input type="submit" value="Delete" wicket:id="delete"/></td>
+        </tr>
+    </table>
+    <input type="submit" value="Save" wicket:id="saveClipLibrary"/>
+    <input type="submit" value="Create" wicket:id="createClip"/>
+</form>
+
+</body>
+</html>

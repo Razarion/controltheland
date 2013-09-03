@@ -1,0 +1,75 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.important {
+			font-weight: bold;
+		}
+		
+		.artifactplate {
+			box-shadow: inset 1px 1px 2px 0px #000000;
+			background-color: ButtonShadow;
+		}
+		
+		.groundplate {
+			padding: 3px;
+			border: 1px solid #ccc;
+			border-bottom: 1px solid #888;
+			border-right: 1px solid #888;
+			border-top: 1px solid #ddd;
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(206,
+				206, 206, 1) ), color-stop(51%, rgba(239, 245, 247, 1) ),
+				color-stop(95%, rgba(198, 198, 198, 1) ) );
+			background: -webkit-linear-gradient(top, rgba(206, 206, 206, 1) 0%,
+				rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95% );
+            background: -ms-linear-gradient(top, rgba(206, 206, 206, 1) 0%,
+            rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95% );
+            background: -moz-linear-gradient(top, rgba(206, 206, 206, 1) 0%,
+            rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95% );
+			background: -o-linear-gradient(top, rgba(206, 206, 206, 1) 0%,
+				rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95% );
+			filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr = '#F8F8F8', endColorstr = '#A0A0A0')"
+				);
+		}
+		
+		div-with-literal {
+			top: literal("expression(document.compatMode==\"CSS1Compat\" ? documentElement.scrollTop : document.body.scrollTop \\ 2)"
+				);
+		}
+		
+		.scrollpanel {
+			overflow-x: hidden;
+			overflow-y: scroll;
+            margin-left: 2px;
+		}
+		
+		.image {
+            border: 1px solid #ccc;
+            border-bottom: 1px solid #888;
+            border-right: 1px solid #888;
+            border-top: 1px solid #ddd;
+        }
+		
+	</ui:style>
+
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:HorizontalPanel
+		title="{msg.tooltipAssemble}"
+		styleName="{style.groundplate}">
+		<g:VerticalPanel>
+			<g:Cell horizontalAlignment="ALIGN_CENTER">
+				<g:Image styleName="{style.image}" ui:field="image" width="50px" height="50px" />
+			</g:Cell>
+			<g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:Button text="{msg.assemble}" ui:field="assembleButton" />
+			</g:Cell>
+		</g:VerticalPanel>
+		<g:Cell verticalAlignment="ALIGN_MIDDLE">
+			<g:SimplePanel  styleName="{style.scrollpanel}" width="65px" height="75px">
+				<g:FlexTable ui:field="artifacts" styleName="{style.artifactplate}" cellPadding="0" cellSpacing="2" />
+			</g:SimplePanel>
+		</g:Cell>
+	</g:HorizontalPanel>
+</ui:UiBinder>

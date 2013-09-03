@@ -1,0 +1,60 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.platte {
+			border: 1px solid #ccc;
+			border-bottom: 2px solid #888;
+			border-right: 2px solid #888;
+			border-top: 1px solid #ddd;
+			border-radius: 4px;
+			background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(245
+				, 246, 246, 1) ), color-stop(21%, rgba(219, 220, 226, 1) ),
+				color-stop(49%, rgba(184, 186, 198, 1) ),
+				color-stop(80%, rgba(221, 223, 227, 1) ),
+				color-stop(100%, rgba(245, 246, 246, 1) ) );
+			background: -webkit-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
+				rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
+				rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+            background: -ms-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
+                rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
+                rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+            background: -moz-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
+            rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
+            rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+			background: -o-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
+				rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
+				rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+			filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr = '#F8F8F8', endColorstr = '#A0A0A0')"
+				);
+		}
+		
+		.panel {
+			margin: 3px;
+			padding: 3px;
+			border-radius: 4px;
+			-webkit-box-shadow: inset 1px 1px 1px 1px rgba(100, 100, 100, 1);
+			box-shadow: inset 1px 1px 1px 1px rgba(100, 100, 100, 1);
+            background: -moz-linear-gradient(90deg, rgba(200, 200, 200, 1) 0%,
+            rgba(230, 230, 230, 1) 90% );
+            background: -ms-linear-gradient(90deg, rgba(200, 200, 200, 1) 0%,
+            rgba(230, 230, 230, 1) 90% );
+		}
+	</ui:style>
+	<g:VerticalPanel styleName="{style.platte}">
+		<g:Cell>
+			<g:HorizontalPanel>
+				<g:Cell>
+					<g:SimplePanel ui:field="infoPanel" styleName="{style.panel}" />
+				</g:Cell>
+				<g:Cell>
+					<g:SimplePanel ui:field="specialFunctionPanel"
+						styleName="{style.panel}" />
+				</g:Cell>
+			</g:HorizontalPanel>
+		</g:Cell>
+		<g:Cell>
+			<g:SimplePanel ui:field="buildupPanel" styleName="{style.panel}" />
+		</g:Cell>
+	</g:VerticalPanel>
+</ui:UiBinder>
