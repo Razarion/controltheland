@@ -316,13 +316,6 @@ abstract public class AbstractServiceTest {
     @Autowired
     private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private XpService xpService;
-    @Autowired
-    private XpService xpServic;
-    //@Autowired
-    private ResourceService resourceService;
-    private ServerPlanetServices serverServices;
-    @Autowired
     private BackupService backupService;
     @Autowired
     private PlatformTransactionManager transactionManager;

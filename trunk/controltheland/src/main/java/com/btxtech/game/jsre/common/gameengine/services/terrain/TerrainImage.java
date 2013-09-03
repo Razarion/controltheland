@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
+
 import java.io.Serializable;
 
 /**
@@ -22,6 +24,7 @@ import java.io.Serializable;
  */
 public class TerrainImage implements Serializable {
     private int id;
+    private ImageSpriteMapInfo imageSpriteMapInfo;
     private int tileWidth;
     private int tileHeight;
     private SurfaceType[][] surfaceTypes;
@@ -32,8 +35,9 @@ public class TerrainImage implements Serializable {
     public TerrainImage() {
     }
 
-    public TerrainImage(int id, int tileWidth, int tileHeight, SurfaceType[][] surfaceTypes) {
+    public TerrainImage(int id, ImageSpriteMapInfo imageSpriteMapInfo, int tileWidth, int tileHeight, SurfaceType[][] surfaceTypes) {
         this.id = id;
+        this.imageSpriteMapInfo = imageSpriteMapInfo;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
         this.surfaceTypes = surfaceTypes;
@@ -57,5 +61,9 @@ public class TerrainImage implements Serializable {
 
     public SurfaceType[][] getSurfaceTypes() {
         return surfaceTypes;
+    }
+
+    public ImageSpriteMapInfo getImageSpriteMapInfo() {
+        return imageSpriteMapInfo;
     }
 }

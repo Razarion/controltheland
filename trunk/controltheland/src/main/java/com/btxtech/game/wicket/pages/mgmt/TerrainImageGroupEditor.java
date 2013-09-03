@@ -7,6 +7,7 @@ import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.DbTerrainImageGroup;
 import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
+import com.btxtech.game.wicket.uiservices.ImageSpriteMapPanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -48,6 +49,7 @@ public class TerrainImageGroupEditor extends MgmtWebPage {
             }
         }));
         add(form);
+        form.add(new ImageSpriteMapPanel("imageSpriteMap"));
         form.add(new TextField("htmlBackgroundColorNone"));
         form.add(new TextField("htmlBackgroundColorWater"));
         form.add(new TextField("htmlBackgroundColorLand"));

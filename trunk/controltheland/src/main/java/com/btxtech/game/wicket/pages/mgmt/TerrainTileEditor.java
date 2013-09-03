@@ -19,6 +19,7 @@ import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbTerrainImageGroup;
 import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
+import com.btxtech.game.wicket.uiservices.ImageSpriteMapPanel;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -89,6 +90,17 @@ public class TerrainTileEditor extends MgmtWebPage {
                     }
                 });
                 item.add(upload);
+                item.add(new Button("clear") {
+
+                    @Override
+                    public void onSubmit() {
+                        item.getModelObject().setImageData(null);
+                        item.getModelObject().setContentType(null);
+                        updateDbChildren(getList());
+                    }
+                });
+                // Background image sprite map
+                item.add(new ImageSpriteMapPanel("imageSpriteMap"));
                 // Size
                 double size = item.getModelObject().getImageData() != null ? item.getModelObject().getImageData().length / 1000.0 : 0;
                 item.add(new Label("size", Double.toString(size)));

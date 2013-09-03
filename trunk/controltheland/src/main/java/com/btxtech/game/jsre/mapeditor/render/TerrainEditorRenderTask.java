@@ -1,6 +1,9 @@
 package com.btxtech.game.jsre.mapeditor.render;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
+import com.btxtech.game.jsre.client.renderer.ImageSpriteMapContainer;
 import com.btxtech.game.jsre.client.renderer.SurfaceLoaderContainer;
 import com.btxtech.game.jsre.client.renderer.TerrainImageLoaderContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainHandler;
@@ -24,7 +27,7 @@ public class TerrainEditorRenderTask extends AbstractMapEditorRenderTask {
     private Logger log = Logger.getLogger(TerrainEditorRenderTask.class.getName());
 
     @Override
-    public void render(long timeStamp, final Context2d context2d, final MapEditorModel mapEditorModel) {
+    public void render(final long timeStamp, final Context2d context2d, final MapEditorModel mapEditorModel) {
         final TerrainHandler terrainHandler = TerrainView.getInstance().getTerrainHandler();
         if (terrainHandler.getTerrainSettings() == null) {
             return;
@@ -57,47 +60,94 @@ public class TerrainEditorRenderTask extends AbstractMapEditorRenderTask {
                     relativeY -= scrollYOffset;
                 }
 
-                ImageElement imageElement;
+                ImageElement imageElement = null;
+                ImageSpriteMapInfo imageSpriteMapInfo = null;
                 if (terrainTile == null) {
                     imageElement = null;
                 } else if (terrainTile.isSurface()) {
-                    imageElement = SurfaceLoaderContainer.getInstance().getImage(terrainTile.getImageId());
+                    if (terrainTile.hasImageSpriteMapInfo()) {
+                        imageSpriteMapInfo = terrainTile.getImageSpriteMapInfo();
+                    } else {
+                        imageElement = SurfaceLoaderContainer.getInstance().getImage(terrainTile.getImageId());
+                    }
                 } else {
+                    if (terrainTile.hasImageSpriteMapInfo()) {
+                        imageSpriteMapInfo = terrainTile.getImageSpriteMapInfo();
+                    }
                     imageElement = TerrainImageLoaderContainer.getInstance().getImage(terrainTile.getImageId());
                 }
-                if (imageElement == null || imageElement.getWidth() == 0 || imageElement.getHeight() == 0) {
+                boolean fallbackNeeded = true;
+                // Render clip below image
+                if (imageSpriteMapInfo != null) {
+                    ImageElement clipImageElement = ImageSpriteMapContainer.getInstance().getImage(imageSpriteMapInfo);
+                    // Check if image is loaded
+                    if (clipImageElement != null && clipImageElement.getWidth() != 0 && clipImageElement.getHeight() != 0) {
+                        int clipTileXCount = TerrainUtil.getTerrainTileIndexForAbsXPosition(imageSpriteMapInfo.getFrameWidth());
+                        int clipTileYCount = TerrainUtil.getTerrainTileIndexForAbsYPosition(imageSpriteMapInfo.getFrameHeight());
+                        int sourceClipXOffset = TerrainUtil.getAbsolutXForTerrainTile(x % clipTileXCount);
+                        int sourceClipYOffset = TerrainUtil.getAbsolutYForTerrainTile(y % clipTileYCount);
+                        if (relativeX == 0) {
+                            sourceClipXOffset += scrollXOffset;
+                        }
+                        if (relativeY == 0) {
+                            sourceClipYOffset += scrollYOffset;
+                        }
+                        Index sourceClipOffset = imageSpriteMapInfo.getSpriteMapOffset(imageSpriteMapInfo.getFrameInfinite(timeStamp));
+                        sourceClipXOffset += sourceClipOffset.getX();
+                        sourceClipYOffset += sourceClipOffset.getY();
+
+                        context2d.drawImage(clipImageElement,
+                                sourceClipXOffset, // Source x pos
+                                sourceClipYOffset, // Source y pos
+                                imageWidth, //the width in the source image you want to sample
+                                imageHeight, //the height in the source image you want to sample
+                                relativeX, //the start X position in the destination image
+                                relativeY, //the start Y position in the destination image
+                                imageWidth, //the width of drawn image in the destination
+                                imageHeight // the height of the drawn image in the destination
+                        );
+                        fallbackNeeded = false;
+                    } else {
+                        ImageSpriteMapContainer.getInstance().startLoad();
+                    }
+                }
+
+                // Render overlay image. Check if image is loaded
+                if (imageElement != null && imageElement.getWidth() != 0 && imageElement.getHeight() != 0) {
+                    int sourceXOffset = TerrainUtil.getAbsolutXForTerrainTile(terrainTile.getTileXOffset());
+                    int sourceYOffset = TerrainUtil.getAbsolutYForTerrainTile(terrainTile.getTileYOffset());
+                    if (relativeX == 0) {
+                        sourceXOffset += scrollXOffset;
+                    }
+                    if (relativeY == 0) {
+                        sourceYOffset += scrollYOffset;
+                    }
+
+                    if (terrainTile.isSurface()) {
+                        sourceXOffset = sourceXOffset % imageElement.getWidth();
+                        sourceYOffset = sourceYOffset % imageElement.getHeight();
+                    }
+
+                    try {
+                        context2d.drawImage(imageElement,
+                                sourceXOffset, //the start X position in the source image
+                                sourceYOffset, //the start Y position in the source image
+                                imageWidth, //the width in the source image you want to sample
+                                imageHeight, //the height in the source image you want to sample
+                                relativeX, //the start X position in the destination image
+                                relativeY, //the start Y position in the destination image
+                                imageWidth, //the width of drawn image in the destination
+                                imageHeight // the height of the drawn image in the destination
+                        );
+                        fallbackNeeded = false;
+                    } catch (Throwable t) {
+                        logCanvasError(t, imageElement, sourceXOffset, sourceYOffset, imageWidth, imageHeight, relativeX, relativeY, imageWidth, imageHeight);
+                    }
+                }
+
+                if(fallbackNeeded) {
                     context2d.setFillStyle("#000000");
                     context2d.fillRect(relativeX, relativeY, imageWidth, imageHeight);
-                    return;
-                }
-
-                int sourceXOffset = TerrainUtil.getAbsolutXForTerrainTile(terrainTile.getTileXOffset());
-                int sourceYOffset = TerrainUtil.getAbsolutYForTerrainTile(terrainTile.getTileYOffset());
-                if (relativeX == 0) {
-                    sourceXOffset += scrollXOffset;
-                }
-                if (relativeY == 0) {
-                    sourceYOffset += scrollYOffset;
-                }
-
-                if (terrainTile.isSurface()) {
-                    sourceXOffset = sourceXOffset % imageElement.getWidth();
-                    sourceYOffset = sourceYOffset % imageElement.getHeight();
-                }
-
-                try {
-                    context2d.drawImage(imageElement,
-                            sourceXOffset, //the start X position in the source image
-                            sourceYOffset, //the start Y position in the source image
-                            imageWidth, //the width in the source image you want to sample
-                            imageHeight, //the height in the source image you want to sample
-                            relativeX, //the start X position in the destination image
-                            relativeY, //the start Y position in the destination image
-                            imageWidth, //the width of drawn image in the destination
-                            imageHeight // the height of the drawn image in the destination
-                    );
-                } catch (Throwable t) {
-                    logCanvasError(t, imageElement, sourceXOffset, sourceYOffset, imageWidth, imageHeight, relativeX, relativeY, imageWidth, imageHeight);
                 }
             }
         });

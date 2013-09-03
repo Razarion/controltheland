@@ -1,21 +1,21 @@
 package com.btxtech.game.mockservlet;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.NotAGuildMemberException;
-import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.NotAGuildMemberException;
 import com.btxtech.game.jsre.client.PositionInBotException;
+import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
-import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
-import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
-import com.btxtech.game.jsre.client.common.info.SimpleGuild;
-import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
+import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimpleGuild;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildDetailedInfo;
@@ -157,7 +157,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 50, 50), 0));
         gameInfo.setSurfaceRects(surfaceRects);
         Collection<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
-        surfaceImages.add(new SurfaceImage(SurfaceType.LAND, 0, ""));
+        surfaceImages.add(new SurfaceImage(SurfaceType.LAND, 0, null, ""));
         gameInfo.setSurfaceImages(surfaceImages);
         gameInfo.setTerrainImages(new ArrayList<TerrainImage>());
     }
