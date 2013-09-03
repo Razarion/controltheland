@@ -151,6 +151,7 @@ public class TestXpService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         guidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        // TODO Failed (realGameInfo == null): on 03.09.2013
         getOrCreateBase();  // Build base
         guidanceService.promote(userService.getUserState(), TEST_LEVEL_5_REAL_ID);
         Assert.assertEquals(TEST_PLANET_1_ID, getOrCreateBase().getPlanetId());
