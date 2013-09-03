@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
+
 import java.io.Serializable;
 
 /**
@@ -24,6 +26,7 @@ public class SurfaceImage implements Serializable {
     private SurfaceType surfaceType;
     private int id;
     private String htmlBackgroundColor;
+    private ImageSpriteMapInfo imageSpriteMapInfo;
 
     /**
      * Used by GWT
@@ -31,9 +34,10 @@ public class SurfaceImage implements Serializable {
     public SurfaceImage() {
     }
 
-    public SurfaceImage(SurfaceType surfaceType, int id, String htmlBackgroundColor) {
+    public SurfaceImage(SurfaceType surfaceType, int id, ImageSpriteMapInfo imageSpriteMapInfo, String htmlBackgroundColor) {
         this.surfaceType = surfaceType;
         this.id = id;
+        this.imageSpriteMapInfo = imageSpriteMapInfo;
         if (htmlBackgroundColor != null) {
             this.htmlBackgroundColor = htmlBackgroundColor;
         } else {
@@ -51,5 +55,9 @@ public class SurfaceImage implements Serializable {
 
     public String getHtmlBackgroundColor() {
         return htmlBackgroundColor;
+    }
+
+    public ImageSpriteMapInfo getImageSpriteMapInfo() {
+        return imageSpriteMapInfo;
     }
 }

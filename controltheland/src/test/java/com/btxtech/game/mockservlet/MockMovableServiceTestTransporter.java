@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class MockMovableServiceTestTransporter extends MockMovableService {
     protected void setupTutorialConfig(SimulationInfo simulationInfo) {
-        List<ItemTypeAndPosition> ownItems = new ArrayList<ItemTypeAndPosition>();
+        List<ItemTypeAndPosition> ownItems = new ArrayList<>();
         ownItems.add(new ItemTypeAndPosition(MOVABLE_CONTAINER_ITEM_TYPE.getId(), new Index(1450, 700), MathHelper.WEST));
         ownItems.add(new ItemTypeAndPosition(MOVABLE_ITEM_TYPE.getId(), new Index(200, 100), MathHelper.WEST));
         ownItems.add(new ItemTypeAndPosition(MOVABLE_ITEM_TYPE.getId(), new Index(200, 300), MathHelper.WEST));
@@ -41,8 +41,8 @@ public class MockMovableServiceTestTransporter extends MockMovableService {
         ownItems.add(new ItemTypeAndPosition(MOVABLE_ITEM_TYPE.getId(), new Index(400, 500), MathHelper.WEST));
         ownItems.add(new ItemTypeAndPosition(MOVABLE_ITEM_TYPE.getId(), new Index(400, 700), MathHelper.WEST));
         ownItems.add(new ItemTypeAndPosition(MOVABLE_ITEM_TYPE.getId(), new Index(400, 900), MathHelper.WEST));
-        Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
-        List<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
+        Map<Integer, Integer> itemTypeLimitation = new HashMap<>();
+        List<TaskConfig> taskConfigs = new ArrayList<>();
         taskConfigs.add(new TaskConfig(ownItems, null, null, 10, 100, 1000, "TestTask1", null, itemTypeLimitation, RadarMode.MAP, null, false));
         TutorialConfig tutorialConfig = new TutorialConfig(taskConfigs, "", false, false, false);
         simulationInfo.setTutorialConfig(tutorialConfig);
@@ -52,17 +52,17 @@ public class MockMovableServiceTestTransporter extends MockMovableService {
     protected void setupTerrain(GameInfo gameInfo) {
         gameInfo.setTerrainSettings(new TerrainSettings(50, 50));
         gameInfo.setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
-        Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+        Collection<SurfaceRect> surfaceRects = new ArrayList<>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 14, 50), 0)); // Land
         surfaceRects.add(new SurfaceRect(new Rectangle(14, 0, 1, 50), 1)); // Land Coast
         surfaceRects.add(new SurfaceRect(new Rectangle(15, 0, 1, 50), 2)); // Water Coast
         surfaceRects.add(new SurfaceRect(new Rectangle(16, 0, 34, 50), 3)); // Water
         gameInfo.setSurfaceRects(surfaceRects);
-        Collection<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
-        surfaceImages.add(new SurfaceImage(SurfaceType.LAND, 0, ""));
-        surfaceImages.add(new SurfaceImage(SurfaceType.LAND_COAST, 1, ""));
-        surfaceImages.add(new SurfaceImage(SurfaceType.WATER_COAST, 2, ""));
-        surfaceImages.add(new SurfaceImage(SurfaceType.WATER, 3, ""));
+        Collection<SurfaceImage> surfaceImages = new ArrayList<>();
+        surfaceImages.add(new SurfaceImage(SurfaceType.LAND, 0, null, ""));
+        surfaceImages.add(new SurfaceImage(SurfaceType.LAND_COAST, 1, null, ""));
+        surfaceImages.add(new SurfaceImage(SurfaceType.WATER_COAST, 2, null, ""));
+        surfaceImages.add(new SurfaceImage(SurfaceType.WATER, 3, null, ""));
         gameInfo.setSurfaceImages(surfaceImages);
         gameInfo.setTerrainImages(new ArrayList<TerrainImage>());
     }

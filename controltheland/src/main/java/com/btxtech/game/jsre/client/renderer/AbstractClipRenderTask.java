@@ -27,7 +27,7 @@ public abstract class AbstractClipRenderTask extends AbstractRenderTask {
                 return;
             }
         }
-        // Draw Explosion
+        // Draw
         context2d.save();
         context2d.translate(clipRendererModel.getRelativeImageMiddleX(), clipRendererModel.getRelativeImageMiddleY());
         if (clipRendererModel.isRotated()) {

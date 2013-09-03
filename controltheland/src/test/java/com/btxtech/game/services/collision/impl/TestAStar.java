@@ -21,7 +21,7 @@ public class TestAStar {
 
     private void addLine(TerrainTile[][] terrainTiles, int y, SurfaceType... surfaceType) {
         for (int x = 0; x < surfaceType.length; x++) {
-            terrainTiles[x][y] = new TerrainTile(surfaceType[x], false, 0, 0, 0);
+            terrainTiles[x][y] = new TerrainTile(surfaceType[x], false, 0, null, 0, 0);
         }
     }
 

@@ -14,8 +14,11 @@
 package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.renderer.ImageLoaderContainer;
+import com.btxtech.game.jsre.client.renderer.ImageSpriteMapContainer;
 import com.btxtech.game.jsre.client.renderer.SurfaceLoaderContainer;
 import com.btxtech.game.jsre.client.renderer.TerrainImageLoaderContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainHandler;
@@ -146,29 +149,60 @@ public class MiniTerrain extends MiniMap implements TerrainListener, ImageLoader
                     relativeY -= scrollYOffset;
                 }
 
-                ImageElement imageElement;
+                ImageElement imageElement = null;
+                ImageSpriteMapInfo imageSpriteMapInfo = null;
                 if (terrainTile == null) {
                     imageElement = null;
                 } else if (terrainTile.isSurface()) {
-                    imageElement = SurfaceLoaderContainer.getInstance().getImage(terrainTile.getImageId());
+                    if (terrainTile.hasImageSpriteMapInfo()) {
+                        imageSpriteMapInfo = terrainTile.getImageSpriteMapInfo();
+                    } else {
+                        imageElement = SurfaceLoaderContainer.getInstance().getImage(terrainTile.getImageId());
+                    }
                 } else {
+                    if (terrainTile.hasImageSpriteMapInfo()) {
+                        imageSpriteMapInfo = terrainTile.getImageSpriteMapInfo();
+                    }
                     imageElement = TerrainImageLoaderContainer.getInstance().getImage(terrainTile.getImageId());
                 }
-                if (imageElement == null || imageElement.getWidth() == 0 || imageElement.getHeight() == 0) {
-                    // Image is not loaded or no image
-                    if (terrainTile != null) {
-                        if (terrainTile.isSurface()) {
-                            context2d.setFillStyle(terrainHandler.getCommonTerrainImageService().getSurfaceImage(terrainTile.getImageId()).getHtmlBackgroundColor());
-                        } else {
-                            SurfaceType surfaceType = terrainHandler.getCommonTerrainImageService().getTerrainImage(terrainTile.getImageId()).getSurfaceType(terrainTile.getTileXOffset(), terrainTile.getTileYOffset());
-                            context2d.setFillStyle(terrainImageBackground.get(terrainTile.getImageId(), surfaceType));
+                boolean fallbackNeeded = true;
+                // Render clip below image
+                if (imageSpriteMapInfo != null) {
+                    ImageElement clipImageElement = ImageSpriteMapContainer.getInstance().getImage(imageSpriteMapInfo);
+                    // Check if image is loaded
+                    if (clipImageElement != null && clipImageElement.getWidth() != 0 && clipImageElement.getHeight() != 0) {
+                        int clipTileXCount = TerrainUtil.getTerrainTileIndexForAbsXPosition(imageSpriteMapInfo.getFrameWidth());
+                        int clipTileYCount = TerrainUtil.getTerrainTileIndexForAbsYPosition(imageSpriteMapInfo.getFrameHeight());
+                        int sourceClipXOffset = TerrainUtil.getAbsolutXForTerrainTile(x % clipTileXCount);
+                        int sourceClipYOffset = TerrainUtil.getAbsolutYForTerrainTile(y % clipTileYCount);
+                        if (relativeX == 0) {
+                            sourceClipXOffset += scrollXOffset;
                         }
+                        if (relativeY == 0) {
+                            sourceClipYOffset += scrollYOffset;
+                        }
+                        Index sourceClipOffset = imageSpriteMapInfo.getSpriteMapOffset(imageSpriteMapInfo.getFrame(0));
+                        sourceClipXOffset += sourceClipOffset.getX();
+                        sourceClipYOffset += sourceClipOffset.getY();
+
+                        context2d.drawImage(clipImageElement,
+                                sourceClipXOffset, // Source x pos
+                                sourceClipYOffset, // Source y pos
+                                imageWidth, //the width in the source image you want to sample
+                                imageHeight, //the height in the source image you want to sample
+                                Math.round((double) relativeX * getScaleValue()) + getXShiftRadarPixel(), //the start X position in the destination image
+                                Math.round((double) relativeY * getScaleValue()) + getYShiftRadarPixel(), //the start Y position in the destination image
+                                Math.ceil((double) imageWidth * getScaleValue()), //the width of drawn image in the destination
+                                Math.ceil((double) imageHeight * getScaleValue()) // the height of the drawn image in the destination
+                        );
+                        fallbackNeeded = false;
                     } else {
-                        // No Image
-                        context2d.setFillStyle("#000000");
+                        ImageSpriteMapContainer.getInstance().startLoad();
                     }
-                    context2d.fillRect(relativeX, relativeY, imageWidth, imageHeight);
-                } else {
+                }
+
+                // Render overlay image. Check if image is loaded
+                if (imageElement != null && imageElement.getWidth() != 0 && imageElement.getHeight() != 0) {
                     int sourceXOffset = TerrainUtil.getAbsolutXForTerrainTile(terrainTile.getTileXOffset());
                     int sourceYOffset = TerrainUtil.getAbsolutYForTerrainTile(terrainTile.getTileYOffset());
                     if (relativeX == 0) {
@@ -194,9 +228,25 @@ public class MiniTerrain extends MiniMap implements TerrainListener, ImageLoader
                                 Math.ceil((double) imageWidth * getScaleValue()), //the width of drawn image in the destination
                                 Math.ceil((double) imageHeight * getScaleValue()) // the height of the drawn image in the destination
                         );
+                        fallbackNeeded = false;
                     } catch (Throwable t) {
                         log.log(Level.SEVERE, "MiniTerrain.drawImages() error in canvas drawImage", t);
                     }
+                }
+                if (fallbackNeeded) {
+                    // Image is not loaded or no image
+                    if (terrainTile != null) {
+                        if (terrainTile.isSurface()) {
+                            context2d.setFillStyle(terrainHandler.getCommonTerrainImageService().getSurfaceImage(terrainTile.getImageId()).getHtmlBackgroundColor());
+                        } else {
+                            SurfaceType surfaceType = terrainHandler.getCommonTerrainImageService().getTerrainImage(terrainTile.getImageId()).getSurfaceType(terrainTile.getTileXOffset(), terrainTile.getTileYOffset());
+                            context2d.setFillStyle(terrainImageBackground.get(terrainTile.getImageId(), surfaceType));
+                        }
+                    } else {
+                        // No Image
+                        context2d.setFillStyle("#000000");
+                    }
+                    context2d.fillRect(relativeX, relativeY, imageWidth, imageHeight);
                 }
             }
         });

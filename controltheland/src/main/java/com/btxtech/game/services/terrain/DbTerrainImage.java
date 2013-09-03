@@ -47,7 +47,7 @@ public class DbTerrainImage implements CrudChild<DbTerrainImageGroup> {
     private int tileHeight;
     @OneToMany(mappedBy = "dbTerrainImage", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<TerrainImageTileSurfaceType> surfaceTypes;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbTerrainImageGroup parent;
 
     @Override
@@ -122,12 +122,12 @@ public class DbTerrainImage implements CrudChild<DbTerrainImageGroup> {
                 surfaceType[x][y] = getSurfaceType(x, y);
             }
         }
-        return new TerrainImage(id, tileWidth, tileHeight, surfaceType);
+        return new TerrainImage(id, parent.createImageSpriteMapInfo(), tileWidth, tileHeight, surfaceType);
     }
 
     public void setSurfaceType(int tileX, int tileY, SurfaceType surfaceType) {
         if (surfaceTypes == null) {
-            surfaceTypes = new ArrayList<TerrainImageTileSurfaceType>();
+            surfaceTypes = new ArrayList<>();
         }
 
         for (TerrainImageTileSurfaceType terrainImageTileSurfaceType : surfaceTypes) {

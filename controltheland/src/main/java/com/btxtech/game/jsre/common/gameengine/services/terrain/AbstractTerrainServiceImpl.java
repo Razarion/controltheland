@@ -222,7 +222,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
                         continue;
                     }
                     try {
-                        terrainTileField[x][y] = new TerrainTile(surfaceType, true, surfaceRect.getSurfaceImageId(), x, y);
+                        terrainTileField[x][y] = new TerrainTile(surfaceType, true, surfaceRect.getSurfaceImageId(), surfaceImage.getImageSpriteMapInfo(), x, y);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         log.log(Level.SEVERE, "AbstractTerrainServiceImpl.createTerrainTileField()", e);
                     }
@@ -265,9 +265,9 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
                 }
                 TerrainTile terrainTile = terrainTileField[absX][absY];
                 if (terrainTile != null) {
-                    terrainTile.setSurfaceType(surfaceTypes[x][y], false, terrainImage.getId(), x, y);
+                    terrainTile.setSurfaceType(surfaceTypes[x][y], false, terrainImage.getId(), terrainImage.getImageSpriteMapInfo(), x, y);
                 } else {
-                    terrainTileField[absX][absY] = new TerrainTile(surfaceTypes[x][y], false, terrainImage.getId(), x, y);
+                    terrainTileField[absX][absY] = new TerrainTile(surfaceTypes[x][y], false, terrainImage.getId(), terrainImage.getImageSpriteMapInfo(), x, y);
                 }
             }
         }

@@ -1,8 +1,10 @@
 package com.btxtech.game.services.terrain;
 
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.media.DbImageSpriteMap;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
@@ -12,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.util.ArrayList;
@@ -37,6 +40,8 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
     private String htmlBackgroundColorLand;
     private String htmlBackgroundColorLandCoast;
     private String htmlBackgroundColorWaterCoast;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbImageSpriteMap imageSpriteMap;
     @Transient
     private CrudChildServiceHelper<DbTerrainImage> terrainImageCrud;
 
@@ -95,6 +100,14 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
         this.htmlBackgroundColorWaterCoast = htmlBackgroundColorWaterCoast;
     }
 
+    public DbImageSpriteMap getImageSpriteMap() {
+        return imageSpriteMap;
+    }
+
+    public void setImageSpriteMap(DbImageSpriteMap imageSpriteMap) {
+        this.imageSpriteMap = imageSpriteMap;
+    }
+
     @Override
     public void init(UserService userService) {
         dbTerrainImages = new ArrayList<DbTerrainImage>();
@@ -110,6 +123,14 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
             terrainImageCrud = new CrudChildServiceHelper<DbTerrainImage>(dbTerrainImages, DbTerrainImage.class, this);
         }
         return terrainImageCrud;
+    }
+
+    public ImageSpriteMapInfo createImageSpriteMapInfo() {
+        if (imageSpriteMap != null) {
+            return imageSpriteMap.createImageSpriteMapInfo();
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -13,15 +13,19 @@
 
 package com.btxtech.game.services.terrain;
 
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.media.DbImageSpriteMap;
 import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 
@@ -38,6 +42,8 @@ public class DbSurfaceImage implements CrudChild, Serializable {
     @Column(length = 500000)
     private byte[] imageData;
     private String contentType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbImageSpriteMap imageSpriteMap;
     @Column(nullable = false)
     private SurfaceType surfaceType;
     private String htmlBackgroundColor;
@@ -66,6 +72,14 @@ public class DbSurfaceImage implements CrudChild, Serializable {
     @Override
     public Object getParent() {
         return null;
+    }
+
+    public DbImageSpriteMap getImageSpriteMap() {
+        return imageSpriteMap;
+    }
+
+    public void setImageSpriteMap(DbImageSpriteMap imageSpriteMap) {
+        this.imageSpriteMap = imageSpriteMap;
     }
 
     public Integer getId() {
@@ -97,7 +111,11 @@ public class DbSurfaceImage implements CrudChild, Serializable {
     }
 
     public SurfaceImage createSurfaceImage() {
-        return new SurfaceImage(surfaceType, id, htmlBackgroundColor);
+        ImageSpriteMapInfo imageSpriteMapInfo = null;
+        if (imageSpriteMap != null) {
+            imageSpriteMapInfo = imageSpriteMap.createImageSpriteMapInfo();
+        }
+        return new SurfaceImage(surfaceType, id, imageSpriteMapInfo, htmlBackgroundColor);
     }
 
     public String getHtmlBackgroundColor() {
