@@ -21,10 +21,8 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceSe
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
-import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
-import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry;
 
 import java.util.Collection;
 import java.util.Locale;
