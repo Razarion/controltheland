@@ -1,7 +1,0 @@
-SET SQL_SAFE_UPDATES=0;
-drop table CMS_HOME_LAYOUT;
-drop table CMS_HOME_TEXT;
-UPDATE CMS_CONTENT SET link = false;
-UPDATE CMS_CONTENT SET navigationVisible = false;
-SET SQL_SAFE_UPDATES=1;
-
