@@ -157,6 +157,8 @@
     <orderEntry type="library" name="Maven: asm:asm:3.3.1" level="project" />
     <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.wicket:wicket-extensions:6.9.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.wicket:wicket-datetime:6.9.1" level="project" />
+    <orderEntry type="library" name="Maven: joda-time:joda-time:2.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.wicket:wicket-auth-roles:6.9.1" level="project" />
     <orderEntry type="library" name="Maven: org.aspectj:aspectjrt:1.6.10" level="project" />
     <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.6.10" level="project" />
@@ -172,10 +174,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: cglib:cglib-nodep:2.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.objenesis:objenesis:1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hsqldb:hsqldb:2.2.6" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mortbay.jetty:jetty:6.1.25" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mortbay.jetty:jetty-util:6.1.25" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mortbay.jetty:servlet-api:2.5-20081211" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mortbay.jetty:jetty-management:6.1.25" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-validator:4.2.0.Final" level="project" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.6.2" level="project" />
     <orderEntry type="library" name="Maven: org.subethamail:subethasmtp:3.1.7" level="project" />
