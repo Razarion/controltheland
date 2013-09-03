@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.mapeditor.MapEditorModel;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
