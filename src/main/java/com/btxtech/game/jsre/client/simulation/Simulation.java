@@ -20,6 +20,9 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.bot.ClientBotService;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.RadarMode;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
@@ -27,12 +30,15 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
+import com.btxtech.game.jsre.client.utg.tip.TipSplashPopupInfo;
 import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
+import com.btxtech.game.jsre.common.tutorial.AutomatedTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
@@ -40,6 +46,8 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.google.gwt.user.client.Timer;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -66,11 +74,64 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     }
 
     public void start() {
+        // TODO ---------- incomment
         simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
-        tutorialConfig = simulationInfo.getTutorialConfig();
-        if (tutorialConfig == null) {
-            return;
-        }
+        // tutorialConfig = simulationInfo.getTutorialConfig();
+        // if (tutorialConfig == null) {
+        //    return;
+        //}
+        // TODO ---------- incomment ends
+        // TODO ---------- setup face simulationInfo
+        List<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
+        // Scroll task
+        GameTipConfig gameTipConfig1 = new GameTipConfig();
+        gameTipConfig1.setTip(GameTipConfig.Tip.SCROLL);
+        gameTipConfig1.setTerrainRectHint(new Rectangle(2900, 1300, 10, 10));
+        TipSplashPopupInfo tipSplashPopupInfo1 = new TipSplashPopupInfo();
+        tipSplashPopupInfo1.setTitle("Willkommen auf Eris");
+        tipSplashPopupInfo1.setImageType(TipSplashPopupInfo.ImageType.QUEST);
+        tipSplashPopupInfo1.setMainText("Razaor Industrie, dein böser Ex-Arbeitgeber, hat auf diesem Planeten ein Datencenter aufgebaut. Finde und zerstöre dieses Datencenter, damit du auf weiteren Mehrspieler Planeten landen kannst.");
+        tipSplashPopupInfo1.setTaskText("Scrolle auf dem Planeten herum um das Datencenter zu finden. Benutze dazu die Pfeiltasten oder bewege die Maus zum Bildschirmrand. Oben links ist das Radar.");
+        gameTipConfig1.setTipSplashPopupInfo(tipSplashPopupInfo1);
+        taskConfigs.add(new TaskConfig(Collections.<ItemTypeAndPosition>emptyList(),
+                new Index(0, 200),
+                null,
+                0,
+                0,
+                0,
+                "",
+                null,
+                Collections.<Integer, Integer>emptyMap(),
+                RadarMode.MAP_AND_UNITS,
+                gameTipConfig1,
+                false));
+        // move back (find position)
+        taskConfigs.add(new AutomatedTaskConfig(new Index(0, 200), null));
+        // build task
+        GameTipConfig gameTipConfig2 = new GameTipConfig();
+        gameTipConfig2.setTip(GameTipConfig.Tip.SCROLL);
+        gameTipConfig2.setTerrainRectHint(new Rectangle(2900, 1300, 10, 10));
+        TipSplashPopupInfo tipSplashPopupInfo2 = new TipSplashPopupInfo();
+        tipSplashPopupInfo2.setTitle("Starte eine Basis");
+        tipSplashPopupInfo2.setImageType(TipSplashPopupInfo.ImageType.QUEST);
+        tipSplashPopupInfo2.setMainText("Damit Razarion Industries dich nicht entdeckt, sollte die Basis nicht zu nahe bei Razarion Industries sein.");
+        tipSplashPopupInfo2.setTaskText("Platziere dein Bulldozer");
+        gameTipConfig2.setTipSplashPopupInfo(tipSplashPopupInfo2);
+        taskConfigs.add(new TaskConfig(Collections.<ItemTypeAndPosition>emptyList(),
+                new Index(0, 200),
+                null,
+                0,
+                0,
+                0,
+                "",
+                null,
+                Collections.<Integer, Integer>emptyMap(),
+                RadarMode.MAP_AND_UNITS,
+                gameTipConfig2,
+                false));
+        tutorialConfig = new TutorialConfig(taskConfigs, "Your base", false, false, false);
+        // TODO ---------- setup face simulationInfo ends
+
         ClientBase.getInstance().setOwnBaseDestroyedListener(this);
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(this);
         tutorialTime = System.currentTimeMillis();
@@ -111,7 +172,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
 
     private void runNextTask(Task closedTask) {
         TaskConfig taskConfig;
-        List<TaskConfig> tasks = simulationInfo.getTutorialConfig().getTasks();
+        List<TaskConfig> tasks = tutorialConfig.getTasks();
         if (tasks.isEmpty()) {
             tutorialFinished();
             return;
@@ -158,6 +219,15 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         if (!ClientBase.getInstance().isMyOwnBase(actor)) {
             throw new IllegalStateException("Received conditionPassed for unexpected base: " + actor);
         }
+        onTaskSucceeded();
+    }
+
+    public void onTaskTipCompleted() {
+        // TODO may conflicts with conditionPassed (if any condition)
+        onTaskSucceeded();
+    }
+
+    private void onTaskSucceeded() {
         long time = System.currentTimeMillis();
         ClientUserTracker.getInstance().onTaskFinished(simulationInfo.getLevelTaskId(), activeTask, time - taskTime, time);
         GameTipManager.getInstance().stop();

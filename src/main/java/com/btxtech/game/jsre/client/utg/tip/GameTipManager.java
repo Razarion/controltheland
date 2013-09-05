@@ -1,11 +1,14 @@
 package com.btxtech.game.jsre.client.utg.tip;
 
+import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.AbstractTipTask;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.TipTaskContainer;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.TipTaskFactory;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.ItemCockpitGameOverlayTipVisualization;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.user.client.Timer;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,11 +19,13 @@ import java.util.logging.Logger;
  * Time: 22:48
  */
 public class GameTipManager {
+    private static final int PRAISE_DELAY = 3000;
     private static final GameTipManager INSTANCE = new GameTipManager();
     private GameTipVisualization gameTipVisualization;
     private ItemCockpitGameOverlayTipVisualization overlayVisualization;
     private TipTaskContainer tipTaskContainer;
     private OverlayTipPanel overlayTipPanel = new OverlayTipPanel();
+    private TipSplashPopup tipSplashPopup;
     private static Logger log = Logger.getLogger(GameTipManager.class.getName());
 
     public static GameTipManager getInstance() {
@@ -60,12 +65,14 @@ public class GameTipManager {
 
     private void startTipTask() throws NoSuchItemTypeException {
         AbstractTipTask currentTipTask = tipTaskContainer.getCurrentTask();
-        if(currentTipTask.isFulfilled()) {
+        if (currentTipTask.isFulfilled()) {
             tipTaskContainer.next();
             currentTipTask = tipTaskContainer.getCurrentTask();
         }
         currentTipTask.start();
         startVisualization(currentTipTask.createInGameTip());
+        startSplashDialog(currentTipTask.createSplashTip());
+        // TODO reward
     }
 
     public GameTipVisualization getGameTipVisualization() {
@@ -94,6 +101,16 @@ public class GameTipManager {
                 tipTaskContainer.activateFallback();
                 if (!tipTaskContainer.hasTip()) {
                     tipTaskContainer = null;
+                    startPraisePopup();
+                    Timer deferredTimer = new Timer(){
+
+                        @Override
+                        public void run() {
+                            hideTipSplashPopup();
+                            Simulation.getInstance().onTaskTipCompleted();
+                        }
+                    };
+                    deferredTimer.schedule(PRAISE_DELAY);
                     return;
                 }
             }
@@ -112,12 +129,40 @@ public class GameTipManager {
         }
     }
 
+    private void startSplashDialog(TipSplashPopupInfo tipSplashPopupInfo) {
+        if (tipSplashPopupInfo == null) {
+            return;
+        }
+        // TODO on task failed
+        tipSplashPopup = new TipSplashPopup(tipSplashPopupInfo);
+        tipSplashPopup.center();
+        tipSplashPopup.getElement().getStyle().setZIndex(99); // TODO zindex
+    }
+
+    private void startPraisePopup() {
+        hideTipSplashPopup();
+        TipSplashPopupInfo tipSplashPopupInfo = new TipSplashPopupInfo();
+        // TODO text should not come from here
+        tipSplashPopupInfo.setTitle("Gut gemacht");
+        tipSplashPopupInfo.setImageType(TipSplashPopupInfo.ImageType.TICK);
+        tipSplashPopupInfo.setTaskText("Du hat die Basis von Razarion Industries gefunden. Das Datacenter muss zerstört werden. Dazu musst du zuerst eine Armee aufbauen");
+        startSplashDialog(tipSplashPopupInfo);
+    }
+
     private void cleanupVisualization() {
         if (overlayVisualization != null) {
             overlayTipPanel.close();
             overlayVisualization = null;
         }
         gameTipVisualization = null;
+        // TODO on task failed
+        hideTipSplashPopup();
     }
 
+    private void hideTipSplashPopup() {
+        if (tipSplashPopup != null) {
+            tipSplashPopup.hide();
+            tipSplashPopup = null;
+        }
+    }
 }
