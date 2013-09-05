@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.utg.tip;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,7 +19,8 @@ public class GameTipConfig implements Serializable {
         FABRICATE,
         GET_RESOURCE,
         MOVE,
-        ATTACK;
+        ATTACK,
+        SCROLL;
 
         public static List<Tip> getValuesIncludingNull() {
             List<Tip> tips = new ArrayList<Tip>(Arrays.asList(values()));
@@ -32,7 +34,9 @@ public class GameTipConfig implements Serializable {
     private int toBeBuiltId;
     private int resourceId;
     private Index terrainPositionHint;
+    private Rectangle terrainRectHint;
     private boolean highlightQuestVisualisationCockpit;
+    private TipSplashPopupInfo tipSplashPopupInfo;
 
     public Tip getTip() {
         return tip;
@@ -66,6 +70,14 @@ public class GameTipConfig implements Serializable {
         this.terrainPositionHint = terrainPositionHint;
     }
 
+    public Rectangle getTerrainRectHint() {
+        return terrainRectHint;
+    }
+
+    public void setTerrainRectHint(Rectangle terrainRectHint) {
+        this.terrainRectHint = terrainRectHint;
+    }
+
     public int getResourceId() {
         return resourceId;
     }
@@ -81,5 +93,13 @@ public class GameTipConfig implements Serializable {
 
     public void setHighlightQuestVisualisationCockpit(boolean highlightQuestVisualisationCockpit) {
         this.highlightQuestVisualisationCockpit = highlightQuestVisualisationCockpit;
+    }
+
+    public TipSplashPopupInfo getTipSplashPopupInfo() {
+        return tipSplashPopupInfo;
+    }
+
+    public void setTipSplashPopupInfo(TipSplashPopupInfo tipSplashPopupInfo) {
+        this.tipSplashPopupInfo = tipSplashPopupInfo;
     }
 }

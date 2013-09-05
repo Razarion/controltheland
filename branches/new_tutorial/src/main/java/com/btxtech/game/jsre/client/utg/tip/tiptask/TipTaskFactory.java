@@ -32,12 +32,13 @@ public class TipTaskFactory {
                 createAttack(tipTaskContainer, gameTipConfig);
                 break;
             }
+            case SCROLL: {
+                createScroll(tipTaskContainer, gameTipConfig);
+                break;
+            }
             default:
                 throw new IllegalArgumentException("TipTaskFactory: unknown tip: " + gameTipConfig.getTip());
         }
-        //if (gameTipConfig.isHighlightQuestVisualisationCockpit()) {
-        //   tipTaskContainer.add(new WatchQuestVisualisationCockpitTipTask());
-        //}
         return tipTaskContainer;
     }
 
@@ -82,4 +83,9 @@ public class TipTaskFactory {
         tipTaskContainer.addFallback(new SelectTipTask(gameTipConfig.getActor()));
         tipTaskContainer.addFallback(new SendAttackCommandTipTask(gameTipConfig.getActor()));
     }
+
+    private static void createScroll(TipTaskContainer tipTaskContainer, GameTipConfig gameTipConfig) {
+        tipTaskContainer.add(new ScrollTipTask(gameTipConfig.getTerrainRectHint(), gameTipConfig.getTipSplashPopupInfo()));
+    }
+
 }
