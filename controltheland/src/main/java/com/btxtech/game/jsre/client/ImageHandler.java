@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
@@ -172,6 +173,12 @@ public class ImageHandler {
         url.append("/");
         url.append(Integer.toString(id));
         return url.toString();
+    }
+
+    public static Image getInventoryArtifactImage(InventoryArtifactInfo inventoryArtifactInfo , int width, int height) {
+        Image image = new Image(getInventoryArtifactUrl(inventoryArtifactInfo.getInventoryArtifactId()));
+        image.setPixelSize(width, height);
+        return image;
     }
 
     public static String getStarMapPlanetImageUrl(int planetId) {

@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.common.utg.condition;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.utg.ConditionService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -78,7 +79,7 @@ public class SyncItemTypeComparison extends AbstractSyncItemComparison {
     }
 
     @Override
-    public void fillQuestProgressInfo(QuestProgressInfo questProgressInfo) {
+    public void fillQuestProgressInfo(QuestProgressInfo questProgressInfo, ConditionService conditionService) {
         Map<Integer, QuestProgressInfo.Amount> itemIdAmounts = new HashMap<Integer, QuestProgressInfo.Amount>();
         for (Map.Entry<ItemType, Integer> entry : total.entrySet()) {
             Integer remaining = this.remaining.get(entry.getKey());

@@ -32,6 +32,7 @@ import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
@@ -71,6 +72,8 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
     private PlanetSystemService planetSystemService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private ServerConditionService serverConditionService;
     private Log log = LogFactory.getLog(GlobalInventoryServiceImpl.class);
 
     @PostConstruct
@@ -103,11 +106,13 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
             builder.append("Item: ").append(dbBoxItemTypePossibility.getDbInventoryItem().getName());
         } else if (dbBoxItemTypePossibility.getDbInventoryArtifact() != null) {
             userState.addInventoryArtifact(dbBoxItemTypePossibility.getDbInventoryArtifact().getId());
+            serverConditionService.onArtifactItemAdded(userState, true, dbBoxItemTypePossibility.getDbInventoryArtifact().getId());
             historyService.addInventoryArtifactFromBox(userState, dbBoxItemTypePossibility.getDbInventoryArtifact().getName());
             builder.append("Artifact: ").append(dbBoxItemTypePossibility.getDbInventoryArtifact().getName());
         } else if (dbBoxItemTypePossibility.getRazarion() != null) {
             userState.addRazarion(dbBoxItemTypePossibility.getRazarion());
             historyService.addRazarionFromBox(userState, dbBoxItemTypePossibility.getRazarion());
+            serverConditionService.onRazarionIncreased(userState,true, dbBoxItemTypePossibility.getRazarion());
             builder.append("Razarion: ").append(dbBoxItemTypePossibility.getRazarion());
         } else {
             log.warn("No content defined for box: " + dbBoxItemTypePossibility.getParent() + " " + dbBoxItemTypePossibility);
@@ -161,6 +166,7 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
         }
         userState.subRazarion(dbInventoryArtifact.getRazarionCoast());
         userState.addInventoryArtifact(dbInventoryArtifact.getId());
+        serverConditionService.onArtifactItemAdded(userState, false,dbInventoryArtifact.getId());
         historyService.addInventoryArtifactBought(userState, dbInventoryArtifact.getName(), dbInventoryArtifact.getRazarionCoast());
     }
 

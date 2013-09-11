@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.utg.ConditionService;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -186,7 +187,7 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
 
 
     @Override
-    public void fillQuestProgressInfo(QuestProgressInfo questProgressInfo) {
+    public void fillQuestProgressInfo(QuestProgressInfo questProgressInfo, ConditionService conditionService) {
         // Add time
         if (time != null) {
             int amount = 0;

@@ -546,6 +546,30 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
+    public SyncBoxItem getNearestBoxItem(final Index middle) {
+        final ObjectHolder<SyncBoxItem> itemObjectHolder = new ObjectHolder<SyncBoxItem>();
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
+            int nearestDistance = Integer.MAX_VALUE;
+
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (!(syncItem instanceof SyncBoxItem)) {
+                    return null;
+                }
+
+                int distance = middle.getDistance(syncItem.getSyncItemArea().getPosition());
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    itemObjectHolder.setObject((SyncBoxItem) syncItem);
+                }
+
+                return null;
+            }
+        });
+        return itemObjectHolder.getObject();
+    }
+
+    @Override
     public SyncItem getItemAtAbsolutePosition(Index absolutePosition) {
         int maxItemDiameter = getGlobalServices().getItemTypeService().getMaxItemDiameter();
         Rectangle rectangle = Rectangle.generateRectangleFromMiddlePoint(absolutePosition, maxItemDiameter, maxItemDiameter);

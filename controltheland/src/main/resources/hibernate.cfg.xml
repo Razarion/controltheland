@@ -57,11 +57,6 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbLauncherType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeDemolitionClip"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeDemolitionStep"/>
-        <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
-        <mapping class="com.btxtech.game.services.utg.condition.DbConditionConfig"/>
-        <mapping class="com.btxtech.game.services.utg.condition.DbCountComparisonConfig"/>
-        <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig"/>
-        <mapping class="com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.DbChatMessage"/>
         <mapping class="com.btxtech.game.services.forum.DbSubForum"/>
         <mapping class="com.btxtech.game.services.forum.DbCategory"/>
@@ -76,6 +71,15 @@
         <mapping class="com.btxtech.game.services.tutorial.DbTaskConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskAllowedItem"/>
         <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
+        <!-- Condition -->
+        <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbConditionConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbCountComparisonConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbArtifactItemIdComparisonConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbComparisonArtifactItemCount"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig"/>
         <!-- User Guidance -->
         <mapping class="com.btxtech.game.services.utg.DbLevel"/>
         <mapping class="com.btxtech.game.services.utg.DbLevelTask"/>

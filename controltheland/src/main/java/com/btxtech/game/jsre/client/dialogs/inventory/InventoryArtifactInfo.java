@@ -61,4 +61,14 @@ public class InventoryArtifactInfo implements Serializable {
     public int hashCode() {
         return inventoryArtifactId;
     }
+
+    @Override
+    public String toString() {
+        return "InventoryArtifactInfo{" +
+                "htmlRarenessColor='" + htmlRarenessColor + '\'' +
+                ", inventoryArtifactName='" + inventoryArtifactName + '\'' +
+                ", inventoryArtifactId=" + inventoryArtifactId +
+                ", razarionCoast=" + razarionCoast +
+                '}';
+    }
 }
