@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.utg.condition;
 
 import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
+import com.btxtech.game.jsre.common.utg.ConditionService;
 
 /**
  * User: beat
@@ -31,7 +32,7 @@ public interface AbstractComparison {
 
     void restoreFromGenericComparisonValue(GenericComparisonValueContainer genericComparisonValueContainer);
 
-    void fillQuestProgressInfo(QuestProgressInfo questProgressInfo);
+    void fillQuestProgressInfo(QuestProgressInfo questProgressInfo, ConditionService aconditionService);
 
     void handleDeferredUpdate();
 }

@@ -14,7 +14,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
-import com.btxtech.game.jsre.common.utg.condition.AbstractSyncItemComparison;
+import com.btxtech.game.jsre.common.utg.condition.AbstractUpdatingComparison;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.SyncItemTypeComparisonConfig;
@@ -63,7 +63,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
     public void before() throws Exception {
         questProgressInfo = null;
         progressBase = null;
-        setPrivateStaticField(AbstractSyncItemComparison.class, "MIN_SEND_DELAY", 0);
+        setPrivateStaticField(AbstractUpdatingComparison.class, "MIN_SEND_DELAY", 0);
         configureSimplePlanetNoResources();
         identifier = null;
         actor = null;
@@ -88,7 +88,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
         EasyMock.expect(baseServiceMock.getUserState(base2.getSimpleBase())).andReturn(userState2).anyTimes();
         EasyMock.replay(baseServiceMock);
 
-        LevelScope levelScope = new LevelScope(new PlanetLiteInfo(TEST_PLANET_1_ID,"",null),0,0,null,0);
+        LevelScope levelScope = new LevelScope(new PlanetLiteInfo(TEST_PLANET_1_ID, "", null), 0, 0, null, 0);
         UserGuidanceService userGuidanceServiceMock = EasyMock.createNiceMock(UserGuidanceService.class);
         EasyMock.expect(userGuidanceServiceMock.getLevelScope(userState1)).andReturn(levelScope).anyTimes();
         EasyMock.expect(userGuidanceServiceMock.getLevelScope(userState2)).andReturn(levelScope).anyTimes();

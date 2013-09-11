@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
@@ -35,6 +36,7 @@ import java.util.logging.Logger;
 public class QuestVisualisationModel {
     private static final String COLOR_ATTACK = "#FF0000";
     private static final String COLOR_COLLECT = "#FFFF00";
+    private static final String COLOR_PICK = "#FFFF33";
     private static final String COLOR_PLACE = "#00FF00";
     private static final QuestVisualisationModel INSTANCE = new QuestVisualisationModel();
     private static Logger log = Logger.getLogger(QuestVisualisationModel.class.getName());
@@ -202,6 +204,18 @@ public class QuestVisualisationModel {
                 } else {
                     return null;
                 }
+            case RAZARION_INCREASED:
+                if (itemsInView.isEmpty()) {
+                    return null;
+                }
+                color = COLOR_PICK;
+                break;
+            case ARTIFACT_ITEM_ADDED:
+                if (itemsInView.isEmpty()) {
+                    return null;
+                }
+                color = COLOR_PICK;
+                break;
             default:
                 return null;
         }
@@ -231,6 +245,16 @@ public class QuestVisualisationModel {
                         if (!currentQuestProgressInfo.getAmount().isFulfilled()) {
                             itemVisualisations.add(new InGameQuestItemVisualisation(color, syncItem.getSyncItemArea().getPosition().sub(viewRect.getStart())));
                         }
+                    }
+                }
+            } else if (color.equals(COLOR_PICK)) {
+                if (syncItem instanceof SyncBoxItem) {
+                    if (currentQuestProgressInfo.getAmount() != null) {
+                        if (!currentQuestProgressInfo.getAmount().isFulfilled()) {
+                            itemVisualisations.add(new InGameQuestItemVisualisation(color, syncItem.getSyncItemArea().getPosition().sub(viewRect.getStart())));
+                        }
+                    } else if (currentQuestProgressInfo.getInventoryArtifactInfoAmount() != null) {
+                        itemVisualisations.add(new InGameQuestItemVisualisation(color, syncItem.getSyncItemArea().getPosition().sub(viewRect.getStart())));
                     }
                 }
             }
@@ -277,6 +301,20 @@ public class QuestVisualisationModel {
                 } else {
                     return null;
                 }
+            case RAZARION_INCREASED: {
+                SyncBoxItem syncBoxItem = ItemContainer.getInstance().getNearestBoxItem(viewRect.getCenter());
+                if (syncBoxItem == null) {
+                    return null;
+                }
+                return new InGameQuestDirectionVisualisation(syncBoxItem, viewRect);
+            }
+            case ARTIFACT_ITEM_ADDED: {
+                SyncBoxItem syncBoxItem = ItemContainer.getInstance().getNearestBoxItem(viewRect.getCenter());
+                if (syncBoxItem == null) {
+                    return null;
+                }
+                return new InGameQuestDirectionVisualisation(syncBoxItem, viewRect);
+            }
             default:
                 return null;
         }

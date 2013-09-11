@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientGlobalServices;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
@@ -162,6 +163,11 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
         LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
         levelTaskPacket.setQuestProgressInfo(SimulationConditionServiceImpl.getInstance().getQuestProgressInfo(a, i));
         QuestVisualisationModel.getInstance().setLevelTask(levelTaskPacket);
+    }
+
+    @Override
+    public InventoryArtifactInfo createInventoryArtifactInfo(int id) {
+        throw new UnsupportedOperationException("SimulationConditionServiceImpl.createInventoryArtifactInfo() not supported on client side");
     }
 
     public void stopUpdateTimer() {

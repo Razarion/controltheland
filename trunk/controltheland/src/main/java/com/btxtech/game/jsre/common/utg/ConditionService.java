@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.utg;
 
 import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
@@ -47,4 +48,6 @@ public interface ConditionService<A, I> {
     void onBaseDeleted(SimpleBase actorBase);
 
     void onSyncItemUnloaded(SyncBaseItem syncItem);
+
+    InventoryArtifactInfo createInventoryArtifactInfo(int id);
 }

@@ -15,6 +15,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.velocity.app.VelocityEngine;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -65,6 +66,8 @@ public class InvitationServiceImpl implements InvitationService {
     private SessionFactory sessionFactory;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private ServerConditionService serverConditionService;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -185,6 +188,7 @@ public class InvitationServiceImpl implements InvitationService {
             UserState hostUserState = userService.getUserState(host);
             hostUserState.addRazarion(dbLevel.getFriendInvitationBonus());
             historyService.addFriendInvitationBonus(host, invitee, dbLevel.getFriendInvitationBonus(), hostUserState.getRazarion());
+            serverConditionService.onRazarionIncreased(hostUserState, false, dbLevel.getFriendInvitationBonus());
             updateDbFriendInvitationBonus(host, invitee, dbLevel);
         } catch (Exception e) {
             ExceptionHandler.handleException(e);

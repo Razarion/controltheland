@@ -11,7 +11,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
-import com.btxtech.game.jsre.common.utg.condition.AbstractSyncItemComparison;
+import com.btxtech.game.jsre.common.utg.condition.AbstractUpdatingComparison;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
@@ -54,7 +54,7 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
     public void before() throws Exception {
         questProgressInfo = null;
         progressBase = null;
-        setPrivateStaticField(AbstractSyncItemComparison.class, "MIN_SEND_DELAY", 0);
+        setPrivateStaticField(AbstractUpdatingComparison.class, "MIN_SEND_DELAY", 0);
         configureSimplePlanetNoResources();
         identifier = null;
         actor = null;

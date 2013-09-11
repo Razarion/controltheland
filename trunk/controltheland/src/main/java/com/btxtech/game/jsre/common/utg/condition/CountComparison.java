@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.utg.condition;
 
 import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.utg.ConditionService;
 
 /**
  * User: beat
@@ -65,7 +66,7 @@ public class CountComparison extends AbstractSyncItemComparison {
     }
 
     @Override
-    public void fillQuestProgressInfo(QuestProgressInfo questProgressInfo) {
+    public void fillQuestProgressInfo(QuestProgressInfo questProgressInfo, ConditionService conditionService) {
         questProgressInfo.setAmount(new QuestProgressInfo.Amount((int) (countTotal - count), (int) countTotal));
     }
 }

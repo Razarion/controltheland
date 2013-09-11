@@ -28,7 +28,7 @@ import org.apache.wicket.model.IModel;
 public class CountComparisonConfigPanel extends Panel {
     public CountComparisonConfigPanel(String id) {
         super(id);
-        setDefaultModel(new CompoundPropertyModel<DbCountComparisonConfig>(new IModel<DbCountComparisonConfig>() {
+        setDefaultModel(new CompoundPropertyModel<>(new IModel<DbCountComparisonConfig>() {
 
             @Override
             public DbCountComparisonConfig getObject() {

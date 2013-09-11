@@ -288,11 +288,17 @@ public interface ClientI18nConstants extends Messages {
 
     String questBasesKilled();
 
+    String questRazarionIncreased();
+
+    String questArtifactItemAdded();
+
     String questOilCollected();
 
     String questBuilt();
 
     String questUnitStructuresBuilt();
+
+    String questArtifactItemAddedActionWord();
 
     String questDestroyed();
 

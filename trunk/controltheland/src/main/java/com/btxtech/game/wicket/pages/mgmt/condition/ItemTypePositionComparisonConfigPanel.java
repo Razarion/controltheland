@@ -41,7 +41,7 @@ public class ItemTypePositionComparisonConfigPanel extends Panel {
 
     public ItemTypePositionComparisonConfigPanel(String id, TerrainLinkHelper terrainLinkHelper) {
         super(id);
-        setDefaultModel(new CompoundPropertyModel<DbItemTypePositionComparisonConfig>(new IModel<DbItemTypePositionComparisonConfig>() {
+        setDefaultModel(new CompoundPropertyModel<>(new IModel<DbItemTypePositionComparisonConfig>() {
 
             @Override
             public DbItemTypePositionComparisonConfig getObject() {
