@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.utg.config;
 
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
+import com.btxtech.game.jsre.common.utg.condition.ArtifactItemIdConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.ValueConditionTrigger;
@@ -59,7 +60,18 @@ public enum ConditionTrigger {
         @Override
         public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
             return new SyncItemConditionTrigger<A, I>(this, abstractComparison);
+        }},
+    RAZARION_INCREASED(true) {
+        @Override
+        public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
+            return new ValueConditionTrigger<A, I>(this, abstractComparison);
+        }},
+    ARTIFACT_ITEM_ADDED(true) {
+        @Override
+        public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
+            return new ArtifactItemIdConditionTrigger<A, I>(this, abstractComparison);
         }};
+
 
 
     private boolean comparisonNeeded;

@@ -34,9 +34,7 @@ public class GameTipConfig implements Serializable {
     private int toBeBuiltId;
     private int resourceId;
     private Index terrainPositionHint;
-    private Rectangle terrainRectHint;
     private boolean highlightQuestVisualisationCockpit;
-    private TipSplashPopupInfo tipSplashPopupInfo;
 
     public Tip getTip() {
         return tip;
@@ -70,14 +68,6 @@ public class GameTipConfig implements Serializable {
         this.terrainPositionHint = terrainPositionHint;
     }
 
-    public Rectangle getTerrainRectHint() {
-        return terrainRectHint;
-    }
-
-    public void setTerrainRectHint(Rectangle terrainRectHint) {
-        this.terrainRectHint = terrainRectHint;
-    }
-
     public int getResourceId() {
         return resourceId;
     }
@@ -93,13 +83,5 @@ public class GameTipConfig implements Serializable {
 
     public void setHighlightQuestVisualisationCockpit(boolean highlightQuestVisualisationCockpit) {
         this.highlightQuestVisualisationCockpit = highlightQuestVisualisationCockpit;
-    }
-
-    public TipSplashPopupInfo getTipSplashPopupInfo() {
-        return tipSplashPopupInfo;
-    }
-
-    public void setTipSplashPopupInfo(TipSplashPopupInfo tipSplashPopupInfo) {
-        this.tipSplashPopupInfo = tipSplashPopupInfo;
     }
 }

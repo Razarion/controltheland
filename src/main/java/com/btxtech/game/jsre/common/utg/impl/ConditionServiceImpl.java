@@ -22,7 +22,7 @@ import com.btxtech.game.jsre.common.utg.ConditionService;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
-import com.btxtech.game.jsre.common.utg.condition.AbstractSyncItemComparison;
+import com.btxtech.game.jsre.common.utg.condition.AbstractUpdatingComparison;
 import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.TimeAware;
@@ -82,8 +82,8 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         AbstractComparison abstractComparison = null;
         if (conditionConfig.getConditionTrigger().isComparisonNeeded()) {
             abstractComparison = conditionConfig.getAbstractComparisonConfig().createAbstractComparison(getPlanetServices(a), getSimpleBase(a));
-            if (abstractComparison instanceof AbstractSyncItemComparison) {
-                ((AbstractSyncItemComparison) abstractComparison).setGlobalServices(getGlobalServices());
+            if (abstractComparison instanceof AbstractUpdatingComparison) {
+                ((AbstractUpdatingComparison) abstractComparison).setGlobalServices(getGlobalServices());
             }
             if (abstractComparison instanceof TimeAware && ((TimeAware) abstractComparison).isTimerNeeded()) {
                 timeAwareList.add((TimeAware) abstractComparison);
@@ -129,7 +129,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         try {
             AbstractConditionTrigger<A, I> abstractConditionTrigger = getActorConditionsPrivate(a, i);
             QuestProgressInfo questProgressInfo = new QuestProgressInfo(abstractConditionTrigger.getConditionTrigger());
-            abstractConditionTrigger.getAbstractComparison().fillQuestProgressInfo(questProgressInfo);
+            abstractConditionTrigger.getAbstractComparison().fillQuestProgressInfo(questProgressInfo, this);
             return questProgressInfo;
         } catch (Exception e) {
             log.log(Level.SEVERE, "ConditionServiceImpl.getProgressHtml()", e);
@@ -151,7 +151,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     @Override
     public void onSyncItemKilled(SimpleBase actorBase, SyncBaseItem killedItem) {
         A actor = getActor(actorBase);
-        if (isActorIgnored(actor)) {
+        if (isActorIgnored(actor, true)) {
             return;
         }
         triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_KILLED, killedItem);
@@ -161,7 +161,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     @Override
     public void onSyncItemBuilt(SyncBaseItem syncBaseItem) {
         A actor = getActor(syncBaseItem.getBase());
-        if (isActorIgnored(actor)) {
+        if (isActorIgnored(actor, true)) {
             return;
         }
         triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_BUILT, syncBaseItem);
@@ -171,7 +171,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     @Override
     public void onSyncItemDeactivated(SyncBaseItem syncBaseItem) {
         A actor = getActor(syncBaseItem.getBase());
-        if (isActorIgnored(actor)) {
+        if (isActorIgnored(actor, true)) {
             return;
         }
         if (syncBaseItem.isReady()) {
@@ -182,7 +182,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     @Override
     public void onSyncItemUnloaded(SyncBaseItem syncBaseItem) {
         A actor = getActor(syncBaseItem.getBase());
-        if (isActorIgnored(actor)) {
+        if (isActorIgnored(actor, true)) {
             return;
         }
         triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_POSITION, syncBaseItem);
@@ -191,7 +191,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     @Override
     public void onMoneyIncrease(SimpleBase actorBase, double accountBalance) {
         A actor = getActor(actorBase);
-        if (isActorIgnored(actor)) {
+        if (isActorIgnored(actor, true)) {
             return;
         }
         triggerValue(actor, ConditionTrigger.MONEY_INCREASED, accountBalance);
@@ -200,7 +200,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     @Override
     public void onBaseDeleted(SimpleBase actorBase) {
         A actor = getActor(actorBase);
-        if (isActorIgnored(actor)) {
+        if (isActorIgnored(actor, true)) {
             return;
         }
         triggerValue(actor, ConditionTrigger.BASE_KILLED, 1.0);
@@ -248,14 +248,14 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         }
     }
 
-    private void conditionPassed(AbstractConditionTrigger<A, I> abstractConditionTrigger) {
+    protected void conditionPassed(AbstractConditionTrigger<A, I> abstractConditionTrigger) {
         deactivateActorCondition(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
         if (conditionServiceListener != null) {
             conditionServiceListener.conditionPassed(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
         }
     }
 
-    private Collection<AbstractConditionTrigger<A, I>> getAbstractConditions(A actor, ConditionTrigger conditionTrigger) {
+    protected Collection<AbstractConditionTrigger<A, I>> getAbstractConditions(A actor, ConditionTrigger conditionTrigger) {
         Collection<AbstractConditionTrigger<A, I>> abstractConditionTriggers = getAbstractConditionPrivate(actor, conditionTrigger);
         if (abstractConditionTriggers == null || abstractConditionTriggers.isEmpty()) {
             return null;
@@ -281,11 +281,11 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         }
     }
 
-    protected boolean isActorIgnored(A actor) {
-        return actor == null || isTriggerSuppressed(actor);
+    protected boolean isActorIgnored(A actor, boolean planetInteraction) {
+        return actor == null || isTriggerSuppressed(actor, planetInteraction);
     }
 
-    protected boolean isTriggerSuppressed(A actor) {
+    protected boolean isTriggerSuppressed(A actor, boolean planetInteraction) {
         return false;
     }
 }

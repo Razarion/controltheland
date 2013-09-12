@@ -872,7 +872,8 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = new SimpleBase(1, TEST_PLANET_1_ID);
+        Base base = new Base(planetSystemService.getPlanet(TEST_PLANET_1_ID),1);
+        SimpleBase simpleBase = base.getSimpleBase();
         DbBoxItemType dbBoxItemType1 = new DbBoxItemType();
         setupDbItemTypeId(dbBoxItemType1, 1);
         DbBoxItemTypePossibility dbBoxItemTypePossibility = dbBoxItemType1.getBoxPossibilityCrud().createDbChild();
@@ -929,8 +930,12 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         // SyncBoxItems
         UserState mockUserState = EasyMock.createStrictMock(UserState.class);
         mockUserState.addRazarion(100);
+        EasyMock.expect(mockUserState.getBase()).andReturn(base);
+        EasyMock.expect(mockUserState.getDbLevelId()).andReturn(TEST_LEVEL_2_REAL_ID);
         mockUserState.addInventoryItem(33);
         mockUserState.addInventoryArtifact(44);
+        EasyMock.expect(mockUserState.getBase()).andReturn(base);
+        EasyMock.expect(mockUserState.getDbLevelId()).andReturn(TEST_LEVEL_2_REAL_ID);
         // SyncBoxItems
         BaseService mockBaseService = EasyMock.createStrictMock(BaseService.class);
         EasyMock.expect(mockBaseService.isAbandoned(simpleBase)).andReturn(false);

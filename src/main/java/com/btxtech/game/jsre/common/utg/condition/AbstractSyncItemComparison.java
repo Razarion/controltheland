@@ -19,26 +19,13 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 /**
  * User: beat Date: 12.01.2011 Time: 12:05:40
  */
-public abstract class AbstractSyncItemComparison implements AbstractComparison {
-    public static final String SHARP = "#";
-    private static int MIN_SEND_DELAY = 1000;
+public abstract class AbstractSyncItemComparison extends AbstractUpdatingComparison {
     private AbstractConditionTrigger abstractConditionTrigger;
-    private long lastProgressSendTime;
-    private GlobalServices globalServices;
-    private boolean hasUpdateToSend;
 
     protected abstract void privateOnSyncItem(SyncItem syncItem);
 
     public final void onSyncItem(SyncItem syncItem) {
         privateOnSyncItem(syncItem);
-    }
-
-    protected GlobalServices getGlobalServices() {
-        return globalServices;
-    }
-
-    public void setGlobalServices(GlobalServices globalServices) {
-        this.globalServices = globalServices;
     }
 
     @Override
@@ -50,24 +37,5 @@ public abstract class AbstractSyncItemComparison implements AbstractComparison {
     @Override
     public void setAbstractConditionTrigger(AbstractConditionTrigger abstractConditionTrigger) {
         this.abstractConditionTrigger = abstractConditionTrigger;
-    }
-
-    protected void onProgressChanged() {
-        if (lastProgressSendTime + MIN_SEND_DELAY > System.currentTimeMillis()) {
-            hasUpdateToSend = true;
-            return;
-        }
-        if (globalServices != null) {
-            globalServices.getConditionService().sendProgressUpdate(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
-            lastProgressSendTime = System.currentTimeMillis();
-            hasUpdateToSend = false;
-        }
-    }
-
-    @Override
-    public void handleDeferredUpdate() {
-        if (hasUpdateToSend) {
-            onProgressChanged();
-        }
     }
 }

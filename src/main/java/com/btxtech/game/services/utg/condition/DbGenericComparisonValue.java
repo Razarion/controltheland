@@ -37,6 +37,7 @@ public class DbGenericComparisonValue {
     private GenericComparisonValueContainer.Key enumKey;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbItemType itemTypeKey;
+    private Integer integerKey;
     private Long longValue;
     private Double doubleValue;
     private Integer identifier;
@@ -49,7 +50,7 @@ public class DbGenericComparisonValue {
 
     public DbGenericComparisonValue(Integer identifier, GenericComparisonValueContainer genericComparisonValueContainer, ServerItemTypeService serverItemTypeService) {
         this.identifier = identifier;
-        children = new ArrayList<DbGenericComparisonValue>();
+        children = new ArrayList<>();
         for (Map.Entry<Object, Object> entry : genericComparisonValueContainer.getEntries()) {
             children.add(createChildDbGenericComparisonValue(entry.getKey(), entry.getValue(), serverItemTypeService));
         }
@@ -81,6 +82,8 @@ public class DbGenericComparisonValue {
             enumKey = (GenericComparisonValueContainer.Key) key;
         } else if (key instanceof ItemType) {
             itemTypeKey = serverItemTypeService.getDbItemType(((ItemType) key).getId());
+        } else if (key instanceof Integer) {
+            integerKey = (Integer) key;
         } else {
             throw new GenericComparisonValueException("Key is not allowed: " + key);
         }
@@ -139,6 +142,8 @@ public class DbGenericComparisonValue {
             container.addChild(serverItemTypeService.getItemType(itemTypeKey.getId()), value);
         } else if (enumKey != null) {
             container.addChild(enumKey, value);
+        } else if (integerKey != null) {
+            container.addChild(integerKey, value);
         } else {
             throw new GenericComparisonValueException("Key does not exist: " + this);
         }

@@ -12,6 +12,7 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserDoesNotExitException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
@@ -40,6 +41,8 @@ public class FinanceServiceImpl implements FinanceService {
     private UserService userService;
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private ServerConditionService serverConditionService;
 
     @Override
     public void razarionBought(int razarionBought, UserState userState) {
@@ -48,6 +51,7 @@ public class FinanceServiceImpl implements FinanceService {
         }
         userState.addRazarion(razarionBought);
         historyService.addRazarionBought(userState, razarionBought);
+        serverConditionService.onRazarionIncreased(userState, false, razarionBought);
     }
 
     @Override

@@ -17,8 +17,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+import com.btxtech.game.jsre.common.tutorial.AbstractTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
-import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
@@ -248,7 +248,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.clearGame = clearGame;
     }
 
-    public TaskConfig createTaskConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
+    public AbstractTaskConfig createTaskConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
         ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<>();
         for (DbItemTypeAndPosition dbItemTypeAndPosition : getItemCrudServiceHelper().readDbChildren()) {
             ItemTypeAndPosition itemTypeAndPosition = dbItemTypeAndPosition.createItemTypeAndPosition();
@@ -266,9 +266,10 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
             Integer newCount = count + dbTaskAllowedItem.getCount();
             itemTypeLimitation.put(dbTaskAllowedItem.getDbBaseItemType().getId(), newCount);
         }
-
-
-        return new TaskConfig(itemTypeAndPositions,
+        // TODO
+        return null;
+        /*
+        return new AbstractTaskConfig(itemTypeAndPositions,
                 scroll,
                 conditionConfig != null ? conditionConfig.createConditionConfig(serverItemTypeService, locale) : null,
                 houseCount,
@@ -279,7 +280,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
                 itemTypeLimitation,
                 radarMode,
                 createGameTipConfig(),
-                clearGame);
+                clearGame); */
     }
 
     private GameTipConfig createGameTipConfig() {

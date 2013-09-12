@@ -14,36 +14,30 @@
 package com.btxtech.game.jsre.common.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.RadarMode;
+import com.btxtech.game.jsre.client.simulation.AbstractTask;
+import com.btxtech.game.jsre.client.simulation.AutomatedTask;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
-import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
-import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
-import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
+import com.btxtech.game.jsre.client.utg.tip.StorySplashPopupInfo;
 
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
- * Date: 17.07.2010
+ * Date: 11.09.2013
  * Time: 17:25:27
  */
-public class AutomatedTaskConfig extends TaskConfig {
+public class AutomatedTaskConfig extends AbstractTaskConfig {
     private Index scrollToPosition;
 
     /**
      * Used by GWT
      */
-    public AutomatedTaskConfig() {
+    AutomatedTaskConfig() {
     }
 
     public AutomatedTaskConfig(Index scrollToPosition, GameTipConfig gameTipConfig) {
         super(Collections.<ItemTypeAndPosition>emptyList(),
-                null,
                 null,
                 0,
                 0,
@@ -53,11 +47,20 @@ public class AutomatedTaskConfig extends TaskConfig {
                 Collections.<Integer, Integer>emptyMap(),
                 RadarMode.MAP_AND_UNITS,
                 gameTipConfig,
-                false); // TODO bad just random values used -> macke configurable
+                false,
+                null,
+                null); // TODO bad just random values used -> make configurable
         this.scrollToPosition = scrollToPosition;
+    }
+
+    @Override
+    public AbstractTask createTask() {
+        return new AutomatedTask(this);
     }
 
     public Index getScrollToPosition() {
         return scrollToPosition;
     }
+
+
 }

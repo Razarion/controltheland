@@ -85,7 +85,7 @@ public class TipTaskFactory {
     }
 
     private static void createScroll(TipTaskContainer tipTaskContainer, GameTipConfig gameTipConfig) {
-        tipTaskContainer.add(new ScrollTipTask(gameTipConfig.getTerrainRectHint(), gameTipConfig.getTipSplashPopupInfo()));
+        tipTaskContainer.add(new ScrollTipTask(gameTipConfig.getTerrainPositionHint()));
     }
 
 }

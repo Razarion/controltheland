@@ -30,11 +30,18 @@ public class GenericComparisonValueContainer {
         children.put(key, value);
     }
 
-    public void addChild(ItemType key, Object value) {
-        if (children.containsKey(key)) {
-            throw new GenericComparisonValueException("Already exists: " + key);
+    public void addChild(ItemType itemType, Object value) {
+        if (children.containsKey(itemType)) {
+            throw new GenericComparisonValueException("Already exists: " + itemType);
         }
-        children.put(key, value);
+        children.put(itemType, value);
+    }
+
+    public void addChild(Integer integer, Object value) {
+        if (children.containsKey(integer)) {
+            throw new GenericComparisonValueException("Already exists: " + integer);
+        }
+        children.put(integer, value);
     }
 
     public GenericComparisonValueContainer createChildContainer(Key key) {
