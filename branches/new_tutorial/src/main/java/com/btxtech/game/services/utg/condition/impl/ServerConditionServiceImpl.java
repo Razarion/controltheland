@@ -14,17 +14,20 @@
 package com.btxtech.game.services.utg.condition.impl;
 
 import com.btxtech.game.jsre.client.common.LevelScope;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
+import com.btxtech.game.jsre.common.utg.condition.ArtifactItemIdConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueContainer;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerGlobalServices;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -65,6 +68,8 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     private UserGuidanceService userGuidanceService;
     @Autowired
     private ServerGlobalServices serverGlobalServices;
+    @Autowired
+    private GlobalInventoryService globalInventoryService;
     private long rate = 10000;
     private long rateDeferredUpdate = 2000;
     private final Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>> triggerMap = new HashMap<>();
@@ -343,6 +348,36 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     }
 
     @Override
+    public void onRazarionIncreased(UserState actor, boolean planetInteraction, int razarion) {
+        if (isActorIgnored(actor, planetInteraction)) {
+            return;
+        }
+        triggerValue(actor, ConditionTrigger.RAZARION_INCREASED, razarion);
+    }
+
+    @Override
+    public void onArtifactItemAdded(UserState actor, boolean planetInteraction, int artifactItemId) {
+        if (isActorIgnored(actor, planetInteraction)) {
+            return;
+        }
+        triggerArtifactItem(actor, ConditionTrigger.ARTIFACT_ITEM_ADDED, artifactItemId);
+    }
+
+    private void triggerArtifactItem(UserState actor, ConditionTrigger conditionTrigger, int artifactItemId) {
+        Collection<AbstractConditionTrigger<UserState, Integer>> abstractConditionTriggers = getAbstractConditions(actor, conditionTrigger);
+        if (abstractConditionTriggers == null) {
+            return;
+        }
+        for (AbstractConditionTrigger<UserState, Integer> abstractConditionTrigger : abstractConditionTriggers) {
+            ArtifactItemIdConditionTrigger artifactItemIdConditionTrigger = (ArtifactItemIdConditionTrigger) abstractConditionTrigger;
+            artifactItemIdConditionTrigger.onArtifactItemId(artifactItemId);
+            if (artifactItemIdConditionTrigger.isFulfilled()) {
+                conditionPassed(abstractConditionTrigger);
+            }
+        }
+    }
+
+    @Override
     protected void startTimer() {
         scheduledFuture = timer.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -392,7 +427,12 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     }
 
     @Override
-    protected boolean isTriggerSuppressed(UserState actor) {
-       return !planetSystemService.isUserOnCorrectPlanet(actor);
+    protected boolean isTriggerSuppressed(UserState actor, boolean planetInteraction) {
+        return planetInteraction && !planetSystemService.isUserOnCorrectPlanet(actor);
+    }
+
+    @Override
+    public InventoryArtifactInfo createInventoryArtifactInfo(int id) {
+        return globalInventoryService.getArtifactCrud().readDbChild(id).generateInventoryArtifactInfo();
     }
 }

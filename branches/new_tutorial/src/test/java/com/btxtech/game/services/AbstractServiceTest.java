@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Region;
@@ -85,7 +86,6 @@ import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.planet.ResourceService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation;
 import com.btxtech.game.services.planet.db.DbRegionResource;
@@ -115,7 +115,6 @@ import com.btxtech.game.services.utg.DbLevelItemTypeLimitation;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
@@ -653,7 +652,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected List<Packet> getPackagesIgnoreSyncItemInfoAndClear(boolean ignoreAccountBalancePackets) throws Exception {
-        List<Packet> receivedPackets = new ArrayList<Packet>(getMovableService().getSyncInfo(START_UID_1, false));
+        List<Packet> receivedPackets = new ArrayList<>(getMovableService().getSyncInfo(START_UID_1, false));
         for (Iterator<Packet> iterator = receivedPackets.iterator(); iterator.hasNext(); ) {
             Packet packet = iterator.next();
             if (packet instanceof SyncItemInfo) {
@@ -760,6 +759,24 @@ abstract public class AbstractServiceTest {
                             return false;
                         }
                         if (!expectedEntry.getValue().equals(receivedMap.get(expectedEntry.getKey()))) {
+                            return false;
+                        }
+                    }
+                }
+                Map<InventoryArtifactInfo, QuestProgressInfo.Amount> expectedArtifactMap = expectedProgressInfo.getInventoryArtifactInfoAmount();
+                Map<InventoryArtifactInfo, QuestProgressInfo.Amount> receivedArtifactMap = receivedProgressInfo.getInventoryArtifactInfoAmount();
+                if (((expectedArtifactMap == null) && (receivedArtifactMap != null)) || ((expectedArtifactMap != null) && (receivedArtifactMap == null))) {
+                    return false;
+                }
+                if (expectedArtifactMap != null && receivedArtifactMap != null) {
+                    if (expectedArtifactMap.size() != receivedArtifactMap.size()) {
+                        return false;
+                    }
+                    for (Map.Entry<InventoryArtifactInfo, QuestProgressInfo.Amount> expectedEntry : expectedArtifactMap.entrySet()) {
+                        if (!receivedArtifactMap.containsKey(expectedEntry.getKey())) {
+                            return false;
+                        }
+                        if (!expectedEntry.getValue().equals(receivedArtifactMap.get(expectedEntry.getKey()))) {
                             return false;
                         }
                     }
@@ -1212,7 +1229,7 @@ abstract public class AbstractServiceTest {
         DbBuilderType dbBuilderType = new DbBuilderType();
         dbBuilderType.setProgress(1000);
         dbBuilderType.setRange(100);
-        Set<DbBaseItemType> ableToBuild = new HashSet<DbBaseItemType>();
+        Set<DbBaseItemType> ableToBuild = new HashSet<>();
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HOUSE_ID));
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_TYPE_ID));
@@ -1244,7 +1261,7 @@ abstract public class AbstractServiceTest {
         // DbBuilderType
         DbFactoryType dbFactoryType = new DbFactoryType();
         dbFactoryType.setProgress(1000);
-        Set<DbBaseItemType> ableToBuild = new HashSet<DbBaseItemType>();
+        Set<DbBaseItemType> ableToBuild = new HashSet<>();
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID));
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARVESTER_ITEM_ID));
@@ -1464,7 +1481,7 @@ abstract public class AbstractServiceTest {
     private void finishContainerBaseItemType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID);
         // DbItemContainerType
-        Set<DbBaseItemType> ableToContain = new HashSet<DbBaseItemType>();
+        Set<DbBaseItemType> ableToContain = new HashSet<>();
         ableToContain.add(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
         dbBaseItemType.getDbItemContainerType().setAbleToContain(ableToContain);
 

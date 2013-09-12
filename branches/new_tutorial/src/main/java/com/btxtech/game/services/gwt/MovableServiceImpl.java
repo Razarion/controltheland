@@ -276,7 +276,12 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig(levelTaskId);
             // Common
             setCommonInfo(simulationInfo, userService, serverItemTypeService, propertyService, cmsUiService, soundService, clipService);
-            simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService, request.getLocale()));
+            // TODO uncomment ----------
+            // simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService, request.getLocale()));
+            // TODO uncomment ends ----------
+            // TODO remove ----------
+            simulationInfo.setTutorialConfig(TaskConfigFactory_DELETE_ME.createTask(serverItemTypeService));
+            // TODO remove ends ----------
             simulationInfo.setLevelTaskId(levelTaskId);
             simulationInfo.setLevelNumber(userGuidanceService.getDbLevel().getNumber());
             simulationInfo.setAbortable(userGuidanceService.getDbLevel().hasDbPlanet());

@@ -509,4 +509,40 @@ td.box {
     100%  {background:none;}
 }
 
+/* ------------------------------------------------------------------------------ */
+.raz-fade-out {
+    animation:razFadeOutFirst 500ms;
+    -webkit-animation:razFadeOutFirst 500ms; /* Safari and Chrome */
+    opacity:0.0;
+}
 
+@keyframes razFadeOutFirst
+{
+    from   {opacity:1.0;}
+    to  {opacity:0;}
+}
+
+@-webkit-keyframes razFadeOutFirst /* Safari and Chrome */
+{
+    from   {opacity:1.0;}
+    to  {opacity:0;}
+}
+
+.raz-fade-in {
+    animation:razFadeInFirst 500ms;
+    -webkit-animation:razFadeInFirst 500ms; /* Safari and Chrome */
+    opacity:1.0;
+}
+
+@keyframes razFadeInFirst
+{
+    from   {opacity:0.0;}
+    to  {opacity:1.0;}
+}
+
+@-webkit-keyframes razFadeInFirst /* Safari and Chrome */
+{
+    from   {opacity:0.0;}
+    to  {opacity:1.0;}
+}
+/* ------------------------------------------------------------------------------ */

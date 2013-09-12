@@ -16,10 +16,11 @@ package com.btxtech.game.jsre.common.tutorial;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.RadarMode;
+import com.btxtech.game.jsre.client.simulation.AbstractTask;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
+import com.btxtech.game.jsre.client.utg.tip.StorySplashPopupInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
-import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -31,7 +32,7 @@ import java.util.Map;
  * Date: 17.07.2010
  * Time: 17:25:27
  */
-public class TaskConfig implements Serializable {
+public abstract class AbstractTaskConfig implements Serializable {
     private Collection<ItemTypeAndPosition> ownItems;
     private Index scroll;
     private int houseCount;
@@ -41,20 +42,20 @@ public class TaskConfig implements Serializable {
     private Collection<BotConfig> botConfigs;
     private Map<Integer, Integer> itemTypeLimitation;
     private RadarMode radarMode;
-    private ConditionConfig conditionConfig;
     private GameTipConfig gameTipConfig;
     private boolean clearGame;
+    private StorySplashPopupInfo storySplashPopupInfo;
+    private StorySplashPopupInfo praiseSplash;
 
     /**
      * Used by GWT
      */
-    public TaskConfig() {
+    AbstractTaskConfig() {
     }
 
-    public TaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, ConditionConfig conditionConfig, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig, boolean clearGame) {
+    public AbstractTaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig, boolean clearGame, StorySplashPopupInfo storySplashPopupInfo, StorySplashPopupInfo praiseSplash) {
         this.ownItems = ownItems;
         this.scroll = scroll;
-        this.conditionConfig = conditionConfig;
         this.houseCount = houseCount;
         this.money = money;
         this.maxMoney = maxMoney;
@@ -64,7 +65,11 @@ public class TaskConfig implements Serializable {
         this.radarMode = radarMode;
         this.gameTipConfig = gameTipConfig;
         this.clearGame = clearGame;
+        this.storySplashPopupInfo = storySplashPopupInfo;
+        this.praiseSplash = praiseSplash;
     }
+
+    public abstract AbstractTask createTask();
 
     public Collection<ItemTypeAndPosition> getOwnItems() {
         return ownItems;
@@ -108,11 +113,16 @@ public class TaskConfig implements Serializable {
         return planetInfo;
     }
 
-    public ConditionConfig getConditionConfig() {
-        return conditionConfig;
-    }
-
     public GameTipConfig getGameTipConfig() {
         return gameTipConfig;
+    }
+
+
+    public StorySplashPopupInfo getStorySplashPopupInfo() {
+        return storySplashPopupInfo;
+    }
+
+    public StorySplashPopupInfo getPraiseSplash() {
+        return praiseSplash;
     }
 }

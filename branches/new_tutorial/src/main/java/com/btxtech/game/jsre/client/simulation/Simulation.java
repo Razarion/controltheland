@@ -20,9 +20,6 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.bot.ClientBotService;
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.RadarMode;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
@@ -30,24 +27,17 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
-import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
-import com.btxtech.game.jsre.client.utg.tip.TipSplashPopupInfo;
+import com.btxtech.game.jsre.client.utg.tip.StorySplashPopup;
 import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
-import com.btxtech.game.jsre.common.tutorial.AutomatedTaskConfig;
+import com.btxtech.game.jsre.common.tutorial.AbstractTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
-import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.google.gwt.user.client.Timer;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -55,13 +45,15 @@ import java.util.List;
  * Date: 17.07.2010
  * Time: 17:21:24
  */
-public class Simulation implements ConditionServiceListener<SimpleBase, Void>, ClientBase.OwnBaseDestroyedListener {
+public class Simulation implements ClientBase.OwnBaseDestroyedListener {
+    private static final int PRAISE_DELAY = 3000;
     private static final Simulation SIMULATION = new Simulation();
     private SimulationInfo simulationInfo;
-    private Task activeTask;
+    private AbstractTask activeAbstractTask;
     private long taskTime;
     private long tutorialTime;
     private TutorialConfig tutorialConfig;
+    private StorySplashPopup praiseSplashPopup;
 
     /**
      * Singleton
@@ -74,66 +66,12 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     }
 
     public void start() {
-        // TODO ---------- incomment
         simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
-        // tutorialConfig = simulationInfo.getTutorialConfig();
-        // if (tutorialConfig == null) {
-        //    return;
-        //}
-        // TODO ---------- incomment ends
-        // TODO ---------- setup face simulationInfo
-        List<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
-        // Scroll task
-        GameTipConfig gameTipConfig1 = new GameTipConfig();
-        gameTipConfig1.setTip(GameTipConfig.Tip.SCROLL);
-        gameTipConfig1.setTerrainRectHint(new Rectangle(2900, 1300, 10, 10));
-        TipSplashPopupInfo tipSplashPopupInfo1 = new TipSplashPopupInfo();
-        tipSplashPopupInfo1.setTitle("Willkommen auf Eris");
-        tipSplashPopupInfo1.setImageType(TipSplashPopupInfo.ImageType.QUEST);
-        tipSplashPopupInfo1.setMainText("Razaor Industrie, dein böser Ex-Arbeitgeber, hat auf diesem Planeten ein Datencenter aufgebaut. Finde und zerstöre dieses Datencenter, damit du auf weiteren Mehrspieler Planeten landen kannst.");
-        tipSplashPopupInfo1.setTaskText("Scrolle auf dem Planeten herum um das Datencenter zu finden. Benutze dazu die Pfeiltasten oder bewege die Maus zum Bildschirmrand. Oben links ist das Radar.");
-        gameTipConfig1.setTipSplashPopupInfo(tipSplashPopupInfo1);
-        taskConfigs.add(new TaskConfig(Collections.<ItemTypeAndPosition>emptyList(),
-                new Index(0, 200),
-                null,
-                0,
-                0,
-                0,
-                "",
-                null,
-                Collections.<Integer, Integer>emptyMap(),
-                RadarMode.MAP_AND_UNITS,
-                gameTipConfig1,
-                false));
-        // move back (find position)
-        taskConfigs.add(new AutomatedTaskConfig(new Index(0, 200), null));
-        // build task
-        GameTipConfig gameTipConfig2 = new GameTipConfig();
-        gameTipConfig2.setTip(GameTipConfig.Tip.SCROLL);
-        gameTipConfig2.setTerrainRectHint(new Rectangle(2900, 1300, 10, 10));
-        TipSplashPopupInfo tipSplashPopupInfo2 = new TipSplashPopupInfo();
-        tipSplashPopupInfo2.setTitle("Starte eine Basis");
-        tipSplashPopupInfo2.setImageType(TipSplashPopupInfo.ImageType.QUEST);
-        tipSplashPopupInfo2.setMainText("Damit Razarion Industries dich nicht entdeckt, sollte die Basis nicht zu nahe bei Razarion Industries sein.");
-        tipSplashPopupInfo2.setTaskText("Platziere dein Bulldozer");
-        gameTipConfig2.setTipSplashPopupInfo(tipSplashPopupInfo2);
-        taskConfigs.add(new TaskConfig(Collections.<ItemTypeAndPosition>emptyList(),
-                new Index(0, 200),
-                null,
-                0,
-                0,
-                0,
-                "",
-                null,
-                Collections.<Integer, Integer>emptyMap(),
-                RadarMode.MAP_AND_UNITS,
-                gameTipConfig2,
-                false));
-        tutorialConfig = new TutorialConfig(taskConfigs, "Your base", false, false, false);
-        // TODO ---------- setup face simulationInfo ends
-
+        tutorialConfig = simulationInfo.getTutorialConfig();
+        if (tutorialConfig == null) {
+            return;
+        }
         ClientBase.getInstance().setOwnBaseDestroyedListener(this);
-        SimulationConditionServiceImpl.getInstance().setConditionServiceListener(this);
         tutorialTime = System.currentTimeMillis();
         if (tutorialConfig.isEventTracking()) {
             ClientUserTracker.getInstance().startEventTracking();
@@ -145,19 +83,19 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         runNextTask(null);
     }
 
-    private void processPreparation(TaskConfig taskConfig) {
-        if (taskConfig.isClearGame()) {
+    private void processPreparation(AbstractTaskConfig abstractTaskConfig) {
+        if (abstractTaskConfig.isClearGame()) {
             GameCommon.clearGame();
         }
         ClientBase.getInstance().createOwnSimulationBaseIfNotExist(tutorialConfig.getOwnBaseName());
-        ClientPlanetServices.getInstance().setPlanetInfo(taskConfig.createPlanetInfo());
-        ClientUserGuidanceService.getInstance().setLevel(taskConfig.createLevelScope(simulationInfo.getLevelNumber()));
-        if (taskConfig.hasBots()) {
-            ClientBotService.getInstance().setBotConfigs(taskConfig.getBotConfigs());
+        ClientPlanetServices.getInstance().setPlanetInfo(abstractTaskConfig.createPlanetInfo());
+        ClientUserGuidanceService.getInstance().setLevel(abstractTaskConfig.createLevelScope(simulationInfo.getLevelNumber()));
+        if (abstractTaskConfig.hasBots()) {
+            ClientBotService.getInstance().setBotConfigs(abstractTaskConfig.getBotConfigs());
             ClientBotService.getInstance().start();
         }
 
-        for (ItemTypeAndPosition itemTypeAndPosition : taskConfig.getOwnItems()) {
+        for (ItemTypeAndPosition itemTypeAndPosition : abstractTaskConfig.getOwnItems()) {
             try {
                 ItemContainer.getInstance().createSimulationSyncObject(itemTypeAndPosition);
             } catch (NoSuchItemTypeException e) {
@@ -165,38 +103,41 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
             }
         }
 
-        if (taskConfig.getScroll() != null) {
-            TerrainView.getInstance().moveAbsolute(taskConfig.getScroll());
+        if (abstractTaskConfig.getScroll() != null) {
+            TerrainView.getInstance().moveAbsolute(abstractTaskConfig.getScroll());
         }
     }
 
-    private void runNextTask(Task closedTask) {
-        TaskConfig taskConfig;
-        List<TaskConfig> tasks = tutorialConfig.getTasks();
+    private void runNextTask(AbstractTask closedAbstractTask) {
+        AbstractTaskConfig abstractTaskConfig;
+        List<AbstractTaskConfig> tasks = tutorialConfig.getTasks();
         if (tasks.isEmpty()) {
             tutorialFinished();
             return;
         }
-        if (closedTask != null) {
-            int index = tasks.indexOf(closedTask.getTaskConfig());
+        if (closedAbstractTask != null) {
+            int index = tasks.indexOf(closedAbstractTask.getAbstractTaskConfig());
             index++;
             if (tasks.size() > index) {
-                taskConfig = tasks.get(index);
+                abstractTaskConfig = tasks.get(index);
             } else {
                 tutorialFinished();
                 return;
             }
         } else {
-            taskConfig = tasks.get(0);
+            abstractTaskConfig = tasks.get(0);
         }
-        processPreparation(taskConfig);
+        processPreparation(abstractTaskConfig);
         taskTime = System.currentTimeMillis();
-        activeTask = new Task(taskConfig);
-        activeTask.start();
+        activeAbstractTask = createTask(abstractTaskConfig);
+        activeAbstractTask.start();
     }
 
     private void tutorialFinished() {
-        activeTask = null;
+        if (activeAbstractTask != null) {
+            activeAbstractTask.cleanup();
+        }
+        activeAbstractTask = null;
         long time = System.currentTimeMillis();
         ClientUserTracker.getInstance().onTutorialFinished(simulationInfo.getLevelTaskId(), time - tutorialTime, time, new ParametrisedRunnable<GameFlow>() {
             @Override
@@ -207,35 +148,36 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     }
 
     public void cleanup() {
-        activeTask = null;
-        SimulationConditionServiceImpl.getInstance().setConditionServiceListener(null);
-        SimulationConditionServiceImpl.getInstance().deactivateAll();
-        SimulationConditionServiceImpl.getInstance().stopUpdateTimer();
+        if (activeAbstractTask != null) {
+            activeAbstractTask.cleanup();
+        }
+        activeAbstractTask = null;
         simulationInfo = null;
     }
 
-    @Override
-    public void conditionPassed(SimpleBase actor, Void identifier) {
-        if (!ClientBase.getInstance().isMyOwnBase(actor)) {
-            throw new IllegalStateException("Received conditionPassed for unexpected base: " + actor);
-        }
-        onTaskSucceeded();
-    }
-
-    public void onTaskTipCompleted() {
-        // TODO may conflicts with conditionPassed (if any condition)
-        onTaskSucceeded();
-    }
-
-    private void onTaskSucceeded() {
+    public void onTaskSucceeded() {
         long time = System.currentTimeMillis();
-        ClientUserTracker.getInstance().onTaskFinished(simulationInfo.getLevelTaskId(), activeTask, time - taskTime, time);
-        GameTipManager.getInstance().stop();
-        runNextTask(activeTask);
+        ClientUserTracker.getInstance().onTaskFinished(simulationInfo.getLevelTaskId(), activeAbstractTask, time - taskTime, time);
+        activeAbstractTask.cleanup();
+        if (hasPraisePopup()) {
+            startPraisePopup();
+            Timer deferredTimer = new Timer() {
+
+                @Override
+                public void run() {
+                    hidePraisePopup();
+                    runNextTask(activeAbstractTask);
+                }
+            };
+            deferredTimer.schedule(PRAISE_DELAY);
+        } else {
+            runNextTask(activeAbstractTask);
+        }
     }
 
     @Override
     public void onOwnBaseDestroyed() {
+        // TODO was soll genau geschehen wenn basis zerstört wird
         long time = System.currentTimeMillis();
         ClientUserTracker.getInstance().onTutorialFailed(simulationInfo.getLevelTaskId(), time - tutorialTime, time);
         Timer timer = new TimerPerfmon(PerfmonEnum.SIMULATION) {
@@ -252,6 +194,28 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
             return simulationInfo.getLevelTaskId();
         } else {
             return null;
+        }
+    }
+
+
+    private AbstractTask createTask(AbstractTaskConfig abstractTaskConfig) {
+        AbstractTask abstractTask = abstractTaskConfig.createTask();
+        abstractTask.setSimulation(this);
+        return abstractTask;
+    }
+
+    private void startPraisePopup() {
+        praiseSplashPopup = new StorySplashPopup(activeAbstractTask.getPraiseSplash());
+    }
+
+    private boolean hasPraisePopup() {
+        return activeAbstractTask.getPraiseSplash() != null;
+    }
+
+    private void hidePraisePopup() {
+        if (praiseSplashPopup != null) {
+            praiseSplashPopup.hide();
+            praiseSplashPopup = null;
         }
     }
 }

@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbArtifactItemIdComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
@@ -40,7 +41,9 @@ public class ComparisonFactory {
         MONEY_INCREASED(ConditionTrigger.MONEY_INCREASED, DbCountComparisonConfig.class),
         XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class),
         BASE_DELETED(ConditionTrigger.BASE_KILLED, DbCountComparisonConfig.class),
-        SYNC_ITEM_POSITION(ConditionTrigger.SYNC_ITEM_POSITION, DbItemTypePositionComparisonConfig.class);
+        SYNC_ITEM_POSITION(ConditionTrigger.SYNC_ITEM_POSITION, DbItemTypePositionComparisonConfig.class),
+        RAZARION_INCREASED(ConditionTrigger.RAZARION_INCREASED, DbCountComparisonConfig.class),
+        ARTIFACT_ITEM_ADDED(ConditionTrigger.ARTIFACT_ITEM_ADDED, DbArtifactItemIdComparisonConfig.class);
 
         private ConditionTrigger conditionTrigger;
         private List<Class<? extends DbAbstractComparisonConfig>> comparisons;
@@ -48,7 +51,7 @@ public class ComparisonFactory {
         ComparisonClass(ConditionTrigger conditionTrigger, Class<? extends DbAbstractComparisonConfig>... comparisonArray) {
             this.conditionTrigger = conditionTrigger;
             if (comparisonArray != null && comparisonArray.length > 0) {
-                comparisons = new ArrayList<Class<? extends DbAbstractComparisonConfig>>();
+                comparisons = new ArrayList<>();
                 comparisons.addAll(Arrays.asList(comparisonArray));
             }
         }
@@ -77,6 +80,8 @@ public class ComparisonFactory {
                 return new CountComparisonConfigPanel(id);
             } else if (config instanceof DbItemTypePositionComparisonConfig) {
                 return new ItemTypePositionComparisonConfigPanel(id, terrainLinkHelper);
+            } else if (config instanceof DbArtifactItemIdComparisonConfig) {
+                return new ArtifactItemIdComparisonConfigPanel(id);
             } else {
                 throw new IllegalArgumentException("No panel for " + config);
             }
@@ -84,7 +89,7 @@ public class ComparisonFactory {
     }
 
     public static List<ConditionTrigger> getFilteredConditionTriggers() {
-        List<ConditionTrigger> result = new ArrayList<ConditionTrigger>(Arrays.asList(ConditionTrigger.values()));
+        List<ConditionTrigger> result = new ArrayList<>(Arrays.asList(ConditionTrigger.values()));
         result.remove(ConditionTrigger.TUTORIAL);
         return result;
     }

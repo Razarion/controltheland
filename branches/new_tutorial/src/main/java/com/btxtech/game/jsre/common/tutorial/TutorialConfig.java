@@ -28,7 +28,7 @@ public class TutorialConfig implements Serializable {
         TUTORIAL_FAILED
     }
 
-    private List<TaskConfig> taskConfigs;
+    private List<AbstractTaskConfig> abstractTaskConfigs;
     private String ownBaseName;
     private boolean eventTracking;
     private boolean showTip;
@@ -40,20 +40,20 @@ public class TutorialConfig implements Serializable {
     TutorialConfig() {
     }
 
-    public TutorialConfig(List<TaskConfig> taskConfigs,
+    public TutorialConfig(List<AbstractTaskConfig> abstractTaskConfigs,
                           String ownBaseName,
                           boolean eventTracking,
                           boolean showTip,
                           boolean disableScroll) {
-        this.taskConfigs = taskConfigs;
+        this.abstractTaskConfigs = abstractTaskConfigs;
         this.ownBaseName = ownBaseName;
         this.eventTracking = eventTracking;
         this.showTip = showTip;
         this.disableScroll = disableScroll;
     }
 
-    public List<TaskConfig> getTasks() {
-        return taskConfigs;
+    public List<AbstractTaskConfig> getTasks() {
+        return abstractTaskConfigs;
     }
 
     public String getOwnBaseName() {

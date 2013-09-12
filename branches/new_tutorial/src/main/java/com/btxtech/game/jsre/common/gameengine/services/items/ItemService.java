@@ -28,6 +28,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededE
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 
@@ -94,6 +95,8 @@ public interface ItemService {
     SyncBaseItem getNearestEnemyItem(final Index middle, final Set<Integer> filter, final SimpleBase simpleBase);
 
     SyncResourceItem getNearestResourceItem(final Index middle);
+
+    SyncBoxItem getNearestBoxItem(final Index middle);
 
     void killSyncItems(Collection<SyncItem> syncItems);
 

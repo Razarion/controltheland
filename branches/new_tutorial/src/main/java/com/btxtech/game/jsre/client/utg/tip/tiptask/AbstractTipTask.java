@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
-import com.btxtech.game.jsre.client.utg.tip.TipSplashPopupInfo;
+import com.btxtech.game.jsre.client.utg.tip.StorySplashPopupInfo;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 
@@ -18,10 +18,6 @@ public abstract class AbstractTipTask {
     }
 
     public abstract GameTipVisualization createInGameTip() throws NoSuchItemTypeException;
-
-    public TipSplashPopupInfo createSplashTip() {
-        return null;
-    }
 
     public abstract boolean isFulfilled();
 

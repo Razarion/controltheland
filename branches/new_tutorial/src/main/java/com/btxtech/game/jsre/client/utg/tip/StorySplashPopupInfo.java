@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Date: 05.09.13
  * Time: 11:12
  */
-public class TipSplashPopupInfo implements Serializable {
+public class StorySplashPopupInfo implements Serializable {
     public enum ImageType {
         QUEST,
         TICK

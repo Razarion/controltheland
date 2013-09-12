@@ -3,12 +3,14 @@ package com.btxtech.game.jsre.client.cockpit.quest;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 
 public class QuestProgressInfo implements Serializable {
     private ConditionTrigger conditionTrigger;
     private Map<Integer, Amount> itemIdAmounts;
+    private Map<InventoryArtifactInfo, QuestProgressInfo.Amount> inventoryArtifactInfoAmount;
     private Amount amount;
 
     /**
@@ -33,6 +35,14 @@ public class QuestProgressInfo implements Serializable {
         this.itemIdAmounts = itemIdAmount;
     }
 
+    public Map<InventoryArtifactInfo, Amount> getInventoryArtifactInfoAmount() {
+        return inventoryArtifactInfoAmount;
+    }
+
+    public void setInventoryArtifactInfoAmount(Map<InventoryArtifactInfo, Amount> inventoryArtifactInfoAmount) {
+        this.inventoryArtifactInfoAmount = inventoryArtifactInfoAmount;
+    }
+
     public Amount getAmount() {
         return amount;
     }
@@ -46,6 +56,7 @@ public class QuestProgressInfo implements Serializable {
         return "QuestProgressInfo{" +
                 "conditionTrigger=" + conditionTrigger +
                 ", itemIdAmounts=" + itemIdAmounts +
+                ", inventoryArtifactInfoAmount=" + inventoryArtifactInfoAmount +
                 ", amount=" + amount +
                 '}';
     }
