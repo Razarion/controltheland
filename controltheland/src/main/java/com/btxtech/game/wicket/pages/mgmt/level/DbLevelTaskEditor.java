@@ -59,7 +59,7 @@ public class DbLevelTaskEditor extends MgmtWebPage {
         form.add(new DropDownChoice<>("questTypeEnum", Arrays.asList(QuestTypeEnum.values())));
         form.add(new TutorialPanel("dbTutorialConfig"));
         form.add(new ConditionConfigPanel("dbConditionConfig", terrainLinkHelper));
-        form.add(new TextField("unlockRazarion"));
+        form.add(new TextField("unlockCrystals"));
         // Reward
         form.add(new TextField("money"));
         form.add(new TextField("xp"));

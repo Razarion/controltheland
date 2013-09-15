@@ -62,9 +62,9 @@ public interface HistoryService {
 
     void addBoxPicked(SyncBoxItem boxItem, SyncBaseItem picker);
 
-    void addRazarionFromBox(UserState userState, int razarion);
+    void addCrystalsFromBox(UserState userState, int crystals);
 
-    void addRazarionBought(UserState userState, int razarionBought);
+    void addCrystalsBought(UserState userState, int crystalsBought);
 
     void addInventoryItemFromBox(UserState userState, String inventoryItemName);
 
@@ -72,9 +72,9 @@ public interface HistoryService {
 
     void addInventoryItemUsed(UserState userState, String inventoryItemName);
 
-    void addInventoryItemBought(UserState userState, String inventoryItemName, int razarion);
+    void addInventoryItemBought(UserState userState, String inventoryItemName, int crystals);
 
-    void addInventoryArtifactBought(UserState userState, String inventoryArtifactName, int razarion);
+    void addInventoryArtifactBought(UserState userState, String inventoryArtifactName, int crystals);
 
     void addBotEnrageUp(String botName, BotEnragementStateConfig botEnragementState, SimpleBase actor);
 
@@ -86,7 +86,7 @@ public interface HistoryService {
 
     void addPlanetUnlocked(UserState userState, PlanetLiteInfo planetLiteInfo);
 
-    void addGuildCreated(User user, int razarionCost, DbGuild dbGuild);
+    void addGuildCreated(User user, int crystalCost, DbGuild dbGuild);
 
     void addGuildInvitation(User invitingUser, User invitee, DbGuild hostGuild);
 
@@ -114,7 +114,7 @@ public interface HistoryService {
 
     void addFriendInvitationFacebookSent(User user, String fbRequestId);
 
-    void addFriendInvitationBonus(User host, User invitee, int bonus, int razarion);
+    void addFriendInvitationBonus(User host, User invitee, int bonus, int crystals);
 
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int start, int count);
 

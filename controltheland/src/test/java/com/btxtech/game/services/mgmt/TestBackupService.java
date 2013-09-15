@@ -720,10 +720,10 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType attacker = serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
-        attacker.setUnlockRazarion(10);
+        attacker.setUnlockCrystals(10);
         serverItemTypeService.saveDbItemType(attacker);
         DbBaseItemType factory = serverItemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID);
-        factory.setUnlockRazarion(8);
+        factory.setUnlockCrystals(8);
         serverItemTypeService.saveDbItemType(factory);
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -741,7 +741,7 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
         Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
@@ -795,7 +795,7 @@ public class TestBackupService extends AbstractServiceTest {
         createBase(new Index(2000, 200));
         Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
         Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -823,7 +823,7 @@ public class TestBackupService extends AbstractServiceTest {
         // Unregistered user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         createBase(new Index(3000, 3000)); // Create base
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
@@ -878,10 +878,10 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask1 = dbLevel.getLevelTaskCrud().createDbChild();
-        dbLevelTask1.setUnlockRazarion(10);
+        dbLevelTask1.setUnlockCrystals(10);
         setupCondition(dbLevelTask1);
         DbLevelTask dbLevelTask2 = dbLevel.getLevelTaskCrud().createDbChild();
-        dbLevelTask2.setUnlockRazarion(20);
+        dbLevelTask2.setUnlockCrystals(20);
         setupCondition(dbLevelTask2);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
@@ -902,7 +902,7 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
         Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         unlockService.unlockQuest(dbLevelTask1.getId());
@@ -956,7 +956,7 @@ public class TestBackupService extends AbstractServiceTest {
         createBase(new Index(2000, 2000));
         Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
         Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         unlockService.unlockQuest(dbLevelTask1.getId());
         unlockService.unlockQuest(dbLevelTask2.getId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -984,7 +984,7 @@ public class TestBackupService extends AbstractServiceTest {
         // Unregistered user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         createBase(new Index(3000, 3000)); // Create base
         unlockService.unlockQuest(dbLevelTask1.getId());
         unlockService.unlockQuest(dbLevelTask2.getId());
@@ -1039,13 +1039,13 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         PlanetLiteInfo planetInfo1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID).createPlanetInfo().getPlanetLiteInfo();
         DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setUnlockRazarion(15);
+        dbPlanet2.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
         PlanetLiteInfo planetInfo2 = dbPlanet2.createPlanetInfo().getPlanetLiteInfo();
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setUnlockRazarion(15);
+        dbPlanet3.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
         planetSystemService.activatePlanet(TEST_PLANET_3_ID);
@@ -1067,7 +1067,7 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         Assert.assertTrue(unlockService.isPlanetLocked(planetInfo2, getUserState()));
         Assert.assertTrue(unlockService.isPlanetLocked(planetInfo3, getUserState()));
         unlockService.unlockPlanet(planetInfo2.getPlanetId());
@@ -1122,7 +1122,7 @@ public class TestBackupService extends AbstractServiceTest {
         loginUser("U2");
         Assert.assertTrue(unlockService.isPlanetLocked(planetInfo2, getUserState()));
         Assert.assertTrue(unlockService.isPlanetLocked(planetInfo3, getUserState()));
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         unlockService.unlockPlanet(planetInfo2.getPlanetId());
         unlockService.unlockPlanet(planetInfo3.getPlanetId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1150,7 +1150,7 @@ public class TestBackupService extends AbstractServiceTest {
         // Unregistered user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
         createBase(new Index(3000, 3000)); // Create base
         unlockService.unlockPlanet(planetInfo2.getPlanetId());

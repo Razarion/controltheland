@@ -44,7 +44,7 @@
         </g:Tab>
         <g:Tab width="100%" text="{msg.tabComplete}">
             <g:VerticalPanel width="100%" height="300px">
-                <g:Label text="{msg.invitationRazarionBonus}"/>
+                <g:Label text="{msg.invitationCrystalBonus}"/>
                 <g:ScrollPanel width="100%" height="20em" styleName="{style.tablePanel}">
                     <p1:CellTable width="100%" ui:field="completeTable"/>
                 </g:ScrollPanel>

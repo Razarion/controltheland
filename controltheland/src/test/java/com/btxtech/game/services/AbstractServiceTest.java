@@ -822,7 +822,7 @@ abstract public class AbstractServiceTest {
                 if (!ObjectUtils.equals(expectedPlanetLiteInfo.getName(), receivedPlanetLiteInfo.getName())) {
                     return false;
                 }
-                if (!ObjectUtils.equals(expectedPlanetLiteInfo.getUnlockRazarion(), receivedPlanetLiteInfo.getUnlockRazarion())) {
+                if (!ObjectUtils.equals(expectedPlanetLiteInfo.getUnlockCrystals(), receivedPlanetLiteInfo.getUnlockCrystals())) {
                     return false;
                 }
                 if (expectedPlanetLiteInfo.getPlanetId() != receivedPlanetLiteInfo.getPlanetId()) {
@@ -2470,7 +2470,7 @@ abstract public class AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("presi");
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         int guildId = guildService.createGuild("guild").getId();
         guildService.inviteUserToGuild("member1");
         endHttpRequestAndOpenSessionInViewFilter();

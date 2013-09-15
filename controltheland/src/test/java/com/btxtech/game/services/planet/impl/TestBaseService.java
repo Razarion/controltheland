@@ -458,7 +458,7 @@ public class TestBaseService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("president");
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         Integer guildId = guildService.createGuild("xxxx").getId();
         createBase(new Index(3000, 1000));
         endHttpRequestAndOpenSessionInViewFilter();

@@ -35,7 +35,7 @@
             font-weight: bold;
         }
 
-        .coastLabel {
+        .costLabel {
             color: black;
             font-size: 11px;
             font-family: Arial, Helvetica, sans-serif;
@@ -58,7 +58,7 @@
                 <g:Cell verticalAlignment="ALIGN_MIDDLE">
                     <g:VerticalPanel>
                         <g:Cell verticalAlignment="ALIGN_MIDDLE">
-                            <g:Label styleName="{style.coastLabel}" ui:field="coastLabel"/>
+                            <g:Label styleName="{style.costLabel}" ui:field="costLabel"/>
                         </g:Cell>
                         <g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
                             <g:Button text="{msg.buy}" ui:field="buyItemButton"/>

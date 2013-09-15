@@ -21,7 +21,7 @@ public class TestPropertyService extends AbstractServiceTest {
     @DirtiesContext
     public void testIntPropertyNoSession() throws Exception {
         try {
-            propertyService.getIntProperty(PropertyServiceEnum.GUILD_RAZARION_COST);
+            propertyService.getIntProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST);
             Assert.fail("HibernateException expected");
         } catch (HibernateException e) {
             Assert.assertEquals("No Session found for current thread", e.getMessage());
@@ -45,10 +45,10 @@ public class TestPropertyService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
-            propertyService.getIntProperty(PropertyServiceEnum.GUILD_RAZARION_COST);
+            propertyService.getIntProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST);
             Assert.fail("NoSuchPropertyException expected");
         } catch (NoSuchPropertyException e) {
-            Assert.assertEquals("No such property: PropertyServiceEnum{displayName='Razarion cost for creating a guild', type=class java.lang.Integer, fallbackValue=null}", e.getMessage());
+            Assert.assertEquals("No such property: PropertyServiceEnum{displayName='Crystal cost for creating a guild', type=class java.lang.Integer, fallbackValue=null}", e.getMessage());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -84,13 +84,13 @@ public class TestPropertyService extends AbstractServiceTest {
     public void testCreateIntProperty() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 1);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1, propertyService.getIntProperty(PropertyServiceEnum.GUILD_RAZARION_COST));
+        Assert.assertEquals(1, propertyService.getIntProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -117,10 +117,10 @@ public class TestPropertyService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
-            propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, "Hallo");
+            propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, "Hallo");
             Assert.fail("WrongPropertyTypeException expected");
         } catch (WrongPropertyTypeException e) {
-            Assert.assertEquals("Wrong property type exception. Expected: class java.lang.String Property: PropertyServiceEnum{displayName='Razarion cost for creating a guild', type=class java.lang.Integer, fallbackValue=null}", e.getMessage());
+            Assert.assertEquals("Wrong property type exception. Expected: class java.lang.String Property: PropertyServiceEnum{displayName='Crystal cost for creating a guild', type=class java.lang.Integer, fallbackValue=null}", e.getMessage());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -132,7 +132,7 @@ public class TestPropertyService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbProperty dbProperty = propertyService.getDPropertyCrudServiceHelper().createDbChild();
-        dbProperty.setPropertyServiceEnum(PropertyServiceEnum.GUILD_RAZARION_COST);
+        dbProperty.setPropertyServiceEnum(PropertyServiceEnum.GUILD_CRYSTAL_COST);
         dbProperty.setIntegerValue(15);
         propertyService.getDPropertyCrudServiceHelper().updateDbChild(dbProperty);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -140,7 +140,7 @@ public class TestPropertyService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(15, propertyService.getIntProperty(PropertyServiceEnum.GUILD_RAZARION_COST));
+        Assert.assertEquals(15, propertyService.getIntProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -155,7 +155,7 @@ public class TestPropertyService extends AbstractServiceTest {
         } catch (IllegalStateException e) {
             Assert.assertEquals("propertyServiceEnum is not set", e.getMessage());
         }
-        dbIntProperty.setPropertyServiceEnum(PropertyServiceEnum.GUILD_RAZARION_COST);
+        dbIntProperty.setPropertyServiceEnum(PropertyServiceEnum.GUILD_CRYSTAL_COST);
         try {
             dbIntProperty.setValueAsString("Hallo");
             Assert.fail("NumberFormatException expected");
@@ -185,7 +185,7 @@ public class TestPropertyService extends AbstractServiceTest {
     @DirtiesContext
     public void getValueAsString() throws Exception {
         DbProperty dbIntProperty = new DbProperty();
-        dbIntProperty.setPropertyServiceEnum(PropertyServiceEnum.GUILD_RAZARION_COST);
+        dbIntProperty.setPropertyServiceEnum(PropertyServiceEnum.GUILD_CRYSTAL_COST);
         dbIntProperty.setIntegerValue(111);
         Assert.assertEquals("111", dbIntProperty.getValueAsString());
         DbProperty dbStringProperty = new DbProperty();

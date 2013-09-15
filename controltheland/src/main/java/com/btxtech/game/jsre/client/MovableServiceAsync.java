@@ -15,7 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
+import com.btxtech.game.jsre.client.common.info.CrystalCostInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
@@ -130,7 +130,7 @@ public interface MovableServiceAsync {
 
     void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime, AsyncCallback<Void> async);
 
-    void getRazarion(AsyncCallback<Integer> async);
+    void getCrystals(AsyncCallback<Integer> async);
 
     void unlockItemType(int itemTypeId, AsyncCallback<UnlockContainer> async);
 
@@ -162,7 +162,7 @@ public interface MovableServiceAsync {
 
     void getFullGuildInfo(int guildId, AsyncCallback<FullGuildInfo> asyncCallback);
 
-    void getCreateGuildRazarionCost(AsyncCallback<RazarionCostInfo> asyncCallback);
+    void getCreateGuildCrystalCost(AsyncCallback<CrystalCostInfo> asyncCallback);
 
     void createGuild(String guildName, AsyncCallback<SimpleGuild> asyncCallback);
 

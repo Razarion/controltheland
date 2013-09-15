@@ -43,7 +43,7 @@ import java.util.List;
  * Date: 08.09.13
  * Time: 17:15
  */
-public class TestConditionServiceRazarion extends AbstractServiceTest {
+public class TestConditionServiceCrystals extends AbstractServiceTest {
     @Autowired
     private FinanceService financeService;
     @Autowired
@@ -73,8 +73,8 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
         configureSimplePlanetNoResources();
 
         ServerConditionService serverConditionServiceMock = EasyMock.createStrictMock(ServerConditionService.class);
-        serverConditionServiceMock.onRazarionIncreased(createUserStateMatcher("U1"), EasyMock.eq(false), EasyMock.eq(100));
-        serverConditionServiceMock.onRazarionIncreased(createUserStateMatcher("U1"), EasyMock.eq(false), EasyMock.eq(1000));
+        serverConditionServiceMock.onCrystalsIncreased(createUserStateMatcher("U1"), EasyMock.eq(false), EasyMock.eq(100));
+        serverConditionServiceMock.onCrystalsIncreased(createUserStateMatcher("U1"), EasyMock.eq(false), EasyMock.eq(1000));
         EasyMock.replay(serverConditionServiceMock);
         setPrivateField(FinanceServiceImpl.class, financeService, "serverConditionService", serverConditionServiceMock);
 
@@ -82,13 +82,13 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         String userIdString = Integer.toString(getUserId());
-        financeService.razarionBought(100, getUserState());
+        financeService.crystalsBought(100, getUserState());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        financeService.razarionBought(userIdString, "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBought(userIdString, "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -110,14 +110,14 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
         dbBoxItemType.setTtl(5000);
         DbBoxItemTypePossibility dbBoxItemTypePossibility1 = dbBoxItemType.getBoxPossibilityCrud().createDbChild();
         dbBoxItemTypePossibility1.setPossibility(1.0);
-        dbBoxItemTypePossibility1.setRazarion(99);
+        dbBoxItemTypePossibility1.setCrystals(99);
         serverItemTypeService.saveDbItemType(dbBoxItemType);
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         ServerConditionService serverConditionServiceMock = EasyMock.createStrictMock(ServerConditionService.class);
-        serverConditionServiceMock.onRazarionIncreased(createUserStateMatcher("qaywsx"), EasyMock.eq(true), EasyMock.eq(99));
+        serverConditionServiceMock.onCrystalsIncreased(createUserStateMatcher("qaywsx"), EasyMock.eq(true), EasyMock.eq(99));
         EasyMock.replay(serverConditionServiceMock);
         setPrivateField(GlobalInventoryServiceImpl.class, globalInventoryService, "serverConditionService", serverConditionServiceMock);
 
@@ -152,7 +152,7 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         ServerConditionService serverConditionServiceMock = EasyMock.createStrictMock(ServerConditionService.class);
-        serverConditionServiceMock.onRazarionIncreased(createUserStateMatcher("Host"), EasyMock.eq(false), EasyMock.eq(29));
+        serverConditionServiceMock.onCrystalsIncreased(createUserStateMatcher("Host"), EasyMock.eq(false), EasyMock.eq(29));
         EasyMock.replay(serverConditionServiceMock);
         setPrivateField(InvitationServiceImpl.class, invitationService, "serverConditionService", serverConditionServiceMock);
 
@@ -179,7 +179,7 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
     @DirtiesContext
     public void testConditionServiceNoPlanetInteraction() throws Exception {
         configureSimplePlanetNoResources();
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.RAZARION_INCREASED, new CountComparisonConfig(20), null, null, false);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.CRYSTALS_INCREASED, new CountComparisonConfig(20), null, null, false);
         passed = false;
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
             @Override
@@ -204,13 +204,13 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Test inside a web request
-        serverConditionService.onRazarionIncreased(userState, false, 1);
+        serverConditionService.onCrystalsIncreased(userState, false, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         Assert.assertFalse(passed);
-        serverConditionService.onRazarionIncreased(userState, false, 18);
+        serverConditionService.onCrystalsIncreased(userState, false, 18);
         Assert.assertFalse(passed);
-        serverConditionService.onRazarionIncreased(userState, false, 2);
+        serverConditionService.onCrystalsIncreased(userState, false, 2);
         Assert.assertTrue(passed);
     }
 
@@ -218,7 +218,7 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
     @DirtiesContext
     public void testConditionServicePlanetInteraction() throws Exception {
         configureSimplePlanetNoResources();
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.RAZARION_INCREASED, new CountComparisonConfig(20), null, null, false);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.CRYSTALS_INCREASED, new CountComparisonConfig(20), null, null, false);
         passed = false;
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
             @Override
@@ -240,7 +240,7 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
         passed = false;
 
         Assert.assertFalse(passed);
-        serverConditionService.onRazarionIncreased(userState, true, 22);
+        serverConditionService.onCrystalsIncreased(userState, true, 22);
         Assert.assertFalse(passed);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -248,7 +248,7 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
         createBase(new Index(1000, 1000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-        serverConditionService.onRazarionIncreased(userState, true, 22);
+        serverConditionService.onCrystalsIncreased(userState, true, 22);
         Assert.assertTrue(passed);
     }
 
@@ -256,14 +256,14 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
     @DirtiesContext
     public void testConditionServiceLevelTask() throws Exception {
         configureSimplePlanetNoResources();
-        // setup level task for razarion
+        // setup level task for crystals
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
-        dbConditionConfig.setConditionTrigger(ConditionTrigger.RAZARION_INCREASED);
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.CRYSTALS_INCREASED);
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
         dbCountComparisonConfig.setCount(30);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
@@ -290,9 +290,9 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
         endHttpSession();
 
         Assert.assertFalse(passed);
-        serverConditionService.onRazarionIncreased(userState, false, 15);
+        serverConditionService.onCrystalsIncreased(userState, false, 15);
         Assert.assertFalse(passed);
-        serverConditionService.onRazarionIncreased(userState, false, 15);
+        serverConditionService.onCrystalsIncreased(userState, false, 15);
         Assert.assertTrue(passed);
     }
 
@@ -300,14 +300,14 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
     @DirtiesContext
     public void testConditionServiceLevelTaskAndBackupRestore() throws Exception {
         configureSimplePlanetNoResources();
-        // setup level task for razarion
+        // setup level task for crystals
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
-        dbConditionConfig.setConditionTrigger(ConditionTrigger.RAZARION_INCREASED);
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.CRYSTALS_INCREASED);
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
         dbCountComparisonConfig.setCount(30);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
@@ -335,7 +335,7 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
         endHttpSession();
 
         Assert.assertFalse(passed);
-        serverConditionService.onRazarionIncreased(userState, false, 15);
+        serverConditionService.onCrystalsIncreased(userState, false, 15);
         Assert.assertFalse(passed);
         // Backup
         beginHttpSession();
@@ -355,7 +355,7 @@ public class TestConditionServiceRazarion extends AbstractServiceTest {
         endHttpSession();
 
         Assert.assertFalse(passed);
-        serverConditionService.onRazarionIncreased(newUserState, false, 15);
+        serverConditionService.onCrystalsIncreased(newUserState, false, 15);
         Assert.assertTrue(passed);
     }
 }

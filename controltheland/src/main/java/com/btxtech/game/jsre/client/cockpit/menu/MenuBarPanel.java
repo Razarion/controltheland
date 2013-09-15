@@ -8,6 +8,8 @@ import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.StartNewBaseDialog;
+import com.btxtech.game.jsre.client.dialogs.crystals.BuyCrystalsPaypalDialog;
+import com.btxtech.game.jsre.client.dialogs.crystals.HowToGetCrystalsPanel;
 import com.btxtech.game.jsre.client.dialogs.guild.CreateGuildDialog;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildInvitationsDialog;
 import com.btxtech.game.jsre.client.dialogs.guild.MyGuildDialog;
@@ -15,8 +17,6 @@ import com.btxtech.game.jsre.client.dialogs.guild.SearchGuildDialog;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryDialog;
 import com.btxtech.game.jsre.client.dialogs.incentive.InviteFriendsDialog;
 import com.btxtech.game.jsre.client.dialogs.news.NewsDialog;
-import com.btxtech.game.jsre.client.dialogs.razarion.BuyRazarionPaypalDialog;
-import com.btxtech.game.jsre.client.dialogs.razarion.HowToGetRazarionPanel;
 import com.btxtech.game.jsre.client.dialogs.starmap.StarMapDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -58,7 +58,7 @@ public class MenuBarPanel extends Composite {
     @UiField
     MenuItem buyPaypal;
     @UiField
-    MenuItem overviewRazarion;
+    MenuItem overviewCrystals;
     @UiField
     MenuItem starMap;
 
@@ -153,13 +153,13 @@ public class MenuBarPanel extends Composite {
         buyPaypal.setScheduledCommand(new Command() {
             @Override
             public void execute() {
-                DialogManager.showDialog(new BuyRazarionPaypalDialog(), DialogManager.Type.STACK_ABLE);
+                BuyCrystalsPaypalDialog.showDialog();
             }
         });
-        overviewRazarion.setScheduledCommand(new Command() {
+        overviewCrystals.setScheduledCommand(new Command() {
             @Override
             public void execute() {
-                DialogManager.showDialog(new HowToGetRazarionPanel(ClientI18nHelper.CONSTANTS.howToGetRazarion()), DialogManager.Type.STACK_ABLE);
+                DialogManager.showDialog(new HowToGetCrystalsPanel(ClientI18nHelper.CONSTANTS.howToGetCrystals()), DialogManager.Type.STACK_ABLE);
             }
         });
         starMap.setScheduledCommand(new Scheduler.ScheduledCommand() {

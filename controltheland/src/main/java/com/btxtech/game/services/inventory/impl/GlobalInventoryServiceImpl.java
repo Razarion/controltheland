@@ -109,11 +109,11 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
             serverConditionService.onArtifactItemAdded(userState, true, dbBoxItemTypePossibility.getDbInventoryArtifact().getId());
             historyService.addInventoryArtifactFromBox(userState, dbBoxItemTypePossibility.getDbInventoryArtifact().getName());
             builder.append("Artifact: ").append(dbBoxItemTypePossibility.getDbInventoryArtifact().getName());
-        } else if (dbBoxItemTypePossibility.getRazarion() != null) {
-            userState.addRazarion(dbBoxItemTypePossibility.getRazarion());
-            historyService.addRazarionFromBox(userState, dbBoxItemTypePossibility.getRazarion());
-            serverConditionService.onRazarionIncreased(userState,true, dbBoxItemTypePossibility.getRazarion());
-            builder.append("Razarion: ").append(dbBoxItemTypePossibility.getRazarion());
+        } else if (dbBoxItemTypePossibility.getCrystals() != null) {
+            userState.addCrystals(dbBoxItemTypePossibility.getCrystals());
+            historyService.addCrystalsFromBox(userState, dbBoxItemTypePossibility.getCrystals());
+            serverConditionService.onCrystalsIncreased(userState, true, dbBoxItemTypePossibility.getCrystals());
+            builder.append("Crystals: ").append(dbBoxItemTypePossibility.getCrystals());
         } else {
             log.warn("No content defined for box: " + dbBoxItemTypePossibility.getParent() + " " + dbBoxItemTypePossibility);
         }
@@ -143,31 +143,31 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
     public void buyInventoryItem(int inventoryItemId) {
         DbInventoryItem dbInventoryItem = itemCrud.readDbChild(inventoryItemId);
         UserState userState = userService.getUserState();
-        if (dbInventoryItem.getRazarionCoast() == null) {
+        if (dbInventoryItem.getCrystalCost() == null) {
             throw new IllegalArgumentException("The InventoryItem can not be bought: " + userState + " dbInventoryItem: " + dbInventoryItem);
         }
-        if (dbInventoryItem.getRazarionCoast() > userState.getRazarion()) {
-            throw new IllegalArgumentException("The user does not have enough razarion to buy the inventory item. User: " + userState + " dbInventoryItem: " + dbInventoryItem + " Razarion: " + userState.getRazarion());
+        if (dbInventoryItem.getCrystalCost() > userState.getCrystals()) {
+            throw new IllegalArgumentException("The user does not have enough crystals to buy the inventory item. User: " + userState + " dbInventoryItem: " + dbInventoryItem + " crystals: " + userState.getCrystals());
         }
-        userState.subRazarion(dbInventoryItem.getRazarionCoast());
+        userState.subCrystals(dbInventoryItem.getCrystalCost());
         userState.addInventoryItem(dbInventoryItem.getId());
-        historyService.addInventoryItemBought(userState, dbInventoryItem.getName(), dbInventoryItem.getRazarionCoast());
+        historyService.addInventoryItemBought(userState, dbInventoryItem.getName(), dbInventoryItem.getCrystalCost());
     }
 
     @Override
     public void buyInventoryArtifact(int inventoryArtifactId) {
         DbInventoryArtifact dbInventoryArtifact = artifactCrud.readDbChild(inventoryArtifactId);
         UserState userState = userService.getUserState();
-        if (dbInventoryArtifact.getRazarionCoast() == null) {
+        if (dbInventoryArtifact.getCrystalCost() == null) {
             throw new IllegalArgumentException("The InventoryArtifact can not be bought: " + userState + " dbInventoryItem: " + dbInventoryArtifact);
         }
-        if (dbInventoryArtifact.getRazarionCoast() > userState.getRazarion()) {
-            throw new IllegalArgumentException("The user does not have enough razarion to buy the inventory artifact. User: " + userState + " dbInventoryArtifact: " + dbInventoryArtifact + " Razarion: " + userState.getRazarion());
+        if (dbInventoryArtifact.getCrystalCost() > userState.getCrystals()) {
+            throw new IllegalArgumentException("The user does not have enough crystals to buy the inventory artifact. User: " + userState + " dbInventoryArtifact: " + dbInventoryArtifact + " crystals: " + userState.getCrystals());
         }
-        userState.subRazarion(dbInventoryArtifact.getRazarionCoast());
+        userState.subCrystals(dbInventoryArtifact.getCrystalCost());
         userState.addInventoryArtifact(dbInventoryArtifact.getId());
         serverConditionService.onArtifactItemAdded(userState, false,dbInventoryArtifact.getId());
-        historyService.addInventoryArtifactBought(userState, dbInventoryArtifact.getName(), dbInventoryArtifact.getRazarionCoast());
+        historyService.addInventoryArtifactBought(userState, dbInventoryArtifact.getName(), dbInventoryArtifact.getCrystalCost());
     }
 
     @Override
@@ -185,8 +185,8 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
         Map<Integer, InventoryArtifactInfo> allArtifacts = getAllInventoryArtifactInfoFromDb(dbPlanet);
         Map<Integer, InventoryItemInfo> allItems = getAllInventoryItemsInfoFromDb(allArtifacts, dbPlanet, levelScope);
 
-        // Set razarion
-        inventoryInfo.setRazarion(userState.getRazarion());
+        // Set crystals
+        inventoryInfo.setCrystals(userState.getCrystals());
         // Set all items
         inventoryInfo.setAllInventoryItemInfos(new ArrayList<>(allItems.values())); // new ArrayList() due to GWT problems
         // Set all artifacts
@@ -230,8 +230,8 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
     @Override
     public void setupNewUserState(UserState userState) {
         for (DbInventoryNewUser dbInventoryNewUser : newUserCrud.readDbChildren()) {
-            if (dbInventoryNewUser.getRazarion() != null) {
-                userState.addRazarion(dbInventoryNewUser.getRazarion());
+            if (dbInventoryNewUser.getCrystals() != null) {
+                userState.addCrystals(dbInventoryNewUser.getCrystals());
             }
             if (dbInventoryNewUser.getDbInventoryItem() != null) {
                 for (int i = 0; i < dbInventoryNewUser.getCount(); i++) {

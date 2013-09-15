@@ -1,4 +1,4 @@
-package com.btxtech.game.jsre.client.dialogs.razarion;
+package com.btxtech.game.jsre.client.dialogs.crystals;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.dialogs.DialogUiBinderWrapper;
@@ -21,12 +21,12 @@ public class BuyDialogPanel extends DialogUiBinderWrapper {
     interface BuyDialogPanelUiBinder extends UiBinder<Widget, BuyDialogPanel> {
     }
 
-    public BuyDialogPanel(String title, String message, int razarionCost, int razarionBalance) {
+    public BuyDialogPanel(String title, String message, int crystalCost, int crystalBalance) {
         this.title = title;
         initWidget(uiBinder.createAndBindUi(this));
         messageLabel.setText(message);
-        costLabel.setText(ClientI18nHelper.CONSTANTS.buyDialogCost(razarionCost));
-        balanceLabel.setText(ClientI18nHelper.CONSTANTS.buyDialogbalance(razarionBalance));
+        costLabel.setText(ClientI18nHelper.CONSTANTS.buyDialogCost(crystalCost));
+        balanceLabel.setText(ClientI18nHelper.CONSTANTS.buyDialogbalance(crystalBalance));
     }
 
     @Override

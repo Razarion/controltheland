@@ -22,9 +22,9 @@ import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.info.CrystalCostInfo;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
-import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
@@ -581,9 +581,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public int getRazarion() {
+    public int getCrystals() {
         try {
-            return userService.getUserState().getRazarion();
+            return userService.getUserState().getCrystals();
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return 0;
@@ -738,9 +738,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public RazarionCostInfo getCreateGuildRazarionCost() {
+    public CrystalCostInfo getCreateGuildCrystalCost() {
         try {
-            return guildService.getCreateGuildRazarionCost();
+            return guildService.getCreateGuildCrystalCost();
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;

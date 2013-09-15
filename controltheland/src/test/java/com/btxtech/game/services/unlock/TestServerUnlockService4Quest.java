@@ -49,7 +49,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(TEST_LEVEL_TASK_2_2_REAL_ID);
-        dbLevelTask.setUnlockRazarion(8);
+        dbLevelTask.setUnlockCrystals(8);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -69,7 +69,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         assertWholeBaseItemCount(TEST_PLANET_1_ID, 4);
         Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
         // Unlock quest
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         UnlockContainer unlockContainer = unlockService.unlockQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
         Assert.assertTrue(unlockContainer.containsQuestId(TEST_LEVEL_TASK_2_2_REAL_ID));
         // Fulfill quest
@@ -92,7 +92,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(TEST_LEVEL_TASK_2_2_REAL_ID);
-        dbLevelTask.setUnlockRazarion(8);
+        dbLevelTask.setUnlockCrystals(8);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -115,7 +115,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         // Verify condition not activate
         Assert.assertFalse(serverConditionService.hasConditionTrigger(getUserState(), dbLevelTask.getId()));
         // Unlock quest
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         UnlockContainer unlockContainer = unlockService.unlockQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
         // Verify
         Assert.assertTrue(unlockContainer.containsQuestId(TEST_LEVEL_TASK_2_2_REAL_ID));
@@ -142,7 +142,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(TEST_LEVEL_TASK_2_2_REAL_ID);
-        dbLevelTask.setUnlockRazarion(8);
+        dbLevelTask.setUnlockCrystals(8);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -152,7 +152,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL_ID);
         // Unlock quest
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         UnlockContainer unlockContainer = unlockService.unlockQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
         Assert.assertTrue(unlockContainer.containsQuestId(TEST_LEVEL_TASK_2_2_REAL_ID));
         userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_2_REAL_ID, Locale.ENGLISH);
@@ -178,7 +178,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(TEST_LEVEL_TASK_2_2_REAL_ID);
-        dbLevelTask.setUnlockRazarion(8);
+        dbLevelTask.setUnlockCrystals(8);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -191,7 +191,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         Thread.sleep(1000); // Wait for money packet
         clearPackets();
         // Unlock quest
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         UnlockContainer unlockContainer = unlockService.unlockQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
         // Verify
         Assert.assertTrue(unlockContainer.containsQuestId(TEST_LEVEL_TASK_2_2_REAL_ID));
@@ -222,7 +222,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(TEST_LEVEL_TASK_2_2_REAL_ID);
-        dbLevelTask.setUnlockRazarion(8);
+        dbLevelTask.setUnlockCrystals(8);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         QuestInfo questInfo = dbLevelTask.createQuestInfo(Locale.ENGLISH);
@@ -231,14 +231,14 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getUserState().setRazarion(0);
+        getUserState().setCrystals(0);
         try {
             unlockService.unlockQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Not enough razarion to unlock: DbLevelTask{id=3, name='TEST_LEVEL_TASK_2_2_REAL_NAME} user: UserState: user=null", e.getMessage());
+            Assert.assertEquals("Not enough crystals to unlock: DbLevelTask{id=3, name='TEST_LEVEL_TASK_2_2_REAL_NAME} user: UserState: user=null", e.getMessage());
         }
-        Assert.assertEquals(0, getUserState().getRazarion());
+        Assert.assertEquals(0, getUserState().getCrystals());
         Assert.assertTrue(unlockService.isQuestLocked(questInfo, getUserState()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -251,14 +251,14 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getUserState().setRazarion(0);
+        getUserState().setCrystals(0);
         try {
             unlockService.unlockQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             Assert.assertEquals("Quest can not be unlocked: DbLevelTask{id=3, name='TEST_LEVEL_TASK_2_2_REAL_NAME}", e.getMessage());
         }
-        Assert.assertEquals(0, getUserState().getRazarion());
+        Assert.assertEquals(0, getUserState().getCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -272,10 +272,10 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask1 = dbLevel.getLevelTaskCrud().createDbChild();
-        dbLevelTask1.setUnlockRazarion(1);
+        dbLevelTask1.setUnlockCrystals(1);
         setupCondition(dbLevelTask1);
         DbLevelTask dbLevelTask2 = dbLevel.getLevelTaskCrud().createDbChild();
-        dbLevelTask2.setUnlockRazarion(1);
+        dbLevelTask2.setUnlockCrystals(1);
         setupCondition(dbLevelTask2);
         DbLevelTask dbLevelTask3 = dbLevel.getLevelTaskCrud().createDbChild();
         setupCondition(dbLevelTask3);
@@ -289,7 +289,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         getOrCreateBase(); // Create Base
         unlockService.unlockQuest(dbLevelTask1.getId());
         Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
@@ -321,11 +321,11 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask1 = dbLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask1.setName("LT1");
-        dbLevelTask1.setUnlockRazarion(10);
+        dbLevelTask1.setUnlockCrystals(10);
         setupCondition(dbLevelTask1);
         DbLevelTask dbLevelTask2 = dbLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask2.setName("LT2");
-        dbLevelTask2.setUnlockRazarion(20);
+        dbLevelTask2.setUnlockCrystals(20);
         setupCondition(dbLevelTask2);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
@@ -335,7 +335,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         getOrCreateBase(); // Create Base
         unlockService.unlockQuest(dbLevelTask1.getId());
         unlockService.unlockQuest(dbLevelTask2.getId());
@@ -349,14 +349,14 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         Assert.assertEquals(DbHistoryElement.Type.UNLOCKED_QUEST, dbHistoryElement.getType());
         Assert.assertEquals("LT1", dbHistoryElement.getLevelTaskName());
         Assert.assertEquals(dbLevelTask1.getId(), dbHistoryElement.getLevelTaskId());
-        Assert.assertEquals(90, (int) dbHistoryElement.getRazarion());
-        Assert.assertEquals(10, (int) dbHistoryElement.getDeltaRazarion());
+        Assert.assertEquals(90, (int) dbHistoryElement.getCrystals());
+        Assert.assertEquals(10, (int) dbHistoryElement.getDeltaCrystals());
         dbHistoryElement = history.get(4);
         Assert.assertEquals(DbHistoryElement.Type.UNLOCKED_QUEST, dbHistoryElement.getType());
         Assert.assertEquals("LT2", dbHistoryElement.getLevelTaskName());
         Assert.assertEquals(dbLevelTask2.getId(), dbHistoryElement.getLevelTaskId());
-        Assert.assertEquals(70, (int) dbHistoryElement.getRazarion());
-        Assert.assertEquals(20, (int) dbHistoryElement.getDeltaRazarion());
+        Assert.assertEquals(70, (int) dbHistoryElement.getCrystals());
+        Assert.assertEquals(20, (int) dbHistoryElement.getDeltaCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -371,11 +371,11 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask1 = dbLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask1.setName("LT1");
-        dbLevelTask1.setUnlockRazarion(10);
+        dbLevelTask1.setUnlockCrystals(10);
         setupCondition(dbLevelTask1);
         DbLevelTask dbLevelTask2 = dbLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask2.setName("LT2");
-        dbLevelTask2.setUnlockRazarion(20);
+        dbLevelTask2.setUnlockCrystals(20);
         setupCondition(dbLevelTask2);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();

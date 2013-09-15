@@ -186,9 +186,9 @@ public class InvitationServiceImpl implements InvitationService {
             }
             User host = dbInvitationInfo.getHost();
             UserState hostUserState = userService.getUserState(host);
-            hostUserState.addRazarion(dbLevel.getFriendInvitationBonus());
-            historyService.addFriendInvitationBonus(host, invitee, dbLevel.getFriendInvitationBonus(), hostUserState.getRazarion());
-            serverConditionService.onRazarionIncreased(hostUserState, false, dbLevel.getFriendInvitationBonus());
+            hostUserState.addCrystals(dbLevel.getFriendInvitationBonus());
+            historyService.addFriendInvitationBonus(host, invitee, dbLevel.getFriendInvitationBonus(), hostUserState.getCrystals());
+            serverConditionService.onCrystalsIncreased(hostUserState, false, dbLevel.getFriendInvitationBonus());
             updateDbFriendInvitationBonus(host, invitee, dbLevel);
         } catch (Exception e) {
             ExceptionHandler.handleException(e);

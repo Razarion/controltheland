@@ -348,11 +348,11 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     }
 
     @Override
-    public void onRazarionIncreased(UserState actor, boolean planetInteraction, int razarion) {
+    public void onCrystalsIncreased(UserState actor, boolean planetInteraction, int crystals) {
         if (isActorIgnored(actor, planetInteraction)) {
             return;
         }
-        triggerValue(actor, ConditionTrigger.RAZARION_INCREASED, razarion);
+        triggerValue(actor, ConditionTrigger.CRYSTALS_INCREASED, crystals);
     }
 
     @Override

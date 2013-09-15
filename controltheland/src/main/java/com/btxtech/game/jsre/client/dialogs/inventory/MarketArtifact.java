@@ -3,8 +3,8 @@ package com.btxtech.game.jsre.client.dialogs.inventory;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.dialogs.razarion.AffordableCallback;
-import com.btxtech.game.jsre.client.dialogs.razarion.RazarionHelper;
+import com.btxtech.game.jsre.client.dialogs.crystals.AffordableCallback;
+import com.btxtech.game.jsre.client.dialogs.crystals.CrystalHelper;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -24,39 +24,40 @@ public class MarketArtifact extends Composite implements HasText {
     @UiField
     Label artifactNameLabel;
     @UiField
-    Label coastLabel;
+    Label costLabel;
     @UiField
     Button buyArtifactButton;
     private int inventoryArtifactId;
     private InventoryArtifactInfo inventoryArtifactInfo;
-    private int razarion;
+    private int crystals;
     private InventoryDialog inventoryDialog;
 
     interface MarketArtifactUiBinder extends UiBinder<Widget, MarketArtifact> {
     }
 
-    public MarketArtifact(InventoryArtifactInfo inventoryArtifactInfo, int razarion, InventoryDialog inventoryDialog) {
+    public MarketArtifact(InventoryArtifactInfo inventoryArtifactInfo, int crystals, InventoryDialog inventoryDialog) {
         this.inventoryArtifactInfo = inventoryArtifactInfo;
-        this.razarion = razarion;
+        this.crystals = crystals;
         this.inventoryDialog = inventoryDialog;
         initWidget(uiBinder.createAndBindUi(this));
-        coastLabel.setText(ClientI18nHelper.CONSTANTS.cost(inventoryArtifactInfo.getRazarionCoast()));
+        costLabel.setText(ClientI18nHelper.CONSTANTS.cost(inventoryArtifactInfo.getCrystalCost()));
         artifactNameLabel.setText(inventoryArtifactInfo.getInventoryArtifactName());
         inventoryArtifactId = inventoryArtifactInfo.getInventoryArtifactId();
         image.setUrl(ImageHandler.getInventoryArtifactUrl(inventoryArtifactId));
+        image.getElement().getStyle().setBackgroundColor(inventoryArtifactInfo.getHtmlRarenessColor());
     }
 
     @UiHandler("buyArtifactButton")
     void onClick(ClickEvent e) {
-        new RazarionHelper(ClientI18nHelper.CONSTANTS.getArtifactItemTitle(),ClientI18nHelper.CONSTANTS.getInventoryArtifactNotEnough(inventoryArtifactInfo.getInventoryArtifactName())) {
+        new CrystalHelper(ClientI18nHelper.CONSTANTS.getArtifactItemTitle(),ClientI18nHelper.CONSTANTS.getInventoryArtifactNotEnough(inventoryArtifactInfo.getInventoryArtifactName())) {
 
             @Override
             protected void askAffordable(AffordableCallback affordableCallback) {
-                affordableCallback.onDetermined(inventoryArtifactInfo.getRazarionCoast(), razarion);
+                affordableCallback.onDetermined(inventoryArtifactInfo.getCrystalCost(), crystals);
             }
 
             @Override
-            protected void onBuySilent(int razarionCost, int razarionBalance) {
+            protected void onBuySilent(int crystalCost, int crystalBalance) {
                 Connection.getInstance().buyInventoryArtifact(inventoryArtifactId, inventoryDialog.getFilterPlanetId(), inventoryDialog.isFilterLevel(), inventoryDialog);
             }
         };

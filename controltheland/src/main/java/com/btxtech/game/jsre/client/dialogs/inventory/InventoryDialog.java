@@ -40,7 +40,7 @@ public class InventoryDialog extends Dialog {
             log.warning("InventoryDialog.onItemsReceived() inventoryInfo == null");
             return;
         }
-        mainTabbedPanel.setRazarionAmount(inventoryInfo.getRazarion());
+        mainTabbedPanel.setCrystalAmount(inventoryInfo.getCrystals());
         mainTabbedPanel.displayInventory(inventoryInfo.getOwnInventoryItems());
         mainTabbedPanel.displayWorkshop(inventoryInfo, inventoryInfo.getAllInventoryItemInfos());
         mainTabbedPanel.displayDealerItems(inventoryInfo, inventoryInfo.getAllInventoryItemInfos());
