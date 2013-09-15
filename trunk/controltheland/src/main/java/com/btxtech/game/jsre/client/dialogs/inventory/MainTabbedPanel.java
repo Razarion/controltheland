@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.Widget;
 import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Logger;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 public class MainTabbedPanel extends Composite {
     private static final String FILTER_CURRENT = "_FILTER_CURRENT";
@@ -40,13 +39,13 @@ public class MainTabbedPanel extends Composite {
     @UiField
     FlexTable itemTable;
     @UiField
-    FlexTable artefactTable;
+    FlexTable artifactTable;
     @UiField
     FlexTable fundsTable;
     @UiField
     TabPanel dealerPanel;
     @UiField
-    Label razarionLabel;
+    Label crystalLabel;
     @UiField
     ListBox filterListBox;
     private InventoryDialog inventoryDialog;
@@ -76,8 +75,8 @@ public class MainTabbedPanel extends Composite {
         filterListBox.addItem(ClientI18nHelper.CONSTANTS.filterAll(), FILTER_ALL);
     }
 
-    public void setRazarionAmount(int razarion) {
-        razarionLabel.setText(ClientI18nHelper.CONSTANTS.razarionAmount(razarion));
+    public void setCrystalAmount(int crystals) {
+        crystalLabel.setText(ClientI18nHelper.CONSTANTS.crystalAmount(crystals));
 
     }
 
@@ -116,12 +115,12 @@ public class MainTabbedPanel extends Composite {
         int column = 0;
         int row = 0;
         for (InventoryItemInfo inventoryItemInfo : allInventoryItemInfos) {
-            if (inventoryItemInfo.hasRazarionCoast() && inventoryItemInfo.hasBaseItemTypeId()) {
+            if (inventoryItemInfo.hasCrystalCost() && inventoryItemInfo.hasBaseItemTypeId()) {
                 if (column >= DEALER_ITEMS_COLUMS) {
                     column = 0;
                     row++;
                 }
-                itemTable.setWidget(row, column, new MarketItem(inventoryItemInfo, inventoryInfo.getRazarion(), inventoryDialog));
+                itemTable.setWidget(row, column, new MarketItem(inventoryItemInfo, inventoryInfo.getCrystals(), inventoryDialog));
                 column++;
             }
         }
@@ -132,29 +131,29 @@ public class MainTabbedPanel extends Composite {
         int column = 0;
         int row = 0;
         for (InventoryItemInfo inventoryItemInfo : allInventoryItemInfos) {
-            if (inventoryItemInfo.hasRazarionCoast() && !inventoryItemInfo.hasBaseItemTypeId()) {
+            if (inventoryItemInfo.hasCrystalCost() && !inventoryItemInfo.hasBaseItemTypeId()) {
                 if (column >= DEALER_ITEMS_COLUMS) {
                     column = 0;
                     row++;
                 }
-                fundsTable.setWidget(row, column, new MarketItem(inventoryItemInfo, inventoryInfo.getRazarion(), inventoryDialog));
+                fundsTable.setWidget(row, column, new MarketItem(inventoryItemInfo, inventoryInfo.getCrystals(), inventoryDialog));
                 column++;
             }
         }
     }
 
     public void displayDealerArtifacts(InventoryInfo inventoryInfo, Collection<InventoryArtifactInfo> allInventoryArtifactInfos) {
-        artefactTable.removeAllRows();
+        artifactTable.removeAllRows();
         int column = 0;
         int row = 0;
 
         for (InventoryArtifactInfo inventoryArtifactInfo : inventoryInfo.getAllInventoryArtifactInfos()) {
-            if (inventoryArtifactInfo.hasRazarionCoast()) {
+            if (inventoryArtifactInfo.hasCrystalCost()) {
                 if (column >= DEALER_ARTIFACT_COLUMS) {
                     column = 0;
                     row++;
                 }
-                artefactTable.setWidget(row, column, new MarketArtifact(inventoryArtifactInfo, inventoryInfo.getRazarion(), inventoryDialog));
+                artifactTable.setWidget(row, column, new MarketArtifact(inventoryArtifactInfo, inventoryInfo.getCrystals(), inventoryDialog));
                 column++;
             }
         }

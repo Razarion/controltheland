@@ -288,7 +288,7 @@ public interface ClientI18nConstants extends Messages {
 
     String questBasesKilled();
 
-    String questRazarionIncreased();
+    String questCrystalsIncreased();
 
     String questArtifactItemAdded();
 
@@ -422,13 +422,13 @@ public interface ClientI18nConstants extends Messages {
 
     String enemyTooNear();
 
-    String razarionAmount(int razarion);
+    String crystalAmount(int crystals);
 
     String filterAll();
 
     String filterCurrent();
 
-    String cost(int razarionCost);
+    String cost(int crystalCost);
 
     String leaveBaseNextPlanet();
 
@@ -480,11 +480,11 @@ public interface ClientI18nConstants extends Messages {
 
     String unlockPlanetDialogTitle();
 
-    String itemDialogNoRazarionMessage(String itemTypeName);
+    String itemDialogNoCrystalsMessage(String itemTypeName);
 
-    String questDialogNoRazarionMessage(String questName);
+    String questDialogNoCrystalsMessage(String questName);
 
-    String planetDialogNoRazarionMessage(String planetName);
+    String planetDialogNoCrystalsMessage(String planetName);
 
     String itemIsLocked(String itemTypeName);
 
@@ -557,13 +557,13 @@ public interface ClientI18nConstants extends Messages {
 
     String menuInviteFriendsTooltip();
 
-    String menuGetRazarion();
+    String menuGetCrystals();
 
-    String menuTooltipGetRazarion();
+    String menuTooltipGetCrystals();
 
     String menuBuyPaypal();
 
-    String menuOverviewGetRazarion();
+    String menuOverviewGetCrystals();
 
     String menuStarMap();
 
@@ -610,9 +610,9 @@ public interface ClientI18nConstants extends Messages {
 
     String inviteMember();
 
-    String createGuildInsufficientRazarion();
+    String createGuildInsufficientCrystals();
 
-    String createGuildRazarionCost(int cost);
+    String createGuildCrystalCost(int cost);
 
     String guildText();
 
@@ -720,9 +720,9 @@ public interface ClientI18nConstants extends Messages {
 
     String generateButton();
 
-    String invitationRazarionBonus();
+    String invitationCrystalBonus();
 
-    String razarionBonus();
+    String crystalBonus();
 
     String fbInviteTitle();
 
@@ -736,37 +736,37 @@ public interface ClientI18nConstants extends Messages {
 
     String noFriendInvited();
 
-    // Razarion helper
-    String buyDialogCost(int razarionCost);
+    // Crystal helper
+    String buyDialogCost(int crystalCost);
 
-    String buyDialogbalance(int razarionBalance);
+    String buyDialogbalance(int crystalBalance);
 
     String invite();
 
-    String howToGetRazarion();
+    String howToGetCrystals();
 
-    String buyRazarionViaPayPal();
+    String buyCrystalsViaPayPal();
 
-    String invitationFriendsAndGetRazarion();
+    String invitationFriendsAndGetCrystals();
 
-    String collectBoxesAndGetRazarion();
+    String collectBoxesAndGetCrystals();
 
-    // Buy Razarion dialog
-    String buyRazarionPaypal();
+    // Buy crystals dialog
+    String buyCrystalsPaypal();
 
-    String buyRazarionPaypal1000();
+    String buyCrystalsPaypal1000();
 
-    String buyRazarionPaypal2200();
+    String buyCrystalsPaypal2200();
 
-    String buyRazarionPaypal4600();
+    String buyCrystalsPaypal4600();
 
-    String buyRazarionPaypal12500();
+    String buyCrystalsPaypal12500();
 
-    String buyRazarionPaypalOnlyRegistered();
+    String buyCrystalsPaypalOnlyRegistered();
 
-    String buyRazarionPaypalOnlyRegisteredVerified();
+    String buyCrystalsPaypalOnlyRegisteredVerified();
 
-    String buyRazarionDialogTitle();
+    String buyCrystalsDialogTitle();
 
     // Star map
     String starMapDialogTitle();

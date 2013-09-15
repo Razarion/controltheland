@@ -124,8 +124,8 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
         if (!baseItemType.isUnlockNeeded()) {
             throw new IllegalArgumentException("Base item type can not be unlocked: " + baseItemType);
         }
-        if (baseItemType.getUnlockRazarion() > userState.getRazarion()) {
-            throw new IllegalArgumentException("Not enough razarion to unlock: " + baseItemType + " user: " + userState);
+        if (baseItemType.getUnlockCrystals() > userState.getCrystals()) {
+            throw new IllegalArgumentException("Not enough crystals to unlock: " + baseItemType + " user: " + userState);
         }
         UnlockContainer unlockContainer;
         synchronized (unlockContainers) {
@@ -137,7 +137,7 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
                 throw new IllegalArgumentException("questId is already unlocked: " + itemTypeId);
             }
             unlockContainer.unlockItemType(itemTypeId);
-            userState.subRazarion(baseItemType.getUnlockRazarion());
+            userState.subCrystals(baseItemType.getUnlockCrystals());
             historyService.addItemUnlocked(userState, baseItemType);
         }
         return unlockContainer;
@@ -150,8 +150,8 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
         if (!dbLevelTask.isUnlockNeeded()) {
             throw new IllegalArgumentException("Quest can not be unlocked: " + dbLevelTask);
         }
-        if (dbLevelTask.getUnlockRazarion() > userState.getRazarion()) {
-            throw new IllegalArgumentException("Not enough razarion to unlock: " + dbLevelTask + " user: " + userState);
+        if (dbLevelTask.getUnlockCrystals() > userState.getCrystals()) {
+            throw new IllegalArgumentException("Not enough crystals to unlock: " + dbLevelTask + " user: " + userState);
         }
         UnlockContainer unlockContainer;
         synchronized (unlockContainers) {
@@ -163,7 +163,7 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
                 throw new IllegalArgumentException("questId is already unlocked: " + questId);
             }
             unlockContainer.unlockQuest(questId);
-            userState.subRazarion(dbLevelTask.getUnlockRazarion());
+            userState.subCrystals(dbLevelTask.getUnlockCrystals());
             historyService.addQuestUnlocked(userState, dbLevelTask);
         }
         userGuidanceService.onQuestUnlocked(questId);
@@ -177,8 +177,8 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
         if (!planetLiteInfo.isUnlockNeeded()) {
             throw new IllegalArgumentException("Planet can not be unlocked: " + planetLiteInfo);
         }
-        if (planetLiteInfo.getUnlockRazarion() > userState.getRazarion()) {
-            throw new IllegalArgumentException("Not enough razarion to unlock: " + planetLiteInfo + " user: " + userState);
+        if (planetLiteInfo.getUnlockCrystals() > userState.getCrystals()) {
+            throw new IllegalArgumentException("Not enough crystals to unlock: " + planetLiteInfo + " user: " + userState);
         }
         UnlockContainer unlockContainer;
         synchronized (unlockContainers) {
@@ -190,7 +190,7 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
                 throw new IllegalArgumentException("planetId is already unlocked: " + planetId);
             }
             unlockContainer.unlockPlanet(planetId);
-            userState.subRazarion(planetLiteInfo.getUnlockRazarion());
+            userState.subCrystals(planetLiteInfo.getUnlockCrystals());
             historyService.addPlanetUnlocked(userState, planetLiteInfo);
         }
         return unlockContainer;

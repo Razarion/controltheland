@@ -16,8 +16,8 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.cockpit.chat.ChatMessageFilter;
 import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.info.CrystalCostInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
-import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
@@ -143,7 +143,7 @@ public interface MovableService extends RemoteService {
 
     void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime);
 
-    int getRazarion();
+    int getCrystals();
 
     UnlockContainer unlockItemType(int itemTypeId);
 
@@ -173,7 +173,7 @@ public interface MovableService extends RemoteService {
 
     FullGuildInfo getFullGuildInfo(int guildId);
 
-    RazarionCostInfo getCreateGuildRazarionCost();
+    CrystalCostInfo getCreateGuildCrystalCost();
 
     SimpleGuild createGuild(String guildName);
 

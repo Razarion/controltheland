@@ -2,7 +2,7 @@ package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
-import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
+import com.btxtech.game.jsre.client.common.info.CrystalCostInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildDetailedInfo;
@@ -38,7 +38,7 @@ public interface GuildService {
 
     List<GuildDetailedInfo> getGuildInvitations();
 
-    RazarionCostInfo getCreateGuildRazarionCost() throws NoSuchPropertyException, WrongPropertyTypeException;
+    CrystalCostInfo getCreateGuildCrystalCost() throws NoSuchPropertyException, WrongPropertyTypeException;
 
     void guildMembershipRequest(int guildId, String text);
 

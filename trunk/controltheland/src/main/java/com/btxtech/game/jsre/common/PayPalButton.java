@@ -14,14 +14,14 @@ public enum PayPalButton {
     private String sandboxHostedButtonId;
     private String itemNumber;
     private double cost;
-    private int razarion;
+    private int crystals;
 
-    PayPalButton(String hostedButtonId, String sandboxHostedButtonId, String itemNumber, double cost, int razarion) {
+    PayPalButton(String hostedButtonId, String sandboxHostedButtonId, String itemNumber, double cost, int crystals) {
         this.hostedButtonId = hostedButtonId;
         this.sandboxHostedButtonId = sandboxHostedButtonId;
         this.itemNumber = itemNumber;
         this.cost = cost;
-        this.razarion = razarion;
+        this.crystals = crystals;
     }
 
     public String getHostedButtonId() {
@@ -49,7 +49,7 @@ public enum PayPalButton {
         return itemNumber;
     }
 
-    public int getRazarion() {
-        return razarion;
+    public int getCrystals() {
+        return crystals;
     }
 }

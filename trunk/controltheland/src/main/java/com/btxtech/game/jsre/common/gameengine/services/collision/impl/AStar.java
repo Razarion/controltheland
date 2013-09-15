@@ -192,7 +192,7 @@ public class AStar {
     private class Node implements Comparable<Node> {
         private Index tileIndex;
         private double f = 0;
-        private double g; // Coast to this node
+        private double g; // Cost to this node
         private Node predecessor;
 
         private Node(Index tileIndex) {

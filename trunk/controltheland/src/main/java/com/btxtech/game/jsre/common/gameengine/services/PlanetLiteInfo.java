@@ -1,9 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.services;
 
-import com.btxtech.game.jsre.client.common.RadarMode;
-
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * User: beat
@@ -13,7 +10,7 @@ import java.util.Map;
 public class PlanetLiteInfo implements Serializable {
     private int planetId;
     private String name;
-    private Integer unlockRazarion;
+    private Integer unlockCrystals;
 
     /**
      * Used by GWT
@@ -21,10 +18,10 @@ public class PlanetLiteInfo implements Serializable {
     PlanetLiteInfo() {
     }
 
-    public PlanetLiteInfo(int planetId, String name, Integer unlockRazarion) {
+    public PlanetLiteInfo(int planetId, String name, Integer unlockCrystals) {
         this.planetId = planetId;
         this.name = name;
-        this.unlockRazarion = unlockRazarion;
+        this.unlockCrystals = unlockCrystals;
     }
 
     public int getPlanetId() {
@@ -35,12 +32,12 @@ public class PlanetLiteInfo implements Serializable {
         return name;
     }
 
-    public Integer getUnlockRazarion() {
-        return unlockRazarion;
+    public Integer getUnlockCrystals() {
+        return unlockCrystals;
     }
 
     public boolean isUnlockNeeded() {
-        return unlockRazarion != null;
+        return unlockCrystals != null;
     }
 
     @Override
@@ -64,7 +61,7 @@ public class PlanetLiteInfo implements Serializable {
         return "PlanetLiteInfo{" +
                 "planetId=" + planetId +
                 ", name='" + name + '\'' +
-                ", unlockRazarion=" + unlockRazarion +
+                ", unlockCrystals=" + unlockCrystals +
                 '}';
     }
 }

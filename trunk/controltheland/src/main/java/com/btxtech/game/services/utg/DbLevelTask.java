@@ -14,7 +14,6 @@ import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -55,7 +54,7 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private DbConditionConfig dbConditionConfig;
-    private Integer unlockRazarion;
+    private Integer unlockCrystals;
 
     @Override
     public Integer getId() {
@@ -144,16 +143,16 @@ public class DbLevelTask implements CrudChild<DbLevel> {
         this.questTypeEnum = questTypeEnum;
     }
 
-    public Integer getUnlockRazarion() {
-        return unlockRazarion;
+    public Integer getUnlockCrystals() {
+        return unlockCrystals;
     }
 
-    public void setUnlockRazarion(Integer unlockRazarion) {
-        this.unlockRazarion = unlockRazarion;
+    public void setUnlockCrystals(Integer unlockCrystals) {
+        this.unlockCrystals = unlockCrystals;
     }
 
     public boolean isUnlockNeeded() {
-        return unlockRazarion != null;
+        return unlockCrystals != null;
     }
 
     public QuestInfo createQuestInfo(Locale locale) {
@@ -165,7 +164,7 @@ public class DbLevelTask implements CrudChild<DbLevel> {
             radarPositionHint = dbConditionConfig.getRadarPositionHint();
             hideQuestProgress = dbConditionConfig.isHideQuestProgress();
         }
-        return new QuestInfo(i18nTitle.getString(locale), i18nDescription.getString(locale), additionalDescription, questTypeEnum, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, radarPositionHint, hideQuestProgress, unlockRazarion);
+        return new QuestInfo(i18nTitle.getString(locale), i18nDescription.getString(locale), additionalDescription, questTypeEnum, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, radarPositionHint, hideQuestProgress, unlockCrystals);
     }
 
     @Override

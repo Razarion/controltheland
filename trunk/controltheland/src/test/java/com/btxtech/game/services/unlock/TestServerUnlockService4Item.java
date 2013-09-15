@@ -46,7 +46,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType factory = itemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID);
-        factory.setUnlockRazarion(10);
+        factory.setUnlockCrystals(10);
         itemTypeService.saveDbItemType(factory);
         itemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -59,7 +59,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         waitForActionServiceDone();
         assertWholeItemCount(TEST_PLANET_1_ID, 1);
         // Unlock item
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         UnlockContainer unlockContainer = unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
         Assert.assertEquals(1, unlockContainer.getItemTypes().size());
         Assert.assertTrue(unlockContainer.getItemTypes().contains(TEST_FACTORY_ITEM_ID));
@@ -67,7 +67,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         Assert.assertEquals(1, getAllSynItemId(TEST_FACTORY_ITEM_ID).size());
-        Assert.assertEquals(90, getUserState().getRazarion());
+        Assert.assertEquals(90, getUserState().getCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -80,7 +80,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType attacker = itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
-        attacker.setUnlockRazarion(10);
+        attacker.setUnlockCrystals(10);
         itemTypeService.saveDbItemType(attacker);
         itemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -96,7 +96,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         waitForActionServiceDone();
         assertWholeItemCount(TEST_PLANET_1_ID, 2);
         // Unlock item
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         UnlockContainer unlockContainer = unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         Assert.assertEquals(1, unlockContainer.getItemTypes().size());
         Assert.assertTrue(unlockContainer.getItemTypes().contains(TEST_ATTACK_ITEM_ID));
@@ -104,20 +104,20 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         Assert.assertEquals(1, getAllSynItemId(TEST_ATTACK_ITEM_ID).size());
-        Assert.assertEquals(90, getUserState().getRazarion());
+        Assert.assertEquals(90, getUserState().getCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
     @Test
     @DirtiesContext
-    public void unlockNoRazarion() throws Exception {
+    public void unlockNoCrystals() throws Exception {
         configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType attacker = itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
-        attacker.setUnlockRazarion(10);
+        attacker.setUnlockCrystals(10);
         itemTypeService.saveDbItemType(attacker);
         itemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -125,14 +125,14 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getUserState().setRazarion(0);
+        getUserState().setCrystals(0);
         try {
             unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Not enough razarion to unlock: ItemType: TestAttackItem user: UserState: user=null", e.getMessage());
+            Assert.assertEquals("Not enough crystals to unlock: ItemType: TestAttackItem user: UserState: user=null", e.getMessage());
         }
-        Assert.assertEquals(0, getUserState().getRazarion());
+        Assert.assertEquals(0, getUserState().getCrystals());
         assertItems(unlockService.getUnlockContainer(getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -145,7 +145,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         try {
             unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
             Assert.fail("IllegalArgumentException expected");
@@ -153,7 +153,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
             Assert.assertEquals("Base item type can not be unlocked: ItemType: TestAttackItem", e.getMessage());
         }
         assertItems(unlockService.getUnlockContainer(getOrCreateBase()));
-        Assert.assertEquals(100, getUserState().getRazarion());
+        Assert.assertEquals(100, getUserState().getCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -166,10 +166,10 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType attacker = itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
-        attacker.setUnlockRazarion(10);
+        attacker.setUnlockCrystals(10);
         itemTypeService.saveDbItemType(attacker);
         DbBaseItemType factory = itemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID);
-        factory.setUnlockRazarion(8);
+        factory.setUnlockCrystals(8);
         itemTypeService.saveDbItemType(factory);
         itemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -177,7 +177,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         getOrCreateBase(); // Create Base
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
         Assert.assertTrue(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
@@ -196,10 +196,10 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType attacker = itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
-        attacker.setUnlockRazarion(10);
+        attacker.setUnlockCrystals(10);
         itemTypeService.saveDbItemType(attacker);
         DbBaseItemType factory = itemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID);
-        factory.setUnlockRazarion(8);
+        factory.setUnlockCrystals(8);
         itemTypeService.saveDbItemType(factory);
         itemTypeService.activate();
         DbBotConfig dbBotConfig = setupMinimalNoAttackBot(TEST_PLANET_1_ID, new Rectangle(0, 0, 1000, 1000));
@@ -226,10 +226,10 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType attacker = itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
-        attacker.setUnlockRazarion(10);
+        attacker.setUnlockCrystals(10);
         itemTypeService.saveDbItemType(attacker);
         DbBaseItemType factory = itemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID);
-        factory.setUnlockRazarion(8);
+        factory.setUnlockCrystals(8);
         itemTypeService.saveDbItemType(factory);
         itemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -238,7 +238,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         getOrCreateBase(); // Create Base
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
@@ -252,14 +252,14 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         Assert.assertEquals(TEST_ATTACK_ITEM, dbHistoryElement.getItemTypeName());
         Assert.assertEquals(TEST_ATTACK_ITEM_ID, (int) dbHistoryElement.getItemTypeId());
         Assert.assertEquals(DbHistoryElement.Type.UNLOCKED_ITEM, dbHistoryElement.getType());
-        Assert.assertEquals(90, (int) dbHistoryElement.getRazarion());
-        Assert.assertEquals(10, (int) dbHistoryElement.getDeltaRazarion());
+        Assert.assertEquals(90, (int) dbHistoryElement.getCrystals());
+        Assert.assertEquals(10, (int) dbHistoryElement.getDeltaCrystals());
         dbHistoryElement = history.get(3);
         Assert.assertEquals(TEST_FACTORY_ITEM, dbHistoryElement.getItemTypeName());
         Assert.assertEquals(TEST_FACTORY_ITEM_ID, (int) dbHistoryElement.getItemTypeId());
         Assert.assertEquals(DbHistoryElement.Type.UNLOCKED_ITEM, dbHistoryElement.getType());
-        Assert.assertEquals(82, (int) dbHistoryElement.getRazarion());
-        Assert.assertEquals(8, (int) dbHistoryElement.getDeltaRazarion());
+        Assert.assertEquals(82, (int) dbHistoryElement.getCrystals());
+        Assert.assertEquals(8, (int) dbHistoryElement.getDeltaCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -272,10 +272,10 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType attacker = itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
-        attacker.setUnlockRazarion(10);
+        attacker.setUnlockCrystals(10);
         itemTypeService.saveDbItemType(attacker);
         DbBaseItemType factory = itemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID);
-        factory.setUnlockRazarion(8);
+        factory.setUnlockCrystals(8);
         itemTypeService.saveDbItemType(factory);
         itemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -341,14 +341,14 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType attacker = itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
-        attacker.setUnlockRazarion(10);
+        attacker.setUnlockCrystals(10);
         itemTypeService.saveDbItemType(attacker);
         itemTypeService.activate();
         DbInventoryItem dbInventoryItem = globalInventoryService.getItemCrud().createDbChild();
         dbInventoryItem.setName("ItemType1");
         dbInventoryItem.setBaseItemTypeCount(1);
         dbInventoryItem.setItemFreeRange(111);
-        dbInventoryItem.setRazarionCoast(77);
+        dbInventoryItem.setCrystalCost(77);
         dbInventoryItem.setDbBaseItemType((DbBaseItemType) itemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
         globalInventoryService.getItemCrud().updateDbChild(dbInventoryItem);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -357,7 +357,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getOrCreateBase(); // Force base
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         Assert.assertTrue(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
         globalInventoryService.buyInventoryItem(dbInventoryItem.getId());
         globalInventoryService.useInventoryItem(dbInventoryItem.getId(), Arrays.asList(new Index(2000, 2000)));

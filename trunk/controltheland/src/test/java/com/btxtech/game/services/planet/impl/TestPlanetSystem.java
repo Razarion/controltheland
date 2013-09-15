@@ -355,7 +355,7 @@ public class TestPlanetSystem extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setUnlockRazarion(10);
+        dbPlanet3.setUnlockCrystals(10);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
         planetSystemService.activatePlanet(TEST_PLANET_3_ID);

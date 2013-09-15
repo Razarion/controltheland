@@ -53,7 +53,7 @@ public class DbInventoryArtifact implements CrudChild {
     @Column(length = 500000)
     @Basic(fetch = FetchType.LAZY)
     private byte[] imageData;
-    private Integer razarionCoast;
+    private Integer crystalCost;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbInventoryArtifact")
     private Collection<DbBoxItemTypePossibility> dbBoxItemTypePossibilities;
 
@@ -112,15 +112,15 @@ public class DbInventoryArtifact implements CrudChild {
     }
 
     public InventoryArtifactInfo generateInventoryArtifactInfo() {
-        return new InventoryArtifactInfo(name, id, rareness.getHtmlColor(), razarionCoast);
+        return new InventoryArtifactInfo(name, id, rareness.getHtmlColor(), crystalCost);
     }
 
-    public Integer getRazarionCoast() {
-        return razarionCoast;
+    public Integer getCrystalCost() {
+        return crystalCost;
     }
 
-    public void setRazarionCoast(Integer razarionCoast) {
-        this.razarionCoast = razarionCoast;
+    public void setCrystalCost(Integer crystalCost) {
+        this.crystalCost = crystalCost;
     }
 
     public Collection<DbPlanet> getPlanets() {

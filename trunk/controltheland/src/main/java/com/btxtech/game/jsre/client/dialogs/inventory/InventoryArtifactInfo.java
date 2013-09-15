@@ -11,7 +11,7 @@ public class InventoryArtifactInfo implements Serializable {
     private String inventoryArtifactName;
     private int inventoryArtifactId;
     private String htmlRarenessColor;
-    private Integer razarionCoast;
+    private Integer crystalCost;
 
     /**
      * Used by GWT
@@ -19,11 +19,11 @@ public class InventoryArtifactInfo implements Serializable {
     InventoryArtifactInfo() {
     }
 
-    public InventoryArtifactInfo(String inventoryArtifactName, int inventoryArtifactId, String htmlRarenessColor, Integer razarionCoast) {
+    public InventoryArtifactInfo(String inventoryArtifactName, int inventoryArtifactId, String htmlRarenessColor, Integer crystalCost) {
         this.inventoryArtifactId = inventoryArtifactId;
         this.inventoryArtifactName = inventoryArtifactName;
         this.htmlRarenessColor = htmlRarenessColor;
-        this.razarionCoast = razarionCoast;
+        this.crystalCost = crystalCost;
    }
 
     public int getInventoryArtifactId() {
@@ -38,12 +38,12 @@ public class InventoryArtifactInfo implements Serializable {
         return htmlRarenessColor;
     }
 
-    public boolean hasRazarionCoast() {
-        return razarionCoast != null;
+    public boolean hasCrystalCost() {
+        return crystalCost != null;
     }
     
-    public int getRazarionCoast() {
-        return razarionCoast;
+    public int getCrystalCost() {
+        return crystalCost;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class InventoryArtifactInfo implements Serializable {
                 "htmlRarenessColor='" + htmlRarenessColor + '\'' +
                 ", inventoryArtifactName='" + inventoryArtifactName + '\'' +
                 ", inventoryArtifactId=" + inventoryArtifactId +
-                ", razarionCoast=" + razarionCoast +
+                ", crystalCost=" + crystalCost +
                 '}';
     }
 }

@@ -85,7 +85,7 @@ public class BoxItemTypeEditor extends MgmtWebPage {
                 dbBoxItemTypePossibilityItem.add(new PercentPanel("possibility"));
                 dbBoxItemTypePossibilityItem.add(new InventoryItemPanel("dbInventoryItem"));
                 dbBoxItemTypePossibilityItem.add(new InventoryArtifactPanel("dbInventoryArtifact"));
-                dbBoxItemTypePossibilityItem.add(new TextField<Integer>("razarion"));
+                dbBoxItemTypePossibilityItem.add(new TextField<Integer>("crystals"));
 
             }
         };

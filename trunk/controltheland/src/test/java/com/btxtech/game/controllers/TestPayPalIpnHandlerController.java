@@ -88,7 +88,7 @@ public class TestPayPalIpnHandlerController {
             }
         };
         FinanceService financeServiceMock = EasyMock.createStrictMock(FinanceService.class);
-        financeServiceMock.razarionBought("00001", "RAZ1000", "5.00", "USD", "11112222", "hallo@cxyyyy.qqq", "wwwww@qqqqq.sssss", "Completed", "1");
+        financeServiceMock.crystalsBought("00001", "RAZ1000", "5.00", "USD", "11112222", "hallo@cxyyyy.qqq", "wwwww@qqqqq.sssss", "Completed", "1");
         EasyMock.replay(financeServiceMock);
         AbstractServiceTest.setPrivateField(PayPalIpnHandlerController.class, payPalIpnHandlerController, "financeService", financeServiceMock);
         payPalIpnHandlerController.handleRequest(mockHttpServletRequest, mockHttpServletResponse);
@@ -137,7 +137,7 @@ public class TestPayPalIpnHandlerController {
             }
         };
         FinanceService financeServiceMock = EasyMock.createStrictMock(FinanceService.class);
-        financeServiceMock.razarionBought("00001", "RAZ1000", "5.00", "USD", "11112222", "hallo@cxyyyy.qqq", "wwwww@qqqqq.sssss", "Completed", "1");
+        financeServiceMock.crystalsBought("00001", "RAZ1000", "5.00", "USD", "11112222", "hallo@cxyyyy.qqq", "wwwww@qqqqq.sssss", "Completed", "1");
         EasyMock.expectLastCall().andThrow(new WrongPaymentStatusException("Refunded"));
         EasyMock.replay(financeServiceMock);
         AbstractServiceTest.setPrivateField(PayPalIpnHandlerController.class, payPalIpnHandlerController, "financeService", financeServiceMock);
@@ -158,7 +158,7 @@ public class TestPayPalIpnHandlerController {
             }
         };
         FinanceService financeServiceMock = EasyMock.createStrictMock(FinanceService.class);
-        financeServiceMock.razarionBought(null, null, null, null, null, null, null, null, null);
+        financeServiceMock.crystalsBought(null, null, null, null, null, null, null, null, null);
         EasyMock.expectLastCall().andThrow(new TransactionAlreadyProcessedException("1"));
         EasyMock.replay(financeServiceMock);
         AbstractServiceTest.setPrivateField(PayPalIpnHandlerController.class, payPalIpnHandlerController, "financeService", financeServiceMock);

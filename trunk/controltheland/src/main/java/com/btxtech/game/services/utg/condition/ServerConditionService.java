@@ -31,7 +31,7 @@ public interface ServerConditionService extends ConditionService<UserState, Inte
 
     void onIncreaseXp(UserState userState, int xp);
 
-    void onRazarionIncreased(UserState actor, boolean planetInteraction,int razarion);
+    void onCrystalsIncreased(UserState actor, boolean planetInteraction, int crystals);
 
     void onArtifactItemAdded(UserState actor, boolean planetInteraction, int artifactItemId);
 

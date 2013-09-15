@@ -59,7 +59,7 @@ public class TestInventoryService extends AbstractServiceTest {
         dbInventoryArtifact1.setRareness(DbInventoryArtifact.Rareness.UN_COMMON);
         dbInventoryArtifact1.setImageContentType("imageContent");
         dbInventoryArtifact1.setImageData(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
-        dbInventoryArtifact1.setRazarionCoast(12);
+        dbInventoryArtifact1.setCrystalCost(12);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact1);
 
         DbInventoryArtifact dbInventoryArtifact2 = globalInventoryService.getArtifactCrud().createDbChild();
@@ -79,13 +79,13 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals("Artifact1", artifactList.get(0).getName());
         Assert.assertEquals(DbInventoryArtifact.Rareness.UN_COMMON, artifactList.get(0).getRareness());
         Assert.assertEquals("imageContent", artifactList.get(0).getImageContentType());
-        Assert.assertEquals(12, (int) artifactList.get(0).getRazarionCoast());
+        Assert.assertEquals(12, (int) artifactList.get(0).getCrystalCost());
         Assert.assertArrayEquals(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9}, artifactList.get(0).getImageData());
 
         Assert.assertEquals("Artifact2", artifactList.get(1).getName());
         Assert.assertEquals(DbInventoryArtifact.Rareness.COMMON, artifactList.get(1).getRareness());
         Assert.assertEquals("imageContent2", artifactList.get(1).getImageContentType());
-        Assert.assertNull(artifactList.get(1).getRazarionCoast());
+        Assert.assertNull(artifactList.get(1).getCrystalCost());
         Assert.assertArrayEquals(new byte[]{7, 8, 9}, artifactList.get(1).getImageData());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -106,7 +106,7 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals("Artifact2", artifactList.get(0).getName());
         Assert.assertEquals(DbInventoryArtifact.Rareness.COMMON, artifactList.get(0).getRareness());
         Assert.assertEquals("imageContent2", artifactList.get(0).getImageContentType());
-        Assert.assertNull(artifactList.get(0).getRazarionCoast());
+        Assert.assertNull(artifactList.get(0).getCrystalCost());
         Assert.assertArrayEquals(new byte[]{7, 8, 9}, artifactList.get(0).getImageData());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -142,12 +142,12 @@ public class TestInventoryService extends AbstractServiceTest {
 
         DbInventoryArtifact dbInventoryArtifact2 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact2.setName("Artifact2");
-        dbInventoryArtifact2.setRazarionCoast(2);
+        dbInventoryArtifact2.setCrystalCost(2);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact2);
 
         DbInventoryArtifact dbInventoryArtifact3 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact3.setName("Artifact3");
-        dbInventoryArtifact3.setRazarionCoast(3);
+        dbInventoryArtifact3.setCrystalCost(3);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact3);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -160,7 +160,7 @@ public class TestInventoryService extends AbstractServiceTest {
         dbInventoryItem1.setImageContentType("imageData22");
         dbInventoryItem1.setImageData(new byte[]{1, 3, 4, 6, 7, 9});
         dbInventoryItem1.setGoldLevel(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID));
-        dbInventoryItem1.setRazarionCoast(43);
+        dbInventoryItem1.setCrystalCost(43);
         DbInventoryArtifactCount dbInventoryArtifactCount = dbInventoryItem1.getArtifactCountCrud().createDbChild();
         dbInventoryArtifactCount.setCount(2);
         dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact1);
@@ -183,7 +183,7 @@ public class TestInventoryService extends AbstractServiceTest {
         DbInventoryItem dbInventoryItem3 = globalInventoryService.getItemCrud().createDbChild();
         dbInventoryItem3.setName("ItemType1");
         dbInventoryItem3.setBaseItemTypeCount(2);
-        dbInventoryItem3.setRazarionCoast(108);
+        dbInventoryItem3.setCrystalCost(108);
         dbInventoryItem3.setDbBaseItemType((DbBaseItemType) serverItemService.getDbItemType(TEST_ATTACK_ITEM_ID));
         dbInventoryArtifactCount = dbInventoryItem3.getArtifactCountCrud().createDbChild();
         dbInventoryArtifactCount.setCount(1);
@@ -217,8 +217,8 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals("GoldItem1", itemList.get(0).getName());
         Assert.assertEquals(100, itemList.get(0).getGoldAmount());
         Assert.assertEquals("imageData22", itemList.get(0).getImageContentType());
-        Assert.assertEquals(43, (int) itemList.get(0).getRazarionCoast());
-        Assert.assertEquals(2, (int)itemList.get(0).getRazarionCostViaArtifacts());
+        Assert.assertEquals(43, (int) itemList.get(0).getCrystalCost());
+        Assert.assertEquals(2, (int)itemList.get(0).getCrystalCostViaArtifacts());
         Assert.assertArrayEquals(new byte[]{1, 3, 4, 6, 7, 9}, itemList.get(0).getImageData());
         Assert.assertEquals(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID), itemList.get(0).getGoldLevel());
         List<DbInventoryArtifactCount> dbInventoryArtifactCountFromDb = new ArrayList<>(itemList.get(0).getArtifactCountCrud().readDbChildren());
@@ -230,8 +230,8 @@ public class TestInventoryService extends AbstractServiceTest {
 
         Assert.assertEquals("GoldItem2", itemList.get(1).getName());
         Assert.assertEquals(10, itemList.get(1).getGoldAmount());
-        Assert.assertNull(itemList.get(1).getRazarionCoast());
-        Assert.assertNull(itemList.get(1).getRazarionCostViaArtifacts());
+        Assert.assertNull(itemList.get(1).getCrystalCost());
+        Assert.assertNull(itemList.get(1).getCrystalCostViaArtifacts());
         Assert.assertEquals("imageData33", itemList.get(1).getImageContentType());
         Assert.assertArrayEquals(new byte[]{6, 7, 9}, itemList.get(1).getImageData());
         Assert.assertEquals(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID), itemList.get(1).getGoldLevel());
@@ -242,8 +242,8 @@ public class TestInventoryService extends AbstractServiceTest {
 
         Assert.assertEquals("ItemType1", itemList.get(2).getName());
         Assert.assertEquals(2, itemList.get(2).getBaseItemTypeCount());
-        Assert.assertEquals(108, (int) itemList.get(2).getRazarionCoast());
-        Assert.assertEquals(3, (int)itemList.get(2).getRazarionCostViaArtifacts());
+        Assert.assertEquals(108, (int) itemList.get(2).getCrystalCost());
+        Assert.assertEquals(3, (int)itemList.get(2).getCrystalCostViaArtifacts());
         Assert.assertEquals(TEST_ATTACK_ITEM_ID, (int) itemList.get(2).getDbBaseItemType().getId());
         dbInventoryArtifactCountFromDb = new ArrayList<>(itemList.get(2).getArtifactCountCrud().readDbChildren());
         Assert.assertEquals(2, dbInventoryArtifactCountFromDb.size());
@@ -254,8 +254,8 @@ public class TestInventoryService extends AbstractServiceTest {
 
         Assert.assertEquals("ItemType2", itemList.get(3).getName());
         Assert.assertEquals(1, itemList.get(3).getBaseItemTypeCount());
-        Assert.assertNull(itemList.get(3).getRazarionCoast());
-        Assert.assertEquals(13, (int)itemList.get(3).getRazarionCostViaArtifacts());
+        Assert.assertNull(itemList.get(3).getCrystalCost());
+        Assert.assertEquals(13, (int)itemList.get(3).getCrystalCostViaArtifacts());
         Assert.assertEquals(TEST_FACTORY_ITEM_ID, (int) itemList.get(3).getDbBaseItemType().getId());
         dbInventoryArtifactCountFromDb = new ArrayList<>(itemList.get(3).getArtifactCountCrud().readDbChildren());
         Assert.assertEquals(3, dbInventoryArtifactCountFromDb.size());
@@ -280,7 +280,7 @@ public class TestInventoryService extends AbstractServiceTest {
         itemList = (List<DbInventoryItem>) globalInventoryService.getItemCrud().readDbChildren();
         Assert.assertEquals(3, itemList.size());
         Assert.assertEquals("GoldItem2", itemList.get(0).getName());
-        Assert.assertNull(itemList.get(0).getRazarionCoast());
+        Assert.assertNull(itemList.get(0).getCrystalCost());
         Assert.assertEquals(10, itemList.get(0).getGoldAmount());
         Assert.assertEquals("imageData33", itemList.get(0).getImageContentType());
         Assert.assertArrayEquals(new byte[]{6, 7, 9}, itemList.get(0).getImageData());
@@ -307,7 +307,7 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(3, itemList.size());
         Assert.assertEquals("GoldItem2", itemList.get(0).getName());
         Assert.assertEquals(10, itemList.get(0).getGoldAmount());
-        Assert.assertNull(itemList.get(0).getRazarionCoast());
+        Assert.assertNull(itemList.get(0).getCrystalCost());
         Assert.assertEquals("imageData33", itemList.get(0).getImageContentType());
         Assert.assertArrayEquals(new byte[]{6, 7, 9}, itemList.get(0).getImageData());
         Assert.assertEquals(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID), itemList.get(0).getGoldLevel());
@@ -521,7 +521,7 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(0.1, dbBoxItemTypePossibility1.getPossibility(), 0.001);
         Assert.assertEquals(dbInventoryItem.getId(), dbBoxItemTypePossibility1.getDbInventoryItem().getId());
         Assert.assertNull(dbBoxItemTypePossibility1.getDbInventoryArtifact());
-        Assert.assertNull(dbBoxItemTypePossibility1.getRazarion());
+        Assert.assertNull(dbBoxItemTypePossibility1.getCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -544,12 +544,12 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(0.1, dbBoxItemTypePossibility1.getPossibility(), 0.001);
         Assert.assertEquals(dbInventoryItem.getId(), dbBoxItemTypePossibility1.getDbInventoryItem().getId());
         Assert.assertNull(dbBoxItemTypePossibility1.getDbInventoryArtifact());
-        Assert.assertNull(dbBoxItemTypePossibility1.getRazarion());
+        Assert.assertNull(dbBoxItemTypePossibility1.getCrystals());
         dbBoxItemTypePossibility2 = dbBoxItemType.getBoxPossibilityCrud().readDbChild(dbBoxItemTypePossibility2.getId());
         Assert.assertEquals(0.2, dbBoxItemTypePossibility2.getPossibility(), 0.001);
         Assert.assertNull(dbBoxItemTypePossibility2.getDbInventoryItem());
         Assert.assertEquals(dbInventoryArtifact.getId(), dbBoxItemTypePossibility2.getDbInventoryArtifact().getId());
-        Assert.assertNull(dbBoxItemTypePossibility2.getRazarion());
+        Assert.assertNull(dbBoxItemTypePossibility2.getCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -558,7 +558,7 @@ public class TestInventoryService extends AbstractServiceTest {
         dbBoxItemType = (DbBoxItemType) serverItemService.getDbItemTypeCrud().readDbChild(dbBoxItemType.getId());
         DbBoxItemTypePossibility dbBoxItemTypePossibility3 = dbBoxItemType.getBoxPossibilityCrud().createDbChild();
         dbBoxItemTypePossibility3.setPossibility(0.3);
-        dbBoxItemTypePossibility3.setRazarion(253000);
+        dbBoxItemTypePossibility3.setCrystals(253000);
         serverItemService.getDbItemTypeCrud().updateDbChild(dbBoxItemType);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -572,17 +572,17 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(0.1, dbBoxItemTypePossibility1.getPossibility(), 0.001);
         Assert.assertEquals(dbInventoryItem.getId(), dbBoxItemTypePossibility1.getDbInventoryItem().getId());
         Assert.assertNull(dbBoxItemTypePossibility1.getDbInventoryArtifact());
-        Assert.assertNull(dbBoxItemTypePossibility1.getRazarion());
+        Assert.assertNull(dbBoxItemTypePossibility1.getCrystals());
         dbBoxItemTypePossibility2 = dbBoxItemType.getBoxPossibilityCrud().readDbChild(dbBoxItemTypePossibility2.getId());
         Assert.assertEquals(0.2, dbBoxItemTypePossibility2.getPossibility(), 0.001);
         Assert.assertNull(dbBoxItemTypePossibility2.getDbInventoryItem());
         Assert.assertEquals(dbInventoryArtifact.getId(), dbBoxItemTypePossibility2.getDbInventoryArtifact().getId());
-        Assert.assertNull(dbBoxItemTypePossibility2.getRazarion());
+        Assert.assertNull(dbBoxItemTypePossibility2.getCrystals());
         dbBoxItemTypePossibility3 = dbBoxItemType.getBoxPossibilityCrud().readDbChild(dbBoxItemTypePossibility3.getId());
         Assert.assertEquals(0.3, dbBoxItemTypePossibility3.getPossibility(), 0.001);
         Assert.assertNull(dbBoxItemTypePossibility3.getDbInventoryItem());
         Assert.assertNull(dbBoxItemTypePossibility3.getDbInventoryArtifact());
-        Assert.assertEquals(253000, (int) dbBoxItemTypePossibility3.getRazarion());
+        Assert.assertEquals(253000, (int) dbBoxItemTypePossibility3.getCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -599,7 +599,7 @@ public class TestInventoryService extends AbstractServiceTest {
         dbInventoryArtifact1.setRareness(DbInventoryArtifact.Rareness.UN_COMMON);
         dbInventoryArtifact1.setImageContentType("imageContent");
         dbInventoryArtifact1.setImageData(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
-        dbInventoryArtifact1.setRazarionCoast(11);
+        dbInventoryArtifact1.setCrystalCost(11);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact1);
 
         DbInventoryArtifact dbInventoryArtifact2 = globalInventoryService.getArtifactCrud().createDbChild();
@@ -612,7 +612,7 @@ public class TestInventoryService extends AbstractServiceTest {
         DbInventoryArtifact dbInventoryArtifact3 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact3.setName("Artifact3");
         dbInventoryArtifact3.setRareness(DbInventoryArtifact.Rareness.EPIC);
-        dbInventoryArtifact3.setRazarionCoast(44);
+        dbInventoryArtifact3.setCrystalCost(44);
         dbInventoryArtifact3.setImageContentType("imageContent2");
         dbInventoryArtifact3.setImageData(new byte[]{7, 8, 9});
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact3);
@@ -629,7 +629,7 @@ public class TestInventoryService extends AbstractServiceTest {
         dbInventoryItem1.setGoldAmount(100);
         dbInventoryItem1.setImageContentType("imageData22");
         dbInventoryItem1.setImageData(new byte[]{1, 3, 4, 6, 7, 9});
-        dbInventoryItem1.setRazarionCoast(66);
+        dbInventoryItem1.setCrystalCost(66);
         dbInventoryItem1.setGoldLevel(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID));
         globalInventoryService.getItemCrud().updateDbChild(dbInventoryItem1);
 
@@ -648,7 +648,7 @@ public class TestInventoryService extends AbstractServiceTest {
         dbInventoryItem3.setName("ItemType1");
         dbInventoryItem3.setBaseItemTypeCount(2);
         dbInventoryItem3.setItemFreeRange(111);
-        dbInventoryItem3.setRazarionCoast(77);
+        dbInventoryItem3.setCrystalCost(77);
         dbInventoryItem3.setDbBaseItemType((DbBaseItemType) serverItemService.getDbItemType(TEST_ATTACK_ITEM_ID));
         dbInventoryArtifactCount = dbInventoryItem3.getArtifactCountCrud().createDbChild();
         dbInventoryArtifactCount.setCount(1);
@@ -696,24 +696,24 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals((int) dbInventoryArtifact1.getId(), inventoryArtifactInfo1.getInventoryArtifactId());
         Assert.assertEquals("Artifact1", inventoryArtifactInfo1.getInventoryArtifactName());
         Assert.assertEquals("#70d460", inventoryArtifactInfo1.getHtmlRarenessColor());
-        Assert.assertEquals(11, inventoryArtifactInfo1.getRazarionCoast());
-        Assert.assertTrue(inventoryArtifactInfo1.hasRazarionCoast());
+        Assert.assertEquals(11, inventoryArtifactInfo1.getCrystalCost());
+        Assert.assertTrue(inventoryArtifactInfo1.hasCrystalCost());
 
         Assert.assertEquals((int) dbInventoryArtifact2.getId(), inventoryArtifactInfo2.getInventoryArtifactId());
         Assert.assertEquals("Artifact2", inventoryArtifactInfo2.getInventoryArtifactName());
         Assert.assertEquals("#d6f6ff", inventoryArtifactInfo2.getHtmlRarenessColor());
-        Assert.assertFalse(inventoryArtifactInfo2.hasRazarionCoast());
+        Assert.assertFalse(inventoryArtifactInfo2.hasCrystalCost());
 
         Assert.assertEquals((int) dbInventoryArtifact3.getId(), inventoryArtifactInfo3.getInventoryArtifactId());
         Assert.assertEquals("Artifact3", inventoryArtifactInfo3.getInventoryArtifactName());
         Assert.assertEquals("#a042cc", inventoryArtifactInfo3.getHtmlRarenessColor());
-        Assert.assertEquals(44, inventoryArtifactInfo3.getRazarionCoast());
-        Assert.assertTrue(inventoryArtifactInfo1.hasRazarionCoast());
+        Assert.assertEquals(44, inventoryArtifactInfo3.getCrystalCost());
+        Assert.assertTrue(inventoryArtifactInfo1.hasCrystalCost());
 
         Assert.assertEquals((int) dbInventoryArtifact4.getId(), inventoryArtifactInfo4.getInventoryArtifactId());
         Assert.assertEquals("Artifact4", inventoryArtifactInfo4.getInventoryArtifactName());
         Assert.assertEquals("#f07d4e", inventoryArtifactInfo4.getHtmlRarenessColor());
-        Assert.assertFalse(inventoryArtifactInfo4.hasRazarionCoast());
+        Assert.assertFalse(inventoryArtifactInfo4.hasCrystalCost());
 
         dbInventoryItem1 = globalInventoryService.getItemCrud().readDbChild(dbInventoryItem1.getId());
         dbInventoryItem2 = globalInventoryService.getItemCrud().readDbChild(dbInventoryItem2.getId());
@@ -729,15 +729,15 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(100, inventoryItemInfo1.getGoldAmount());
         Assert.assertEquals("GoldItem1", inventoryItemInfo1.getInventoryItemName());
         Assert.assertEquals(0, inventoryItemInfo1.getArtifacts().size());
-        Assert.assertTrue(inventoryItemInfo1.hasRazarionCoast());
-        Assert.assertEquals(66, inventoryItemInfo1.getRazarionCoast());
+        Assert.assertTrue(inventoryItemInfo1.hasCrystalCost());
+        Assert.assertEquals(66, inventoryItemInfo1.getCrystalCost());
 
         Assert.assertEquals((int) dbInventoryItem2.getId(), inventoryItemInfo2.getInventoryItemId());
         Assert.assertEquals(10, inventoryItemInfo2.getGoldAmount());
         Assert.assertEquals("GoldItem2", inventoryItemInfo2.getInventoryItemName());
         Assert.assertEquals(1, inventoryItemInfo2.getArtifacts().size());
         Assert.assertEquals(3, (int) inventoryItemInfo2.getArtifacts().get(inventoryArtifactInfo1));
-        Assert.assertFalse(inventoryItemInfo2.hasRazarionCoast());
+        Assert.assertFalse(inventoryItemInfo2.hasCrystalCost());
 
         Assert.assertEquals((int) dbInventoryItem3.getId(), inventoryItemInfo3.getInventoryItemId());
         Assert.assertEquals("ItemType1", inventoryItemInfo3.getInventoryItemName());
@@ -746,8 +746,8 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(2, inventoryItemInfo3.getArtifacts().size());
         Assert.assertEquals(2, (int) inventoryItemInfo3.getArtifacts().get(inventoryArtifactInfo1));
         Assert.assertEquals(1, (int) inventoryItemInfo3.getArtifacts().get(inventoryArtifactInfo3));
-        Assert.assertTrue(inventoryItemInfo3.hasRazarionCoast());
-        Assert.assertEquals(77, inventoryItemInfo3.getRazarionCoast());
+        Assert.assertTrue(inventoryItemInfo3.hasCrystalCost());
+        Assert.assertEquals(77, inventoryItemInfo3.getCrystalCost());
 
         Assert.assertEquals((int) dbInventoryItem4.getId(), inventoryItemInfo4.getInventoryItemId());
         Assert.assertEquals("ItemType2", inventoryItemInfo4.getInventoryItemName());
@@ -757,7 +757,7 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(1, (int) inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo1));
         Assert.assertEquals(2, (int) inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo2));
         Assert.assertEquals(3, (int) inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo3));
-        Assert.assertFalse(inventoryItemInfo4.hasRazarionCoast());
+        Assert.assertFalse(inventoryItemInfo4.hasCrystalCost());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -792,7 +792,7 @@ public class TestInventoryService extends AbstractServiceTest {
         globalInventoryService.getItemCrud().updateDbChild(dbInventoryItem1);
 
         DbInventoryNewUser inventoryNewUser1 = globalInventoryService.getNewUserCrud().createDbChild();
-        inventoryNewUser1.setRazarion(33);
+        inventoryNewUser1.setCrystals(33);
         globalInventoryService.getNewUserCrud().updateDbChild(inventoryNewUser1);
         DbInventoryNewUser inventoryNewUser2 = globalInventoryService.getNewUserCrud().createDbChild();
         inventoryNewUser2.setDbInventoryItem(dbInventoryItem1);
@@ -814,7 +814,7 @@ public class TestInventoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getOrCreateBase();
         UserState userState = userService.getUserState();
-        Assert.assertEquals(33, userState.getRazarion());
+        Assert.assertEquals(33, userState.getCrystals());
 
         Assert.assertEquals(2, userState.getInventoryItemIds().size());
         Assert.assertTrue(userState.hasInventoryItemId(dbInventoryItem1.getId()));

@@ -2,7 +2,7 @@ package com.btxtech.game.services.user.impl;
 
 import com.btxtech.game.jsre.client.VerificationRequestCallback;
 import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseException;
-import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
+import com.btxtech.game.jsre.client.common.info.CrystalCostInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.dialogs.guild.FullGuildInfo;
 import com.btxtech.game.jsre.client.dialogs.guild.GuildDetailedInfo;
@@ -92,20 +92,20 @@ public class GuildServiceImpl implements GuildService {
         if (errorResult != null) {
             throw new IllegalArgumentException("Guild name is invalid: " + errorResult + " " + guildName);
         }
-        int razarionCost = propertyService.getIntProperty(PropertyServiceEnum.GUILD_RAZARION_COST);
+        int crystalCost = propertyService.getIntProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST);
         UserState userState = userService.getUserState();
-        if (razarionCost > userState.getRazarion()) {
-            throw new IllegalStateException("Not enough razarion to create a guild: " + user);
+        if (crystalCost > userState.getCrystals()) {
+            throw new IllegalStateException("Not enough crystals to create a guild: " + user);
         }
         DbGuild dbGuild = new DbGuild();
         dbGuild.setTimeStamp();
         dbGuild.setName(guildName);
         dbGuild.addMember(user, GuildMemberInfo.Rank.PRESIDENT);
         sessionFactory.getCurrentSession().save(dbGuild);
-        userState.subRazarion(razarionCost);
+        userState.subCrystals(crystalCost);
         removeGuildInvitations(user);
         removeMembershipRequests(user, null);
-        historyService.addGuildCreated(user, razarionCost, dbGuild);
+        historyService.addGuildCreated(user, crystalCost, dbGuild);
         updateBaseService(dbGuild, user);
         return dbGuild.createSimpleGuild();
     }
@@ -243,9 +243,9 @@ public class GuildServiceImpl implements GuildService {
     }
 
     @Override
-    public RazarionCostInfo getCreateGuildRazarionCost() throws NoSuchPropertyException, WrongPropertyTypeException {
-        int razarionCost = propertyService.getIntProperty(PropertyServiceEnum.GUILD_RAZARION_COST);
-        return new RazarionCostInfo(razarionCost, userService.getUserState().getRazarion());
+    public CrystalCostInfo getCreateGuildCrystalCost() throws NoSuchPropertyException, WrongPropertyTypeException {
+        int crystalCost = propertyService.getIntProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST);
+        return new CrystalCostInfo(crystalCost, userService.getUserState().getCrystals());
     }
 
     @Override

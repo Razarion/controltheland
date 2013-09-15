@@ -326,8 +326,8 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public void addRazarionFromBox(UserState userState, int razarion) {
-        save(new DbHistoryElement(DbHistoryElement.Type.RAZARION_FROM_BOX,
+    public void addCrystalsFromBox(UserState userState, int crystals) {
+        save(new DbHistoryElement(DbHistoryElement.Type.CRYSTALS_FROM_BOX,
                 userService.getUser(userState),
                 null,
                 userState.getBase().getSimpleBase(),
@@ -339,13 +339,13 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
-                razarion,
-                userState.getRazarion(), null, null, null, null, null, null, null, null));
+                crystals,
+                userState.getCrystals(), null, null, null, null, null, null, null, null));
     }
 
     @Override
-    public void addRazarionBought(UserState userState, int razarionBought) {
-        save(new DbHistoryElement(DbHistoryElement.Type.RAZARION_BOUGHT,
+    public void addCrystalsBought(UserState userState, int crystalsBought) {
+        save(new DbHistoryElement(DbHistoryElement.Type.CRYSTALS_BOUGHT,
                 userService.getUser(userState),
                 null,
                 null,
@@ -357,8 +357,8 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 null,
-                razarionBought,
-                userState.getRazarion(), null, null, null, null, null, null, null, null));
+                crystalsBought,
+                userState.getCrystals(), null, null, null, null, null, null, null, null));
     }
 
     @Override
@@ -376,7 +376,7 @@ public class HistoryServiceImpl implements HistoryService {
                 DbHistoryElement.Source.HUMAN,
                 null,
                 null,
-                userState.getRazarion(),
+                userState.getCrystals(),
                 inventoryItemName, null, null, null, null, null, null, null));
     }
 
@@ -395,7 +395,7 @@ public class HistoryServiceImpl implements HistoryService {
                 DbHistoryElement.Source.HUMAN,
                 null,
                 null,
-                userState.getRazarion(),
+                userState.getCrystals(),
                 inventoryArtifactName, null, null, null, null, null, null, null));
     }
 
@@ -419,7 +419,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public void addInventoryItemBought(UserState userState, String inventoryItemName, int razarion) {
+    public void addInventoryItemBought(UserState userState, String inventoryItemName, int crystals) {
         save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ITEM_BOUGHT,
                 userService.getUser(userState),
                 null,
@@ -432,13 +432,13 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
-                razarion,
-                userState.getRazarion(),
+                crystals,
+                userState.getCrystals(),
                 inventoryItemName, null, null, null, null, null, null, null));
     }
 
     @Override
-    public void addInventoryArtifactBought(UserState userState, String inventoryArtifactName, int razarion) {
+    public void addInventoryArtifactBought(UserState userState, String inventoryArtifactName, int crystals) {
         save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ARTIFACT_BOUGHT,
                 userService.getUser(userState),
                 null,
@@ -451,8 +451,8 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
-                razarion,
-                userState.getRazarion(),
+                crystals,
+                userState.getCrystals(),
                 inventoryArtifactName, null, null, null, null, null, null, null));
     }
 
@@ -523,8 +523,8 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
-                baseItemType.getUnlockRazarion(),
-                userState.getRazarion(),
+                baseItemType.getUnlockCrystals(),
+                userState.getCrystals(),
                 null,
                 null,
                 null,
@@ -545,8 +545,8 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
-                dbLevelTask.getUnlockRazarion(),
-                userState.getRazarion(),
+                dbLevelTask.getUnlockCrystals(),
+                userState.getCrystals(),
                 null,
                 null,
                 null,
@@ -567,8 +567,8 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
-                planetLiteInfo.getUnlockRazarion(),
-                userState.getRazarion(),
+                planetLiteInfo.getUnlockCrystals(),
+                userState.getCrystals(),
                 null,
                 null,
                 null,
@@ -577,7 +577,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public void addGuildCreated(User user, int razarionCost, DbGuild dbGuild) {
+    public void addGuildCreated(User user, int crystalCost, DbGuild dbGuild) {
         save(new DbHistoryElement(DbHistoryElement.Type.GUILD_CREATED,
                 user,
                 null,
@@ -590,8 +590,8 @@ public class HistoryServiceImpl implements HistoryService {
                 userService.getUserState(user).getSessionId(),
                 DbHistoryElement.Source.HUMAN,
                 null,
-                razarionCost,
-                userService.getUserState(user).getRazarion(),
+                crystalCost,
+                userService.getUserState(user).getCrystals(),
                 null,
                 null,
                 null,
@@ -926,7 +926,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public void addFriendInvitationBonus(User host, User invitee, int bonus, int razarion) {
+    public void addFriendInvitationBonus(User host, User invitee, int bonus, int crystals) {
         save(new DbHistoryElement(DbHistoryElement.Type.FRIEND_INVITATION_BONUS,
                 host,
                 invitee,
@@ -940,7 +940,7 @@ public class HistoryServiceImpl implements HistoryService {
                 DbHistoryElement.Source.HUMAN,
                 null,
                 bonus,
-                razarion,
+                crystals,
                 null,
                 null,
                 null,
@@ -1129,8 +1129,8 @@ public class HistoryServiceImpl implements HistoryService {
                 return "Found inventory artifact " + dbHistoryElement.getInventory();
             case INVENTORY_ITEM_FROM_BOX:
                 return "Found inventory item " + dbHistoryElement.getInventory();
-            case RAZARION_FROM_BOX:
-                return "Found razarion " + dbHistoryElement.getDeltaRazarion();
+            case CRYSTALS_FROM_BOX:
+                return "Found " + dbHistoryElement.getDeltaCrystals() + " crystals";
             case BOX_PICKED:
                 return "Box picked";
             case INVENTORY_ITEM_BOUGHT:
@@ -1139,8 +1139,8 @@ public class HistoryServiceImpl implements HistoryService {
                 return "Inventory artifact bought: " + dbHistoryElement.getInventory();
             case BOT_ENRAGE_UP:
                 return "You have angered " + dbHistoryElement.getBotName() + ": " + dbHistoryElement.getBotInfo();
-            case RAZARION_BOUGHT:
-                return "Bought Razarion " + dbHistoryElement.getDeltaRazarion() + " via PayPal";
+            case CRYSTALS_BOUGHT:
+                return "Bought " + dbHistoryElement.getDeltaCrystals() + " crystals via PayPal";
             case UNLOCKED_ITEM:
                 return "Item unlocked " + dbHistoryElement.getItemTypeName();
             case UNLOCKED_QUEST:
@@ -1176,7 +1176,7 @@ public class HistoryServiceImpl implements HistoryService {
             case FRIEND_INVITATION_EMAIL_SENT:
                 return "You sent a friend invitation via mail to " + dbHistoryElement.getText();
             case FRIEND_INVITATION_BONUS:
-                return "Friend invitation bonus received for " + dbHistoryElement.getTargetUserName() + ". Bonus: " + dbHistoryElement.getDeltaRazarion() + " Razarion";
+                return "Friend invitation bonus received for " + dbHistoryElement.getTargetUserName() + ". Bonus: " + dbHistoryElement.getDeltaCrystals() + " crystals";
             default:
                 log.warn("HistoryServiceImpl.convert() " + dbHistoryElement + " Unknown type: " + dbHistoryElement.getType());
                 return "Internal error 999999";

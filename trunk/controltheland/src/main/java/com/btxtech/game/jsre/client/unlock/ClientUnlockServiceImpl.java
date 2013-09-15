@@ -6,9 +6,9 @@ import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
+import com.btxtech.game.jsre.client.dialogs.crystals.CrystalHelper;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
-import com.btxtech.game.jsre.client.dialogs.razarion.AffordableCallback;
-import com.btxtech.game.jsre.client.dialogs.razarion.RazarionHelper;
+import com.btxtech.game.jsre.client.dialogs.crystals.AffordableCallback;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
@@ -67,23 +67,23 @@ public class ClientUnlockServiceImpl extends UnlockServiceImpl {
         if (!baseItemType.isUnlockNeeded()) {
             throw new IllegalArgumentException("No unlock needed for base item type: " + baseItemType);
         }
-        new RazarionHelper(ClientI18nHelper.CONSTANTS.unlockItemDialogTitle(),
+        new CrystalHelper(ClientI18nHelper.CONSTANTS.unlockItemDialogTitle(),
                 ClientI18nHelper.CONSTANTS.itemIsLocked(ClientI18nHelper.getLocalizedString(baseItemType.getI18Name())),
                 ClientI18nHelper.CONSTANTS.unlockButton(),
-                ClientI18nHelper.CONSTANTS.itemDialogNoRazarionMessage(ClientI18nHelper.getLocalizedString(baseItemType.getI18Name()))) {
+                ClientI18nHelper.CONSTANTS.itemDialogNoCrystalsMessage(ClientI18nHelper.getLocalizedString(baseItemType.getI18Name()))) {
 
             @Override
             protected void askAffordable(final AffordableCallback affordableCallback) {
-                Connection.getInstance().getRazarion(new ParametrisedRunnable<Integer>() {
+                Connection.getInstance().getCrystals(new ParametrisedRunnable<Integer>() {
                     @Override
-                    public void run(Integer razarion) {
-                        affordableCallback.onDetermined(baseItemType.getUnlockRazarion(), razarion);
+                    public void run(Integer crystals) {
+                        affordableCallback.onDetermined(baseItemType.getUnlockCrystals(), crystals);
                     }
                 });
             }
 
             @Override
-            protected void onBuy(int razarionCost, int razarionBalance) {
+            protected void onBuy(int crystalCost, int crystalBalance) {
                 Connection.getInstance().unlockItemType(baseItemType.getId(), successRunnable);
             }
         };
@@ -93,23 +93,23 @@ public class ClientUnlockServiceImpl extends UnlockServiceImpl {
         if (!questInfo.isUnlockNeeded()) {
             throw new IllegalArgumentException("No unlock needed for questInfo: " + questInfo);
         }
-        new RazarionHelper(ClientI18nHelper.CONSTANTS.unlockQuestDialogTitle(),
+        new CrystalHelper(ClientI18nHelper.CONSTANTS.unlockQuestDialogTitle(),
                 ClientI18nHelper.CONSTANTS.questIsLocked(questInfo.getTitle()),
                 ClientI18nHelper.CONSTANTS.unlockButton(),
-                ClientI18nHelper.CONSTANTS.questDialogNoRazarionMessage(questInfo.getTitle())) {
+                ClientI18nHelper.CONSTANTS.questDialogNoCrystalsMessage(questInfo.getTitle())) {
 
             @Override
             protected void askAffordable(final AffordableCallback affordableCallback) {
-                Connection.getInstance().getRazarion(new ParametrisedRunnable<Integer>() {
+                Connection.getInstance().getCrystals(new ParametrisedRunnable<Integer>() {
                     @Override
-                    public void run(Integer razarion) {
-                        affordableCallback.onDetermined(questInfo.getUnlockRazarion(), razarion);
+                    public void run(Integer crystals) {
+                        affordableCallback.onDetermined(questInfo.getUnlockCrystals(), crystals);
                     }
                 });
             }
 
             @Override
-            protected void onBuy(int razarionCost, int razarionBalance) {
+            protected void onBuy(int crystalCost, int crystalBalance) {
                 Connection.getInstance().unlockQuest(questInfo.getId(), successRunnable);
             }
         };
@@ -120,23 +120,23 @@ public class ClientUnlockServiceImpl extends UnlockServiceImpl {
             throw new IllegalArgumentException("No unlock needed for planetLiteInfo: " + planetLiteInfo);
         }
 
-        new RazarionHelper(ClientI18nHelper.CONSTANTS.unlockPlanetDialogTitle(),
+        new CrystalHelper(ClientI18nHelper.CONSTANTS.unlockPlanetDialogTitle(),
                 ClientI18nHelper.CONSTANTS.planetIsLocked(planetLiteInfo.getName()),
                 ClientI18nHelper.CONSTANTS.unlockButton(),
-                ClientI18nHelper.CONSTANTS.planetDialogNoRazarionMessage(planetLiteInfo.getName())) {
+                ClientI18nHelper.CONSTANTS.planetDialogNoCrystalsMessage(planetLiteInfo.getName())) {
 
             @Override
             protected void askAffordable(final AffordableCallback affordableCallback) {
-                Connection.getInstance().getRazarion(new ParametrisedRunnable<Integer>() {
+                Connection.getInstance().getCrystals(new ParametrisedRunnable<Integer>() {
                     @Override
-                    public void run(Integer razarion) {
-                        affordableCallback.onDetermined(planetLiteInfo.getUnlockRazarion(), razarion);
+                    public void run(Integer crystals) {
+                        affordableCallback.onDetermined(planetLiteInfo.getUnlockCrystals(), crystals);
                     }
                 });
             }
 
             @Override
-            protected void onBuy(int razarionCost, int razarionBalance) {
+            protected void onBuy(int crystalCost, int crystalBalance) {
                 Connection.getInstance().unlockPlanet(planetLiteInfo, successRunnable);
             }
         };

@@ -25,7 +25,7 @@ public class DbBoxItemTypePossibility implements CrudChild<DbBoxItemType> {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbBoxItemType dbBoxItemType;
     private double possibility;
-    private Integer razarion;
+    private Integer crystals;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbInventoryArtifact dbInventoryArtifact;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -68,12 +68,12 @@ public class DbBoxItemTypePossibility implements CrudChild<DbBoxItemType> {
         this.possibility = possibility;
     }
 
-    public Integer getRazarion() {
-        return razarion;
+    public Integer getCrystals() {
+        return crystals;
     }
 
-    public void setRazarion(Integer razarion) {
-        this.razarion = razarion;
+    public void setCrystals(Integer crystals) {
+        this.crystals = crystals;
     }
 
     public DbInventoryArtifact getDbInventoryArtifact() {

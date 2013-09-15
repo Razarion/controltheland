@@ -13,7 +13,6 @@ import com.btxtech.game.jsre.common.utg.condition.AbstractUpdatingComparison;
 import com.btxtech.game.jsre.common.utg.config.ArtifactItemIdComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
-import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
@@ -134,11 +133,11 @@ public class TestConditionServiceArtifactItemAdded extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbInventoryArtifact dbInventoryArtifact1 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact1.setName("dbInventoryArtifact1");
-        dbInventoryArtifact1.setRazarionCoast(1);
+        dbInventoryArtifact1.setCrystalCost(1);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact1);
         DbInventoryArtifact dbInventoryArtifact2 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact2.setName("dbInventoryArtifact2");
-        dbInventoryArtifact2.setRazarionCoast(1);
+        dbInventoryArtifact2.setCrystalCost(1);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -152,7 +151,7 @@ public class TestConditionServiceArtifactItemAdded extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("qaywsx");
-        getUserState().addRazarion(100);
+        getUserState().addCrystals(100);
         globalInventoryService.buyInventoryArtifact(dbInventoryArtifact1.getId());
         globalInventoryService.buyInventoryArtifact(dbInventoryArtifact2.getId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -247,16 +246,16 @@ public class TestConditionServiceArtifactItemAdded extends AbstractServiceTest {
     @DirtiesContext
     public void testConditionServiceLevelTask() throws Exception {
         configureSimplePlanetNoResources();
-        // setup level task for razarion
+        // setup level task for crystals
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbInventoryArtifact dbInventoryArtifact1 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact1.setName("dbInventoryArtifact1");
-        dbInventoryArtifact1.setRazarionCoast(1);
+        dbInventoryArtifact1.setCrystalCost(1);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact1);
         DbInventoryArtifact dbInventoryArtifact2 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact2.setName("dbInventoryArtifact2");
-        dbInventoryArtifact2.setRazarionCoast(1);
+        dbInventoryArtifact2.setCrystalCost(1);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact2);
 
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
@@ -290,7 +289,7 @@ public class TestConditionServiceArtifactItemAdded extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         userState = getUserState();
-        userState.addRazarion(100);
+        userState.addCrystals(100);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -307,16 +306,16 @@ public class TestConditionServiceArtifactItemAdded extends AbstractServiceTest {
     @DirtiesContext
     public void testConditionServiceBackup() throws Exception {
         configureSimplePlanetNoResources();
-        // setup level task for razarion
+        // setup level task for crystals
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbInventoryArtifact dbInventoryArtifact1 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact1.setName("dbInventoryArtifact1");
-        dbInventoryArtifact1.setRazarionCoast(1);
+        dbInventoryArtifact1.setCrystalCost(1);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact1);
         DbInventoryArtifact dbInventoryArtifact2 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact2.setName("dbInventoryArtifact2");
-        dbInventoryArtifact2.setRazarionCoast(1);
+        dbInventoryArtifact2.setCrystalCost(1);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact2);
 
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
@@ -350,7 +349,7 @@ public class TestConditionServiceArtifactItemAdded extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         userState = getUserState();
-        userState.addRazarion(100);
+        userState.addCrystals(100);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -385,16 +384,16 @@ public class TestConditionServiceArtifactItemAdded extends AbstractServiceTest {
     public void testUpdateSending() throws Exception {
         setPrivateStaticField(AbstractUpdatingComparison.class, "MIN_SEND_DELAY", 0);
         configureSimplePlanetNoResources();
-        // setup level task for razarion
+        // setup level task for crystals
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbInventoryArtifact dbInventoryArtifact1 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact1.setName("dbInventoryArtifact1");
-        dbInventoryArtifact1.setRazarionCoast(1);
+        dbInventoryArtifact1.setCrystalCost(1);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact1);
         DbInventoryArtifact dbInventoryArtifact2 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact2.setName("dbInventoryArtifact2");
-        dbInventoryArtifact2.setRazarionCoast(1);
+        dbInventoryArtifact2.setCrystalCost(1);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact2);
         InventoryArtifactInfo artifactInfo1 = dbInventoryArtifact1.generateInventoryArtifactInfo();
         InventoryArtifactInfo artifactInfo2 = dbInventoryArtifact2.generateInventoryArtifactInfo();
@@ -421,7 +420,7 @@ public class TestConditionServiceArtifactItemAdded extends AbstractServiceTest {
         createAndLoginUser("U1");
         createBase(new Index(1000, 1000));
         userState = getUserState();
-        userState.addRazarion(100);
+        userState.addCrystals(100);
         createConnection();
         clearPackets();
         serverConditionService.onArtifactItemAdded(userState, false, dbInventoryArtifact2.getId());
@@ -467,16 +466,16 @@ public class TestConditionServiceArtifactItemAdded extends AbstractServiceTest {
     @DirtiesContext
     public void testGetRealGameInfo() throws Exception {
         configureSimplePlanetNoResources();
-        // setup level task for razarion
+        // setup level task for crystals
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbInventoryArtifact dbInventoryArtifact1 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact1.setName("dbInventoryArtifact1");
-        dbInventoryArtifact1.setRazarionCoast(1);
+        dbInventoryArtifact1.setCrystalCost(1);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact1);
         DbInventoryArtifact dbInventoryArtifact2 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact2.setName("dbInventoryArtifact2");
-        dbInventoryArtifact2.setRazarionCoast(1);
+        dbInventoryArtifact2.setCrystalCost(1);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact2);
         InventoryArtifactInfo artifactInfo1 = dbInventoryArtifact1.generateInventoryArtifactInfo();
         InventoryArtifactInfo artifactInfo2 = dbInventoryArtifact2.generateInventoryArtifactInfo();
@@ -503,7 +502,7 @@ public class TestConditionServiceArtifactItemAdded extends AbstractServiceTest {
         createAndLoginUser("U1");
         createBase(new Index(1000, 1000));
         userState = getUserState();
-        userState.addRazarion(100);
+        userState.addCrystals(100);
         LevelTaskPacket levelTaskPacket = getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket();
         Assert.assertFalse(levelTaskPacket.isCompleted());
         Assert.assertEquals(ConditionTrigger.ARTIFACT_ITEM_ADDED, levelTaskPacket.getQuestProgressInfo().getConditionTrigger());

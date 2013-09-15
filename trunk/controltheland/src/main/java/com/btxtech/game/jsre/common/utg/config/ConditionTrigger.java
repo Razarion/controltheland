@@ -61,7 +61,7 @@ public enum ConditionTrigger {
         public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
             return new SyncItemConditionTrigger<A, I>(this, abstractComparison);
         }},
-    RAZARION_INCREASED(true) {
+    CRYSTALS_INCREASED(true) {
         @Override
         public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
             return new ValueConditionTrigger<A, I>(this, abstractComparison);

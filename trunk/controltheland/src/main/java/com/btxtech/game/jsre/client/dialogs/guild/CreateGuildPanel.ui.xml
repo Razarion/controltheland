@@ -13,6 +13,6 @@
 		<g:Cell height="80px" verticalAlignment="ALIGN_MIDDLE">
 			<p1:GuildNameField ui:field="guildName" width="" height=""/>
 		</g:Cell>
-		<g:Label ui:field="razarionCostLabel"/>
+		<g:Label ui:field="crystalCostLabel"/>
 	</g:VerticalPanel>
 </ui:UiBinder> 

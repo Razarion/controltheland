@@ -7,30 +7,30 @@ import java.io.Serializable;
  * Date: 02.06.13
  * Time: 18:59
  */
-public class RazarionCostInfo implements Serializable {
+public class CrystalCostInfo implements Serializable {
     private int cost;
-    private int razarionAmount;
+    private int crystalAmount;
 
     /**
      * Used by GWT
      */
-    RazarionCostInfo() {
+    CrystalCostInfo() {
     }
 
-    public RazarionCostInfo(int cost, int razarionAmount) {
+    public CrystalCostInfo(int cost, int crystalAmount) {
         this.cost = cost;
-        this.razarionAmount = razarionAmount;
+        this.crystalAmount = crystalAmount;
     }
 
     public int getCost() {
         return cost;
     }
 
-    public int getRazarionAmount() {
-        return razarionAmount;
+    public int getCrystalAmount() {
+        return crystalAmount;
     }
 
     public boolean isAfordable() {
-        return razarionAmount >= cost;
+        return crystalAmount >= cost;
     }
 }
