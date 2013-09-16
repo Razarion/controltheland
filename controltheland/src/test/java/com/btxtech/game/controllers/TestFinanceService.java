@@ -61,7 +61,7 @@ public class TestFinanceService extends AbstractServiceTest {
         org.junit.Assert.assertEquals(100, userState.getCrystals());
         ReadonlyListContentProvider<DisplayHistoryElement> history = historyService.getNewestHistoryElements();
         org.junit.Assert.assertEquals(1, history.readDbChildren().size());
-        org.junit.Assert.assertEquals("Bought 100 cristals via PayPal", history.readDbChildren().get(0).getMessage());
+        org.junit.Assert.assertEquals("Bought 100 crystals via PayPal", history.readDbChildren().get(0).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -79,14 +79,14 @@ public class TestFinanceService extends AbstractServiceTest {
         Assert.assertEquals(0, getUserState().getCrystals());
         // User exists
         try {
-            financeService.crystalsBought("120", "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+            financeService.crystalsBought("120", "CRYST_1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
             Assert.fail("UserDoesNotExitException expected");
         } catch (UserDoesNotExitException e) {
             // Expected
         }
         // Wrong user Id
         try {
-            financeService.crystalsBought("aaaa", "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+            financeService.crystalsBought("aaaa", "CRYST_1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
             Assert.fail("UserDoesNotExitException expected");
         } catch (NumberFormatException e) {
             // Expected
@@ -101,7 +101,7 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         // Correct cost
         try {
-            financeService.crystalsBought(userIdString, "RAZ1000", "6.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+            financeService.crystalsBought(userIdString, "CRYST_1000", "6.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -109,7 +109,7 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         // Email
         try {
-            financeService.crystalsBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "lulola", "Completed", "1");
+            financeService.crystalsBought(userIdString, "CRYST_1000", "5.00", "USD", "1", "payer email", "lulola", "Completed", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -117,7 +117,7 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         // Payment status unknown
         try {
-            financeService.crystalsBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "kikoka", "1");
+            financeService.crystalsBought(userIdString, "CRYST_1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "kikoka", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -125,28 +125,28 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         // Payment status refunded
         try {
-            financeService.crystalsBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Refunded", "1");
+            financeService.crystalsBought(userIdString, "CRYST_1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Refunded", "1");
             Assert.fail("WrongPaymentStatusException expected");
         } catch (WrongPaymentStatusException e) {
             Assert.assertEquals("Refunded", e.getMessage());
         }
         // Payment status Pending
         try {
-            financeService.crystalsBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Pending", "1");
+            financeService.crystalsBought(userIdString, "CRYST_1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Pending", "1");
             Assert.fail("WrongPaymentStatusException expected");
         } catch (WrongPaymentStatusException e) {
             Assert.assertEquals("Pending", e.getMessage());
         }
         // Payment status Denied
         try {
-            financeService.crystalsBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Denied", "1");
+            financeService.crystalsBought(userIdString, "CRYST_1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Denied", "1");
             Assert.fail("WrongPaymentStatusException expected");
         } catch (WrongPaymentStatusException e) {
             Assert.assertEquals("Denied", e.getMessage());
         }
         // Quantity
         try {
-            financeService.crystalsBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "10");
+            financeService.crystalsBought(userIdString, "CRYST_1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "10");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -154,7 +154,7 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         // Currency
         try {
-            financeService.crystalsBought(userIdString, "RAZ1000", "5.00", "EUR", "1", "payer email", "finance@razarion.com", "Completed", "1");
+            financeService.crystalsBought(userIdString, "CRYST_1000", "5.00", "EUR", "1", "payer email", "finance@razarion.com", "Completed", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -162,10 +162,10 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         Assert.assertEquals(0, getUserState().getCrystals());
         // Transaction id already used
-        financeService.crystalsBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBought(userIdString, "CRYST_1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
         Assert.assertEquals(1000, getUserState().getCrystals());
         try {
-            financeService.crystalsBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+            financeService.crystalsBought(userIdString, "CRYST_1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (TransactionAlreadyProcessedException e) {
             // Expected
@@ -187,22 +187,22 @@ public class TestFinanceService extends AbstractServiceTest {
         int userId = getUserState().getUser();
         String userIdString = Integer.toString(userId);
         Assert.assertEquals(0, getUserState().getCrystals());
-        financeService.crystalsBought(userIdString, "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBought(userIdString, "CRYST_1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
         Assert.assertEquals(1000, getUserState().getCrystals());
-        financeService.crystalsBought(userIdString, "RAZ2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBought(userIdString, "CRYST_2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
         Assert.assertEquals(3200, getUserState().getCrystals());
-        financeService.crystalsBought(userIdString, "RAZ4600", "20", "USD", "3", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBought(userIdString, "CRYST_4600", "20", "USD", "3", "payer email", "finance@razarion.com", "Completed", "1");
         Assert.assertEquals(7800, getUserState().getCrystals());
-        financeService.crystalsBought(userIdString, "RAZ12500", "50", "USD", "4", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBought(userIdString, "CRYST_12500", "50", "USD", "4", "payer email", "finance@razarion.com", "Completed", "1");
         Assert.assertEquals(20300, getUserState().getCrystals());
 
         List<DbPayPalTransaction> transactions = HibernateUtil.loadAll(getSessionFactory(), DbPayPalTransaction.class);
 
         Assert.assertEquals(4, transactions.size());
-        assertTransaction(transactions.get(0), userId, "RAZ1000", "1", "payer email");
-        assertTransaction(transactions.get(1), userId, "RAZ2200", "2", "payer email");
-        assertTransaction(transactions.get(2), userId, "RAZ4600", "3", "payer email");
-        assertTransaction(transactions.get(3), userId, "RAZ12500", "4", "payer email");
+        assertTransaction(transactions.get(0), userId, "CRYST_1000", "1", "payer email");
+        assertTransaction(transactions.get(1), userId, "CRYST_2200", "2", "payer email");
+        assertTransaction(transactions.get(2), userId, "CRYST_4600", "3", "payer email");
+        assertTransaction(transactions.get(3), userId, "CRYST_12500", "4", "payer email");
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
