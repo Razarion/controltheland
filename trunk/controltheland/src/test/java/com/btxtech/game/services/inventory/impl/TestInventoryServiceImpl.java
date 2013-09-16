@@ -1565,7 +1565,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
             globalInventoryService.buyInventoryItem(dbInventoryItem1.getId());
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("The user does not have enough crystals to buy the inventory item. User: UserState: user=null dbInventoryItem: DbInventoryItem{id=1, name='GoldItem1'} Crstasls: 0", e.getMessage());
+            Assert.assertEquals("The user does not have enough crystals to buy the inventory item. User: UserState: user=null dbInventoryItem: DbInventoryItem{id=1, name='GoldItem1'} crystals: 0", e.getMessage());
         }
         Assert.assertFalse(userService.getUserState().hasInventoryItemId(dbInventoryItem1.getId()));
         userService.getUserState().addCrystals(100);
@@ -1620,7 +1620,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
             globalInventoryService.buyInventoryArtifact(dbInventoryArtifact1.getId());
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("The user does not have enough crystals to buy the inventory artifact. User: UserState: user=null dbInventoryArtifact: DbInventoryArtifact{id=1, name='Artifact1'} Crystals: 0", e.getMessage());
+            Assert.assertEquals("The user does not have enough crystals to buy the inventory artifact. User: UserState: user=null dbInventoryArtifact: DbInventoryArtifact{id=1, name='Artifact1'} crystals: 0", e.getMessage());
         }
         Assert.assertTrue(userService.getUserState().getInventoryArtifactIds().isEmpty());
         userService.getUserState().addCrystals(24);
