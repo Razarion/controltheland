@@ -471,7 +471,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         waitForActionServiceDone();
         Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1, null).getLevelTaskPacket().getQuestInfo().getId());
-        Thread.sleep(500);
+        Thread.sleep(5000);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         //Backup
@@ -483,7 +483,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Thread.sleep(500);
+        Thread.sleep(5000);
         List<BackupSummary> backupSummaries = backupService.getBackupSummary();
         backupService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -518,7 +518,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         long fulfilledTimeStamp = (Long) getPrivateField(ItemTypePositionComparison.class, itemTypePositionComparison, "fulfilledTimeStamp");
         long fulfilledTime = (System.currentTimeMillis() - fulfilledTimeStamp);
         System.out.println("fulfilledTime: " + fulfilledTime);
-        Assert.assertTrue("fulfilledTime invalid: " + fulfilledTime, fulfilledTime > 500 && fulfilledTime < 800);
+        Assert.assertTrue("fulfilledTime invalid: " + fulfilledTime, fulfilledTime > 5000 && fulfilledTime < 10000);
         setPrivateField(ItemTypePositionComparison.class, itemTypePositionComparison, "fulfilledTimeStamp", System.currentTimeMillis() - 60000);
     }
 
