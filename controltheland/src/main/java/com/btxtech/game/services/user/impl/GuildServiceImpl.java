@@ -567,37 +567,6 @@ public class GuildServiceImpl implements GuildService {
     }
 
     @Override
-    public void onMakeBaseAbandoned(User user, SimpleBase simpleBase) {
-        DbGuild dbGuild = getGuild(user);
-        if (dbGuild == null) {
-            return;
-        }
-        planetSystemService.getServerPlanetServices(simpleBase).getBaseService().setGuild(simpleBase, null);
-    }
-
-    @Override
-    public void onMakeBaseAbandonedHandleEnemies(User user, SimpleBase simpleBase) {
-        DbGuild dbGuild = getGuild(user);
-        if (dbGuild == null) {
-            return;
-        }
-        Set<SimpleBase> simpleBases = new HashSet<>();
-        simpleBases.add(simpleBase);
-        for (DbGuildMember dbGuildMember : dbGuild.getGuildMembers()) {
-            if (user.equals(dbGuildMember.getUser())) {
-                continue;
-            }
-            SimpleBase guildMemberBase = getSimpleBase(dbGuildMember.getUser());
-            if (guildMemberBase != null && simpleBase.getPlanetId() == guildMemberBase.getPlanetId()) {
-                simpleBases.add(guildMemberBase);
-            }
-        }
-        if (simpleBases.size() > 1) {
-            planetSystemService.getServerPlanetServices(simpleBase).getItemService().onGuildChanged(simpleBases);
-        }
-    }
-
-    @Override
     public Set<SimpleBase> getGuildBases(UserState userState, int planetId) {
         User user = userService.getUser(userState);
         if (user == null) {

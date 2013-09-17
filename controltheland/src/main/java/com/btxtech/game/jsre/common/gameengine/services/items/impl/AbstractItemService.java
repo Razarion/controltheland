@@ -273,7 +273,7 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
-    public void killSyncItems(Collection<SyncItem> itemsToKill) {
+    public void killSyncItems(Collection<? extends SyncItem> itemsToKill) {
         for (SyncItem syncItem : itemsToKill) {
             try {
                 killSyncItem(syncItem, null, true, false);

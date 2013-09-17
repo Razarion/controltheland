@@ -17,4 +17,11 @@ public class BaseLostPacket extends Packet {
     public void setRealGameInfo(RealGameInfo realGameInfo) {
         this.realGameInfo = realGameInfo;
     }
+
+    @Override
+    public String toString() {
+        return "BaseLostPacket{" +
+                "realGameInfo=" + realGameInfo +
+                '}';
+    }
 }
