@@ -3007,8 +3007,8 @@ abstract public class AbstractServiceTest {
                 errorString = "Invalid BaseChangedPacket. Actural baseAttributes is bot";
                 return false;
             }
-            if (baseAttributes.getSimpleGuild() != null) {
-                errorString = "Invalid BaseChangedPacket. Expected baseAttributes has guild set: " + baseAttributes.getSimpleGuild();
+            if (baseAttributes.getSimpleGuild() == null) {
+                errorString = "Invalid BaseChangedPacket. Expected baseAttributes guild not set: " + baseAttributes.getSimpleGuild();
                 return false;
             }
             if (abandoned != baseAttributes.isAbandoned()) {
