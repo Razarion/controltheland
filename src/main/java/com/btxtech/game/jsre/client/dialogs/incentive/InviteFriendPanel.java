@@ -71,13 +71,13 @@ public class InviteFriendPanel extends Composite {
                 return Integer.toString(friendInvitationBonus.getLevel());
             }
         }, ClientI18nHelper.CONSTANTS.level());
-        // Create razarion bonus
+        // Create crystal bonus
         completeTable.addColumn(new TextColumn<FriendInvitationBonus>() {
             @Override
             public String getValue(FriendInvitationBonus friendInvitationBonus) {
-                return Integer.toString(friendInvitationBonus.getRazarionBonus());
+                return Integer.toString(friendInvitationBonus.getCrystalBonus());
             }
-        }, ClientI18nHelper.CONSTANTS.razarionBonus());
+        }, ClientI18nHelper.CONSTANTS.crystalBonus());
         if (Connection.getMovableServiceAsync() != null) {
             Connection.getMovableServiceAsync().getFriendInvitationBonuses(new AsyncCallback<List<FriendInvitationBonus>>() {
 

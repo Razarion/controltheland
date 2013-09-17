@@ -814,18 +814,18 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void getRazarion(final ParametrisedRunnable<Integer> runnable) {
+    public void getCrystals(final ParametrisedRunnable<Integer> runnable) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.getRazarion(new AsyncCallback<Integer>() {
+            movableServiceAsync.getCrystals(new AsyncCallback<Integer>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    handleDisconnection("getRazarion", caught);
+                    handleDisconnection("getCrystals", caught);
                 }
 
                 @Override
-                public void onSuccess(Integer razarion) {
-                    runnable.run(razarion);
+                public void onSuccess(Integer crystals) {
+                    runnable.run(crystals);
                 }
             });
         }

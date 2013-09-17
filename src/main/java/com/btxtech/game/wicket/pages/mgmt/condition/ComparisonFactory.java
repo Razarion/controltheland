@@ -42,7 +42,7 @@ public class ComparisonFactory {
         XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class),
         BASE_DELETED(ConditionTrigger.BASE_KILLED, DbCountComparisonConfig.class),
         SYNC_ITEM_POSITION(ConditionTrigger.SYNC_ITEM_POSITION, DbItemTypePositionComparisonConfig.class),
-        RAZARION_INCREASED(ConditionTrigger.RAZARION_INCREASED, DbCountComparisonConfig.class),
+        CRYSTALS_INCREASED(ConditionTrigger.CRYSTALS_INCREASED, DbCountComparisonConfig.class),
         ARTIFACT_ITEM_ADDED(ConditionTrigger.ARTIFACT_ITEM_ADDED, DbArtifactItemIdComparisonConfig.class);
 
         private ConditionTrigger conditionTrigger;

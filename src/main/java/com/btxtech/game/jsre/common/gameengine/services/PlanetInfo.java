@@ -23,8 +23,8 @@ public class PlanetInfo implements Serializable {
         return planetLiteInfo.getPlanetId();
     }
 
-    public void setPlanetIdAndName(int planetId, String name, Integer unlockRazarion) {
-        planetLiteInfo = new PlanetLiteInfo(planetId, name, unlockRazarion);
+    public void setPlanetIdAndName(int planetId, String name, Integer unlockCrystals) {
+        planetLiteInfo = new PlanetLiteInfo(planetId, name, unlockCrystals);
     }
 
     public String getName() {

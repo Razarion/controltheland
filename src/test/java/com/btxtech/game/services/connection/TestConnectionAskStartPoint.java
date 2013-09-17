@@ -13,6 +13,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -86,7 +87,14 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
         getMovableService().surrenderBase();
         Thread.sleep(200);
         List<Packet> packets = getMovableService().getSyncInfo(START_UID_1, false);
-        Assert.assertEquals(BaseChangedPacket.Type.CHANGED, ((BaseChangedPacket) packets.get(0)).getType());
+        // Remove account balance package
+        for (Iterator<Packet> iterator = packets.iterator(); iterator.hasNext(); ) {
+            Packet packet = iterator.next();
+            if (packet instanceof AccountBalancePacket) {
+                iterator.remove();
+            }
+        }
+        Assert.assertEquals(BaseChangedPacket.Type.REMOVED, ((BaseChangedPacket) packets.get(0)).getType());
         Assert.assertEquals(simpleBase, ((BaseChangedPacket) packets.get(0)).getBaseAttributes().getSimpleBase());
         realGameInfo = ((BaseLostPacket) packets.get(1)).getRealGameInfo();
         Assert.assertEquals(-3, realGameInfo.getBase().getBaseId());
@@ -95,7 +103,7 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
         Assert.assertEquals(0, realGameInfo.getEnergyConsuming());
         Assert.assertEquals(0, realGameInfo.getEnergyGenerating());
         Assert.assertEquals(0, realGameInfo.getHouseSpace());
-        Assert.assertEquals(2, realGameInfo.getAllBase().size());
+        Assert.assertEquals(1, realGameInfo.getAllBase().size());
         Assert.assertEquals(TEST_START_BUILDER_ITEM_ID, realGameInfo.getStartPointInfo().getBaseItemTypeId());
         Assert.assertEquals(300, realGameInfo.getStartPointInfo().getItemFreeRange());
         Assert.assertNull(realGameInfo.getStartPointInfo().getSuggestedPosition());

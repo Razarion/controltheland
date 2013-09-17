@@ -50,7 +50,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet.setUnlockRazarion(13);
+        dbPlanet.setUnlockCrystals(13);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
@@ -64,9 +64,9 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         xpService.onReward(getUserState(), 100001);
         getMovableService().surrenderBase();
         Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, null).getPlanetInfo().getPlanetId());
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         UnlockContainer unlockContainer = unlockService.unlockPlanet(TEST_PLANET_2_ID);
-        Assert.assertEquals(87, getUserState().getRazarion());
+        Assert.assertEquals(87, getUserState().getCrystals());
         getMovableService().surrenderBase();
         Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, null).getPlanetInfo().getPlanetId());
         Assert.assertTrue(unlockContainer.containsPlanetId(TEST_PLANET_2_ID));
@@ -82,7 +82,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet.setUnlockRazarion(15);
+        dbPlanet.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
@@ -93,9 +93,9 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL);
         getOrCreateBase();
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         UnlockContainer unlockContainer = unlockService.unlockPlanet(TEST_PLANET_2_ID);
-        Assert.assertEquals(85, getUserState().getRazarion());
+        Assert.assertEquals(85, getUserState().getCrystals());
         Assert.assertTrue(unlockContainer.containsPlanetId(TEST_PLANET_2_ID));
         xpService.onReward(getUserState(), 100001);
         getMovableService().surrenderBase();
@@ -113,7 +113,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setUnlockRazarion(15);
+        dbPlanet3.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
         planetSystemService.activatePlanet(TEST_PLANET_3_ID);
@@ -124,7 +124,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_6_REAL);
         createBase(new Index(500, 500));
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, null).getPlanetInfo().getPlanetId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -138,12 +138,12 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setUnlockRazarion(15);
+        dbPlanet2.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setUnlockRazarion(15);
+        dbPlanet3.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
         planetSystemService.activatePlanet(TEST_PLANET_3_ID);
@@ -154,7 +154,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_6_REAL);
         getOrCreateBase();
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, null).getPlanetInfo().getPlanetId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -168,7 +168,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet.setUnlockRazarion(15);
+        dbPlanet.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
@@ -202,13 +202,13 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void unlockNoRazarion() throws Exception {
+    public void unlockNoCrystals() throws Exception {
         configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet.setUnlockRazarion(15);
+        dbPlanet.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
@@ -218,14 +218,14 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getUserState().setRazarion(0);
+        getUserState().setCrystals(0);
         try {
             unlockService.unlockPlanet(TEST_PLANET_2_ID);
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Not enough razarion to unlock: PlanetLiteInfo{planetId=2, name='TEST_PLANET_2', unlockRazarion=15} user: UserState: user=null", e.getMessage());
+            Assert.assertEquals("Not enough crystals to unlock: PlanetLiteInfo{planetId=2, name='TEST_PLANET_2', unlockCrystals=15} user: UserState: user=null", e.getMessage());
         }
-        Assert.assertEquals(0, getUserState().getRazarion());
+        Assert.assertEquals(0, getUserState().getCrystals());
         Assert.assertTrue(unlockService.isPlanetLocked(planetInfo.getPlanetLiteInfo(), getUserState()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -238,14 +238,14 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getUserState().setRazarion(0);
+        getUserState().setCrystals(0);
         try {
             unlockService.unlockPlanet(TEST_PLANET_2_ID);
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Planet can not be unlocked: PlanetLiteInfo{planetId=2, name='TEST_PLANET_2', unlockRazarion=null}", e.getMessage());
+            Assert.assertEquals("Planet can not be unlocked: PlanetLiteInfo{planetId=2, name='TEST_PLANET_2', unlockCrystals=null}", e.getMessage());
         }
-        Assert.assertEquals(0, getUserState().getRazarion());
+        Assert.assertEquals(0, getUserState().getCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -259,13 +259,13 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         PlanetLiteInfo planetInfo1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID).createPlanetInfo().getPlanetLiteInfo();
         DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setUnlockRazarion(15);
+        dbPlanet2.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
         PlanetLiteInfo planetInfo2 = dbPlanet2.createPlanetInfo().getPlanetLiteInfo();
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setUnlockRazarion(15);
+        dbPlanet3.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
         planetSystemService.activatePlanet(TEST_PLANET_3_ID);
@@ -277,7 +277,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL);
         getOrCreateBase(); // Create Base
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         unlockService.unlockPlanet(TEST_PLANET_2_ID);
         Assert.assertFalse(unlockService.isPlanetLocked(planetInfo1, getUserState()));
         Assert.assertFalse(unlockService.isPlanetLocked(planetInfo2, getUserState()));
@@ -294,12 +294,12 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setUnlockRazarion(15);
+        dbPlanet2.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setUnlockRazarion(20);
+        dbPlanet3.setUnlockCrystals(20);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
         planetSystemService.activatePlanet(TEST_PLANET_3_ID);
@@ -310,7 +310,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL);
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         getOrCreateBase(); // Create Base
         unlockService.unlockPlanet(TEST_PLANET_2_ID);
         unlockService.unlockPlanet(TEST_PLANET_3_ID);
@@ -324,14 +324,14 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         Assert.assertEquals(DbHistoryElement.Type.UNLOCKED_PLANET, dbHistoryElement.getType());
         Assert.assertEquals(TEST_PLANET_2, dbHistoryElement.getPlanetName());
         Assert.assertEquals(TEST_PLANET_2_ID, (int) dbHistoryElement.getPlanetId());
-        Assert.assertEquals(85, (int) dbHistoryElement.getRazarion());
-        Assert.assertEquals(15, (int) dbHistoryElement.getDeltaRazarion());
+        Assert.assertEquals(85, (int) dbHistoryElement.getCrystals());
+        Assert.assertEquals(15, (int) dbHistoryElement.getDeltaCrystals());
         dbHistoryElement = history.get(6);
         Assert.assertEquals(DbHistoryElement.Type.UNLOCKED_PLANET, dbHistoryElement.getType());
         Assert.assertEquals(TEST_PLANET_3, dbHistoryElement.getPlanetName());
         Assert.assertEquals(TEST_PLANET_3_ID, (int) dbHistoryElement.getPlanetId());
-        Assert.assertEquals(65, (int) dbHistoryElement.getRazarion());
-        Assert.assertEquals(20, (int) dbHistoryElement.getDeltaRazarion());
+        Assert.assertEquals(65, (int) dbHistoryElement.getCrystals());
+        Assert.assertEquals(20, (int) dbHistoryElement.getDeltaCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -344,13 +344,13 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setUnlockRazarion(15);
+        dbPlanet2.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
         PlanetLiteInfo planetInfo2 = dbPlanet2.createPlanetInfo().getPlanetLiteInfo();
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setUnlockRazarion(15);
+        dbPlanet3.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
         planetSystemService.activatePlanet(TEST_PLANET_3_ID);

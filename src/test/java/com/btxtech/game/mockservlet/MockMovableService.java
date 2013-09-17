@@ -10,9 +10,9 @@ import com.btxtech.game.jsre.client.cockpit.item.InvitingUnregisteredBaseExcepti
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.CrystalCostInfo;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
-import com.btxtech.game.jsre.client.common.info.RazarionCostInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
@@ -315,7 +315,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public int getRazarion() {
+    public int getCrystals() {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -395,7 +395,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public RazarionCostInfo getCreateGuildRazarionCost() {
+    public CrystalCostInfo getCreateGuildCrystalCost() {
         return null; //To change body of implemented methods use File | Settings | File Templates.
     }
 

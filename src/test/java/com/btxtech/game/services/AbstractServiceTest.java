@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
+import com.btxtech.game.jsre.client.common.info.StartPointInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.NoConnectionException;
@@ -38,6 +39,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.BaseLostPacket;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.EnergyPacket;
 import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
@@ -822,7 +824,7 @@ abstract public class AbstractServiceTest {
                 if (!ObjectUtils.equals(expectedPlanetLiteInfo.getName(), receivedPlanetLiteInfo.getName())) {
                     return false;
                 }
-                if (!ObjectUtils.equals(expectedPlanetLiteInfo.getUnlockRazarion(), receivedPlanetLiteInfo.getUnlockRazarion())) {
+                if (!ObjectUtils.equals(expectedPlanetLiteInfo.getUnlockCrystals(), receivedPlanetLiteInfo.getUnlockCrystals())) {
                     return false;
                 }
                 if (expectedPlanetLiteInfo.getPlanetId() != receivedPlanetLiteInfo.getPlanetId()) {
@@ -907,6 +909,20 @@ abstract public class AbstractServiceTest {
             StorablePacket expected = (StorablePacket) expectedPacket;
             StorablePacket received = (StorablePacket) receivedPacket;
             return expected.getType() == received.getType();
+        } else if (expectedPacket instanceof BaseLostPacket) {
+            BaseLostPacket expected = (BaseLostPacket) expectedPacket;
+            BaseLostPacket received = (BaseLostPacket) receivedPacket;
+            RealGameInfo expectedRealGameInfo = expected.getRealGameInfo();
+            RealGameInfo receivedRealGameInfo = received.getRealGameInfo();
+            StartPointInfo expectedStartPointInfo = expectedRealGameInfo.getStartPointInfo();
+            StartPointInfo receivedStartPointInfo = receivedRealGameInfo.getStartPointInfo();
+            if (expectedStartPointInfo == null || receivedStartPointInfo == null) {
+                return false;
+            }
+            return expectedStartPointInfo.getBaseItemTypeId() == receivedStartPointInfo.getBaseItemTypeId()
+                    && expectedStartPointInfo.getItemFreeRange() == receivedStartPointInfo.getItemFreeRange()
+                    && ObjectUtils.equals(expectedStartPointInfo.getSuggestedPosition(), receivedStartPointInfo.getSuggestedPosition());
+
         } else {
             Assert.fail("Unknown packet: " + expectedPacket);
             return false;
@@ -2470,7 +2486,7 @@ abstract public class AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("presi");
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         int guildId = guildService.createGuild("guild").getId();
         guildService.inviteUserToGuild("member1");
         endHttpRequestAndOpenSessionInViewFilter();

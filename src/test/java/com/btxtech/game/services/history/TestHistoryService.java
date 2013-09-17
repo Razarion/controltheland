@@ -520,7 +520,7 @@ public class TestHistoryService extends AbstractServiceTest {
         historyService.addInventoryItemBought(userService.getUserState(), "inventoryItemName", 12);
         historyService.addInventoryArtifactBought(userService.getUserState(), "inventoryArtifactName", 33);
         historyService.addBoxPicked(syncBoxItem, syncBaseItem);
-        historyService.addRazarionFromBox(userService.getUserState(), 100);
+        historyService.addCrystalsFromBox(userService.getUserState(), 100);
         historyService.addInventoryItemFromBox(userService.getUserState(), "inventoryItemName");
         historyService.addInventoryArtifactFromBox(userService.getUserState(), "inventoryArtifactName");
         historyService.addInventoryItemUsed(userService.getUserState(), "inventoryItemName");
@@ -538,7 +538,7 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
         Assert.assertEquals("Found inventory item inventoryItemName", displayHistoryElements.get(2).getMessage());
         Assert.assertTrue(displayHistoryElements.get(3).getTimeStamp() >= displayHistoryElements.get(4).getTimeStamp());
-        Assert.assertEquals("Found razarion 100", displayHistoryElements.get(3).getMessage());
+        Assert.assertEquals("Found 100 crystals", displayHistoryElements.get(3).getMessage());
         Assert.assertTrue(displayHistoryElements.get(4).getTimeStamp() >= displayHistoryElements.get(5).getTimeStamp());
         Assert.assertEquals("Box picked", displayHistoryElements.get(4).getMessage());
         Assert.assertTrue(displayHistoryElements.get(5).getTimeStamp() >= displayHistoryElements.get(6).getTimeStamp());
@@ -585,7 +585,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testRazarionBought() throws Exception {
+    public void testCrystalsBought() throws Exception {
         configureSimplePlanetNoResources();
 
         beginHttpSession();
@@ -593,8 +593,8 @@ public class TestHistoryService extends AbstractServiceTest {
         createAndLoginUser("U1");
         int userId = getUserState().getUser();
         String userIdString = Integer.toString(userId);
-        financeService.razarionBought(userIdString, "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
-        financeService.razarionBought(userIdString, "RAZ2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBought(userIdString, "CRYST_1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBought(userIdString, "CRYST_2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -607,8 +607,8 @@ public class TestHistoryService extends AbstractServiceTest {
         }
         Assert.assertEquals(2, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
-        Assert.assertEquals("Bought Razarion 2200 via PayPal", displayHistoryElements.get(0).getMessage());
-        Assert.assertEquals("Bought Razarion 1000 via PayPal", displayHistoryElements.get(1).getMessage());
+        Assert.assertEquals("Bought 2200 crystals via PayPal", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Bought 1000 crystals via PayPal", displayHistoryElements.get(1).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -621,10 +621,10 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType attacker = itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
-        attacker.setUnlockRazarion(10);
+        attacker.setUnlockCrystals(10);
         itemTypeService.saveDbItemType(attacker);
         DbBaseItemType factory = itemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID);
-        factory.setUnlockRazarion(8);
+        factory.setUnlockCrystals(8);
         itemTypeService.saveDbItemType(factory);
         itemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -633,7 +633,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         getOrCreateBase(); // Create Base
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
@@ -674,11 +674,11 @@ public class TestHistoryService extends AbstractServiceTest {
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask1 = dbLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask1.setName("LT1");
-        dbLevelTask1.setUnlockRazarion(10);
+        dbLevelTask1.setUnlockCrystals(10);
         setupCondition(dbLevelTask1);
         DbLevelTask dbLevelTask2 = dbLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask2.setName("LT2");
-        dbLevelTask2.setUnlockRazarion(20);
+        dbLevelTask2.setUnlockCrystals(20);
         setupCondition(dbLevelTask2);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
@@ -688,7 +688,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         getOrCreateBase(); // Create Base
         unlockService.unlockQuest(dbLevelTask1.getId());
         unlockService.unlockQuest(dbLevelTask2.getId());
@@ -720,12 +720,12 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setUnlockRazarion(20);
+        dbPlanet2.setUnlockCrystals(20);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setUnlockRazarion(15);
+        dbPlanet3.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
         planetSystemService.activatePlanet(TEST_PLANET_3_ID);
@@ -736,7 +736,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL);
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         getOrCreateBase(); // Create Base
         unlockService.unlockPlanet(TEST_PLANET_2_ID);
         unlockService.unlockPlanet(TEST_PLANET_3_ID);
@@ -765,55 +765,55 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U2");
-        historyService.addRazarionBought(getUserState(), 1);
-        historyService.addRazarionBought(getUserState(), 2);
-        historyService.addRazarionBought(getUserState(), 3);
-        historyService.addRazarionBought(getUserState(), 4);
-        historyService.addRazarionBought(getUserState(), 5);
-        historyService.addRazarionBought(getUserState(), 6);
-        historyService.addRazarionBought(getUserState(), 7);
-        historyService.addRazarionBought(getUserState(), 8);
-        historyService.addRazarionBought(getUserState(), 9);
-        historyService.addRazarionBought(getUserState(), 10);
+        historyService.addCrystalsBought(getUserState(), 1);
+        historyService.addCrystalsBought(getUserState(), 2);
+        historyService.addCrystalsBought(getUserState(), 3);
+        historyService.addCrystalsBought(getUserState(), 4);
+        historyService.addCrystalsBought(getUserState(), 5);
+        historyService.addCrystalsBought(getUserState(), 6);
+        historyService.addCrystalsBought(getUserState(), 7);
+        historyService.addCrystalsBought(getUserState(), 8);
+        historyService.addCrystalsBought(getUserState(), 9);
+        historyService.addCrystalsBought(getUserState(), 10);
         // Verify 1
         HistoryElementInfo historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(0, 10));
         Assert.assertEquals(0, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(10, historyElementInfo.getHistoryElements().size());
-        Assert.assertEquals("Bought Razarion 10 via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
-        Assert.assertEquals("Bought Razarion 9 via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
-        Assert.assertEquals("Bought Razarion 8 via PayPal", historyElementInfo.getHistoryElements().get(2).getMessage());
-        Assert.assertEquals("Bought Razarion 7 via PayPal", historyElementInfo.getHistoryElements().get(3).getMessage());
-        Assert.assertEquals("Bought Razarion 6 via PayPal", historyElementInfo.getHistoryElements().get(4).getMessage());
-        Assert.assertEquals("Bought Razarion 5 via PayPal", historyElementInfo.getHistoryElements().get(5).getMessage());
-        Assert.assertEquals("Bought Razarion 4 via PayPal", historyElementInfo.getHistoryElements().get(6).getMessage());
-        Assert.assertEquals("Bought Razarion 3 via PayPal", historyElementInfo.getHistoryElements().get(7).getMessage());
-        Assert.assertEquals("Bought Razarion 2 via PayPal", historyElementInfo.getHistoryElements().get(8).getMessage());
-        Assert.assertEquals("Bought Razarion 1 via PayPal", historyElementInfo.getHistoryElements().get(9).getMessage());
+        Assert.assertEquals("Bought 10 crystals via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought 9 crystals via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Bought 8 crystals via PayPal", historyElementInfo.getHistoryElements().get(2).getMessage());
+        Assert.assertEquals("Bought 7 crystals via PayPal", historyElementInfo.getHistoryElements().get(3).getMessage());
+        Assert.assertEquals("Bought 6 crystals via PayPal", historyElementInfo.getHistoryElements().get(4).getMessage());
+        Assert.assertEquals("Bought 5 crystals via PayPal", historyElementInfo.getHistoryElements().get(5).getMessage());
+        Assert.assertEquals("Bought 4 crystals via PayPal", historyElementInfo.getHistoryElements().get(6).getMessage());
+        Assert.assertEquals("Bought 3 crystals via PayPal", historyElementInfo.getHistoryElements().get(7).getMessage());
+        Assert.assertEquals("Bought 2 crystals via PayPal", historyElementInfo.getHistoryElements().get(8).getMessage());
+        Assert.assertEquals("Bought 1 crystals via PayPal", historyElementInfo.getHistoryElements().get(9).getMessage());
         // Verify 2
         historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(2, 5));
         Assert.assertEquals(2, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(5, historyElementInfo.getHistoryElements().size());
-        Assert.assertEquals("Bought Razarion 8 via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
-        Assert.assertEquals("Bought Razarion 7 via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
-        Assert.assertEquals("Bought Razarion 6 via PayPal", historyElementInfo.getHistoryElements().get(2).getMessage());
-        Assert.assertEquals("Bought Razarion 5 via PayPal", historyElementInfo.getHistoryElements().get(3).getMessage());
-        Assert.assertEquals("Bought Razarion 4 via PayPal", historyElementInfo.getHistoryElements().get(4).getMessage());
+        Assert.assertEquals("Bought 8 crystals via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought 7 crystals via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Bought 6 crystals via PayPal", historyElementInfo.getHistoryElements().get(2).getMessage());
+        Assert.assertEquals("Bought 5 crystals via PayPal", historyElementInfo.getHistoryElements().get(3).getMessage());
+        Assert.assertEquals("Bought 4 crystals via PayPal", historyElementInfo.getHistoryElements().get(4).getMessage());
         // Verify 3
         historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(8, 2));
         Assert.assertEquals(8, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(2, historyElementInfo.getHistoryElements().size());
-        Assert.assertEquals("Bought Razarion 2 via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
-        Assert.assertEquals("Bought Razarion 1 via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Bought 2 crystals via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought 1 crystals via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
         // Verify 4
         historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(8, 4));
         Assert.assertEquals(8, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(2, historyElementInfo.getHistoryElements().size());
-        Assert.assertEquals("Bought Razarion 2 via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
-        Assert.assertEquals("Bought Razarion 1 via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Bought 2 crystals via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought 1 crystals via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
         // Verify 5
         historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(10, 6));
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
@@ -874,8 +874,8 @@ public class TestHistoryService extends AbstractServiceTest {
         // Prepare
         createAndLoginUser("master");
         createBase(new Index(300, 300));
-        historyService.addRazarionBought(getUserState(), 100);
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        historyService.addCrystalsBought(getUserState(), 100);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         int guildId = guildService.createGuild("xxGUILD").getId();
         // Test
         HistoryElementInfo historyElementInfo = historyService.getHistoryElements(createGuildHistoryFilter(0, 12, guildId));
@@ -889,7 +889,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         createBase(new Index(600, 600));
-        historyService.addRazarionBought(getUserState(), 100);
+        historyService.addCrystalsBought(getUserState(), 100);
         guildService.guildMembershipRequest(guildId, "xxx");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1002,32 +1002,32 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         User master = userService.getUser("Master");
         User member = userService.getUser("Member");
-        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addCrystalsBought(userService.getUserState(master), 10);
         historyService.addGuildCreated(master, 10, dbGuild);
-        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addCrystalsBought(userService.getUserState(master), 10);
         historyService.addGuildInvitation(master, member, dbGuild);
-        historyService.addRazarionBought(userService.getUserState(master), 10);
-        historyService.addRazarionBought(userService.getUserState(master), 99);
-        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addCrystalsBought(userService.getUserState(master), 10);
+        historyService.addCrystalsBought(userService.getUserState(master), 99);
+        historyService.addCrystalsBought(userService.getUserState(master), 10);
         historyService.addGuildJoined(member, dbGuild);
         historyService.addGuildDismissInvitation(member, dbGuild);
-        historyService.addRazarionBought(userService.getUserState(master), 99);
-        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addCrystalsBought(userService.getUserState(master), 99);
+        historyService.addCrystalsBought(userService.getUserState(master), 10);
         historyService.addGuildMembershipRequest(member, dbGuild);
-        historyService.addRazarionBought(userService.getUserState(master), 99);
+        historyService.addCrystalsBought(userService.getUserState(master), 99);
         historyService.addDismissGuildMemberRequest(master, member, dbGuild);
         historyService.addChangeGuildMemberRank(master, member, GuildMemberInfo.Rank.MANAGEMENT, dbGuild);
-        historyService.addRazarionBought(userService.getUserState(master), 99);
-        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addCrystalsBought(userService.getUserState(master), 99);
+        historyService.addCrystalsBought(userService.getUserState(master), 10);
         historyService.addGuildTextChanged(master, "xxx", dbGuild);
-        historyService.addRazarionBought(userService.getUserState(master), 99);
+        historyService.addCrystalsBought(userService.getUserState(master), 99);
         historyService.addGuildMemberKicked(master, member, dbGuild);
-        historyService.addRazarionBought(userService.getUserState(master), 10);
+        historyService.addCrystalsBought(userService.getUserState(master), 10);
         historyService.addGuildLeft(member, dbGuild);
-        historyService.addRazarionBought(userService.getUserState(master), 99);
+        historyService.addCrystalsBought(userService.getUserState(master), 99);
         historyService.addGuildClosed(master, dbGuild);
-        historyService.addRazarionBought(userService.getUserState(master), 10);
-        historyService.addRazarionBought(userService.getUserState(master), 99);
+        historyService.addCrystalsBought(userService.getUserState(master), 10);
+        historyService.addCrystalsBought(userService.getUserState(master), 99);
         historyService.addKickedGuildClosed(master, member, dbGuild);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1094,7 +1094,7 @@ public class TestHistoryService extends AbstractServiceTest {
         loginUser("Host");
         List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Host"), 0, 1000);
         Assert.assertEquals(3, displayHistoryElements.size());
-        Assert.assertEquals("Friend invitation bonus received for Invitee. Bonus: 10 Razarion", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Friend invitation bonus received for Invitee. Bonus: 10 crystals", displayHistoryElements.get(0).getMessage());
         Assert.assertEquals("You sent a friend invitation via mail to xxxx@yyy.com", displayHistoryElements.get(1).getMessage());
         Assert.assertEquals("You sent some friend invitations via Facebook", displayHistoryElements.get(2).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();

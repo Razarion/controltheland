@@ -29,10 +29,10 @@
         	</g:MenuBar>
         </g:MenuItem>
         <g:MenuItem text="{msg.menuInviteFriends}" ui:field="inviteFriends" title="{msg.menuInviteFriendsTooltip}"/>
-        <g:MenuItem text="{msg.menuGetRazarion}" title="{msg.menuTooltipGetRazarion}">
+        <g:MenuItem text="{msg.menuGetCrystals}" title="{msg.menuTooltipGetCrystals}">
             <g:MenuBar vertical="true">
                 <g:MenuItem text="{msg.menuBuyPaypal}" ui:field="buyPaypal"/>
-                <g:MenuItem text="{msg.menuOverviewGetRazarion}" ui:field="overviewRazarion"/>
+                <g:MenuItem text="{msg.menuOverviewGetCrystals}" ui:field="overviewCrystals"/>
             </g:MenuBar>
         </g:MenuItem>
         <g:MenuItem text="{msg.menuStarMap}" ui:field="starMap"/>

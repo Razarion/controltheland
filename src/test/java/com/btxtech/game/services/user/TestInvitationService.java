@@ -309,7 +309,7 @@ public class TestInvitationService extends AbstractServiceTest {
         createAndLoginUser("Host");
         invitationService.onFacebookInvite("fbrequid1111", Arrays.asList("llll", "aaaaa", "eeeee"));
         int hostId = getUserId();
-        Assert.assertEquals(0, getUserState().getRazarion());
+        Assert.assertEquals(0, getUserState().getCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         beginHttpSession();
@@ -334,7 +334,7 @@ public class TestInvitationService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(29, userService.getUserState(userService.getUser("Host")).getRazarion());
+        Assert.assertEquals(29, userService.getUserState(userService.getUser("Host")).getCrystals());
         List<DbFriendInvitationBonus> dbFriendInvitationBonuses = loadAll(DbFriendInvitationBonus.class);
         Assert.assertEquals(1, dbFriendInvitationBonuses.size());
         DbFriendInvitationBonus dbFriendInvitationBonus = dbFriendInvitationBonuses.get(0);
@@ -354,7 +354,7 @@ public class TestInvitationService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(54, userService.getUserState(userService.getUser("Host")).getRazarion());
+        Assert.assertEquals(54, userService.getUserState(userService.getUser("Host")).getCrystals());
         dbFriendInvitationBonuses = loadAll(DbFriendInvitationBonus.class);
         Assert.assertEquals(1, dbFriendInvitationBonuses.size());
         dbFriendInvitationBonus = dbFriendInvitationBonuses.get(0);
@@ -434,10 +434,10 @@ public class TestInvitationService extends AbstractServiceTest {
         bonuses = getMovableService().getFriendInvitationBonuses();
         Assert.assertEquals(2, bonuses.size());
         Assert.assertEquals(TEST_LEVEL_2_REAL, bonuses.get(0).getLevel());
-        Assert.assertEquals(100, bonuses.get(0).getRazarionBonus());
+        Assert.assertEquals(100, bonuses.get(0).getCrystalBonus());
         Assert.assertEquals("Invitee2", bonuses.get(0).getUserName());
         Assert.assertEquals(TEST_LEVEL_1_SIMULATED, bonuses.get(1).getLevel());
-        Assert.assertEquals(0, bonuses.get(1).getRazarionBonus());
+        Assert.assertEquals(0, bonuses.get(1).getCrystalBonus());
         Assert.assertEquals("Invitee1", bonuses.get(1).getUserName());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -448,7 +448,7 @@ public class TestInvitationService extends AbstractServiceTest {
         bonuses = getMovableService().getFriendInvitationBonuses();
         Assert.assertEquals(1, bonuses.size());
         Assert.assertEquals(TEST_LEVEL_3_REAL, bonuses.get(0).getLevel());
-        Assert.assertEquals(22, bonuses.get(0).getRazarionBonus());
+        Assert.assertEquals(22, bonuses.get(0).getCrystalBonus());
         Assert.assertEquals("Invitee3", bonuses.get(0).getUserName());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

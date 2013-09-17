@@ -204,7 +204,7 @@ public class QuestVisualisationModel {
                 } else {
                     return null;
                 }
-            case RAZARION_INCREASED:
+            case CRYSTALS_INCREASED:
                 if (itemsInView.isEmpty()) {
                     return null;
                 }
@@ -301,7 +301,7 @@ public class QuestVisualisationModel {
                 } else {
                     return null;
                 }
-            case RAZARION_INCREASED: {
+            case CRYSTALS_INCREASED: {
                 SyncBoxItem syncBoxItem = ItemContainer.getInstance().getNearestBoxItem(viewRect.getCenter());
                 if (syncBoxItem == null) {
                     return null;

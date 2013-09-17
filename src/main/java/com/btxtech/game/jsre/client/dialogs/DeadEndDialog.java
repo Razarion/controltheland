@@ -21,6 +21,13 @@ public class DeadEndDialog extends PeriodicDialog {
     public DeadEndDialog(String message) {
         super(ClientI18nHelper.CONSTANTS.reachedDeadEnd());
         this.message = message;
+        setShowYesButton(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                close();
+                StartNewBaseDialog.show();
+            }
+        }, ClientI18nHelper.CONSTANTS.newBase());
     }
 
     @Override
@@ -28,17 +35,6 @@ public class DeadEndDialog extends PeriodicDialog {
         Label label = new Label(message);
         label.getElement().getStyle().setWidth(17, Style.Unit.EM);
         dialogVPanel.add(label);
-        dialogVPanel.add(new HTML("&nbsp;"));
-        Button button = new Button(ClientI18nHelper.CONSTANTS.newBase());
-        button.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                close();
-                StartNewBaseDialog.show();
-            }
-        });
-        dialogVPanel.add(button);
-        dialogVPanel.setCellHorizontalAlignment(button, HasHorizontalAlignment.ALIGN_CENTER);
     }
 
 }

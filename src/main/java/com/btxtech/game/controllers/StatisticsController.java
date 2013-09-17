@@ -16,7 +16,6 @@ package com.btxtech.game.controllers;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.RazarionPage;
-import com.btxtech.game.wicket.pages.cms.CmsPage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;

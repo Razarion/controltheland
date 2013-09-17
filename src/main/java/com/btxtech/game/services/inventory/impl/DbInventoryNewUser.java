@@ -22,7 +22,7 @@ public class DbInventoryNewUser implements CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
-    private Integer razarion;
+    private Integer crystals;
     @Column(name = "theCount")
     private int count;
     @OneToOne(fetch = FetchType.LAZY)
@@ -34,12 +34,12 @@ public class DbInventoryNewUser implements CrudChild {
         return id;
     }
 
-    public Integer getRazarion() {
-        return razarion;
+    public Integer getCrystals() {
+        return crystals;
     }
 
-    public void setRazarion(Integer razarion) {
-        this.razarion = razarion;
+    public void setCrystals(Integer crystals) {
+        this.crystals = crystals;
     }
 
     public int getCount() {
