@@ -2,6 +2,8 @@ package com.btxtech.game.services.planet.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.StartPointInfo;
 import com.btxtech.game.jsre.client.dialogs.starmap.StarMapPlanetInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -10,6 +12,8 @@ import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.BaseLostPacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.TestPlanetHelper;
 import com.btxtech.game.services.bot.DbBotConfig;
@@ -141,10 +145,11 @@ public class TestBaseService extends AbstractServiceTest {
         sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         Assert.assertEquals(2, baseService.getBase().getItemCount());
+        assertWholeItemCount(TEST_PLANET_1_ID, 2);
         Assert.assertFalse(baseService.getBase(simpleBase).isAbandoned());
         baseService.surrenderBase(baseService.getBase(simpleBase));
-        Assert.assertTrue(baseService.getBase(simpleBase).isAbandoned());
-        Assert.assertNull(userService.getUserState().getBase());
+        Assert.assertFalse(baseService.isAlive(simpleBase));
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -458,7 +463,7 @@ public class TestBaseService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("president");
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         Integer guildId = guildService.createGuild("xxxx").getId();
         createBase(new Index(3000, 1000));
         endHttpRequestAndOpenSessionInViewFilter();
@@ -488,7 +493,7 @@ public class TestBaseService extends AbstractServiceTest {
         loginUser("president");
         SimpleBase ownFakeBase = new SimpleBase(SimpleBase.FAKE_BASE_START_POINT, TEST_PLANET_1_ID);
         Collection<BaseAttributes> allBaseAttributes = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().createAllBaseAttributes4FakeBase(ownFakeBase, getUserState(), TEST_PLANET_1_ID);
-        Assert.assertEquals(32, allBaseAttributes.size());
+        Assert.assertEquals(31, allBaseAttributes.size());
         BaseAttributes baseAttributes = getOwnBase(allBaseAttributes, ownFakeBase);
         Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
         Assert.assertEquals("president", baseAttributes.getName());
@@ -601,7 +606,7 @@ public class TestBaseService extends AbstractServiceTest {
     private void createBase(int levelId, Index startPoint) {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userGuidanceService.promote(getUserState(),levelId);
+        userGuidanceService.promote(getUserState(), levelId);
         createBase(startPoint);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

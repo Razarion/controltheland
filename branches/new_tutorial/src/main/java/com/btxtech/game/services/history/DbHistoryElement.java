@@ -69,9 +69,8 @@ public class DbHistoryElement implements Serializable {
         BOX_DROPPED,
         BOX_EXPIRED,
         BOX_PICKED,
-        RAZARION_FROM_BOX,
-        RAZARION_BOUGHT,
-        RAZARION_SPENT,
+        CRYSTALS_FROM_BOX,
+        CRYSTALS_BOUGHT,
         INVENTORY_ITEM_FROM_BOX,
         INVENTORY_ARTIFACT_FROM_BOX,
         INVENTORY_ITEM_USED,
@@ -150,8 +149,8 @@ public class DbHistoryElement implements Serializable {
     @org.hibernate.annotations.Type(type = "index")
     @Columns(columns = {@Column(name = "xPos"), @Column(name = "yPos")})
     private com.btxtech.game.jsre.client.common.Index position;
-    private Integer deltaRazarion;
-    private Integer razarion;
+    private Integer deltaCrystals;
+    private Integer crystals;
     private String inventory;
     private String botName;
     private String botInfo;
@@ -169,10 +168,10 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, PlanetSystemService planetSystemService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory, String botName, String botInfo, ItemType itemType, PlanetLiteInfo planetLiteInfo, DbGuild dbGuild, GuildMemberInfo.Rank rank, String text) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, PlanetSystemService planetSystemService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaCrystals, Integer crystals, String inventory, String botName, String botInfo, ItemType itemType, PlanetLiteInfo planetLiteInfo, DbGuild dbGuild, GuildMemberInfo.Rank rank, String text) {
         this.sessionId = sessionId;
-        this.deltaRazarion = deltaRazarion;
-        this.razarion = razarion;
+        this.deltaCrystals = deltaCrystals;
+        this.crystals = crystals;
         this.botName = botName;
         this.botInfo = botInfo;
         this.text = text;
@@ -300,12 +299,12 @@ public class DbHistoryElement implements Serializable {
         return position;
     }
 
-    public Integer getDeltaRazarion() {
-        return deltaRazarion;
+    public Integer getDeltaCrystals() {
+        return deltaCrystals;
     }
 
-    public Integer getRazarion() {
-        return razarion;
+    public Integer getCrystals() {
+        return crystals;
     }
 
     public String getInventory() {

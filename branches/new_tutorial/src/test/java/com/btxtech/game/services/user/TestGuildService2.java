@@ -69,7 +69,7 @@ public class TestGuildService2 extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void createGuildNoRazarion() throws Exception {
+    public void createGuildNoCrystals() throws Exception {
         configureSimplePlanetNoResources();
         // Prepare
         HistoryService historyServiceMock = EasyMock.createStrictMock(HistoryService.class);
@@ -77,7 +77,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 1);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Test
@@ -86,9 +86,9 @@ public class TestGuildService2 extends AbstractServiceTest {
         createAndLoginUser("U1");
         try {
             guildService.createGuild("Hallo");
-            Assert.fail("IllegalStateException due to razarion expected");
+            Assert.fail("IllegalStateException due to crystals expected");
         } catch (IllegalStateException e) {
-            Assert.assertEquals("Not enough razarion to create a guild: User: 'U1' id: 1", e.getMessage());
+            Assert.assertEquals("Not enough crystals to create a guild: User: 'U1' id: 1", e.getMessage());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -108,14 +108,14 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 10);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 10);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Preparation
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getUserState().addRazarion(100);
+        getUserState().addCrystals(100);
         guildService.createGuild("AAAAAA");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -146,14 +146,14 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 10);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 10);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Test
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getUserState().addRazarion(100);
+        getUserState().addCrystals(100);
         try {
             guildService.createGuild("Ha");
             Assert.fail("IllegalArgumentException e");
@@ -163,7 +163,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         SimpleGuild simpleGuild = guildService.createGuild("Hallo");
         Assert.assertEquals(1, simpleGuild.getId());
         Assert.assertEquals("Hallo", simpleGuild.getName());
-        Assert.assertEquals(90, getUserState().getRazarion());
+        Assert.assertEquals(90, getUserState().getCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -179,18 +179,18 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 10);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 10);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Test
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getUserState().addRazarion(100);
+        getUserState().addCrystals(100);
         SimpleGuild simpleGuild = guildService.createGuild("Hallo");
         Assert.assertEquals(1, simpleGuild.getId());
         Assert.assertEquals("Hallo", simpleGuild.getName());
-        Assert.assertEquals(90, getUserState().getRazarion());
+        Assert.assertEquals(90, getUserState().getCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify db
@@ -219,7 +219,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         // Prepare
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -340,7 +340,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U1");
         guildService.createGuild("Hallo");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -374,7 +374,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U1");
         guildService.createGuild("Hallo");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -382,7 +382,7 @@ public class TestGuildService2 extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U2");
         guildService.createGuild("Hallo2");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -416,7 +416,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U1");
         guildService.createGuild("Hallo");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -467,7 +467,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U1");
         guildService.createGuild("Hallo");
         guildService.inviteUserToGuild("U2");
@@ -520,7 +520,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         endHttpSession();
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U1");
         guildService.createGuild("Hallo");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -555,7 +555,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         // Prepare
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U1");
         int guildId = guildService.createGuild("Hallo").getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -622,7 +622,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("presi");
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         guildService.createGuild("xxxx");
         guildService.inviteUserToGuild(simpleBase);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -698,7 +698,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U1");
         int guildId = guildService.createGuild("Hallo").getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -739,7 +739,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U1");
         int guildId = guildService.createGuild("AAAAAA").getId();
         guildService.inviteUserToGuild("U2");
@@ -778,7 +778,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         // Prepare
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -873,7 +873,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U1");
         int guildId = guildService.createGuild("Hallo").getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -913,7 +913,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         setPrivateField(GuildServiceImpl.class, guildService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U1");
         int guildId = guildService.createGuild("AAAAAA").getId();
         guildService.inviteUserToGuild("U2");
@@ -988,7 +988,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         // Prepare
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("U1");
         int guildId1 = guildService.createGuild("Aaa").getId();
         guildService.inviteUserToGuild("U");
@@ -1088,7 +1088,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         // Prepare
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("presi");
         int guildId = guildService.createGuild("GuildName").getId();
         guildService.saveGuildText("disfhoasudf isudhfoiash");
@@ -1231,7 +1231,7 @@ public class TestGuildService2 extends AbstractServiceTest {
         // Prepare
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("presi");
         int guildId = guildService.createGuild("GuildName").getId();
         guildService.saveGuildText("disfhoasudf isudhfoiash");

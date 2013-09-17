@@ -71,7 +71,7 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         form.add(new PercentPanel("dropBoxPossibility"));
         form.add(new BoxItemTypePanel("dbBoxItemType"));
         form.add(new ClipPanel("explosionClip"));
-        form.add(new TextField<Integer>("unlockRazarion"));
+        form.add(new TextField<Integer>("unlockCrystals"));
 
         form.add(new Button("editAbilities") {
             @Override

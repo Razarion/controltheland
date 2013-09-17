@@ -45,18 +45,18 @@ public class FinanceServiceImpl implements FinanceService {
     private ServerConditionService serverConditionService;
 
     @Override
-    public void razarionBought(int razarionBought, UserState userState) {
+    public void crystalsBought(int crystalsBought, UserState userState) {
         if (!userState.isRegistered()) {
-            throw new IllegalStateException("Unregistered user can not buy Razarion: " + userState);
+            throw new IllegalStateException("Unregistered user can not buy crystals: " + userState);
         }
-        userState.addRazarion(razarionBought);
-        historyService.addRazarionBought(userState, razarionBought);
-        serverConditionService.onRazarionIncreased(userState, false, razarionBought);
+        userState.addCrystals(crystalsBought);
+        historyService.addCrystalsBought(userState, crystalsBought);
+        serverConditionService.onCrystalsIncreased(userState, false, crystalsBought);
     }
 
     @Override
     @Transactional
-    public void razarionBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException, TransactionAlreadyProcessedException, WrongPaymentStatusException {
+    public void crystalsBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException, TransactionAlreadyProcessedException, WrongPaymentStatusException {
         if (!(PayPalUtils.IS_SANDBOX ? SANDBOX_RECEIVER_EMAIL : RECEIVER_EMAIL).equalsIgnoreCase(receiverEmail)) {
             throw new IllegalArgumentException("Receiver email is wrong: " + receiverEmail);
         }
@@ -99,7 +99,7 @@ public class FinanceServiceImpl implements FinanceService {
         }
 
         sessionFactory.getCurrentSession().save(new DbPayPalTransaction(user, itemNumber, txnId, payerEmail));
-        razarionBought(payPalButton.getRazarion(), userState);
+        crystalsBought(payPalButton.getCrystals(), userState);
     }
 
     private boolean transactionIdAlreadyExits(String txnId) {

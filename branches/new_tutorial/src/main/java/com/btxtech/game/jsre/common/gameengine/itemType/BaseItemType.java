@@ -39,7 +39,7 @@ public class BaseItemType extends ItemType {
     private int upgradeProgress;
     private double dropBoxPossibility;
     private int boxPickupRange;
-    private Integer unlockRazarion;
+    private Integer unlockCrystals;
 
     public int getHealth() {
         return health;
@@ -202,15 +202,15 @@ public class BaseItemType extends ItemType {
     }
 
     public boolean isUnlockNeeded() {
-        return unlockRazarion != null;
+        return unlockCrystals != null;
     }
 
-    public Integer getUnlockRazarion() {
-        return unlockRazarion;
+    public Integer getUnlockCrystals() {
+        return unlockCrystals;
     }
 
-    public void setUnlockRazarion(Integer unlockRazarion) {
-        this.unlockRazarion = unlockRazarion;
+    public void setUnlockCrystals(Integer unlockCrystals) {
+        this.unlockCrystals = unlockCrystals;
     }
 
     @Override
@@ -226,7 +226,7 @@ public class BaseItemType extends ItemType {
         upgradeProgress = baseItemType.upgradeProgress;
         dropBoxPossibility = baseItemType.dropBoxPossibility;
         boxPickupRange = baseItemType.getBoxPickupRange();
-        unlockRazarion = baseItemType.getUnlockRazarion();
+        unlockCrystals = baseItemType.getUnlockCrystals();
 
         if (movableType != null) {
             movableType.changeTo(baseItemType.movableType);

@@ -168,14 +168,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         User user = serverGlobalServices.getUserService().getUser();
         if (user != null) {
             serverGlobalServices.getUserTrackingService().onBaseSurrender(user, base);
-            serverGlobalServices.getGuildService().onMakeBaseAbandoned(user, base.getSimpleBase());
         }
-        UserState userState = getUserState(base.getSimpleBase());
-        makeBaseAbandoned(base);
-        if (user != null) {
-            serverGlobalServices.getGuildService().onMakeBaseAbandonedHandleEnemies(user, base.getSimpleBase());
-        }
-        askForStartPosition(userState);
+        getPlanetServices().getItemService().killSyncItems(base.getItems());
     }
 
     @Override

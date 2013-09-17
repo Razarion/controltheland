@@ -75,7 +75,7 @@ public class DbUserState {
             joinColumns = {@JoinColumn(name = "userState")},
             inverseJoinColumns = {@JoinColumn(name = "inventoryArtifact")})
     private Collection<DbInventoryArtifact> inventoryArtifacts;
-    private int razarion;
+    private int crystals;
     @org.hibernate.annotations.Type(type = "locale")
     private Locale locale;
     @ManyToMany(fetch = FetchType.LAZY)
@@ -110,7 +110,7 @@ public class DbUserState {
             this.userId = user.getId();
         }
         xp = userState.getXp();
-        razarion = userState.getRazarion();
+        crystals = userState.getCrystals();
         currentLevel = dbLevel;
         this.inventoryItems = inventoryItems;
         this.inventoryArtifacts = inventoryArtifacts;
@@ -135,7 +135,7 @@ public class DbUserState {
             return null;
         }
         userState.setXp(xp);
-        userState.setRazarion(razarion);
+        userState.setCrystals(crystals);
         userState.setLocale(locale);
         if (currentLevel != null) {
             userState.setDbLevelId(currentLevel.getId());

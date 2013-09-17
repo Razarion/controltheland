@@ -17,7 +17,7 @@
             <th bgcolor="#dadada">Id</th>
             <th bgcolor="#dadada">Image</th>
             <th bgcolor="#dadada">Name [Tooltip Dialog]</th>
-            <th bgcolor="#dadada">Razarion Cost<br/>(If empty not in market)</th>
+            <th bgcolor="#dadada">Crystal Cost<br/>(If empty not in market)</th>
             <th bgcolor="#dadada">Rareness</th>
             <th bgcolor="#dadada">Planets<br/>(Box Regions)</th>
             <th bgcolor="#dadada">Item Types<br/>(Can drop)</th>
@@ -28,7 +28,7 @@
             <td wicket:id="id"/>
             <td><img wicket:id="image"/></td>
             <td><input wicket:id="name" type="text" size="30"></td>
-            <td><input wicket:id="razarionCoast" type="text" size="6"></td>
+            <td><input wicket:id="crystalCost" type="text" size="6"></td>
             <td valign="center"><select wicket:id="rareness" size="1"></select></td>
             <td wicket:id="planets"></td>
             <td wicket:id="baseItemTypes"></td>
@@ -51,8 +51,8 @@
             <th bgcolor="#dadada">Id</th>
             <th bgcolor="#dadada"></th>
             <th bgcolor="#dadada">Name [Text in Dialog]</th>
-            <th bgcolor="#dadada">Razarion Cost<br/>(If empty not in market)</th>
-            <th bgcolor="#dadada">Razarion Cost<br/>(Via Artifacts)</th>
+            <th bgcolor="#dadada">Crystal Cost<br/>(If empty not in market)</th>
+            <th bgcolor="#dadada">Crystal Cost<br/>(Via Artifacts)</th>
             <th bgcolor="#dadada">Planets<br/>(Via Artifacts)</th>
             <th bgcolor="#dadada">Item Types<br/>(Via Artifacts)</th>
             <th bgcolor="#dadada">Planets<br/>(Box Regions)</th>
@@ -65,8 +65,8 @@
             <td wicket:id="id"/>
             <td><img wicket:id="image"/></td>
             <td><input wicket:id="name" type="text" size="30"></td>
-            <td><input wicket:id="razarionCoast" type="text" size="6"></td>
-            <td wicket:id="razarionCostViaArtifacts"></td>
+            <td><input wicket:id="crystalCost" type="text" size="6"></td>
+            <td wicket:id="crystalCostViaArtifacts"></td>
             <td wicket:id="planetsViaArtifact"></td>
             <td wicket:id="baseItemTypesViaArtifact"></td>
             <td wicket:id="planets"></td>
@@ -90,14 +90,14 @@
     <h2>Inventory for new Users</h2>
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
-            <th bgcolor="#dadada">Razarion</th>
+            <th bgcolor="#dadada">Crystals</th>
             <th bgcolor="#dadada">Count (Item & Artifact)</th>
             <th bgcolor="#dadada">Item Id</th>
             <th bgcolor="#dadada">Artifact Id</th>
             <th bgcolor="#dadada">Delete</th>
         </tr>
         <tr wicket:id="newUserItems">
-            <td><input wicket:id="razarion" type="text" size="6"></td>
+            <td><input wicket:id="crystals" type="text" size="6"></td>
             <td><input wicket:id="count" type="text" size="6"></td>
             <td wicket:id="dbInventoryItem"/>
             <td wicket:id="dbInventoryArtifact"/>

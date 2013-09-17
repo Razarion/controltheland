@@ -41,33 +41,33 @@ public class TestServerUnlockService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         // Setup items
         DbBaseItemType attacker = itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
-        attacker.setUnlockRazarion(10);
+        attacker.setUnlockCrystals(10);
         itemTypeService.saveDbItemType(attacker);
         DbBaseItemType factory = itemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID);
-        factory.setUnlockRazarion(8);
+        factory.setUnlockCrystals(8);
         itemTypeService.saveDbItemType(factory);
         itemTypeService.activate();
         // Setup Quests
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask1 = dbLevel.getLevelTaskCrud().createDbChild();
-        dbLevelTask1.setUnlockRazarion(1);
+        dbLevelTask1.setUnlockCrystals(1);
         setupCondition(dbLevelTask1);
         DbLevelTask dbLevelTask2 = dbLevel.getLevelTaskCrud().createDbChild();
-        dbLevelTask2.setUnlockRazarion(1);
+        dbLevelTask2.setUnlockCrystals(1);
         setupCondition(dbLevelTask2);
         DbLevelTask dbLevelTask3 = dbLevel.getLevelTaskCrud().createDbChild();
         setupCondition(dbLevelTask3);
-        dbLevelTask3.setUnlockRazarion(1);
+        dbLevelTask3.setUnlockCrystals(1);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         // Setup planets
         DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setUnlockRazarion(15);
+        dbPlanet2.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setUnlockRazarion(15);
+        dbPlanet3.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
         planetSystemService.activatePlanet(TEST_PLANET_3_ID);
@@ -77,7 +77,7 @@ public class TestServerUnlockService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         getOrCreateBase(); // Create Base
         // Setup
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
@@ -104,7 +104,7 @@ public class TestServerUnlockService extends AbstractServiceTest {
         Assert.assertTrue(unlockContainer.getPlanets().contains(TEST_PLANET_2_ID));
         Assert.assertTrue(unlockContainer.getPlanets().contains(TEST_PLANET_3_ID));
         // Verify planet
-        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1, null).getLevelScope().getPlanetLiteInfo().getUnlockRazarion());
+        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1, null).getLevelScope().getPlanetLiteInfo().getUnlockCrystals());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -127,33 +127,33 @@ public class TestServerUnlockService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         // Setup items
         DbBaseItemType attacker = itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
-        attacker.setUnlockRazarion(10);
+        attacker.setUnlockCrystals(10);
         itemTypeService.saveDbItemType(attacker);
         DbBaseItemType factory = itemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID);
-        factory.setUnlockRazarion(8);
+        factory.setUnlockCrystals(8);
         itemTypeService.saveDbItemType(factory);
         itemTypeService.activate();
         // Setup Quests
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         DbLevelTask dbLevelTask1 = dbLevel.getLevelTaskCrud().createDbChild();
-        dbLevelTask1.setUnlockRazarion(1);
+        dbLevelTask1.setUnlockCrystals(1);
         setupCondition(dbLevelTask1);
         DbLevelTask dbLevelTask2 = dbLevel.getLevelTaskCrud().createDbChild();
-        dbLevelTask2.setUnlockRazarion(1);
+        dbLevelTask2.setUnlockCrystals(1);
         setupCondition(dbLevelTask2);
         DbLevelTask dbLevelTask3 = dbLevel.getLevelTaskCrud().createDbChild();
         setupCondition(dbLevelTask3);
-        dbLevelTask3.setUnlockRazarion(1);
+        dbLevelTask3.setUnlockCrystals(1);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         // Setup planets
         DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setUnlockRazarion(15);
+        dbPlanet2.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setUnlockRazarion(15);
+        dbPlanet3.setUnlockCrystals(15);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
         planetSystemService.activatePlanet(TEST_PLANET_3_ID);
@@ -164,7 +164,7 @@ public class TestServerUnlockService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         getOrCreateBase(); // Create Base
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);

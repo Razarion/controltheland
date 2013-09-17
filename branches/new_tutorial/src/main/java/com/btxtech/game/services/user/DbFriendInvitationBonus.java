@@ -86,7 +86,7 @@ public class DbFriendInvitationBonus {
 
     public FriendInvitationBonus createFriendInvitationBonus(UserGuidanceService userGuidanceService) {
         FriendInvitationBonus friendInvitationBonus = new FriendInvitationBonus();
-        friendInvitationBonus.setRazarionBonus(bonus);
+        friendInvitationBonus.setCrystalBonus(bonus);
         friendInvitationBonus.setUserName(invitee.getUsername());
         friendInvitationBonus.setLevel(userGuidanceService.getDbLevel(invitee).getNumber());
         return friendInvitationBonus;

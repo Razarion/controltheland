@@ -30,8 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -116,7 +114,7 @@ public class TestMovableService extends AbstractServiceTest {
         Assert.assertTrue(realGameInfo.isSellAllowed());
         Assert.assertEquals(TEST_PLANET_1, realGameInfo.getLevelScope().getPlanetLiteInfo().getName());
         Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getLevelScope().getPlanetLiteInfo().getPlanetId());
-        Assert.assertNull(realGameInfo.getLevelScope().getPlanetLiteInfo().getUnlockRazarion());
+        Assert.assertNull(realGameInfo.getLevelScope().getPlanetLiteInfo().getUnlockCrystals());
         Assert.assertEquals(Integer.MAX_VALUE, realGameInfo.getLevelScope().getXp2LevelUp());
         Assert.assertEquals(TEST_LEVEL_2_REAL, realGameInfo.getLevelScope().getNumber());
         Assert.assertNotNull(realGameInfo.getLevelScope().getItemTypeLimitation());
@@ -162,7 +160,7 @@ public class TestMovableService extends AbstractServiceTest {
         Assert.assertTrue(realGameInfo.isSellAllowed());
         Assert.assertEquals(TEST_PLANET_1, realGameInfo.getLevelScope().getPlanetLiteInfo().getName());
         Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getLevelScope().getPlanetLiteInfo().getPlanetId());
-        Assert.assertNull(realGameInfo.getLevelScope().getPlanetLiteInfo().getUnlockRazarion());
+        Assert.assertNull(realGameInfo.getLevelScope().getPlanetLiteInfo().getUnlockCrystals());
         Assert.assertEquals(Integer.MAX_VALUE, realGameInfo.getLevelScope().getXp2LevelUp());
         Assert.assertEquals(TEST_LEVEL_2_REAL, realGameInfo.getLevelScope().getNumber());
         Assert.assertNotNull(realGameInfo.getLevelScope().getItemTypeLimitation());
@@ -259,12 +257,12 @@ public class TestMovableService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
-        dbPlanet2.setUnlockRazarion(10);
+        dbPlanet2.setUnlockCrystals(10);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
         planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
         planetSystemService.activatePlanet(TEST_PLANET_2_ID);
         DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
-        dbPlanet3.setUnlockRazarion(10);
+        dbPlanet3.setUnlockCrystals(10);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
         planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
         planetSystemService.activatePlanet(TEST_PLANET_3_ID);
@@ -279,7 +277,7 @@ public class TestMovableService extends AbstractServiceTest {
         Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_2_ID).getPlanetInfo().getPlanetId());
         Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_3_ID).getPlanetInfo().getPlanetId());
         // Unlock planet 2
-        getUserState().setRazarion(100);
+        getUserState().setCrystals(100);
         unlockService.unlockPlanet(TEST_PLANET_2_ID);
         Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_1_ID).getPlanetInfo().getPlanetId());
         Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1, TEST_PLANET_2_ID).getPlanetInfo().getPlanetId());

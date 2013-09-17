@@ -48,7 +48,7 @@ public class InventoryEditor extends MgmtWebPage {
             @Override
             protected void extendedPopulateItem(final Item<DbInventoryArtifact> dbInventoryArtifactItem) {
                 displayId(dbInventoryArtifactItem);
-                dbInventoryArtifactItem.add(new TextField("razarionCoast"));
+                dbInventoryArtifactItem.add(new TextField("crystalCost"));
                 dbInventoryArtifactItem.add(InventoryImageResource.createArtifactImage("image", dbInventoryArtifactItem.getModelObject()));
                 super.extendedPopulateItem(dbInventoryArtifactItem);
                 dbInventoryArtifactItem.add(new DropDownChoice<>("rareness", Arrays.asList(DbInventoryArtifact.Rareness.values())));
@@ -91,10 +91,10 @@ public class InventoryEditor extends MgmtWebPage {
             @Override
             protected void extendedPopulateItem(final Item<DbInventoryItem> dbInventoryItemItem) {
                 displayId(dbInventoryItemItem);
-                dbInventoryItemItem.add(new TextField("razarionCoast"));
+                dbInventoryItemItem.add(new TextField("crystalCost"));
                 dbInventoryItemItem.add(InventoryImageResource.createItemImage("image", dbInventoryItemItem.getModelObject()));
                 super.extendedPopulateItem(dbInventoryItemItem);
-                dbInventoryItemItem.add(new Label("razarionCostViaArtifacts"));
+                dbInventoryItemItem.add(new Label("crystalCostViaArtifacts"));
                 dbInventoryItemItem.add(new PlanetsReadonlyPanel("planetsViaArtifact"));
                 dbInventoryItemItem.add(new ItemTypesReadonlyPanel("baseItemTypesViaArtifact"));
                 dbInventoryItemItem.add(new PlanetsReadonlyPanel("planets"));
@@ -140,7 +140,7 @@ public class InventoryEditor extends MgmtWebPage {
 
             @Override
             protected void extendedPopulateItem(final Item<DbInventoryNewUser> dbInventoryNewUserItem) {
-                dbInventoryNewUserItem.add(new TextField("razarion"));
+                dbInventoryNewUserItem.add(new TextField("crystals"));
                 dbInventoryNewUserItem.add(new TextField("count"));
                 dbInventoryNewUserItem.add(new InventoryItemPanel("dbInventoryItem"));
                 dbInventoryNewUserItem.add(new InventoryArtifactPanel("dbInventoryArtifact"));

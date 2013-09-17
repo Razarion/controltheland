@@ -10,18 +10,18 @@ import java.util.Map;
  * Time: 12:42
  */
 public class InventoryInfo implements Serializable {
-    private int razarion;
+    private int crystals;
     private Collection<InventoryItemInfo> allInventoryItemInfos;
     private Collection<InventoryArtifactInfo> allInventoryArtifactInfos;
     private Map<InventoryItemInfo, Integer> ownInventoryItems;
     private Map<InventoryArtifactInfo, Integer> ownInventoryArtifacts;
 
-    public int getRazarion() {
-        return razarion;
+    public int getCrystals() {
+        return crystals;
     }
 
-    public void setRazarion(int razarion) {
-        this.razarion = razarion;
+    public void setCrystals(int crystals) {
+        this.crystals = crystals;
     }
 
     public void setAllInventoryItemInfos(Collection<InventoryItemInfo> allInventoryItemInfos) {

@@ -15,16 +15,16 @@ public class CreateGuildPanel extends Composite {
     @UiField(provided = true)
     GuildNameField guildName;
     @UiField
-    Label razarionCostLabel;
+    Label crystalCostLabel;
 
     interface CreateGuildPanelUiBinder extends UiBinder<Widget, CreateGuildPanel> {
     }
 
-    public CreateGuildPanel(int razarionCost, VerificationRequestField.ValidListener validListener) {
+    public CreateGuildPanel(int crystalCost, VerificationRequestField.ValidListener validListener) {
         guildName = new GuildNameField(validListener);
         initWidget(uiBinder.createAndBindUi(this));
         guildName.checkName();
-        razarionCostLabel.setText(ClientI18nHelper.CONSTANTS.createGuildRazarionCost(razarionCost));
+        crystalCostLabel.setText(ClientI18nHelper.CONSTANTS.createGuildCrystalCost(crystalCost));
     }
 
     public String getGuildName() {

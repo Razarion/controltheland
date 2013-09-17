@@ -10,7 +10,6 @@ import com.btxtech.game.services.cms.ContentService;
 import com.btxtech.game.services.common.NameErrorPair;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
-import com.btxtech.game.services.common.db.DbProperty;
 import com.btxtech.game.services.user.impl.UserServiceImpl;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import junit.framework.Assert;
@@ -509,7 +508,7 @@ public class TestUserService extends AbstractServiceTest {
         // createGuilds
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         loginUser("ABCED", "xxx");
         guildService.createGuild("xxxx1");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -592,7 +591,7 @@ public class TestUserService extends AbstractServiceTest {
         // createGuilds
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         loginUser("ABCED", "xxx");
         guildService.createGuild("xxxx1");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -650,7 +649,7 @@ public class TestUserService extends AbstractServiceTest {
         // createGuilds
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         loginUser("ABCED", "xxx");
         guildService.createGuild("xxxx1");
         endHttpRequestAndOpenSessionInViewFilter();

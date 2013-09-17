@@ -77,7 +77,7 @@ public class UserStateEditor extends MgmtWebPage {
     private ServerUnlockService unlockService;
     private Integer dbLevelId;
     private Integer xp;
-    private Integer razarionBought;
+    private Integer crystalsBought;
 
     public UserStateEditor(PageParameters pageParameters) {
         final int userStateHash = pageParameters.get(USER_STATE_HASH).toInt();
@@ -109,11 +109,11 @@ public class UserStateEditor extends MgmtWebPage {
         form.add(new Label("sessionId"));
         form.add(new Label("userName", userService.getUserName(userService.getUserState4Hash(userStateHash))));
         form.add(new Label("userId"));
-        setupRazarionBought(form);
+        setupCrystalsBought(form);
         setupLevel(form);
         setupInventoryItem(form);
         setupInventoryArtifact(form);
-        setupRazarion(form);
+        setupCrystals(form);
         setupUnlockedItems(form);
         setupUnlockedQuests(form);
         setupUnlockedPlanet(form);
@@ -121,30 +121,30 @@ public class UserStateEditor extends MgmtWebPage {
         setupHighScore(form);
     }
 
-    private void setupRazarionBought(final Form<UserState> form) {
-        form.add(new TextField<>("razarionBought", new IModel<Integer>() {
+    private void setupCrystalsBought(final Form<UserState> form) {
+        form.add(new TextField<>("crystalsBought", new IModel<Integer>() {
             @Override
             public Integer getObject() {
-                return razarionBought;
+                return crystalsBought;
             }
 
             @Override
             public void setObject(Integer integer) {
-                razarionBought = integer;
+                crystalsBought = integer;
             }
 
             @Override
             public void detach() {
-                razarionBought = null;
+                crystalsBought = null;
             }
         }, Integer.class));
-        form.add(new Button("activateRazarionBought") {
+        form.add(new Button("activateCrystalsBought") {
 
             @Override
             public void onSubmit() {
-                if (razarionBought != null) {
-                    financeService.razarionBought(razarionBought, form.getModelObject());
-                    razarionBought = null;
+                if (crystalsBought != null) {
+                    financeService.crystalsBought(crystalsBought, form.getModelObject());
+                    crystalsBought = null;
                 }
             }
         });
@@ -340,33 +340,33 @@ public class UserStateEditor extends MgmtWebPage {
         });
     }
 
-    private void setupRazarion(final Form<UserState> form) {
-        final TextField<Integer> field = new TextField<>("razarion", new IModel<Integer>() {
-            Integer razarion;
+    private void setupCrystals(final Form<UserState> form) {
+        final TextField<Integer> field = new TextField<>("crystals", new IModel<Integer>() {
+            Integer crystals;
 
             @Override
             public Integer getObject() {
-                if (razarion == null) {
-                    razarion = form.getModelObject().getRazarion();
+                if (crystals == null) {
+                    crystals = form.getModelObject().getCrystals();
                 }
-                return razarion;
+                return crystals;
             }
 
             @Override
             public void setObject(Integer integer) {
-                razarion = integer;
+                crystals = integer;
             }
 
             @Override
             public void detach() {
-                razarion = null;
+                crystals = null;
             }
         }, Integer.class);
         form.add(field);
-        form.add(new Button("activateRazarion") {
+        form.add(new Button("activateCrystals") {
             @Override
             public void onSubmit() {
-                form.getModelObject().setRazarion(field.getModelObject());
+                form.getModelObject().setCrystals(field.getModelObject());
             }
         });
     }

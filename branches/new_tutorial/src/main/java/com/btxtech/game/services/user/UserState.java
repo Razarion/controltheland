@@ -16,7 +16,6 @@ package com.btxtech.game.services.user;
 import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.services.planet.Base;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
@@ -32,7 +31,7 @@ public class UserState {
     private int dbLevelId;
     private int xp;
     private String sessionId;
-    private int razarion;
+    private int crystals;
     private Collection<Integer> inventoryItemIds = new ArrayList<>();
     private Collection<Integer> inventoryArtifactIds = new ArrayList<>();
     private Collection<StorablePacket> storablePackets = new ArrayList<>();
@@ -95,20 +94,20 @@ public class UserState {
         return "UserState: user=" + userId;
     }
 
-    public int getRazarion() {
-        return razarion;
+    public int getCrystals() {
+        return crystals;
     }
 
-    public void setRazarion(int razarion) {
-        this.razarion = razarion;
+    public void setCrystals(int crystals) {
+        this.crystals = crystals;
     }
 
-    public void addRazarion(int value) {
-        razarion += value;
+    public void addCrystals(int value) {
+        crystals += value;
     }
 
-    public void subRazarion(int value) {
-        razarion -= value;
+    public void subCrystals(int value) {
+        crystals -= value;
     }
 
     public void addInventoryItem(int inventoryItemId) {

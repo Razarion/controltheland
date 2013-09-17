@@ -1,7 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs.incentive;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * User: beat
@@ -11,7 +10,7 @@ import java.util.Date;
 public class FriendInvitationBonus implements Serializable {
     private String userName;
     private int level;
-    private int razarionBonus;
+    private int crystalBonus;
 
     public String getUserName() {
         return userName;
@@ -29,11 +28,11 @@ public class FriendInvitationBonus implements Serializable {
         this.level = level;
     }
 
-    public int getRazarionBonus() {
-        return razarionBonus;
+    public int getCrystalBonus() {
+        return crystalBonus;
     }
 
-    public void setRazarionBonus(int razarionBonus) {
-        this.razarionBonus = razarionBonus;
+    public void setCrystalBonus(int crystalBonus) {
+        this.crystalBonus = crystalBonus;
     }
 }

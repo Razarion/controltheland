@@ -50,7 +50,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         // Prepare
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("presi");
         createBase(new Index(1000, 1000));
         Thread.sleep(200); // Wait for packages
@@ -83,7 +83,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         // Create Guild
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("presi");
         createBase(new Index(1000, 1000));
         int guildId = guildService.createGuild("GuildName").getId();
@@ -128,7 +128,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         // Create Guild
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("presi");
         createBase(new Index(1000, 1000));
         int guildId = guildService.createGuild("GuildName").getId();
@@ -187,7 +187,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         // Create Guild
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("presi");
         createBase(new Index(2000, 2000));
         int guildId = guildService.createGuild("GuildName").getId();
@@ -241,7 +241,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         // Prepare
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("presi");
         ServerConnectionService serverConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
         EasyMock.expect(serverConnectionService.hasConnection(createUserStateMatcher("presi"))).andReturn(true);
@@ -272,7 +272,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         // Create Guild
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("presi");
         createBase(new Index(1000, 1000));
         int guildId = guildService.createGuild("GuildName").getId();
@@ -315,7 +315,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         // Create Guild
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("presi");
         createBase(new Index(1000, 1000));
         int guildId = guildService.createGuild("GuildName").getId();
@@ -362,7 +362,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         // Create Guild
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("presi");
         createBase(new Index(1000, 1000));
         int guildId = guildService.createGuild("GuildName").getId();
@@ -414,7 +414,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         // Create Guild
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         createAndLoginUser("presi");
         int guildId = guildService.createGuild("GuildName").getId();
         Assert.assertEquals(1, guildId);
@@ -491,7 +491,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         createAndLoginUser("U1");
         SimpleBase simpleBase = createBase(new Index(1000, 1000)); // Setup connection
         waitForActionServiceDone();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         guildService.createGuild("GuildName").getId();
 
         Thread.sleep(200); // Wait for packages
@@ -609,7 +609,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         createAndLoginUser("presi");
         SimpleBase simpleBase = createBase(new Index(1000, 1000)); // Setup connection
         waitForActionServiceDone();
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         int guildId = guildService.createGuild("GuildName").getId();
         guildService.inviteUserToGuild("member");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -663,7 +663,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("presi");
-        propertyService.createProperty(PropertyServiceEnum.GUILD_RAZARION_COST, 0);
+        propertyService.createProperty(PropertyServiceEnum.GUILD_CRYSTAL_COST, 0);
         int guildId = guildService.createGuild("GuildName").getId();
         Assert.assertTrue(guildService.getGuildBases(userService.getUserState(), TEST_PLANET_1_ID).isEmpty());
         guildService.inviteUserToGuild("member1_1");

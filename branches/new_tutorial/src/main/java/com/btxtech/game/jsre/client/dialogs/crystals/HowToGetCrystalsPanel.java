@@ -1,7 +1,6 @@
-package com.btxtech.game.jsre.client.dialogs.razarion;
+package com.btxtech.game.jsre.client.dialogs.crystals;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
-import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.DialogUiBinderWrapper;
 import com.btxtech.game.jsre.client.dialogs.incentive.InviteFriendsDialog;
 import com.google.gwt.core.client.GWT;
@@ -13,8 +12,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class HowToGetRazarionPanel extends DialogUiBinderWrapper {
-    private static HowToGetRazarionPanelUiBinder uiBinder = GWT.create(HowToGetRazarionPanelUiBinder.class);
+public class HowToGetCrystalsPanel extends DialogUiBinderWrapper {
+    private static HowToGetCrystalsPanelUiBinder uiBinder = GWT.create(HowToGetCrystalsPanelUiBinder.class);
     @UiField
     Label messageLabel;
     @UiField
@@ -28,20 +27,20 @@ public class HowToGetRazarionPanel extends DialogUiBinderWrapper {
 
     private String title;
 
-    interface HowToGetRazarionPanelUiBinder extends UiBinder<Widget, HowToGetRazarionPanel> {
+    interface HowToGetCrystalsPanelUiBinder extends UiBinder<Widget, HowToGetCrystalsPanel> {
     }
 
-    public HowToGetRazarionPanel(String title) {
+    public HowToGetCrystalsPanel(String title) {
         this(title, null, 0, 0);
     }
 
-    public HowToGetRazarionPanel(String title, String message, int razarionCost, int razarionBalance) {
+    public HowToGetCrystalsPanel(String title, String message, int crystalCost, int crystalBalance) {
         this.title = title;
         initWidget(uiBinder.createAndBindUi(this));
         if (message != null) {
             messageLabel.setText(message);
-            costLabel.setText(ClientI18nHelper.CONSTANTS.buyDialogCost(razarionCost));
-            balanceLabel.setText(ClientI18nHelper.CONSTANTS.buyDialogbalance(razarionBalance));
+            costLabel.setText(ClientI18nHelper.CONSTANTS.buyDialogCost(crystalCost));
+            balanceLabel.setText(ClientI18nHelper.CONSTANTS.buyDialogbalance(crystalBalance));
         } else {
             messageLabel.setVisible(false);
             costLabel.setVisible(false);
@@ -57,7 +56,7 @@ public class HowToGetRazarionPanel extends DialogUiBinderWrapper {
     @UiHandler("buyButton")
     void onBuyButtonClick(ClickEvent event) {
         close();
-        DialogManager.showDialog(new BuyRazarionPaypalDialog(), DialogManager.Type.STACK_ABLE);
+        BuyCrystalsPaypalDialog.showDialog();
     }
 
     @UiHandler("buyInvite")

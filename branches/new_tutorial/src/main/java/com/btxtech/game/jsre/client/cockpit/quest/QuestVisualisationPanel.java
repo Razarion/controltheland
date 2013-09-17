@@ -72,8 +72,8 @@ public class QuestVisualisationPanel extends Composite {
                 displayItemAmount(questProgressInfo.getItemIdAmounts(), null);
                 displayAmount(questProgressInfo.getAmount(), ClientI18nHelper.CONSTANTS.questMinutesPast());
                 break;
-            case RAZARION_INCREASED:
-                displayAmount(questProgressInfo.getAmount(), ClientI18nHelper.CONSTANTS.questRazarionIncreased());
+            case CRYSTALS_INCREASED:
+                displayAmount(questProgressInfo.getAmount(), ClientI18nHelper.CONSTANTS.questCrystalsIncreased());
                 break;
             case ARTIFACT_ITEM_ADDED:
                 displayArtifactItemAmount(questProgressInfo.getInventoryArtifactInfoAmount(), ClientI18nHelper.CONSTANTS.questArtifactItemAddedActionWord());

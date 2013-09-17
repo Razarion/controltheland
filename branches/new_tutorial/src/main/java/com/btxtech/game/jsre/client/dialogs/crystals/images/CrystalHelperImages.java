@@ -1,8 +1,8 @@
-package com.btxtech.game.jsre.client.dialogs.razarion.images;
+package com.btxtech.game.jsre.client.dialogs.crystals.images;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 
-public interface RazarionHelperImages extends ClientBundle {
+public interface CrystalHelperImages extends ClientBundle {
     ImageResource box();
 }

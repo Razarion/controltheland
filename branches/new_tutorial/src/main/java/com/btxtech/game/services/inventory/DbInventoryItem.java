@@ -61,7 +61,7 @@ public class DbInventoryItem implements CrudChild, CrudParent {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     @JoinColumn(name = "dbInventoryItem", nullable = false)
     private Collection<DbInventoryArtifactCount> artifactCounts;
-    private Integer razarionCoast;
+    private Integer crystalCost;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbInventoryItem")
     private Collection<DbBoxItemTypePossibility> dbBoxItemTypePossibilities;
 
@@ -154,12 +154,12 @@ public class DbInventoryItem implements CrudChild, CrudParent {
         this.itemFreeRange = itemFreeRange;
     }
 
-    public Integer getRazarionCoast() {
-        return razarionCoast;
+    public Integer getCrystalCost() {
+        return crystalCost;
     }
 
-    public void setRazarionCoast(Integer razarionCoast) {
-        this.razarionCoast = razarionCoast;
+    public void setCrystalCost(Integer crystalCost) {
+        this.crystalCost = crystalCost;
     }
 
     public CrudChildServiceHelper<DbInventoryArtifactCount> getArtifactCountCrud() {
@@ -169,15 +169,15 @@ public class DbInventoryItem implements CrudChild, CrudParent {
         return artifactCountCrud;
     }
 
-    public Integer getRazarionCostViaArtifacts() {
+    public Integer getCrystalCostViaArtifacts() {
         Integer cost = null;
         for (DbInventoryArtifactCount dbInventoryArtifactCount : getArtifactCountCrud().readDbChildren()) {
             DbInventoryArtifact dbInventoryArtifact = dbInventoryArtifactCount.getDbInventoryArtifact();
-            if (dbInventoryArtifact != null && dbInventoryArtifact.getRazarionCoast() != null && dbInventoryArtifactCount.getCount() > 0) {
+            if (dbInventoryArtifact != null && dbInventoryArtifact.getCrystalCost() != null && dbInventoryArtifactCount.getCount() > 0) {
                 if (cost == null) {
                     cost = 0;
                 }
-                cost += (dbInventoryArtifact.getRazarionCoast() * dbInventoryArtifactCount.getCount());
+                cost += (dbInventoryArtifact.getCrystalCost() * dbInventoryArtifactCount.getCount());
             }
         }
         return cost;
@@ -267,7 +267,7 @@ public class DbInventoryItem implements CrudChild, CrudParent {
                 baseItemTypeCount,
                 itemFreeRange,
                 goldAmount,
-                razarionCoast);
+                crystalCost);
     }
 
     public Collection<DbBaseItemType> getBaseItemTypesViaArtifact() {

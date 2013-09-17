@@ -87,7 +87,7 @@ public class DbPlanet implements CrudChild, CrudParent {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     @JoinColumn(name = "dbPlanet_id")
     private Collection<DbRegionResource> dbRegionResources;
-    private Integer unlockRazarion;
+    private Integer unlockCrystals;
     private String starMapImageContentType;
     @Basic(fetch = FetchType.LAZY)
     @Column(length = 500000)
@@ -257,17 +257,17 @@ public class DbPlanet implements CrudChild, CrudParent {
         this.html = html;
     }
 
-    public Integer getUnlockRazarion() {
-        return unlockRazarion;
+    public Integer getUnlockCrystals() {
+        return unlockCrystals;
     }
 
-    public void setUnlockRazarion(Integer unlockRazarion) {
-        this.unlockRazarion = unlockRazarion;
+    public void setUnlockCrystals(Integer unlockCrystals) {
+        this.unlockCrystals = unlockCrystals;
     }
 
     public PlanetInfo createPlanetInfo() {
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetIdAndName(id, name, unlockRazarion);
+        planetInfo.setPlanetIdAndName(id, name, unlockCrystals);
         planetInfo.setHouseSpace(houseSpace);
         planetInfo.setMaxMoney(maxMoney);
         Map<Integer, Integer> itemTypeLimitation = new HashMap<>();

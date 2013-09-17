@@ -90,7 +90,7 @@ public class PlanetEditor extends MgmtWebPage {
                 return consumedHouseSpace;
             }
         }));
-        form.add(new TextField("unlockRazarion"));
+        form.add(new TextField("unlockCrystals"));
         form.add(new FileUploadField("starMapPlanetUpload", new IModel<List<FileUpload>>() {
 
             @Override
