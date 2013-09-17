@@ -64,9 +64,5 @@ public interface GuildService {
 
     SimpleGuild getGuildId(UserState userState);
 
-    void onMakeBaseAbandoned(User user, SimpleBase simpleBase);
-
-    void onMakeBaseAbandonedHandleEnemies(User user, SimpleBase simpleBase);
-
     Set<SimpleBase> getGuildBases(UserState userState, int planetId);
 }

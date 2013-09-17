@@ -2046,8 +2046,8 @@ public class TestGuildService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "member1").getSimpleGuild().getId());
+        Assert.assertEquals(guildId, getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
+        Assert.assertEquals(guildId, getBaseAttributes(TEST_PLANET_1_ID, "member1").getSimpleGuild().getId());
         Assert.assertNull(getBaseAttributes(TEST_PLANET_1_ID, "nonmember").getSimpleGuild());
         Assert.assertNull(getBaseAttributes(TEST_PLANET_1_ID, "pendingMember").getSimpleGuild());
         // Backup
@@ -2063,8 +2063,8 @@ public class TestGuildService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "member1").getSimpleGuild().getId());
+        Assert.assertEquals(guildId, getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
+        Assert.assertEquals(guildId, getBaseAttributes(TEST_PLANET_1_ID, "member1").getSimpleGuild().getId());
         Assert.assertNull(getBaseAttributes(TEST_PLANET_1_ID, "nonmember").getSimpleGuild());
         Assert.assertNull(getBaseAttributes(TEST_PLANET_1_ID, "pendingMember").getSimpleGuild());
     }
@@ -2103,9 +2103,9 @@ public class TestGuildService extends AbstractServiceTest {
         endHttpSession();
         // Verify
         Assert.assertNull(getBaseAttributes(TEST_PLANET_1_ID, "nomember").getSimpleGuild());
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
+        Assert.assertEquals(guildId, getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
         Assert.assertEquals(simpleBase1, getBaseAttributes(TEST_PLANET_1_ID, "member").getSimpleBase());
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "member").getSimpleGuild().getId());
+        Assert.assertEquals(guildId, getBaseAttributes(TEST_PLANET_1_ID, "member").getSimpleGuild().getId());
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -2117,9 +2117,9 @@ public class TestGuildService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
+        Assert.assertEquals(guildId, getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
         Assert.assertEquals(simpleBase2, getBaseAttributes(TEST_PLANET_1_ID, "member").getSimpleBase());
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "member").getSimpleGuild().getId());
+        Assert.assertEquals(guildId, getBaseAttributes(TEST_PLANET_1_ID, "member").getSimpleGuild().getId());
     }
 
     @Test
@@ -2138,7 +2138,7 @@ public class TestGuildService extends AbstractServiceTest {
         // Verify
         Assert.assertEquals(simpleBase1, getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleBase());
         Assert.assertEquals(TEST_PLANET_1_ID, getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleBase().getPlanetId());
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
+        Assert.assertEquals(guildId, getBaseAttributes(TEST_PLANET_1_ID, "presi").getSimpleGuild().getId());
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -2149,7 +2149,7 @@ public class TestGuildService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
-        Assert.assertEquals(guildId, (int) getBaseAttributes(TEST_PLANET_2_ID, "presi").getSimpleGuild().getId());
+        Assert.assertEquals(guildId, getBaseAttributes(TEST_PLANET_2_ID, "presi").getSimpleGuild().getId());
         Assert.assertEquals(simpleBase2, getBaseAttributes(TEST_PLANET_2_ID, "presi").getSimpleBase());
         Assert.assertEquals(TEST_PLANET_2_ID, getBaseAttributes(TEST_PLANET_2_ID, "presi").getSimpleBase().getPlanetId());
     }

@@ -98,7 +98,7 @@ public interface ItemService {
 
     SyncBoxItem getNearestBoxItem(final Index middle);
 
-    void killSyncItems(Collection<SyncItem> syncItems);
+    void killSyncItems(Collection<? extends SyncItem> syncItems);
 
     SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem);
 
