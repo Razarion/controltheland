@@ -27,8 +27,10 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.client.utg.tip.StorySplashPanel;
 import com.btxtech.game.jsre.client.utg.tip.StorySplashPopup;
 import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
+import com.btxtech.game.jsre.client.utg.tip.tiptask.AbstractTipTask;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
@@ -45,6 +47,8 @@ import java.util.List;
  * Date: 17.07.2010
  * Time: 17:21:24
  */
+// TODO noob protection, if unit is send near bot
+// TODO 19.09.2013 -> Tutorial weiter machen: build defence, attack von bot
 public class Simulation implements ClientBase.OwnBaseDestroyedListener {
     private static final int PRAISE_DELAY = 3000;
     private static final Simulation SIMULATION = new Simulation();
@@ -205,17 +209,29 @@ public class Simulation implements ClientBase.OwnBaseDestroyedListener {
     }
 
     private void startPraisePopup() {
-        praiseSplashPopup = new StorySplashPopup(activeAbstractTask.getPraiseSplash());
+        praiseSplashPopup = new StorySplashPopup(activeAbstractTask.getPraiseSplashPopupInfo());
     }
 
     private boolean hasPraisePopup() {
-        return activeAbstractTask.getPraiseSplash() != null;
+        return activeAbstractTask.getPraiseSplashPopupInfo() != null;
     }
 
     private void hidePraisePopup() {
         if (praiseSplashPopup != null) {
-            praiseSplashPopup.hide();
+            praiseSplashPopup.fadeOut();
             praiseSplashPopup = null;
         }
+    }
+
+    public void onTipTaskChanged(AbstractTipTask currentTipTask) {
+        activeAbstractTask.onTipTaskChanged(currentTipTask);
+    }
+
+    public void onTipTaskConversion() {
+        activeAbstractTask.onTipTaskConversion();
+    }
+
+    public void onTipTaskPoorConversion() {
+        activeAbstractTask.onTaskPoorConversion();
     }
 }

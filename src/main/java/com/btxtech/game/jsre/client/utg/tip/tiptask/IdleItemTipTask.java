@@ -21,7 +21,7 @@ public class IdleItemTipTask extends AbstractTipTask implements ActionHandler.Id
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         ActionHandler.getInstance().setIdleListener(this);
     }
 
@@ -31,8 +31,13 @@ public class IdleItemTipTask extends AbstractTipTask implements ActionHandler.Id
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         ActionHandler.getInstance().setIdleListener(null);
+    }
+
+    @Override
+    public String getTaskText() {
+        return null;
     }
 
     @Override

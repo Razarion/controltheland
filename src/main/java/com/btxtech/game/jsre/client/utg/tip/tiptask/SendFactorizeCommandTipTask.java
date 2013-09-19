@@ -23,7 +23,7 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         ActionHandler.getInstance().setCommandListener(this);
         SelectionHandler.getInstance().addSelectionListener(this);
     }
@@ -34,7 +34,7 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         SelectionHandler.getInstance().removeSelectionListener(this);
         ActionHandler.getInstance().setCommandListener(null);
     }
@@ -42,6 +42,14 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
     @Override
     public GameTipVisualization createInGameTip() {
         return new ItemCockpitGameOverlayTipVisualization(itemTypeToFactorized);
+    }
+
+    @Override
+    public String getTaskText() {
+        // TODO use i18n
+        // TODO dynamic create item name
+        // TODO german flexion
+        return "Klicke auf das " + getItemTypeName(itemTypeToFactorized) + " Menu. So kannst Du Einheiten Prodizieren";
     }
 
     @Override

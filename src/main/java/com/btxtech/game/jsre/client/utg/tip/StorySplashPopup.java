@@ -1,60 +1,58 @@
 package com.btxtech.game.jsre.client.utg.tip;
 
-import com.google.gwt.user.client.ui.HTML;
+import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
  * User: beat
- * Date: 03.09.13
- * Time: 22:30
+ * Date: 19.09.13
+ * Time: 11:18
  */
 public class StorySplashPopup extends PopupPanel {
-    public StorySplashPopup(StorySplashPopupInfo storySplashPopupInfo) {
-        StringBuilder htmlString = new StringBuilder();
-        // Title
-        htmlString.append("<p style='font-size:25px;'>");
-        htmlString.append(storySplashPopupInfo.getTitle());
-        htmlString.append("</p>");
-        // Main Text
-        if (storySplashPopupInfo.getMainText() != null) {
-            htmlString.append("<p style='font-size:12px;'>");
-            htmlString.append(storySplashPopupInfo.getMainText());
-            htmlString.append("</p>");
+    private static final int REMOVE_TIMEOUT = 500;
+    private StorySplashPanel storySplashPanel;
+    private Timer removeTimer;
 
-        }
-        // Table
-        htmlString.append("<table><tr><td><img width='40' height='40' src='");
-        htmlString.append(getImage(storySplashPopupInfo.getImageType()));
-        htmlString.append("'></td><td style='font-size:12px;'>");
-        htmlString.append(storySplashPopupInfo.getTaskText());
-        htmlString.append("</td></tr></table>");
-
-        HTML htmlWidget = new HTML(htmlString.toString());
-        htmlWidget.setWidth("35em");
-        setWidget(htmlWidget);
-        getElement().getStyle().setZIndex(99); // TODO zindex
-        center();
-    }
-
-    public String getImage(StorySplashPopupInfo.ImageType imageType) {
-        switch (imageType) {
-
-            case QUEST:
-                return "/images/tips/tipQuest.png";
-            case TICK:
-                return "/images/tips/tick.png";
-            default:
-                return "";
-        }
+    public StorySplashPopup(AbstractSplashPopupInfo abstractSplashPopupInfo) {
+        setStyleName("storyPopup");
+        storySplashPanel = new StorySplashPanel(abstractSplashPopupInfo);
+        setWidget(storySplashPanel);
+        getElement().getStyle().setZIndex(Constants.Z_INDEX_TIP_POPUP);
+        fadeIn();
     }
 
     public void fadeOut() {
+        if(removeTimer != null) {
+            return;
+        }
         removeStyleName("raz-fade-in");
         addStyleName("raz-fade-out");
+        removeTimer = new Timer() {
+            @Override
+            public void run() {
+                hide();
+            }
+        };
+        removeTimer.schedule(REMOVE_TIMEOUT);
     }
 
     public void fadeIn() {
+        stopRemoveTimer();
         removeStyleName("raz-fade-out");
         addStyleName("raz-fade-in");
+        center();
+    }
+
+    private void stopRemoveTimer() {
+        if(removeTimer != null) {
+            removeTimer.cancel();
+            removeTimer = null;
+        }
+    }
+
+    public void setTaskText(String taskText) {
+        storySplashPanel.setTaskText(taskText);
     }
 }

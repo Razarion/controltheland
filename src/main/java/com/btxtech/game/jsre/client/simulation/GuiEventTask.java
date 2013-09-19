@@ -13,7 +13,7 @@ import com.google.gwt.user.client.Timer;
  */
 public class GuiEventTask extends AbstractTask implements TerrainScrollListener {
     private Rectangle scrollTargetRectangle;
-    private Timer prompterTimer;
+    private Timer prompterTimer; // TODO move to ScrollTipTask
     private long lastConversionTimeStamp;
 
     public GuiEventTask(GuiEventTaskConfig guiEventTaskConfig) {
@@ -45,7 +45,7 @@ public class GuiEventTask extends AbstractTask implements TerrainScrollListener 
     @Override
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
         onTaskConversion();
-        lastConversionTimeStamp = System.currentTimeMillis();
+        lastConversionTimeStamp = System.currentTimeMillis(); // TODO move to ScrollTipTask
         if (new Rectangle(left, top, width, height).adjoins(scrollTargetRectangle)) {
             onTaskSucceeded();
         }

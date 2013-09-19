@@ -26,10 +26,11 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
 
     public SelectTipTask(int itemTypeId) {
         this.itemTypeId = itemTypeId;
+        activateConversationOnMouseMove();
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         SelectionHandler.getInstance().addSelectionListener(this);
         QuestVisualisationModel.getInstance().setShowInGameVisualisation(false);
     }
@@ -37,7 +38,7 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
     @Override
     public boolean isFulfilled() {
         Group selectedGroup = SelectionHandler.getInstance().getOwnSelection();
-        if(selectedGroup == null) {
+        if (selectedGroup == null) {
             return false;
         }
         Map<BaseItemType, Collection<SyncBaseItem>> selectedItems = selectedGroup.getGroupedItems();
@@ -45,7 +46,7 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         SelectionHandler.getInstance().removeSelectionListener(this);
         QuestVisualisationModel.getInstance().setShowInGameVisualisation(true);
     }
@@ -68,6 +69,14 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
         } else {
             onFailed();
         }
+    }
+
+    @Override
+    public String getTaskText() {
+        // TODO use i18n
+        // TODO dynamic create item name
+        // TODO German flexion
+        return "Selektiere deine(n) " + getItemTypeName(itemTypeId) + " mit der Maus";
     }
 
     public GameTipVisualization createInGameTip() {

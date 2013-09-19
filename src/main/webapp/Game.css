@@ -509,7 +509,7 @@ td.box {
     100%  {background:none;}
 }
 
-/* ------------------------------------------------------------------------------ */
+/* -----------------------------Story popup panel------------------------------------------------- */
 .raz-fade-out {
     animation:razFadeOutFirst 500ms;
     -webkit-animation:razFadeOutFirst 500ms; /* Safari and Chrome */
@@ -545,4 +545,17 @@ td.box {
     from   {opacity:0.0;}
     to  {opacity:1.0;}
 }
+
+.storyPopup {
+    position:  absolute;
+    background-color: rgba(215, 237, 254, .8);
+    color: #000000;
+    padding: 10px;
+    border: 5px solid rgba(36, 101, 147, .8);
+    background-clip: padding-box;
+    border-radius: 10px;
+    box-shadow: inset 1px 1px 10px 2px rgba(0, 0, 0, 1);
+}
+
 /* ------------------------------------------------------------------------------ */
+

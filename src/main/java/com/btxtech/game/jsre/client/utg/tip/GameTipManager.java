@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.utg.tip;
 
+import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.AbstractTipTask;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.TipTaskContainer;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.TipTaskFactory;
@@ -65,6 +66,7 @@ public class GameTipManager {
             currentTipTask = tipTaskContainer.getCurrentTask();
         }
         currentTipTask.start();
+        Simulation.getInstance().onTipTaskChanged(currentTipTask);
         startVisualization(currentTipTask.createInGameTip());
     }
 

@@ -28,7 +28,7 @@ public class SendMoneyCollectCommandTipTask extends AbstractTipTask implements S
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         SelectionHandler.getInstance().addSelectionListener(this);
         ActionHandler.getInstance().setCommandListener(this);
     }
@@ -39,7 +39,7 @@ public class SendMoneyCollectCommandTipTask extends AbstractTipTask implements S
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         ActionHandler.getInstance().setCommandListener(null);
         SelectionHandler.getInstance().removeSelectionListener(this);
     }
@@ -49,6 +49,14 @@ public class SendMoneyCollectCommandTipTask extends AbstractTipTask implements S
         if (baseCommand instanceof MoneyCollectCommand) {
             onSucceed();
         }
+    }
+
+    @Override
+    public String getTaskText() {
+        // TODO use i18n
+        // TODO dynamic create item name
+        // TODO german flexion
+        return "Klicke mit der Maus auf den " + getItemTypeName(toCollectFormId) + " um Geld abzubauen";
     }
 
     public GameTipVisualization createInGameTip() throws NoSuchItemTypeException {

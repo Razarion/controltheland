@@ -15,8 +15,10 @@ package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
-import com.btxtech.game.jsre.client.utg.tip.StorySplashPopupInfo;
+import com.btxtech.game.jsre.client.utg.tip.PraiseSplashPopupInfo;
+import com.btxtech.game.jsre.client.utg.tip.StorySplashPanel;
 import com.btxtech.game.jsre.client.utg.tip.StorySplashPopup;
+import com.btxtech.game.jsre.client.utg.tip.tiptask.AbstractTipTask;
 import com.btxtech.game.jsre.common.tutorial.AbstractTaskConfig;
 
 /**
@@ -31,9 +33,9 @@ abstract public class AbstractTask {
         this.abstractTaskConfig = abstractTaskConfig;
     }
 
-    abstract public void internStart();
+    protected abstract void internStart();
 
-    abstract public void internCleanup();
+    protected abstract void internCleanup();
 
     public final void start() {
         ClientBase.getInstance().setAccountBalance(abstractTaskConfig.getMoney());
@@ -61,12 +63,14 @@ abstract public class AbstractTask {
     }
 
     public void onTaskConversion() {
+        // TODO move to ScrollTipTask
         if (storySplashPopup != null) {
             storySplashPopup.fadeOut();
         }
     }
 
     public void onTaskPoorConversion() {
+        // TODO move to ScrollTipTask
         if (storySplashPopup != null) {
             storySplashPopup.fadeIn();
         }
@@ -81,12 +85,26 @@ abstract public class AbstractTask {
 
     private void hideTipSplashPopup() {
         if (storySplashPopup != null) {
-            storySplashPopup.hide();
+            storySplashPopup.fadeOut();
             storySplashPopup = null;
         }
     }
 
-    public StorySplashPopupInfo getPraiseSplash() {
-       return abstractTaskConfig.getPraiseSplash();
+    public PraiseSplashPopupInfo getPraiseSplashPopupInfo() {
+        return abstractTaskConfig.getPraiseSplashPopupInfo();
     }
+
+    public void onTipTaskChanged(AbstractTipTask currentTipTask) {
+        if (storySplashPopup != null && currentTipTask.getTaskText() != null) {
+            storySplashPopup.fadeIn();
+            storySplashPopup.setTaskText(currentTipTask.getTaskText());
+        }
+    }
+
+    public void onTipTaskConversion() {
+        if (storySplashPopup != null) {
+            storySplashPopup.fadeOut();
+        }
+    }
+
 }
