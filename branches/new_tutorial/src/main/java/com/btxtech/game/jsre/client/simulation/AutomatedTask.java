@@ -30,7 +30,7 @@ public class AutomatedTask extends AbstractTask {
                     timer = null;
                     onTaskSucceeded();
                 }
-                TerrainView.getInstance().moveAbsolute(currentPosition.getPointWithDistance(20, scrollToPosition, false));
+                TerrainView.getInstance().moveAbsolute(currentPosition.getPointWithDistance(40, scrollToPosition, false));
             }
         };
         timer.scheduleRepeating(25);

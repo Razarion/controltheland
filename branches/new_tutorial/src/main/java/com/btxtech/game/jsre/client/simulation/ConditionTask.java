@@ -36,20 +36,20 @@ public class ConditionTask extends AbstractTask implements ConditionServiceListe
 
                 // TODO make special scroll task (oder so)
                 SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, ClientBase.getInstance().getSimpleBase(), null);
-               LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
-                    levelTaskPacket.setQuestInfo(new QuestInfo(getAbstractTaskConfig().getName(),
-                            null,
-                            conditionConfig.getAdditionalDescription(),
-                            null,
-                            0,
-                            0,
-                            0,
-                            QuestInfo.Type.MISSION,
-                            conditionConfig.getRadarPositionHint(),
-                            conditionConfig.isHideQuestProgress(),
-                            null));
-                    levelTaskPacket.setQuestProgressInfo(SimulationConditionServiceImpl.getInstance().getQuestProgressInfo(ClientBase.getInstance().getSimpleBase(), null));
-                    QuestVisualisationModel.getInstance().setLevelTask(levelTaskPacket);
+                LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
+                levelTaskPacket.setQuestInfo(new QuestInfo(getAbstractTaskConfig().getName(),
+                        null,
+                        conditionConfig.getAdditionalDescription(),
+                        null,
+                        0,
+                        0,
+                        0,
+                        QuestInfo.Type.MISSION,
+                        conditionConfig.getRadarPositionHint(),
+                        conditionConfig.isHideQuestProgress(),
+                        null));
+                levelTaskPacket.setQuestProgressInfo(SimulationConditionServiceImpl.getInstance().getQuestProgressInfo(ClientBase.getInstance().getSimpleBase(), null));
+                QuestVisualisationModel.getInstance().setLevelTask(levelTaskPacket);
             }
         }.schedule(200);
     }

@@ -48,8 +48,7 @@ public class TipTaskFactory {
         tipTaskContainer.add(new SendBuildCommandTipTask(gameTipConfig.getToBeBuiltId(), gameTipConfig.getTerrainPositionHint()));
         tipTaskContainer.addFallback(new IdleItemTipTask(gameTipConfig.getActor()));
         tipTaskContainer.addFallback(new SelectTipTask(gameTipConfig.getActor()));
-        tipTaskContainer.addFallback(new ToBeBuildPlacerTipTask(gameTipConfig.getToBeBuiltId()));
-        tipTaskContainer.addFallback(new SendBuildCommandTipTask(gameTipConfig.getToBeBuiltId(), gameTipConfig.getTerrainPositionHint()));
+        tipTaskContainer.addFallback(new SendBuilderFinalizeCommandTipTask(gameTipConfig.getToBeBuiltId()));
     }
 
     private static void createFactorizeUnit(TipTaskContainer tipTaskContainer, GameTipConfig gameTipConfig) {

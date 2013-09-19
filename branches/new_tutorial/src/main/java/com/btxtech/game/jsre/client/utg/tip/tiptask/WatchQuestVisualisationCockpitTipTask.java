@@ -1,6 +1,5 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
-import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.QuestVisualisationCockpitInGameTipVisualization;
 
@@ -12,7 +11,7 @@ import com.btxtech.game.jsre.client.utg.tip.visualization.QuestVisualisationCock
 @Deprecated
 public class WatchQuestVisualisationCockpitTipTask extends AbstractTipTask {
     @Override
-    public void start() {
+    public void internalStart() {
         // Ignore
     }
 
@@ -22,8 +21,14 @@ public class WatchQuestVisualisationCockpitTipTask extends AbstractTipTask {
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         // Ignore
+    }
+
+    @Override
+    public String getTaskText() {
+        // TODO
+        return "???";
     }
 
     public GameTipVisualization createInGameTip() {

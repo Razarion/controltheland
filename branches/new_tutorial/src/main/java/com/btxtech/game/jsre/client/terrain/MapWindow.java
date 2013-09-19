@@ -84,7 +84,7 @@ public class MapWindow {
         return INSTANCE;
     }
 
-    public static AbsolutePanel getAbsolutePanel() {
+    public static ExtendedAbsolutePanel getAbsolutePanel() {
         return INSTANCE.mapWindow;
     }
 }

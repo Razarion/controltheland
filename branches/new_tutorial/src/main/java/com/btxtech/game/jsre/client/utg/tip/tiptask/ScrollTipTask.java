@@ -18,7 +18,7 @@ public class ScrollTipTask extends AbstractTipTask {
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         QuestVisualisationModel.getInstance().setShowInGameVisualisation(false);
     }
 
@@ -28,8 +28,14 @@ public class ScrollTipTask extends AbstractTipTask {
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         QuestVisualisationModel.getInstance().setShowInGameVisualisation(true);
+    }
+
+    @Override
+    public String getTaskText() {
+        // TODO use i18n
+        return "Scrolle auf dem Planeten herum um das Datencenter zu finden. Benutze dazu die Pfeiltasten oder bewege die Maus zum Bildschirmrand. Oben links ist das Radar.";
     }
 
     public GameTipVisualization createInGameTip() {

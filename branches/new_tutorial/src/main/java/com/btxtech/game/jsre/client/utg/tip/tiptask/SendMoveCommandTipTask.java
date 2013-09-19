@@ -25,7 +25,7 @@ public class SendMoveCommandTipTask extends AbstractTipTask implements Selection
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         SelectionHandler.getInstance().addSelectionListener(this);
         ActionHandler.getInstance().setCommandListener(this);
     }
@@ -36,7 +36,7 @@ public class SendMoveCommandTipTask extends AbstractTipTask implements Selection
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         ActionHandler.getInstance().setCommandListener(null);
         SelectionHandler.getInstance().removeSelectionListener(this);
     }
@@ -46,6 +46,12 @@ public class SendMoveCommandTipTask extends AbstractTipTask implements Selection
         if (baseCommand instanceof MoveCommand) {
             onSucceed();
         }
+    }
+
+    @Override
+    public String getTaskText() {
+        // TODO
+        return "???";
     }
 
     public GameTipVisualization createInGameTip() throws NoSuchItemTypeException {

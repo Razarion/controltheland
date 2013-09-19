@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.simulation.AbstractTask;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
+import com.btxtech.game.jsre.client.utg.tip.PraiseSplashPopupInfo;
 import com.btxtech.game.jsre.client.utg.tip.StorySplashPopupInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
@@ -45,7 +46,7 @@ public abstract class AbstractTaskConfig implements Serializable {
     private GameTipConfig gameTipConfig;
     private boolean clearGame;
     private StorySplashPopupInfo storySplashPopupInfo;
-    private StorySplashPopupInfo praiseSplash;
+    private PraiseSplashPopupInfo praiseSplashPopupInfo;
 
     /**
      * Used by GWT
@@ -53,7 +54,7 @@ public abstract class AbstractTaskConfig implements Serializable {
     AbstractTaskConfig() {
     }
 
-    public AbstractTaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig, boolean clearGame, StorySplashPopupInfo storySplashPopupInfo, StorySplashPopupInfo praiseSplash) {
+    public AbstractTaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig, boolean clearGame, StorySplashPopupInfo storySplashPopupInfo, PraiseSplashPopupInfo praiseSplashPopupInfo) {
         this.ownItems = ownItems;
         this.scroll = scroll;
         this.houseCount = houseCount;
@@ -66,7 +67,7 @@ public abstract class AbstractTaskConfig implements Serializable {
         this.gameTipConfig = gameTipConfig;
         this.clearGame = clearGame;
         this.storySplashPopupInfo = storySplashPopupInfo;
-        this.praiseSplash = praiseSplash;
+        this.praiseSplashPopupInfo = praiseSplashPopupInfo;
     }
 
     public abstract AbstractTask createTask();
@@ -122,7 +123,7 @@ public abstract class AbstractTaskConfig implements Serializable {
         return storySplashPopupInfo;
     }
 
-    public StorySplashPopupInfo getPraiseSplash() {
-        return praiseSplash;
+    public PraiseSplashPopupInfo getPraiseSplashPopupInfo() {
+        return praiseSplashPopupInfo;
     }
 }
