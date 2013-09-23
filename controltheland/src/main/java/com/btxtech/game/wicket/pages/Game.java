@@ -15,12 +15,11 @@ package com.btxtech.game.wicket.pages;
 
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
+import com.btxtech.game.wicket.facebook.FacebookController;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;

@@ -1,4 +1,4 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.ClientDateUtil;
@@ -9,6 +9,8 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.TestPlanetHelper;
+import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
@@ -43,8 +45,6 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
-import com.btxtech.game.wicket.pages.cms.CmsPage;
-import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
 import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.lang.mutable.MutableBoolean;

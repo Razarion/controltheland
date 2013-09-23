@@ -21,7 +21,6 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.Game;
-import com.btxtech.game.wicket.pages.InvitationStart;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
 import org.apache.wicket.WicketRuntimeException;
@@ -119,10 +118,14 @@ public class TestWicketCommon extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
-        DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
-        dbPage.setName("Home");
-        pageCrud.updateDbChild(dbPage);
+        DbPage home = pageCrud.createDbChild();
+        home.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        home.setName("Home");
+        pageCrud.updateDbChild(home);
+        DbPage facebookApp = pageCrud.createDbChild();
+        facebookApp.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_START);
+        facebookApp.setName("facebookApp");
+        pageCrud.updateDbChild(facebookApp);
         cmsService.activateCms();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -135,12 +138,7 @@ public class TestWicketCommon extends AbstractServiceTest {
         getWicketTester().assertRenderedPage(Game.class);
         getWicketTester().executeUrl("game_cms_invitation");
         getWicketTester().assertRenderedPage(Game.class);
-        try {
-            getWicketTester().executeUrl("game_cms_facebook_app");
-            Assert.fail("WicketRuntimeException expected");
-        } catch (WicketRuntimeException wicketRuntimeException) {
-            Assert.assertEquals("Empty signed_request received", (((InvocationTargetException) wicketRuntimeException.getCause()).getTargetException()).getMessage());
-        }
+        getWicketTester().executeUrl("game_cms_facebook_app");
         try {
             getWicketTester().executeUrl("game_cms_facebook_auto_login");
             Assert.fail("WicketRuntimeException expected");
