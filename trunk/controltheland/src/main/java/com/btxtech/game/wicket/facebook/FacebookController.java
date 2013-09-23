@@ -11,10 +11,11 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.uiservices.facebook;
+package com.btxtech.game.wicket.facebook;
 
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -35,12 +36,16 @@ public class FacebookController extends Panel {
         REGISTER,
         AUTO_LOGON,
         LOGGED_IN,
-        GAME
+        GAME,
+        OAUTH_DIALOG
     }
+
     @SpringBean
     private UserService userService;
     @SpringBean
     private CmsUiService cmsUiService;
+    @SpringBean
+    private UserGuidanceService userGuidanceService;
 
     public FacebookController(String id, Type type) {
         super(id);
@@ -59,6 +64,9 @@ public class FacebookController extends Panel {
             case GAME:
                 jsTemplate = new PackageTextTemplate(FacebookController.class, "FacebookInit.js");
                 break;
+            case OAUTH_DIALOG:
+                jsTemplate = new PackageTextTemplate(FacebookController.class, "FacebookOAuthDialog.js");
+                break;
             default:
                 throw new IllegalArgumentException("Unknown type: " + type);
         }
@@ -67,8 +75,19 @@ public class FacebookController extends Panel {
         parameters.put("FACEBOOK_APP_ID", cmsUiService.getFacebookAppId());
         parameters.put("CHANNEL_URL", "//www.razarion.com/FacebookChannelFile.html");
         parameters.put("FACEBOOK_AUTO_LOGIN", "/" + CmsUtil.MOUNT_GAME_FACEBOOK_AUTO_LOGIN);
+        if (type == Type.OAUTH_DIALOG) {
+            if (userGuidanceService.isStartRealGame()) {
+                parameters.put("GAME_PAGE_URL", CmsUtil.getUrl4Game(null));
+            } else {
+                parameters.put("GAME_PAGE_URL", CmsUtil.getUrl4Game(userGuidanceService.getDefaultLevelTaskId()));
+            }
+        }
         add(new Label("facebookJsSkd", new Model<>(jsTemplate.asString(parameters))).setEscapeModelStrings(false));
 
     }
 
+    public FacebookController(String id) {
+        super(id);
+        setVisible(false);
+    }
 }

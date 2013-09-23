@@ -2583,6 +2583,17 @@ abstract public class AbstractServiceTest {
         }
     }
 
+    public String getLastRenderedBodyString() {
+        String response = getWicketTester().getLastResponseAsString();
+        int end = response.lastIndexOf("</body>");
+        if (end > -1) {
+            int start = response.indexOf("<body>") + "<body>".length();
+            return response.substring(start, end);
+        } else {
+            return null;
+        }
+    }
+
     public void assertStringInHeader(String expected) {
         String head = getLastRenderedHeaderString();
         Assert.assertNotNull(head);
@@ -2593,6 +2604,12 @@ abstract public class AbstractServiceTest {
         String head = getLastRenderedHeaderString();
         Assert.assertNotNull(head);
         assertNotContainsStringIgnoreWhitespace(head, expected);
+    }
+
+    public void assertStringInBody(String expected) {
+        String body = getLastRenderedBodyString();
+        Assert.assertNotNull(body);
+        assertContainsStringIgnoreWhitespace(body, expected);
     }
 
     public void debugWholeLastResponse() {

@@ -20,7 +20,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
+import com.btxtech.game.wicket.facebook.FacebookController;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;

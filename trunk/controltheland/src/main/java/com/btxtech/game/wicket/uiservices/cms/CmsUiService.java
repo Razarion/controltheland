@@ -11,6 +11,7 @@ import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import java.lang.reflect.InvocationTargetException;
@@ -111,4 +112,8 @@ public interface CmsUiService {
     String getFacebookRedirectUri();
 
     String getUrl4CmsPage(CmsUtil.CmsPredefinedPage predefinedType);
+
+    void renderCmsCssHead(IHeaderResponse response, int pageId);
+
+    DbPage getFacebookAppPage();
 }

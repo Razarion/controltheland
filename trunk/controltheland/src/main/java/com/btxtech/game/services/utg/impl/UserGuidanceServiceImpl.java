@@ -28,13 +28,13 @@ import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.InvitationService;
 import com.btxtech.game.services.user.SecurityRoles;
@@ -47,15 +47,9 @@ import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
-import com.btxtech.game.services.utg.tracker.DbUserHistory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
@@ -356,8 +350,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     public DbLevel getDbLevel() {
         DbLevel dbLevel = (DbLevel) sessionFactory.getCurrentSession().get(DbLevel.class, userService.getUserState().getDbLevelId());
         if (dbLevel == null) {
-            log.error("----DbLevel is null----");
-            log.error("session: " + userService.getUserState().getSessionId());
+            ExceptionHandler.handleException("----DbLevel is null----");
         }
         return dbLevel;
     }
