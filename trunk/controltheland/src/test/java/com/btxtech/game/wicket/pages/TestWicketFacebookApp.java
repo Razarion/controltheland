@@ -27,32 +27,20 @@ import java.util.Locale;
  * Time: 09:53
  */
 public class TestWicketFacebookApp extends AbstractServiceTest {
-    private static final String OAUTH_DIALOG = "<wicket:panel>\n" +
+    private static final String OAUTH_DIALOG = "<div wicket:id=\"facebook\"><wicket:panel>\n" +
             "    <div id=\"fb-root\"></div>\n" +
             "    <script wicket:id=\"facebookJsSkd\" type=\"text/javascript\">window.fbAsyncInit = function () {\n" +
             "    FB.init({\n" +
-            "        appId:'195335357236873', // App ID\n" +
-            "        channelUrl:'//www.razarion.com/FacebookChannelFile.html', // Channel File\n" +
-            "        status:true, // check login status\n" +
-            "        cookie:true, // enable cookies to allow the server to access the session\n" +
-            "        xfbml:true  // parse XFBML\n" +
+            "        appId: '195335357236873', // App ID\n" +
+            "        channelUrl: '//www.razarion.com/FacebookChannelFile.html', // Channel File\n" +
+            "        status: true, // check login status\n" +
+            "        cookie: true, // enable cookies to allow the server to access the session\n" +
+            "        xfbml: true  // parse XFBML\n" +
             "    });\n" +
             "\n" +
-            "    function login() {\n" +
-            "        FB.login(function (response1) {\n" +
-            "            if (response1.authResponse) {\n" +
-            "                    window.location.href = '/game_run/taskId/1';\n" +
-            "            }\n" +
-            "        }, {scope:'email'});\n" +
-            "    }\n" +
-            "\n" +
-            "    FB.getLoginStatus(function (response) {\n" +
-            "        if (response.status === 'connected') {\n" +
-            "            window.onerror(\"User is already connected with facebook. This should not happen in the register process.\", \"FacebookOAuthDialog.js\", \"???\");\n" +
-            "        } else {\n" +
-            "            login();\n" +
-            "        }\n" +
-            "    });\n" +
+            "    FB.login(function (response1) {\n" +
+            "        window.location.href = '/game_run/taskId/1';\n" +
+            "    }, {scope: 'email'});\n" +
             "};\n" +
             "\n" +
             "// Load the SDK Asynchronously\n" +
@@ -67,7 +55,7 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
             "    js.src = \"//connect.facebook.net/en_US/all.js\";\n" +
             "    ref.parentNode.insertBefore(js, ref);\n" +
             "}(document));</script>\n" +
-            "</wicket:panel></div>\n";
+            "</wicket:panel></div>";
 
     @Autowired
     private CmsUiService cmsUiService;
@@ -147,7 +135,6 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
         getWicketTester().getRequest().getPostParameters().setParameterValue("email", "fakeEmail"); // Prevent FB api call
         getWicketTester().startPage(FacebookAppStart.class);
         getWicketTester().assertRenderedPage(Game.class);
-        assertStringInBody(OAUTH_DIALOG);
         Assert.assertNull(getUser());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
