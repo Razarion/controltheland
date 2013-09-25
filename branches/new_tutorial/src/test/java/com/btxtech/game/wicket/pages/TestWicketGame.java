@@ -141,6 +141,29 @@ public class TestWicketGame extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void testUrlHandling() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Test simulated
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("game_run/taskId/103");
+        assertAttributeModifier("startupSeq", 0, "id", "startSeq");
+        assertAttributeModifier("startupSeq", 1, "startSeq", "COLD_SIMULATED");
+        assertAttributeModifier("startupSeq", 2, "taskId", Integer.toString(103));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Test real
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().executeUrl("game_run");
+        assertAttributeModifier("startupSeq", 0, "id", "startSeq");
+        assertAttributeModifier("startupSeq", 1, "startSeq", "COLD_REAL");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
     public void testTrackingRealGame() throws Exception {
         configureSimplePlanetNoResources();
         // Test
@@ -182,5 +205,4 @@ public class TestWicketGame extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
-
 }

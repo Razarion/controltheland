@@ -1,9 +1,10 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.cms.ContentService;
 import com.btxtech.game.services.cms.content.DbBlogEntry;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;

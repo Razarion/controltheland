@@ -11,16 +11,24 @@
   ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~   GNU General Public License for more details.
   -->
-<html xmlns:wicket style="height: 100%;margin:0;border:0;padding:0">
+<html xmlns:wicket>
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Razarion</title>
+    <title wicket:id="title"/>
 </head>
 
 <body style="height: 100%;background-color: #000000;font-size: 12px;font-family: Arial, Helvetica, sans-serif;color: #C7C4BB;">
-
+<div wicket:id="facebook"></div>
 <div wicket:id="feedback"></div>
-
+<div class="middle">
+    <div class="middleRow">
+        <div class="middleCenter">
+            <form wicket:id="form" class="contentMLPadding">
+                <div wicket:id="content" class="contentML"></div>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>

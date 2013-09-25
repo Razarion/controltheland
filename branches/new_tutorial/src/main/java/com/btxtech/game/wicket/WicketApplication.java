@@ -92,6 +92,7 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
         mountPage(CmsUtil.MOUNT_GAME_CMS, CmsPage.class);
         mount(new MountedMapper("/" + CmsUtil.MOUNT_GAME_CMS, CmsPage.class, new UrlPathPageParametersEncoder()));
         mountPage(CmsUtil.MOUNT_GAME, Game.class);
+        mount(new MountedMapper("/" + CmsUtil.MOUNT_GAME, Game.class, new UrlPathPageParametersEncoder()));
         mountPage(CmsUtil.MOUNT_GAME_FACEBOOK_APP, FacebookAppStart.class);
         mountPage(CmsUtil.MOUNT_GAME_FACEBOOK_AUTO_LOGIN, FacebookAutoLogin.class);
         mountPage(CmsUtil.MOUNT_INVITATION_START, InvitationStart.class);

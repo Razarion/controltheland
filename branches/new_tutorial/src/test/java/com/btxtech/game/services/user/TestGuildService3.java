@@ -1,7 +1,9 @@
 package com.btxtech.game.services.user;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.StorablePacket;
@@ -496,8 +498,10 @@ public class TestGuildService3 extends AbstractServiceTest {
 
         Thread.sleep(200); // Wait for packages
         ServerConnectionService serverConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
-        serverConnectionService.sendPacket(createUnregisteredBaseChangedPacketMatcher(BaseChangedPacket.Type.CHANGED, simpleBase, true));
+        serverConnectionService.sendSyncInfo(EasyMock.<SyncItem>anyObject());
+        serverConnectionService.sendPacket(createUnregisteredBaseChangedPacketMatcher(BaseChangedPacket.Type.REMOVED, simpleBase, false));
         EasyMock.expect(serverConnectionService.hasConnection(createUserStateMatcher("U1"))).andReturn(false);
+        EasyMock.expect(serverConnectionService.getGameEngineMode()).andReturn(GameEngineMode.MASTER);
         EasyMock.replay(serverConnectionService);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerConnectionService(serverConnectionService);
         // Test
@@ -506,7 +510,7 @@ public class TestGuildService3 extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        Assert.assertNull(getBaseAttributes(TEST_PLANET_1_ID, simpleBase).getSimpleGuild());
+        Assert.assertFalse(baseService.isAlive(simpleBase));
 
         EasyMock.verify(serverConnectionService);
     }

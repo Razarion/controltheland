@@ -21,6 +21,9 @@ public class CmsUtil {
     public static final String MOUNT_INVENTORY_IMAGES = "inventoryImage";
     public static final String MOUNT_CMS_IMAGES = "cmsimg";
     public static final String MOUNT_SINGLE_ITEM_TYPE_IMAGES = "cmsitemimg";
+    // CSS
+    public static final String CMS_SHARED_CSS_RESOURCES = "cssResource";
+    public static final String CMS_CSS_ID = "id";
     // ???
     public static final String ID = "page";
     public static final String NO_HTML5_BROWSER_PAGE_STRING_ID = "NoHtml5Browser";
@@ -69,7 +72,6 @@ public class CmsUtil {
         NO_HTML5_BROWSER,
         NOT_FOUND,
         LEVEL_TASK_DONE,
-        @Deprecated
         FACEBOOK_START,
         @Deprecated
         CHOOSE_NICKNAME,

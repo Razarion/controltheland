@@ -1,9 +1,12 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.ContentService;
+import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.cms.content.DbBlogEntry;
 import com.btxtech.game.services.cms.content.DbWikiSection;
 import com.btxtech.game.services.cms.impl.CmsServiceImpl;
@@ -41,7 +44,6 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
-import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.SecurityCmsUiService;
