@@ -19,13 +19,11 @@ import com.btxtech.game.services.cms.CmsSectionInfo;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.common.ExceptionHandler;
-import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.RazarionPage;
 import com.btxtech.game.wicket.uiservices.DisplayPageViewLink;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.basic.Label;
@@ -33,9 +31,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.ByteArrayResource;
-import org.apache.wicket.request.resource.IResource;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 public class CmsPage extends RazarionPage implements IHeaderContributor {
@@ -49,8 +44,6 @@ public class CmsPage extends RazarionPage implements IHeaderContributor {
     public static final String SORT_INFO = "sort";
     public static final char SORT_ASCENDING = 'a';
     public static final char SORT_DESCENDING = 'd';
-    public static final String CMS_SHARED_CSS_RESOURCES = "cssResource";
-    public static final String CMS_CSS_ID = "id";
     public static final int MAX_LEVELS = 20;
 
     @SpringBean
@@ -134,21 +127,7 @@ public class CmsPage extends RazarionPage implements IHeaderContributor {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        // CSS resource
-        PageParameters pageParameters = new PageParameters();
-        pageParameters.set(CMS_CSS_ID, pageId);
-        response.render(new CssReferenceHeaderItem(new ResourceReference(CMS_SHARED_CSS_RESOURCES) {
-            @Override
-            public IResource getResource() {
-                return new ByteArrayResource("text/css") {
-                    @Override
-                    protected byte[] getData(Attributes attributes) {
-                        int pageId = Utils.parseIntSave(attributes.getParameters().get(CMS_CSS_ID).toString());
-                        return cmsService.getPage(pageId).getStyle().getCss().getBytes();
-                    }
-                };
-            }
-        }, pageParameters, "screen", null));
+        cmsUiService.renderCmsCssHead(response, pageId);
     }
 
 }

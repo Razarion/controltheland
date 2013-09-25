@@ -19,7 +19,7 @@ import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
+import com.btxtech.game.wicket.facebook.FacebookController;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;

@@ -1,4 +1,4 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.common.db.DbI18nString;
 import org.junit.Ignore;

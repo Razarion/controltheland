@@ -30,18 +30,15 @@ import com.btxtech.game.services.common.ContentSortList;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.common.ExceptionHandler;
+import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.common.db.DbI18nString;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
-import com.btxtech.game.services.socialnet.facebook.FacebookUtil;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.BorderWrapper;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
@@ -71,16 +68,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.template.JavaScriptTemplate;
-import org.apache.wicket.util.template.PackageTextTemplate;
+import org.apache.wicket.request.resource.ByteArrayResource;
+import org.apache.wicket.request.resource.IResource;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -122,8 +119,6 @@ public class CmsUiServiceImpl implements CmsUiService {
     private SecurityCmsUiService securityCmsUiService;
     @Autowired
     private SessionFactory sessionFactory;
-    @Autowired
-    private UserGuidanceService userGuidanceService;
     @Value(value = "${facebook.appsecret}")
     private String facebookAppSecret;
     @Value(value = "${facebook.appid}")
@@ -1100,5 +1095,33 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public String getFacebookRedirectUri() {
         return facebookRedirectUri;
+    }
+
+    @Override
+    public void renderCmsCssHead(IHeaderResponse response, int pageId) {
+        // CSS resource
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.set(CmsUtil.CMS_CSS_ID, pageId);
+        response.render(new CssReferenceHeaderItem(new ResourceReference(CmsUtil.CMS_SHARED_CSS_RESOURCES) {
+            @Override
+            public IResource getResource() {
+                return new ByteArrayResource("text/css") {
+                    @Override
+                    protected byte[] getData(Attributes attributes) {
+                        int pageId = Utils.parseIntSave(attributes.getParameters().get(CmsUtil.CMS_CSS_ID).toString());
+                        return cmsService.getPage(pageId).getStyle().getCss().getBytes();
+                    }
+                };
+            }
+        }, pageParameters, "screen", null));
+    }
+
+    @Override
+    public DbPage getFacebookAppPage() {
+        try {
+            return cmsService.getPredefinedDbPage(CmsUtil.CmsPredefinedPage.FACEBOOK_START);
+        } catch (CmsPredefinedPageDoesNotExistException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
