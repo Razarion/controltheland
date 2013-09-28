@@ -13,7 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
@@ -31,8 +30,7 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
     @GeneratedValue
     private Integer id;
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "parent_id")
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Collection<DbTerrainImage> dbTerrainImages;
     private String htmlBackgroundColorNone;
@@ -110,7 +108,7 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
 
     @Override
     public void init(UserService userService) {
-        dbTerrainImages = new ArrayList<DbTerrainImage>();
+        dbTerrainImages = new ArrayList<>();
         htmlBackgroundColorNone = "#FFFFFF";
         htmlBackgroundColorWater = "#FFFFFF";
         htmlBackgroundColorLand = "#FFFFFF";
@@ -120,7 +118,7 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
 
     public CrudChildServiceHelper<DbTerrainImage> getTerrainImageCrud() {
         if (terrainImageCrud == null) {
-            terrainImageCrud = new CrudChildServiceHelper<DbTerrainImage>(dbTerrainImages, DbTerrainImage.class, this);
+            terrainImageCrud = new CrudChildServiceHelper<>(dbTerrainImages, DbTerrainImage.class, this);
         }
         return terrainImageCrud;
     }

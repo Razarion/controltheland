@@ -128,7 +128,11 @@ public class TerrainRenderTask extends AbstractRenderTask {
                         sourceYOffset += scrollYOffset;
                     }
                     if (terrainTile.isSurface()) {
-                        sourceXOffset = sourceXOffset % imageElement.getWidth();
+                        if (terrainTile.hasScatterXOffset()) {
+                            sourceXOffset = terrainTile.getScatterXOffset();
+                        } else {
+                            sourceXOffset = sourceXOffset % imageElement.getWidth();
+                        }
                         sourceYOffset = sourceYOffset % imageElement.getHeight();
                     }
                     try {

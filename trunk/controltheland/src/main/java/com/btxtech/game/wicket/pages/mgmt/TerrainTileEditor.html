@@ -29,7 +29,8 @@
             <th bgcolor="#dadada">Id</th>
             <th bgcolor="#dadada">Image</th>
             <th bgcolor="#dadada">Upload</th>
-            <th bgcolor="#dadada">Image Sprite Map Id<br>(Overrides Image)</th>
+            <th bgcolor="#dadada">Image Sprite Map Id<br>(Overrides Image & Scatter Image)</th>
+            <th bgcolor="#dadada">Scatter Image<br>(Overrides Image)</th>
             <th bgcolor="#dadada">Size in K</th>
             <th bgcolor="#dadada">Surface type</th>
             <th bgcolor="#dadada">HTML Bg Color</th>
@@ -46,6 +47,9 @@
                 <input type="submit" value="Clear" wicket:id="clear"/>
             </td>
             <td wicket:id="imageSpriteMap"/>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="editScatter"/>
+            </td>
             <td wicket:id="size" align="right" valign="center"/>
             <td valign="center">
                 <select wicket:id="surfaceType" size="1"></select>

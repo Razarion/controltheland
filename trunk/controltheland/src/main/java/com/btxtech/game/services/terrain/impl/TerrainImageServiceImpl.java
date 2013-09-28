@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.TerrainInfo;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.CommonTerrainImageServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -102,8 +104,13 @@ public class TerrainImageServiceImpl extends CommonTerrainImageServiceImpl imple
         clearSurfaceImages();
         dbSurfaceImages = new HashMap<>();
         for (DbSurfaceImage dbSurfaceImage : surfaceList) {
-            dbSurfaceImages.put(dbSurfaceImage.getId(), dbSurfaceImage);
-            putSurfaceImage(dbSurfaceImage.createSurfaceImage());
+            try {
+                dbSurfaceImage.cacheImage();
+                dbSurfaceImages.put(dbSurfaceImage.getId(), dbSurfaceImage);
+                putSurfaceImage(dbSurfaceImage.createSurfaceImage());
+            } catch (IOException e) {
+                ExceptionHandler.handleException(e);
+            }
         }
     }
 

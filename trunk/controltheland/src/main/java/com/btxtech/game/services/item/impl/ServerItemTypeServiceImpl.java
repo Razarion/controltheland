@@ -14,7 +14,6 @@
 package com.btxtech.game.services.item.impl;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -24,6 +23,7 @@ import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ImageHolder;
+import com.btxtech.game.services.common.SpriteMapAssembler;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
@@ -44,19 +44,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
@@ -81,7 +74,8 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
             HibernateUtil.openSession4InternalCall(sessionFactory);
             activate();
         } catch (Throwable t) {
-            log.error("", t);        } finally {
+            log.error("", t);
+        } finally {
             HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
     }
@@ -273,49 +267,22 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
                     }
                 }
             });
-            BufferedImage masterImage = ImageIO.read(new ByteArrayInputStream(exampleImage.getData()));
-
-            // Get the format name
-            Iterator<ImageReader> iter = ImageIO.getImageReaders(ImageIO.createImageInputStream(new ByteArrayInputStream(exampleImage.getData())));
-            if (!iter.hasNext()) {
-                throw new IllegalArgumentException("Can not find image reader: " + dbItemType);
-            }
-            String formatName = iter.next().getFormatName();
-
             ItemTypeSpriteMap itemTypeSpriteMap = itemType.getItemTypeSpriteMap();
             int totalImageCount = itemTypeSpriteMap.getBuildupSteps() * itemTypeSpriteMap.getBuildupAnimationFrames();
             totalImageCount += itemType.getBoundingBox().getAngelCount() * itemTypeSpriteMap.getRuntimeAnimationFrames();
             totalImageCount += itemType.getBoundingBox().getAngelCount() * itemTypeSpriteMap.getDemolitionFramesPerAngel();
-            BufferedImage spriteMap = new BufferedImage(dbItemType.getImageWidth() * totalImageCount, dbItemType.getImageHeight(), masterImage.getType());
-            int xPos = 0;
+            SpriteMapAssembler spriteMapAssembler = new SpriteMapAssembler(totalImageCount, exampleImage.getData());
             String contentType = exampleImage.getContentType();
             for (DbItemTypeImage dbItemTypeImage : buildup) {
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(dbItemTypeImage.getData()));
-                boolean done = spriteMap.createGraphics().drawImage(image, xPos, 0, null);
-                if (!done) {
-                    throw new IllegalStateException("Buildup image could not be drawn: " + dbItemType + " image number: " + dbItemTypeImage.getId());
-                }
-                xPos += dbItemType.getImageWidth();
+                spriteMapAssembler.appendImage(dbItemTypeImage.getData());
             }
             for (DbItemTypeImage dbItemTypeImage : runtime) {
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(dbItemTypeImage.getData()));
-                boolean done = spriteMap.createGraphics().drawImage(image, xPos, 0, null);
-                if (!done) {
-                    throw new IllegalStateException("Runtime image could not be drawn: " + dbItemType + " image number: " + dbItemTypeImage.getId());
-                }
-                xPos += dbItemType.getImageWidth();
+                spriteMapAssembler.appendImage(dbItemTypeImage.getData());
             }
             for (DbItemTypeImage dbItemTypeImage : demolition) {
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(dbItemTypeImage.getData()));
-                boolean done = spriteMap.createGraphics().drawImage(image, xPos, 0, null);
-                if (!done) {
-                    throw new IllegalStateException("Demolition image could not be drawn: " + dbItemType + " image number: " + dbItemTypeImage.getId());
-                }
-                xPos += dbItemType.getImageWidth();
+                spriteMapAssembler.appendImage(dbItemTypeImage.getData());
             }
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(spriteMap, formatName, outputStream);
-            itemTypeSpriteMaps.put(dbItemType.getId(), new ImageHolder(outputStream.toByteArray(), contentType));
+            itemTypeSpriteMaps.put(dbItemType.getId(), new ImageHolder(spriteMapAssembler.assemble(), contentType));
         } catch (Exception e) {
             log.error("ServerItemTypeServiceImpl.addSpriteMapItemTypeImage() error with DbItemType: " + dbItemType, e);
         }

@@ -157,7 +157,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 50, 50), 0));
         gameInfo.setSurfaceRects(surfaceRects);
         Collection<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
-        surfaceImages.add(new SurfaceImage(SurfaceType.LAND, 0, null, ""));
+        surfaceImages.add(new SurfaceImage(SurfaceType.LAND, 0, null, null, ""));
         gameInfo.setSurfaceImages(surfaceImages);
         gameInfo.setTerrainImages(new ArrayList<TerrainImage>());
     }

@@ -519,7 +519,7 @@ public class ItemTypeEditorModel {
                     if (itemType.getTerrainType() == null) {
                         throw new IllegalArgumentException("ItemTypeEditorModel: No surface type specified");
                     }
-                    surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, null, "#00FF00"));
+                    surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, null, null, "#00FF00"));
                     ArrayList<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
                     surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, SIM_WIDTH / 100, SIM_HEIGHT / 100), 23));
                     TerrainView.getInstance().setupTerrain(new TerrainSettings(SIM_WIDTH / 100, SIM_HEIGHT / 100), new ArrayList<TerrainImagePosition>(),
