@@ -27,6 +27,7 @@ public class SurfaceImage implements Serializable {
     private int id;
     private String htmlBackgroundColor;
     private ImageSpriteMapInfo imageSpriteMapInfo;
+    private ScatterSurfaceImageInfo scatterSurfaceImageInfo;
 
     /**
      * Used by GWT
@@ -34,10 +35,11 @@ public class SurfaceImage implements Serializable {
     public SurfaceImage() {
     }
 
-    public SurfaceImage(SurfaceType surfaceType, int id, ImageSpriteMapInfo imageSpriteMapInfo, String htmlBackgroundColor) {
+    public SurfaceImage(SurfaceType surfaceType, int id, ImageSpriteMapInfo imageSpriteMapInfo, ScatterSurfaceImageInfo scatterSurfaceImageInfo, String htmlBackgroundColor) {
         this.surfaceType = surfaceType;
         this.id = id;
         this.imageSpriteMapInfo = imageSpriteMapInfo;
+        this.scatterSurfaceImageInfo = scatterSurfaceImageInfo;
         if (htmlBackgroundColor != null) {
             this.htmlBackgroundColor = htmlBackgroundColor;
         } else {
@@ -59,5 +61,13 @@ public class SurfaceImage implements Serializable {
 
     public ImageSpriteMapInfo getImageSpriteMapInfo() {
         return imageSpriteMapInfo;
+    }
+
+    public ScatterSurfaceImageInfo getScatterSurfaceImageInfo() {
+        return scatterSurfaceImageInfo;
+    }
+
+    public boolean hasScatterSurfaceImageInfo() {
+        return scatterSurfaceImageInfo != null;
     }
 }

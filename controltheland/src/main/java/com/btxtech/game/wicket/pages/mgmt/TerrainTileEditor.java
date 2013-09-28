@@ -101,8 +101,15 @@ public class TerrainTileEditor extends MgmtWebPage {
                 });
                 // Background image sprite map
                 item.add(new ImageSpriteMapPanel("imageSpriteMap"));
+                // Scatter image
+                item.add(new Button("editScatter") {
+                    @Override
+                    public void onSubmit() {
+                        setResponsePage(new ScatterSurfaceImageEditor(item.getModelObject()));
+                    }
+                });
                 // Size
-                double size = item.getModelObject().getImageData() != null ? item.getModelObject().getImageData().length / 1000.0 : 0;
+                double size = item.getModelObject().getCachedImageData() != null ? item.getModelObject().getCachedImageData().length / 1000.0 : 0;
                 item.add(new Label("size", Double.toString(size)));
                 // Surface type
                 IModel<SurfaceType> surfaceTypeIModel = new IModel<SurfaceType>() {

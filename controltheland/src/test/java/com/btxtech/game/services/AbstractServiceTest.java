@@ -2674,6 +2674,12 @@ abstract public class AbstractServiceTest {
         return result;
     }
 
+    public static void assertPrivateField(Class clazz, Object expected, Object actual, String fieldName) throws Exception {
+        Object expectedObject = getPrivateField(clazz, expected, fieldName);
+        Object actualObject = getPrivateField(clazz, actual, fieldName);
+        Assert.assertEquals(expectedObject, actualObject);
+    }
+
     public static Object deAopProxy(Object object) throws Exception {
         if (AopUtils.isJdkDynamicProxy(object)) {
             return ((Advised) object).getTargetSource().getTarget();
