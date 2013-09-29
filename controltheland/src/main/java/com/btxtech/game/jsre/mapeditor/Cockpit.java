@@ -28,9 +28,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import java.util.Collection;
@@ -42,15 +40,19 @@ import java.util.Map;
  * Date: Sep 2, 2009
  * Time: 9:30:48 PM
  */
-public class Cockpit extends TopMapPanel {
+public class Cockpit extends TopMapPanel implements ChangeHandler {
     public static final String HEIGHT = "600px";
-    private static final String RADIO_BUTTON_GROUP = "RadioButtonGroup";
+    private static final String LIST_BOX_SELECTION_OPERATION = "Selection Operation";
+    private static final String LIST_BOX_SURFACE = "Surface";
     private Map<Integer, FlexTable> imageGroup = new HashMap<Integer, FlexTable>();
     private FlexTable controlPanel;
     private int selectorRow;
+    private ListBox placements;
     private ListBox zIndexSelector;
     private MapEditorModel mapEditorModel;
     private TerrainEditorConnection terrainEditorConnection;
+    private ScrollPanel surfaceScroll;
+    private Map<String, ScrollPanel> imageScrollMap = new HashMap<String, ScrollPanel>();
 
     public Cockpit() {
     }
@@ -58,14 +60,6 @@ public class Cockpit extends TopMapPanel {
     @Override
     protected Widget createBody() {
         controlPanel = new FlexTable();
-        // Delete Button
-        final ToggleButton deleteButton = new ToggleButton("Delete", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                mapEditorModel.setDeleteMode(((ToggleButton) event.getSource()).getValue());
-            }
-        });
-        controlPanel.setWidget(0, 0, deleteButton);
         // Save Button
         final Button saveButton = new Button("Save");
         saveButton.addClickHandler(new ClickHandler() {
@@ -75,8 +69,11 @@ public class Cockpit extends TopMapPanel {
                 terrainEditorConnection.save(saveButton);
             }
         });
-        controlPanel.setWidget(1, 0, saveButton);
-        setupSelectionModePanel();
+        controlPanel.setWidget(0, 0, saveButton);
+        placements = new ListBox();
+        placements.addChangeHandler(this);
+        controlPanel.setWidget(1, 0, placements);
+        placements.addItem(LIST_BOX_SELECTION_OPERATION);
         return controlPanel;
     }
 
@@ -85,21 +82,10 @@ public class Cockpit extends TopMapPanel {
         surfaceSelector.setCellSpacing(5);
         surfaceSelector.setCellPadding(3);
         surfaceSelector.addStyleName("tile-selector");
-        final ScrollPanel surfaceScroll = new ScrollPanel(surfaceSelector);
+        surfaceScroll = new ScrollPanel(surfaceSelector);
         surfaceScroll.setAlwaysShowScrollBars(true);
         surfaceScroll.setHeight(HEIGHT);
-
-        RadioButton surfaceButton = new RadioButton(RADIO_BUTTON_GROUP, "Surface");
-        surfaceButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-                controlPanel.setWidget(selectorRow, 0, surfaceScroll);
-                zIndexSelector.setEnabled(false);
-                mapEditorModel.setActiveLayer(MapEditorModel.ActiveLayer.SURFACE);
-                mapEditorModel.setSelectionMode(false);
-            }
-        });
-        controlPanel.setWidget(controlPanel.getRowCount(), 0, surfaceButton);
+        placements.addItem(LIST_BOX_SURFACE);
         // Fill surface images
         for (SurfaceImage surfaceImage : terrainInfo.getSurfaceImages()) {
             surfaceSelector.setWidget(surfaceSelector.getRowCount(), 0, new SurfaceSelectorItem(surfaceImage, mapEditorModel));
@@ -139,38 +125,14 @@ public class Cockpit extends TopMapPanel {
         imageSelector.setCellSpacing(5);
         imageSelector.setCellPadding(3);
         imageSelector.addStyleName("tile-selector");
-        final ScrollPanel imageScroll = new ScrollPanel(imageSelector);
+        ScrollPanel imageScroll = new ScrollPanel(imageSelector);
         imageScroll.setAlwaysShowScrollBars(true);
         imageScroll.setHeight(HEIGHT);
         for (Integer imageId : imageGroupEntry.getValue()) {
             imageGroup.put(imageId, imageSelector);
         }
-
-        RadioButton imageGroupButton = new RadioButton(RADIO_BUTTON_GROUP, imageGroupEntry.getKey());
-        imageGroupButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-                controlPanel.setWidget(selectorRow, 0, imageScroll);
-                zIndexSelector.setEnabled(true);
-                mapEditorModel.setActiveLayer(zIndexSelector.getSelectedIndex() == 0 ? MapEditorModel.ActiveLayer.IMAGE_LAYER_1 : MapEditorModel.ActiveLayer.IMAGE_LAYER_2);
-                mapEditorModel.setSelectionMode(false);
-            }
-        });
-
-        controlPanel.setWidget(controlPanel.getRowCount(), 0, imageGroupButton);
-    }
-
-    private void setupSelectionModePanel() {
-        RadioButton selectionModeButton = new RadioButton(RADIO_BUTTON_GROUP, "Selection Operation");
-        selectionModeButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-                controlPanel.setWidget(selectorRow, 0, createSelectionOperationPanel());
-                zIndexSelector.setEnabled(false);
-                mapEditorModel.setSelectionMode(true);
-            }
-        });
-        controlPanel.setWidget(controlPanel.getRowCount(), 0, selectionModeButton);
+        imageScrollMap.put(imageGroupEntry.getKey(), imageScroll);
+        placements.addItem(imageGroupEntry.getKey());
     }
 
     private Widget createSelectionOperationPanel() {
@@ -217,5 +179,25 @@ public class Cockpit extends TopMapPanel {
 
     public void setTerrainEditorConnection(TerrainEditorConnection terrainEditorConnection) {
         this.terrainEditorConnection = terrainEditorConnection;
+    }
+
+    @Override
+    public void onChange(ChangeEvent event) {
+        String selectedIndex = placements.getItemText(placements.getSelectedIndex());
+        if (LIST_BOX_SELECTION_OPERATION.equals(selectedIndex)) {
+            controlPanel.setWidget(selectorRow, 0, createSelectionOperationPanel());
+            zIndexSelector.setEnabled(false);
+            mapEditorModel.setSelectionMode(true);
+        } else if (LIST_BOX_SURFACE.equals(selectedIndex)) {
+            controlPanel.setWidget(selectorRow, 0, surfaceScroll);
+            zIndexSelector.setEnabled(false);
+            mapEditorModel.setActiveLayer(MapEditorModel.ActiveLayer.SURFACE);
+            mapEditorModel.setSelectionMode(false);
+        } else if (imageScrollMap.containsKey(selectedIndex)) {
+            controlPanel.setWidget(selectorRow, 0, imageScrollMap.get(selectedIndex));
+            zIndexSelector.setEnabled(true);
+            mapEditorModel.setActiveLayer(zIndexSelector.getSelectedIndex() == 0 ? MapEditorModel.ActiveLayer.IMAGE_LAYER_1 : MapEditorModel.ActiveLayer.IMAGE_LAYER_2);
+            mapEditorModel.setSelectionMode(false);
+        }
     }
 }

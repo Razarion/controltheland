@@ -13,6 +13,8 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
@@ -31,7 +33,7 @@ import java.util.Collection;
  * Date: 16.09.12
  * Time: 13:57
  */
-public class MapEditorModel implements TerrainScrollHandler.ScrollExecutor, MouseMoveHandler, MouseDownHandler, MouseUpHandler, KeyDownHandler, MouseOverHandler {
+public class MapEditorModel implements TerrainScrollHandler.ScrollExecutor, MouseMoveHandler, MouseDownHandler, MouseUpHandler, KeyDownHandler, KeyUpHandler, MouseOverHandler {
     public enum ActiveLayer {
         SURFACE,
         IMAGE_LAYER_1,
@@ -83,9 +85,6 @@ public class MapEditorModel implements TerrainScrollHandler.ScrollExecutor, Mous
         return absoluteMouseOver;
     }
 
-    public void setDeleteMode(boolean deleteMode) {
-        this.deleteMode = deleteMode;
-    }
 
     public TerrainImageModifier getTerrainImageModifier() {
         return terrainImageModifier;
@@ -309,6 +308,20 @@ public class MapEditorModel implements TerrainScrollHandler.ScrollExecutor, Mous
             }
             case KeyCodes.KEY_RIGHT: {
                 moveDelta(100, 0);
+                break;
+            }
+            case KeyCodes.KEY_DELETE: {
+                deleteMode = true;
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onKeyUp(KeyUpEvent event) {
+        switch (event.getNativeKeyCode()) {
+            case KeyCodes.KEY_DELETE: {
+                deleteMode = false;
                 break;
             }
         }
