@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <mapping class="com.btxtech.game.services.history.DbHistoryElement"/>
+        <mapping class="com.btxtech.game.services.connection.DbConnectionStatistics"/>
+        <mapping class="com.btxtech.game.services.connection.DbClientDebugEntry"/>
+        <mapping class="com.btxtech.game.services.mgmt.DbServerDebugEntry"/>
+        <mapping class="com.btxtech.game.services.terrain.DbTerrainImagePosition"/>
+        <mapping class="com.btxtech.game.services.terrain.DbSurfaceRect"/>
+        <mapping class="com.btxtech.game.services.terrain.DbTerrainImageGroup"/>
+        <mapping class="com.btxtech.game.services.terrain.DbTerrainImage"/>
+        <mapping class="com.btxtech.game.services.terrain.TerrainImageTileSurfaceType"/>
+        <mapping class="com.btxtech.game.services.terrain.DbSurfaceImage"/>
+        <mapping class="com.btxtech.game.services.terrain.DbScatterSurfaceImage"/>
+        <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
+        <mapping class="com.btxtech.game.services.terrain.DbRegion"/>
+        <mapping class="com.btxtech.game.services.user.User"/>
+        <mapping class="com.btxtech.game.services.user.DbForgotPassword"/>
+        <mapping class="com.btxtech.game.services.user.DbContentAccessControl"/>
+        <mapping class="com.btxtech.game.services.user.DbPageAccessControl"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.SavedQuery"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbResourceItemType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbBoxItemType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbProjectileItemType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbBaseItemType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbBuilderType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbFactoryType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbHarvesterType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbMovableType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbWeaponType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbWeaponTypeMuzzle"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbWeaponTypeMuzzlePosition"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeImage"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbConsumerType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbGeneratorType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbSpecialType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbItemContainerType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbHouseType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbLauncherType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeDemolitionClip"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeDemolitionStep"/>
+        <mapping class="com.btxtech.game.services.utg.DbChatMessage"/>
+        <mapping class="com.btxtech.game.services.forum.DbSubForum"/>
+        <mapping class="com.btxtech.game.services.forum.DbCategory"/>
+        <mapping class="com.btxtech.game.services.forum.DbForumThread"/>
+        <mapping class="com.btxtech.game.services.forum.DbPost"/>
+        <mapping class="com.btxtech.game.services.messenger.DbMail"/>
+        <mapping class="com.btxtech.game.services.planet.db.DbRegionResource"/>
+        <mapping class="com.btxtech.game.services.bot.DbBotConfig"/>
+        <mapping class="com.btxtech.game.services.bot.DbBotEnragementStateConfig"/>
+        <mapping class="com.btxtech.game.services.bot.DbBotItemConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbTutorialConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbTaskConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbTaskAllowedItem"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
+        <!-- Condition -->
+        <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbConditionConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbCountComparisonConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbArtifactItemIdComparisonConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbComparisonArtifactItemCount"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig"/>
+        <!-- User Guidance -->
+        <mapping class="com.btxtech.game.services.utg.DbLevel"/>
+        <mapping class="com.btxtech.game.services.utg.DbLevelTask"/>
+        <mapping class="com.btxtech.game.services.utg.DbLevelItemTypeLimitation"/>
+        <!-- Backup -->
+        <mapping class="com.btxtech.game.services.mgmt.impl.DbBackupEntry"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.DbGenericBaseItem"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.GenericProjectileItem"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.DbUserState"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.DbBase"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.DbStorablePacket"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbGenericComparisonValue"/>
+        <!-- CMS -->
+        <mapping class="com.btxtech.game.services.cms.DbCmsImage"/>
+        <mapping class="com.btxtech.game.services.cms.page.DbMenu"/>
+        <mapping class="com.btxtech.game.services.cms.page.DbMenuItem"/>
+        <mapping class="com.btxtech.game.services.cms.page.DbPage"/>
+        <mapping class="com.btxtech.game.services.cms.page.DbPageStyle"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentList"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentContainer"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbExpressionProperty"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentDetailLink"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentBook"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentRow"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentStaticHtml"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentPageLink"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentGameLink"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentPlugin"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentDynamicHtml"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentActionButton"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentCreateEdit"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentSmartPageLink"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentInvoker"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentInvokerButton"/>
+        <mapping class="com.btxtech.game.services.cms.page.DbAds"/>
+        <!-- Content -->
+        <mapping class="com.btxtech.game.services.cms.content.DbBlogEntry"/>
+        <mapping class="com.btxtech.game.services.cms.content.DbWikiSection"/>
+        <mapping class="com.btxtech.game.services.cms.content.DbHtmlContent"/>
+        <!-- Statistics -->
+        <mapping class="com.btxtech.game.services.statistics.StatisticsEntry"/>
+        <!-- Tracking -->
+        <mapping class="com.btxtech.game.services.utg.tracker.DbPageAccess"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbSessionDetail"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbStartupTask"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbStartupTerminated"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbUserCommand"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbUserHistory"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbTutorialProgress"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbEventTrackingStart"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbEventTrackingItem"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbSyncItemInfo"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbScrollTrackingItem"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbDialogTracking"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbWindowClosed"/>
+        <!-- Inventory -->
+        <mapping class="com.btxtech.game.services.inventory.DbInventoryItem"/>
+        <mapping class="com.btxtech.game.services.inventory.DbInventoryArtifact"/>
+        <mapping class="com.btxtech.game.services.inventory.DbInventoryArtifactCount"/>
+        <mapping class="com.btxtech.game.services.planet.db.DbBoxRegion"/>
+        <mapping class="com.btxtech.game.services.planet.db.DbBoxRegionCount"/>
+        <mapping class="com.btxtech.game.services.inventory.impl.DbInventoryNewUser"/>
+        <!-- Media -->
+        <mapping class="com.btxtech.game.services.media.DbSound"/>
+        <mapping class="com.btxtech.game.services.media.DbCommonSound"/>
+        <mapping class="com.btxtech.game.services.media.DbImageSpriteMap"/>
+        <mapping class="com.btxtech.game.services.media.DbImageSpriteMapFrame"/>
+        <mapping class="com.btxtech.game.services.media.DbClip"/>
+        <mapping class="com.btxtech.game.services.media.PreloadedImageSpriteMap"/>
+        <!-- Planet -->
+        <mapping class="com.btxtech.game.services.planet.db.DbPlanet"/>
+        <mapping class="com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation"/>
+        <!-- Common -->
+        <mapping class="com.btxtech.game.services.common.db.DbI18nString"/>
+        <mapping class="com.btxtech.game.services.common.db.DbProperty"/>
+        <!-- Finance -->
+        <mapping class="com.btxtech.game.services.finance.DbPayPalTransaction"/>
+        <!-- Guild -->
+        <mapping class="com.btxtech.game.services.user.DbGuild"/>
+        <mapping class="com.btxtech.game.services.user.DbGuildMember"/>
+        <mapping class="com.btxtech.game.services.user.DbGuildInvitation"/>
+        <mapping class="com.btxtech.game.services.user.DbGuildMembershipRequest"/>
+        <!-- Incentive -->
+        <mapping class="com.btxtech.game.services.user.DbFacebookInvitation"/>
+        <mapping class="com.btxtech.game.services.user.DbFriendInvitationBonus"/>
+    </session-factory>
+</hibernate-configuration>

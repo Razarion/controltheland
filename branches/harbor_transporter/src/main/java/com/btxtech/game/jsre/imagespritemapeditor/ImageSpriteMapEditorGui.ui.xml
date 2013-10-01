@@ -1,0 +1,71 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		
+	</ui:style>
+	<g:HorizontalPanel borderWidth="1">
+		<g:VerticalPanel>
+			<g:Grid>
+				<g:row>
+					<g:customCell>
+						<g:InlineLabel text="Width"/>
+					</g:customCell>
+					<g:customCell>
+						<g:InlineLabel ui:field="widthLabel"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<g:InlineLabel text="Height"/>
+					</g:customCell>
+					<g:customCell>
+						<g:InlineLabel ui:field="heightLabel"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<g:InlineLabel text="Count"/>
+					</g:customCell>
+					<g:customCell>
+						<g:HorizontalPanel>
+							<g:Cell verticalAlignment="ALIGN_MIDDLE">
+								<g:IntegerBox ui:field="countBox" visibleLength="10"/>
+							</g:Cell>
+							<g:Cell verticalAlignment="ALIGN_MIDDLE">
+								<g:Button ui:field="applyCountButton">Apply</g:Button>
+							</g:Cell>
+						</g:HorizontalPanel>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<g:InlineLabel text="Time [ms]"/>
+					</g:customCell>
+					<g:customCell>
+						<g:IntegerBox ui:field="timeBox" visibleLength="10"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<g:Button text="Save" ui:field="saveButton"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+			<g:FlexTable ui:field="imageTable" borderWidth="1"/>
+		</g:VerticalPanel>
+		<g:VerticalPanel>
+				<g:SimplePanel ui:field="moviePanel"/>
+				<g:HorizontalPanel>
+					<g:Button text="Play" ui:field="playButton"/>
+					<g:Button text="Stop" ui:field="stopButton"/>
+					<g:Cell verticalAlignment="ALIGN_MIDDLE">
+						<g:Label text="Loop"/>
+					</g:Cell>
+					<g:Cell verticalAlignment="ALIGN_MIDDLE">
+						<g:SimpleCheckBox ui:field="loopCheckbox"/>
+					</g:Cell>
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
+	</g:HorizontalPanel>
+</ui:UiBinder> 

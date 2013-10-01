@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="send">Absenden</entry>
+    <entry key="email">Email</entry>
+    <entry key="registerEmailVerified">Dieser Bestätigungslink wurder bereits verifiziert.</entry>
+    <entry key="LOAD_JAVA_SCRIPT">Lade Java Script</entry>
+    <entry key="registerThanks">Vielen Dank für die Registrierung</entry>
+    <entry key="registerUserExists">Der gewünschte Benutzername existiert bereits</entry>
+    <entry key="loginFailedTitle">Razarion Anmeldung</entry>
+    <entry key="loginFailed">Anmeldung fehlgeschlagen. Bitte versuche es erneut.</entry>
+    <entry key="loginFailed">Einloggen fehlgeschlagen. Bitte erneut versuchen.</entry>
+    <entry key="userEmailNoConfirmed">Dieser Account ist noch nicht per Email bestätigt. Bitte prüfe Dein Email-Postfach und klicke auf den Bestätigungslink in der Email.</entry>
+    <entry key="forgotPassword">Passwort vergessen</entry>
+    <entry key="resetPasswordRequestTitle">Passwort zurücksetzen</entry>
+    <entry key="resetPasswordRequest">Bitte gib deine Email-Adresse in das Feld unten ein, um eine neue E-Mail zum Zurücksetzen des Passworts zu erhalten.</entry>
+    <entry key="passwordRequestEmailHasBeenSent">Eine Email um das Passwort zurückzusetzen wurde gesendet.</entry>
+    <entry key="emailIsUnknown">Diese Email-Adresse ist uns nicht bekannt.</entry>
+    <entry key="passwordNotMatch">Passwort und bestätigungs Passwort sind nicht gleich.</entry>
+    <entry key="noPasswordForgotRequest">Dieser link ist ungültig. Es existiert keine Anfrage um das Passwort zurücksetzen.</entry>
+    <entry key="changePasswordTitle">Passwort ändern</entry>
+    <entry key="changePassword">Das neue Passwort kann hier eingegeben werden:</entry>
+    <entry key="password">Passwort</entry>
+    <entry key="confirmPassword">Passwort bestätigen</entry>
+    <entry key="loginAlready">Bereits {0} als eingeloggt</entry>
+    <entry key="registerConfirmationInvalid">Dieser Bestätigungslink Link ist ungültig. Bitte erneut registrieren.</entry>
+    <entry key="error">Fehler: {0}</entry>
+    <entry key="loadingGame">Lade Spiel...</entry>
+    <entry key="registerNoMatch">Passwort und bestätigungs Passwort sind nicht gleich</entry>
+    <entry key="loggedIn">Eingeloggt</entry>
+    <entry key="play">Spielen</entry>
+    <entry key="nameToShort">Name muss mindestens 3 Zeichen lang sein</entry>
+    <entry key="nameAlreadyUsed">Name bereits vergeben</entry>
+    <entry key="unknownErrorReceived">Unbekannter Fehler</entry>
+    <entry key="NickNameError">${error}</entry>
+    <entry key="chooseYourNickName">Spielername wählen </entry>
+    <entry key="facebookAlreadyLoggedIn">Du bist bereits als {0} eingeloggt. Bitte logge dich zuerst aus, bevor du dich via Facebook einloggst.</entry>
+</properties>

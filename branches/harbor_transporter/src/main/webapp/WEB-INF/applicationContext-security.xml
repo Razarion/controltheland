@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<b:beans xmlns="http://www.springframework.org/schema/security"
+         xmlns:b="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+         http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+         http://www.springframework.org/schema/security
+         http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+    <!--
+    org.springframework.security.web.context.SecurityContextPersistenceFilter
+    Has problems if a long runner execution (progressive sound download) starts before log-ing
+    and ends after successful log-ing. This will override SecurityContext and lets to delete the
+    spring-security object in the http session
+    -->
+
+    <http pattern="/spring/terrain/**" security="none"/>
+    <http pattern="/spring/item/**" security="none"/>
+    <http pattern="/spring/sprites/**" security="none"/>
+    <http pattern="/spring/statJS/**" security="none"/>
+    <http pattern="/spring/lsc/**" security="none"/>
+    <http pattern="/spring/sound/**" security="none"/>
+    <http pattern="/spring/ipnHandler/**" security="none"/>
+
+    <http>
+        <http-basic/>
+        <anonymous enabled="false"/>
+    </http>
+
+    <global-method-security secured-annotations="enabled"/>
+
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider user-service-ref="userService">
+            <password-encoder hash="md5">
+                <salt-source system-wide="${security.md5salt}"/>
+            </password-encoder>
+        </authentication-provider>
+    </authentication-manager>
+
+</b:beans>

@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Smart Page Link Editor</title>
+</head>
+<body>
+<h1>Smart Page Link Editor</h1>
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <div wicket:id="commonPanel"></div>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Page</td>
+            <td wicket:id="dbPage"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Enable Access</td>
+            <td><select wicket:id="enableAccess" size="1"></select></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Button Name</td>
+            <td><input type="text" wicket:id="buttonName"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Spring Bean Name</td>
+            <td><input type="text" wicket:id="springBeanName"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Property Expression</td>
+            <td><input type="text" wicket:id="propertyExpression"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Access Denied String</td>
+            <td><input type="text" wicket:id="accessDeniedString"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">String value = 0</td>
+            <td><input type="text" wicket:id="string0"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">String value = 1</td>
+            <td><input type="text" wicket:id="string1"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">String value > 1. User $ for value replacement in String</td>
+            <td><input type="text" wicket:id="stringN"/></td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <input type="submit" value="Save" wicket:id="save"/>
+</form>
+</body>
+</html>

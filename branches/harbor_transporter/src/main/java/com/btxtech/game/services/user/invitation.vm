@@ -1,0 +1,18 @@
+<html>
+<body>
+<h3>${title},</h3>
+
+<div>
+    ${line1}
+    <br>
+    ${line2}
+    <a href="${url}">${url}</a>
+    <br>
+    <a href="${url}">${linkText}</a>
+    ${line3}
+    <br>
+    <br>
+    ${razarionTeam}
+</div>
+</body>
+</html>

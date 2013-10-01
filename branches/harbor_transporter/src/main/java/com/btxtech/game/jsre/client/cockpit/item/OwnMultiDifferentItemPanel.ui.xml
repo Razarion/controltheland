@@ -1,0 +1,24 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		
+	</ui:style>
+	<ui:with field='res'
+		type='com.btxtech.game.jsre.client.cockpit.item.ItemCokpitBundle' />
+	<g:HorizontalPanel>
+		<g:Cell verticalAlignment="ALIGN_MIDDLE">
+			<g:PushButton ui:field="scrollLeftButton">
+				<g:upFace image='{res.arrowLeftUp}' />
+				<g:downFace image='{res.arrowLeftDown}' />
+			</g:PushButton>
+		</g:Cell>
+		<g:ScrollPanel width="266px" ui:field="scrollPanel" />
+		<g:Cell verticalAlignment="ALIGN_MIDDLE">
+			<g:PushButton ui:field="scrollRightButton">
+				<g:upFace image='{res.arrowRightUp}' />
+				<g:downFace image='{res.arrowRightDown}' />
+			</g:PushButton>
+		</g:Cell>
+	</g:HorizontalPanel>
+</ui:UiBinder> 

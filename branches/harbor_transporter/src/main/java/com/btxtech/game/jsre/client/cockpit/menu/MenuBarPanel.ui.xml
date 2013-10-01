@@ -1,0 +1,41 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+
+    </ui:style>
+
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <!-- g:HTMLPanel -->
+    <g:MenuBar>
+        <g:MenuItem text="{msg.register}" ui:field="registerSubMenuBar" title="{msg.menuTooltipRegisterLogin}">
+            <g:MenuBar vertical="true">
+                <g:MenuItem text="{msg.register}" ui:field="register"/>
+                <g:MenuItem text="{msg.login}" ui:field="login"/>
+            </g:MenuBar>
+        </g:MenuItem>
+        <g:MenuItem text="{msg.logout}" ui:field="logout"/>
+        <g:MenuItem text="{msg.newBase}" ui:field="newBase"/>
+        <g:MenuItem text="{msg.menuNews}" ui:field="news" title="{msg.menuTooltipNews}"/>
+        <g:MenuItem text="{msg.menuHistory}" ui:field="history"/>
+        <g:MenuItem text="{msg.menuMyGuild}" ui:field="myGuild"/>
+        <g:MenuItem text="{msg.menuGuilds}" ui:field="guilds">
+        	<g:MenuBar vertical="true">
+        		<g:MenuItem text="{msg.menuSearchGuilds}" ui:field="searchGuild"/>
+        		<g:MenuItem text="{msg.menuCreateGuild}" ui:field="createGuild"/>
+        		<g:MenuItem text="{msg.menuGuildInvitations}" ui:field="guildInvitation"/>
+        	</g:MenuBar>
+        </g:MenuItem>
+        <g:MenuItem text="{msg.menuInviteFriends}" ui:field="inviteFriends" title="{msg.menuInviteFriendsTooltip}"/>
+        <g:MenuItem text="{msg.menuGetCrystals}" title="{msg.menuTooltipGetCrystals}">
+            <g:MenuBar vertical="true">
+                <g:MenuItem text="{msg.menuBuyPaypal}" ui:field="buyPaypal"/>
+                <g:MenuItem text="{msg.menuOverviewGetCrystals}" ui:field="overviewCrystals"/>
+            </g:MenuBar>
+        </g:MenuItem>
+        <g:MenuItem text="{msg.menuStarMap}" ui:field="starMap"/>
+    </g:MenuBar>
+    <!-- /g:HTMLPanel -->
+</ui:UiBinder> 

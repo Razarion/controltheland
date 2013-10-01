@@ -1,0 +1,63 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <link rel="stylesheet" type="text/css" href="GameEditor.css">
+    <title>Item Type Editor</title>
+</head>
+<body>
+
+<h1>Item Type Editor</h1>
+
+<form wicket:id="itemTypeForm">
+
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Preview</th>
+            <th bgcolor="#dadada">Name (Internal Only)</th>
+            <th bgcolor="#dadada">ID</th>
+            <th bgcolor="#dadada">Edit</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+
+        <tr wicket:id="itemTypes">
+            <td valign="center">
+                <!--img border="1" wicket:id="image"/-->
+            </td>
+            <td><input wicket:id="name" type="text" size="20"></td>
+            <td wicket:id="id" align="right" valign="center"/>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <br/>
+    <br/>
+    <input type="submit" wicket:id="save" value="Save">
+    <br/>
+    <input type="submit" wicket:id="activate" value="Activate">
+    <input type="submit" wicket:id="addBaseItemType" value="Add Base Item Type">
+    <input type="submit" wicket:id="addResourceItemType" value="Add Resource Item Type">
+    <input type="submit" wicket:id="addBoxItemType" value="Add Box Item Type">
+    <input type="submit" wicket:id="addProjectileItemType" value="Add Projectile Item Type">
+</form>
+
+</body>
+</html>

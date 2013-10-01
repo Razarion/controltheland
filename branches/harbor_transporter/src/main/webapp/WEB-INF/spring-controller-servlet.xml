@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- context:component-scan base-package="com.btxtech.btxrpc.weboperator.gwt.services" / -->
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        <!-- <property name="interceptors" ref="localeChangeInterceptor"/> -->
+    </bean>
+
+    <!-- Enables annotated POJO @Controllers -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+
+    <!-- Enables plain Controllers -->
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="order" value="0" />
+        <property name="mappings">
+            <props>
+                <prop key="terrain">terrainImageController</prop>
+                <prop key="item">itemImageController</prop>
+                <prop key="sprites">imageSpriteMapController</prop>
+                <prop key="statJS">statisticsController</prop>
+                <prop key="lsc">loadScriptCommunicationController</prop>
+                <prop key="sound">soundController</prop>
+                <prop key="ipnHandler">payPalIpnHandlerController</prop>
+                <prop key="image">imageController</prop>
+            </props>
+        </property>
+    </bean>
+    
+</beans>

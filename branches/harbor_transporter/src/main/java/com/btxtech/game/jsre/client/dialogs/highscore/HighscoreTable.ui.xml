@@ -1,0 +1,44 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:p1="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:w="urn:import:com.google.gwt.widget.client">
+	<ui:style>
+		.background {
+			border-bottom: 2px solid #888;
+			border-right: 2px solid #888;
+			border-top: 1px solid #ddd;
+			border-radius: 4px;
+			background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(245
+				, 246, 246, 1) ), color-stop(21%, rgba(219, 220, 226, 1) ),
+				color-stop(49%, rgba(184, 186, 198, 1) ),
+				color-stop(80%, rgba(221, 223, 227, 1) ),
+				color-stop(100%, rgba(245, 246, 246, 1) ) );
+			background: -webkit-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
+				rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
+				rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+            background: -moz-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
+            rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
+            rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+            background: -ms-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
+            rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
+            rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+			background: -o-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
+				rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
+				rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+			filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr = '#F8F8F8', endColorstr = '#A0A0A0')"
+				);
+		}
+	</ui:style>
+
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:VerticalPanel styleName="{style.background}">
+		<p1:DataGrid width="83em"
+			height="300px" ui:field="dataGrid" keyboardSelectionPolicy="DISABLED" />
+		<g:HorizontalPanel>
+			<w:TextButton text="{msg.findMe}" ui:field="findMeButton" />
+			<w:TextButton text="{msg.refresh}" ui:field="refreshButton" />
+		</g:HorizontalPanel>
+	</g:VerticalPanel>
+</ui:UiBinder> 

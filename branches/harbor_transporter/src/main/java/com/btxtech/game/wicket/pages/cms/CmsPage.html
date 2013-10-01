@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <!-- link wicket:id="css"/ -->
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title wicket:id="title"/>
+</head>
+<body>
+<div class="header" wicket:id="header"></div>
+
+<div class="middle">
+    <div class="middleRow">
+        <div class="middleLeft" wicket:id="menu"></div>
+
+        <div class="middleCenter">
+            <table border="0" cellpadding="0" cellspacing="0" class="contentOuter">
+                <tr>
+                    <td class="contentTL"></td>
+                    <td class="contentT"></td>
+                    <td class="contentTR"></td>
+                </tr>
+                <tr>
+                    <td class="contentL"></td>
+                    <td>
+                        <div class="contentM">
+                            <form wicket:id="form" class="contentMLPadding">
+                                <div wicket:id="content" class="contentML"></div>
+                            </form>
+                            <div wicket:id="contentRight" class="contentMR"></div>
+                        </div>
+                    </td>
+                    <td class="contentR"></td>
+                </tr>
+                <tr>
+                    <td class="contentBL"></td>
+                    <td class="contentB"></td>
+                    <td class="contentBR"></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>
+<span wicket:id="componentTree"/>
+</body>
+</html>

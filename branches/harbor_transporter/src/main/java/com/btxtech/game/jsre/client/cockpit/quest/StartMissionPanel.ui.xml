@@ -1,0 +1,28 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .description {
+            color: #C7C4BB;
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </ui:style>
+    <ui:with field='res'
+             type='com.btxtech.game.jsre.client.cockpit.quest.images.QuestVisualisationImageBundle'/>
+
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:VerticalPanel>
+        <g:Cell horizontalAlignment="ALIGN_CENTER">
+            <g:Label text="{msg.pressButtonWhenReady}" styleName="{style.description}"/>
+        </g:Cell>
+        <g:Cell horizontalAlignment="ALIGN_CENTER">
+            <g:PushButton title="{msg.tooltipStartMission}" ui:field="startButton">
+                <g:upFace image='{res.startmissionUp}'/>
+                <g:downFace image='{res.startmissionUp}'/>
+            </g:PushButton>
+        </g:Cell>
+    </g:VerticalPanel>
+</ui:UiBinder> 

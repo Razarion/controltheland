@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Expression Property</title>
+</head>
+<body>
+<h1>Expression Property</h1>
+<span wicket:id="msgs"/>
+
+<div>
+    Use . to use the current object as expression
+</div>
+<br>
+
+<form wicket:id="form">
+    <div wicket:id="commonPanel"></div>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Spring Bean Name</td>
+            <td><input type="text" wicket:id="springBeanName"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Expression</td>
+            <td><input type="text" wicket:id="expression"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Editor Type</td>
+            <td><select wicket:id="editorType" size="1"></select></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Optional Type</td>
+            <td><select wicket:id="optionalType" size="1"></select></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Link (ItemTypes & Levels & LevelTasks)</td>
+            <td><input type="checkbox" wicket:id="link"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Link CSS Class</td>
+            <td><input type="text" wicket:id="linkCssClass"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" colspan="2">If this property is part of ContentList</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Sortable</td>
+            <td><input type="checkbox" wicket:id="sortable"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Sort Hint Expression</td>
+            <td><input type="text" wicket:id="sortHintExpression"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Default Sortable</td>
+            <td><input type="checkbox" wicket:id="defaultSortable"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Default Sortable Asc</td>
+            <td><input type="checkbox" wicket:id="defaultSortableAsc"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Sort Link CSS Class</td>
+            <td><input type="text" wicket:id="sortLinkCssClass"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Sort Link CSS Class Active</td>
+            <td><input type="text" wicket:id="sortLinkCssClassActive"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">ASC Sort Image</td>
+            <td wicket:id="sortAscActiveImage"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">DESC SOrt Image</td>
+            <td wicket:id="sortDescActiveImage"></td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <input type="submit" value="Save" wicket:id="save"/>
+</form>
+</body>
+</html>

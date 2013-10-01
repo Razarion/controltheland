@@ -1,0 +1,71 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Bot Editor</title>
+</head>
+<body>
+<h1>Bot Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="from">
+    <h2>Span Point</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Bot Items</td>
+            <td>
+                <table cellpadding="1" cellspacing="1" border="0">
+                    <tr>
+                        <th bgcolor="#dadada">Item Type</th>
+                        <th bgcolor="#dadada">Count</th>
+                        <th bgcolor="#dadada">Create Directly</th>
+                        <th bgcolor="#dadada">Region
+                            <br>
+                            <span style="color:red;">Movable units: only if Create Directly</span>
+                            <br>
+                            <span style="color:#006400;">If empty, realm is taken</span>
+                        </th>
+                        <th bgcolor="#dadada">Move to Realm if Idle</th>
+                        <th bgcolor="#dadada">Idle TTL [ms]</th>
+                        <th bgcolor="#dadada">No Rebuild</th>
+                        <th bgcolor="#dadada">Re Pop [s]</th>
+                        <th bgcolor="#dadada">Delete</th>
+                    </tr>
+                    <tr wicket:id="botItems">
+                        <td wicket:id="baseItemType"/>
+                        <td><input type="text" wicket:id="count" size="6"></td>
+                        <td><input type="checkbox" wicket:id="createDirectly"></td>
+                        <td wicket:id="region"></td>
+                        <td><input type="checkbox" wicket:id="moveRealmIfIdle"></td>
+                        <td><input type="text" wicket:id="idleTtl" size="6"></td>
+                        <td><input type="checkbox" wicket:id="noRebuild"></td>
+                        <td wicket:id="rePopTime"/>
+                        <td valign="center">
+                            <input type="submit" value="Delete" wicket:id="delete"/>
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" wicket:id="createBaseBuildupItem" value="Create">
+            </td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+</form>
+</body>
+</html>

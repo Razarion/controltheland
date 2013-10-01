@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="GameEditor.css">
+    <title>Item Type Editor</title>
+</head>
+<body>
+
+<h3>Baser</h3>
+
+<form wicket:id="base">
+    <h3>General</h3>
+
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Name</td>
+            <td wicket:id="name">name</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Bot</td>
+            <td wicket:id="bot"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Money</td>
+            <td>
+                <input type="text" wicket:id="accountBalance" size="20" maxlength="20"/>
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Energy</td>
+            <td wicket:id="energy"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Item Count</td>
+            <td wicket:id="itemCount"/>
+        </tr>
+    </table>
+
+
+    <h3>Items</h3>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">ID</th>
+            <th bgcolor="#dadada">Item Type</th>
+            <th bgcolor="#dadada">Health</th>
+            <th bgcolor="#dadada">X Pos</th>
+            <th bgcolor="#dadada">Y Pos</th>
+            <th bgcolor="#dadada">Kill</th>
+            <th bgcolor="#dadada">Select</th>
+        </tr>
+
+        <tr wicket:id="itemTypes">
+            <td wicket:id="id" align="left" valign="center">712</td>
+            <td wicket:id="itemType" align="left" valign="center">Jeep</td>
+            <td align="right" valign="center">
+                <input type="text" wicket:id="health" size="6" maxlength="15"/>
+            </td>
+            <td align="right" valign="center">
+                <input type="text" wicket:id="xPos" size="6" maxlength="15"/>
+            </td>
+            <td align="right" valign="center">
+                <input type="text" wicket:id="yPos" size="6" maxlength="15"/>
+            </td>
+            <td valign="center">
+                <input type="submit" wicket:id="kill" value="Kill"/>
+            </td>
+            <td valign="center">
+                <input wicket:id="select" type="checkbox">
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <input type="submit" wicket:id="killSelected" value="Kill Selected"/>
+    <br/>
+    <br/>
+    <input type="submit" wicket:id="apply" value="Apply"/>
+    <br/>
+    <br/>
+</form>
+
+<h3>Rectangle Selection</h3>
+
+<form wicket:id="selection">
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <td>Count</td>
+            <td wicket:id="count"/>
+        </tr>
+        <tr>
+            <td>Start X</td>
+            <td><input type="text" wicket:id="x" size="6" maxlength="15"/></td>
+        </tr>
+        <tr>
+            <td>Start Y</td>
+            <td><input type="text" wicket:id="y" size="6" maxlength="15"/></td>
+        </tr>
+        <tr>
+            <td>End X</td>
+            <td><input type="text" wicket:id="endX" size="6" maxlength="15"/></td>
+        </tr>
+        <tr>
+            <td>End Y</td>
+            <td><input type="text" wicket:id="endY" size="6" maxlength="15"/></td>
+        </tr>
+        <tr>
+            <td valign="left " colspan="2">
+                <input type="submit" value="Select"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+</body>
+</html>

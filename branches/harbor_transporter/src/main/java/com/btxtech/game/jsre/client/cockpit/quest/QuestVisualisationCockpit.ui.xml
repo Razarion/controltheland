@@ -1,0 +1,46 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .plate {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0 10px 10px 10px;
+            max-width: 20%;
+            display: block;
+        }
+
+        .title {
+            color: #FFFFAA;
+            font-size: 18px;
+            font-family: Arial, Helvetica, sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .text {
+            color: #C7C4BB;
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </ui:style>
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:SimplePanel styleName="{style.plate}">
+        <g:VerticalPanel>
+            <g:Label ui:field="titleLabel" styleName="{style.title}"/>
+            <g:Cell horizontalAlignment="ALIGN_CENTER">
+                <g:SimplePanel ui:field="mainPanel"/>
+            </g:Cell>
+            <g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+                <g:HorizontalPanel>
+                    <g:Cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_CENTER">
+                        <g:Button text="{msg.questDialog}" ui:field="questDialogButton"
+                                  title="{msg.tooltipQuestDialog}"/>
+                    </g:Cell>
+                    <g:CheckBox text="{msg.questVisualisation}" ui:field="visualiseCheckBox"
+                                title="{msg.tooltipQuestVisualisation}" styleName="{style.text}"/>
+                </g:HorizontalPanel>
+            </g:Cell>
+        </g:VerticalPanel>
+    </g:SimplePanel>
+</ui:UiBinder>

@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Page Editor</title>
+</head>
+<body>
+<h1>Page Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <h2>Style</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Name</td>
+            <td wicket:id="dbI18nName"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Header visible</td>
+            <td><input type="checkbox" wicket:id="headerVisible"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Footer visible</td>
+            <td><input type="checkbox" wicket:id="footerVisible"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Ads visible</td>
+            <td><input type="checkbox" wicket:id="adsVisible"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Access restricted</td>
+            <td><input type="checkbox" wicket:id="accessRestricted"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Style</td>
+            <td wicket:id="style"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Predefined Type</td>
+            <td><select wicket:id="predefinedType" size="1"></select></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Menu</td>
+            <td wicket:id="menu"/>
+        </tr>
+    </table>
+    <br>
+
+    <h2>Content</h2>
+    <span wicket:id="create"></span>
+    <input type="submit" value="Edit" wicket:id="edit"/>
+    <input type="submit" value="Delete" wicket:id="delete"/>
+    <br>
+    <span wicket:id="contentInfo"></span>
+    <br>
+    <br>
+    <input type="submit" value="Save" wicket:id="save"/>
+    <br>
+    <input type="submit" value="CMS" wicket:id="cms"/>
+</form>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:p1="urn:import:com.btxtech.game.jsre.client.dialogs.guild">
+	<ui:style>
+		
+	</ui:style>
+
+    <ui:with field='msg' type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:VerticalPanel>
+		<g:Label text="{msg.createGuildDialog}" height=""/>
+		<g:Cell height="80px" verticalAlignment="ALIGN_MIDDLE">
+			<p1:GuildNameField ui:field="guildName" width="" height=""/>
+		</g:Cell>
+		<g:Label ui:field="crystalCostLabel"/>
+	</g:VerticalPanel>
+</ui:UiBinder> 

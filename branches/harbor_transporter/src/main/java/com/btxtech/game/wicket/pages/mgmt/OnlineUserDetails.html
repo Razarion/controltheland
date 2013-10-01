@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC>
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+<html xmlns:wicket>
+<head>
+    <title>Online User Details</title>
+</head>
+<body>
+<h1>Online User Details</h1>
+
+<h2>Real Game</h2>
+<table border="1" style="border-collapse:collapse">
+    <tr>
+        <th bgcolor="#dadada">Planet</th>
+        <th bgcolor="#dadada">Base</th>
+        <th bgcolor="#dadada">User</th>
+        <th bgcolor="#dadada">User State</th>
+        <th bgcolor="#dadada">Session</th>
+    </tr>
+    <tr wicket:id="realGameTable">
+        <td wicket:id="planet"></td>
+        <td wicket:id="baseName"></td>
+        <td>
+            <a href="" wicket:id="userLink" target="_blank"><span wicket:id="userName">xxx</span></a>
+        </td>
+        <td>
+            <a href="" wicket:id="userStateLink" target="_blank">User State</a>
+        </td>
+        <td align="right">
+            <a href="" wicket:id="sessionLink" target="_blank"><span wicket:id="sessionId">xxx</span></a>
+        </td>
+    </tr>
+</table>
+
+<h2>Missions</h2>
+<table border="1" style="border-collapse:collapse">
+    <tr>
+        <th bgcolor="#dadada">Mission</th>
+        <th bgcolor="#dadada">User</th>
+        <th bgcolor="#dadada">User State</th>
+        <th bgcolor="#dadada">Session</th>
+    </tr>
+    <tr wicket:id="missionTable">
+        <td wicket:id="mission"></td>
+        <td>
+            <a href="" wicket:id="userLink" target="_blank"><span wicket:id="userName">xxx</span></a>
+            <span wicket:id="baseName">xxx</span>
+        </td>
+        <td>
+            <a href="" wicket:id="userStateLink" target="_blank">User State</a>
+        </td>
+        <td align="right">
+            <a href="" wicket:id="sessionLink" target="_blank"><span wicket:id="sessionId">xxx</span></a>
+        </td>
+    </tr>
+</table>
+<br />
+<br />
+<form wicket:id="form">
+    <input type="submit" value="Reload"/>
+</form>
+
+</body>
+</html>

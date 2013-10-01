@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+              http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0"
+         xmlns="http://java.sun.com/xml/ns/javaee">
+    <display-name>Strategy Game</display-name>
+    <description>Game</description>
+
+    <session-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <!-- Spring integration -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/applicationContext.xml
+            /WEB-INF/applicationContext-security.xml
+        </param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+
+    <!-- GWT -->
+    <servlet>
+        <servlet-name>mapeditor-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.TerrainEditorImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mapeditor-dispatcher</servlet-name>
+        <url-pattern>/mapeditor/terrainEditor</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>mapeditor-dispatcher</servlet-name>
+        <url-pattern>/regioneditor/terrainEditor</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>movable-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.MovableServiceImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>movable-dispatcher</servlet-name>
+        <url-pattern>/game/movableService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>movable-dispatcher</servlet-name>
+        <url-pattern>/playback/movableService</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>compatibilityChecker-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.CompatibilityCheckerImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>compatibilityChecker-dispatcher</servlet-name>
+        <url-pattern>/game/compatibilityChecker</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>pathfinding-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.PathfindingImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>pathfinding-dispatcher</servlet-name>
+        <url-pattern>/pathfinding/pathfinding</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>playback-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.playback.impl.PlaybackServiceImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>playback-dispatcher</servlet-name>
+        <url-pattern>/playback/playback</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>itemtypeeditor-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ItemTypeAccessImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>itemtypeeditor-dispatcher</servlet-name>
+        <url-pattern>/itemtypeeditor/itemTypeAccess</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>itemtypeeditor-dispatcher</servlet-name>
+        <url-pattern>/pathfinding/itemTypeAccess</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>imagespritemapaccess-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ImageSpriteMapAccessImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>imagespritemapaccess-dispatcher</servlet-name>
+        <url-pattern>/imagespritemapeditor/imageSpriteMapAccess</url-pattern>
+    </servlet-mapping>
+
+    <!-- GWT Logging -->
+    <servlet>
+        <servlet-name>gameRemoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>WEB-INF/deploy/game/symbolMaps</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>gameRemoteLogging</servlet-name>
+        <url-pattern>/game/remote_logging</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>itemTypeEditorRemoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>WEB-INF/deploy/itemtypeeditor/symbolMaps</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>itemTypeEditorRemoteLogging</servlet-name>
+        <url-pattern>/itemtypeeditor/remote_logging</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>playbackRemoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>WEB-INF/deploy/playback/symbolMaps</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>playbackRemoteLogging</servlet-name>
+        <url-pattern>/playback/remote_logging</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>pathfindingRemoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>WEB-INF/deploy/pathfinding/symbolMaps</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>pathfindingRemoteLogging</servlet-name>
+        <url-pattern>/pathfinding/remote_logging</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>regionEditorRemoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>WEB-INF/deploy/regioneditor/symbolMaps</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>regionEditorRemoteLogging</servlet-name>
+        <url-pattern>/regioneditor/remote_logging</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>mapeditorRemoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>WEB-INF/deploy/mapeditor/symbolMaps</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mapeditorRemoteLogging</servlet-name>
+        <url-pattern>/mapeditor/remote_logging</url-pattern>
+    </servlet-mapping>
+
+    <!-- Spring controller integration -->
+    <servlet>
+        <servlet-name>spring-controller</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>spring-controller</servlet-name>
+        <url-pattern>/spring/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Spring security -->
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Spring hibernate session -->
+    <filter>
+        <filter-name>openSessionInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
+        <init-param>
+            <param-name>flushMode</param-name>
+            <param-value>MANUAL</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>openSessionInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Wicket -->
+    <filter>
+        <filter-name>wicket</filter-name>
+        <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+        <init-param>
+            <param-name>applicationFactoryClassName</param-name>
+            <param-value>org.apache.wicket.spring.SpringWebApplicationFactory</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>wicket</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+</web-app>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+<module rename-to='mapeditor'>
+    <source path="client" />
+    <source path="mapeditor" />
+    <source path="common" />
+
+    <!-- Inherit the core Web Toolkit stuff.                        -->
+    <inherits name='com.google.gwt.user.User'/>
+    <!-- GWT Issue 5691: Logging mus be at the beginning otherwise log are lost in onModuleLoad() method-->
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <!-- Inherit the default GWT style sheet.  You can change       -->
+    <!-- the theme of your GWT application by uncommenting          -->
+    <!-- any one of the following lines.                            -->
+    <inherits name='com.google.gwt.user.theme.standard.Standard'/>
+    <!-- <inherits name='com.google.gwt.base.theme.chrome.Chrome'/> -->
+    <!-- <inherits name='com.google.gwt.base.theme.dark.Dark'/>     -->
+    <add-linker name="xsiframe"/>
+    <set-configuration-property name="devModeRedirectEnabled" value="true"/>
+
+    <!-- Other module inherits                                      -->
+    <!-- Logging Properties-->
+    <set-property name="gwt.logging.logLevel" value="WARNING"/>
+    <set-property name="gwt.logging.firebugHandler" value="DISABLED"/>
+    <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
+    <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
+
+    <!-- Specify the app entry point class.                         -->
+    <entry-point class='com.btxtech.game.jsre.mapeditor.MainTerrainEditor'/>
+</module>
