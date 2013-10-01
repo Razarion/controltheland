@@ -16,20 +16,21 @@ package com.btxtech.game.services.debug.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.ObjectHolder;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.services.debug.DebugService;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -44,10 +45,10 @@ public class DebugServiceImpl implements DebugService {
     private Panel panel;
     private Frame frame;
     private ScrollPane scroll;
-    private final Map<Rectangle, Color> rectangleColorMap = new HashMap<Rectangle, Color>();
-    private final Map<Line, Color> lineColorMap = new HashMap<Line, Color>();
-    private final Map<SyncItemArea, Color> syncItemAreaColorMap = new HashMap<SyncItemArea, Color>();
-    private final Map<Index, Color> indexColorMap = new HashMap<Index, Color>();
+    private final Map<ObjectHolder<Rectangle>, Color> rectangleColorMap = new HashMap<>();
+    private final Map<Line, Color> lineColorMap = new HashMap<>();
+    private final Map<SyncItemArea, Color> syncItemAreaColorMap = new HashMap<>();
+    private final Map<Index, Color> indexColorMap = new HashMap<>();
     private Thread blockedThread;
     private Label mousePosition;
 
@@ -151,10 +152,10 @@ public class DebugServiceImpl implements DebugService {
     }
 
     private void privatePaintRectangles(Graphics graphics) {
-        for (Map.Entry<Rectangle, Color> entry : rectangleColorMap.entrySet()) {
+        for (Map.Entry<ObjectHolder<Rectangle>, Color> entry : rectangleColorMap.entrySet()) {
             graphics.setColor(entry.getValue());
-            Rectangle rectangle = entry.getKey();
-            graphics.drawRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+            Rectangle rectangle = entry.getKey().getObject();
+            graphics.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
         }
     }
 
@@ -180,7 +181,7 @@ public class DebugServiceImpl implements DebugService {
     @Override
     public void drawRectangle(Rectangle rectangle, Color color) {
         synchronized (rectangleColorMap) {
-            rectangleColorMap.put(rectangle, color);
+            rectangleColorMap.put(new ObjectHolder<>(rectangle), color);
         }
         update();
     }
@@ -189,7 +190,7 @@ public class DebugServiceImpl implements DebugService {
     public void drawRectangles(Collection<Rectangle> rectangles) {
         for (Rectangle rectangle : rectangles) {
             synchronized (rectangleColorMap) {
-                rectangleColorMap.put(rectangle, Color.BLACK);
+                rectangleColorMap.put(new ObjectHolder<>(rectangle), Color.BLACK);
             }
         }
         update();

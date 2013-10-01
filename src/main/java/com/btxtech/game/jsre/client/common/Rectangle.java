@@ -568,6 +568,35 @@ public class Rectangle implements Serializable {
         return bestLine;
     }
 
+    public void iterateOverPerimeterInclusive(IndexCallback indexCallback) {
+        if (getHeight() == 0 || getWidth() == 0) {
+            return;
+        }
+
+        // X axis
+        for (int i = getX(); i < getEndX(); i++) {
+            if (!indexCallback.onIndex(new Index(i, getY()))) {
+                return;
+            }
+            if (getEndY() - 1 > getY()) {
+                if (!indexCallback.onIndex(new Index(i, getEndY() - 1))) {
+                    return;
+                }
+            }
+        }
+        // Y axis
+        for (int i = getY() + 1; i < getEndY() - 1; i++) {
+            if (!indexCallback.onIndex(new Index(getX(), i))) {
+                return;
+            }
+            if (getEndX() - 1 > getX()) {
+                if (!indexCallback.onIndex(new Index(getEndX() - 1, i))) {
+                    return;
+                }
+            }
+        }
+    }
+
     public static Rectangle generateRectangleFromAnyPoints(Index point1, Index point2) {
         Index start = point1.getSmallestPoint(point2);
         Index end = point1.getLargestPoint(point2);
