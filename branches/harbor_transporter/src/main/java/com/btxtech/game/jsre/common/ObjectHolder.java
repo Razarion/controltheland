@@ -8,6 +8,13 @@ package com.btxtech.game.jsre.common;
 public class ObjectHolder<T> {
     private T object;
 
+    public ObjectHolder() {
+    }
+
+    public ObjectHolder(T object) {
+        this.object = object;
+    }
+
     public T getObject() {
         return object;
     }

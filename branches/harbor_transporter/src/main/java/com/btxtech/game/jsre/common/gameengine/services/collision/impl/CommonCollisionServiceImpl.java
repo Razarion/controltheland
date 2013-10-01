@@ -168,7 +168,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
                 Index point = origin.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, distance + targetMinRange);
 
-                if (!getServices().getTerrainService().isFree(point, maxRadius, allowedSurfaces)) {
+                if (!getServices().getTerrainService().isFree(point, maxRadius, allowedSurfaces, null)) {
                     continue;
                 }
 

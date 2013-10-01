@@ -3,6 +3,7 @@ package com.btxtech.game.services.item;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
@@ -38,6 +39,7 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         dbResourceItemType.setName("Hallo");
         dbResourceItemType.getDbI18nName().putString("NameI81n");
         dbResourceItemType.setTerrainType(TerrainType.LAND);
+        dbResourceItemType.setAdjoinSurfaceType(SurfaceType.LAND);
         dbResourceItemType.setBounding(new BoundingBox(3, new double[]{0.12}));
         dbResourceItemType.setImageWidth(12);
         dbResourceItemType.setImageHeight(13);
@@ -60,11 +62,13 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         Assert.assertEquals("Hallo", dbResourceItemType.getName());
         Assert.assertEquals("NameI81n", dbResourceItemType.getDbI18nName().getString());
         Assert.assertEquals(TerrainType.LAND, dbResourceItemType.getTerrainType());
+        Assert.assertEquals(SurfaceType.LAND, dbResourceItemType.getAdjoinSurfaceType());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify cache
         ResourceType resourceType = (ResourceType) serverItemTypeService.getItemType(dbResourceItemType.getId());
         Assert.assertEquals(TerrainType.LAND, resourceType.getTerrainType());
+        Assert.assertEquals(SurfaceType.LAND, resourceType.getAdjoinSurfaceType());
         Assert.assertEquals(22, resourceType.getAmount());
         Assert.assertEquals(3, resourceType.getBoundingBox().getRadius());
         Assert.assertEquals(1, resourceType.getBoundingBox().getAngels().length);
@@ -81,6 +85,7 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         dbResourceItemType.setName("Ade");
         dbResourceItemType.getDbI18nName().putString("NameI81n2");
         dbResourceItemType.setTerrainType(TerrainType.WATER);
+        dbResourceItemType.setAdjoinSurfaceType(SurfaceType.WATER);
         dbResourceItemType.setBounding(new BoundingBox(4, new double[]{0.13}));
         dbResourceItemType.setImageWidth(14);
         dbResourceItemType.setImageHeight(15);
@@ -105,11 +110,13 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         Assert.assertEquals("Ade", dbResourceItemType.getName());
         Assert.assertEquals("NameI81n2", dbResourceItemType.getDbI18nName().getString());
         Assert.assertEquals(TerrainType.WATER, dbResourceItemType.getTerrainType());
+        Assert.assertEquals(SurfaceType.WATER, dbResourceItemType.getAdjoinSurfaceType());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify cache
         resourceType = (ResourceType) serverItemTypeService.getItemType(dbResourceItemType.getId());
         Assert.assertEquals(TerrainType.WATER, resourceType.getTerrainType());
+        Assert.assertEquals(SurfaceType.WATER, resourceType.getAdjoinSurfaceType());
         Assert.assertEquals(23, resourceType.getAmount());
         Assert.assertEquals(4, resourceType.getBoundingBox().getRadius());
         Assert.assertEquals(1, resourceType.getBoundingBox().getAngels().length);
