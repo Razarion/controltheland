@@ -13,12 +13,9 @@
 
 package com.btxtech.game.jsre.common.tutorial;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
-import com.btxtech.game.jsre.client.simulation.AbstractTask;
-import com.btxtech.game.jsre.client.simulation.AutomatedTask;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
-import com.btxtech.game.jsre.client.utg.tip.StorySplashPopupInfo;
+import com.btxtech.game.jsre.client.utg.tip.PraiseSplashPopupInfo;
 
 import java.util.Collections;
 
@@ -27,16 +24,15 @@ import java.util.Collections;
  * Date: 11.09.2013
  * Time: 17:25:27
  */
-public class AutomatedTaskConfig extends AbstractTaskConfig {
-    private Index scrollToPosition;
+abstract public class AbstractAutomatedTaskConfig extends AbstractTaskConfig {
 
     /**
      * Used by GWT
      */
-    AutomatedTaskConfig() {
+    AbstractAutomatedTaskConfig() {
     }
 
-    public AutomatedTaskConfig(Index scrollToPosition, GameTipConfig gameTipConfig) {
+    public AbstractAutomatedTaskConfig(GameTipConfig gameTipConfig, PraiseSplashPopupInfo praiseSplashPopupInfo) {
         super(Collections.<ItemTypeAndPosition>emptyList(),
                 null,
                 0,
@@ -49,18 +45,6 @@ public class AutomatedTaskConfig extends AbstractTaskConfig {
                 gameTipConfig,
                 false,
                 null,
-                null); // TODO bad just random values used -> make configurable
-        this.scrollToPosition = scrollToPosition;
+                praiseSplashPopupInfo); // TODO bad just random values used -> make configurable
     }
-
-    @Override
-    public AbstractTask createTask() {
-        return new AutomatedTask(this);
-    }
-
-    public Index getScrollToPosition() {
-        return scrollToPosition;
-    }
-
-
 }

@@ -342,9 +342,13 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     @Override
     public SimpleBase createBotBase(BotConfig botConfig) {
+        return createBotBase(botConfig.getName());
+    }
+
+    public SimpleBase createBotBase(String name) {
         int baseId = getFreeBaseId();
         SimpleBase simpleBase = new SimpleBase(baseId, PlanetInfo.MISSION_PLANET_ID.getPlanetId());
-        createBase(simpleBase, botConfig.getName(), false, null);
+        createBase(simpleBase, name, false, null);
         setBot(simpleBase, true);
         return simpleBase;
     }
@@ -472,7 +476,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     public void updateMySimpleGuild(SimpleGuild mySimpleGuild) {
-        if(this.mySimpleGuild != null && mySimpleGuild == null) {
+        if (this.mySimpleGuild != null && mySimpleGuild == null) {
             ChatCockpit.getInstance().setChatMessageFilter(ChatMessageFilter.GLOBAL);
         }
         setMySimpleGuild(mySimpleGuild);

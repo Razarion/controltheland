@@ -10,7 +10,6 @@ import com.btxtech.game.jsre.common.MathHelper;
  * Date: 22.08.12
  * Time: 13:53
  */
-@Deprecated
 public class QuestVisualisationCockpitInGameTipVisualization implements GameTipVisualization {
     private static final int LEFT_DISTANCE = 100;
     private static final int TOP_DISTANCE = 50;
