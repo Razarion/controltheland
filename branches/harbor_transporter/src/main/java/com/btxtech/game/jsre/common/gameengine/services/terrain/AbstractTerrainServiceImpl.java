@@ -171,7 +171,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         if (!allowedSurfaces.containsAll(surfaceTypes)) {
             return false;
         }
-        if (adjoinSurface != null) {
+        if (adjoinSurface != null && adjoinSurface != SurfaceType.NONE) {
             return doesSurfaceAdjoinGivenRegion(rectangle, adjoinSurface);
         } else {
             return true;
