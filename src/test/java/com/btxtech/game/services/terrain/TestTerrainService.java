@@ -244,9 +244,6 @@ public class TestTerrainService extends AbstractServiceTest {
         Assert.assertTrue(terrainService.isFree(new Index(5000, 5000), radius80ItemType));
     }
 
-    // TODO test harbor builder
-    // TODO test Adjoin SurfaceType -> NONE
-
     @Test
     @DirtiesContext
     public void testIsFreeAdjoin() throws Exception {
@@ -277,39 +274,94 @@ public class TestTerrainService extends AbstractServiceTest {
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
         planetSystemService.deactivatePlanet(dbPlanet.getId());
         planetSystemService.activatePlanet(dbPlanet.getId());
-        // Setup Harbor
-        DbBaseItemType dbHarborItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
-        setupImages(dbHarborItemType, 1);
-        dbHarborItemType.setName("Harbor");
-        dbHarborItemType.setTerrainType(TerrainType.WATER);
-        dbHarborItemType.setAdjoinSurfaceType(SurfaceType.LAND_COAST);
-        dbHarborItemType.setBounding(new BoundingBox(80, ANGELS_1));
-        dbHarborItemType.setHealth(10);
-        dbHarborItemType.setBuildup(10);
-        dbHarborItemType.setPrice(2);
-        dbHarborItemType.setXpOnKilling(2);
-        dbHarborItemType.setConsumingHouseSpace(2);
-        serverItemTypeService.getDbItemTypeCrud().updateDbChild(dbHarborItemType);
+        // Setup Harbor with adjoin surface type
+        DbBaseItemType dbHarborItemTypeAdjoin = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbHarborItemTypeAdjoin, 1);
+        dbHarborItemTypeAdjoin.setName("Harbor Adjoin");
+        dbHarborItemTypeAdjoin.setTerrainType(TerrainType.WATER);
+        dbHarborItemTypeAdjoin.setAdjoinSurfaceType(SurfaceType.LAND_COAST);
+        dbHarborItemTypeAdjoin.setBounding(new BoundingBox(80, ANGELS_1));
+        dbHarborItemTypeAdjoin.setHealth(10);
+        dbHarborItemTypeAdjoin.setBuildup(10);
+        dbHarborItemTypeAdjoin.setPrice(2);
+        dbHarborItemTypeAdjoin.setXpOnKilling(2);
+        dbHarborItemTypeAdjoin.setConsumingHouseSpace(2);
+        serverItemTypeService.getDbItemTypeCrud().updateDbChild(dbHarborItemTypeAdjoin);
+        DbBaseItemType dbHarborItemTypeEmpty = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbHarborItemTypeEmpty, 1);
+        dbHarborItemTypeEmpty.setName("Harbor Adjoin");
+        dbHarborItemTypeEmpty.setTerrainType(TerrainType.WATER);
+        dbHarborItemTypeEmpty.setBounding(new BoundingBox(80, ANGELS_1));
+        dbHarborItemTypeEmpty.setHealth(10);
+        dbHarborItemTypeEmpty.setBuildup(10);
+        dbHarborItemTypeEmpty.setPrice(2);
+        dbHarborItemTypeEmpty.setXpOnKilling(2);
+        dbHarborItemTypeEmpty.setConsumingHouseSpace(2);
+        serverItemTypeService.getDbItemTypeCrud().updateDbChild(dbHarborItemTypeEmpty);
+        DbBaseItemType dbHarborItemTypeNone = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbHarborItemTypeNone, 1);
+        dbHarborItemTypeNone.setName("Harbor Adjoin");
+        dbHarborItemTypeNone.setTerrainType(TerrainType.WATER);
+        dbHarborItemTypeNone.setAdjoinSurfaceType(SurfaceType.NONE);
+        dbHarborItemTypeNone.setBounding(new BoundingBox(80, ANGELS_1));
+        dbHarborItemTypeNone.setHealth(10);
+        dbHarborItemTypeNone.setBuildup(10);
+        dbHarborItemTypeNone.setPrice(2);
+        dbHarborItemTypeNone.setXpOnKilling(2);
+        dbHarborItemTypeNone.setConsumingHouseSpace(2);
+        serverItemTypeService.getDbItemTypeCrud().updateDbChild(dbHarborItemTypeNone);
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Test
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        ItemType harborItemType = itemTypeService.getItemType(dbHarborItemType.getId());
+        ItemType harborItemTypeAdjoin = itemTypeService.getItemType(dbHarborItemTypeAdjoin.getId());
+        ItemType harborItemTypeEmpty = itemTypeService.getItemType(dbHarborItemTypeEmpty.getId());
+        ItemType harborItemTypeNone = itemTypeService.getItemType(dbHarborItemTypeNone.getId());
         ServerTerrainService serverTerrainService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getTerrainService();
         // OK
-        Assert.assertTrue(serverTerrainService.isFree(new Index(590, 130), harborItemType));
-        Assert.assertTrue(serverTerrainService.isFree(new Index(654, 154), harborItemType));
-        Assert.assertTrue(serverTerrainService.isFree(new Index(586, 366), harborItemType));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(590, 130), harborItemTypeAdjoin));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(654, 154), harborItemTypeAdjoin));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(586, 366), harborItemTypeAdjoin));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(590, 130), harborItemTypeEmpty));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(654, 154), harborItemTypeEmpty));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(586, 366), harborItemTypeEmpty));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(590, 130), harborItemTypeNone));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(654, 154), harborItemTypeNone));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(586, 366), harborItemTypeNone));
         // Out of play field
-        Assert.assertFalse(serverTerrainService.isFree(new Index(594, 46), harborItemType));
-        Assert.assertFalse(serverTerrainService.isFree(new Index(612, 1076), harborItemType));
-        Assert.assertFalse(serverTerrainService.isFree(new Index(1000, 500), harborItemType));
-        Assert.assertFalse(serverTerrainService.isFree(new Index(1000, 1000), harborItemType));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(594, 46), harborItemTypeAdjoin));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(612, 1076), harborItemTypeAdjoin));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(1000, 500), harborItemTypeAdjoin));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(1000, 1000), harborItemTypeAdjoin));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(594, 46), harborItemTypeEmpty));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(612, 1076), harborItemTypeEmpty));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(1000, 500), harborItemTypeEmpty));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(1000, 1000), harborItemTypeEmpty));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(594, 46), harborItemTypeNone));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(612, 1076), harborItemTypeNone));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(1000, 500), harborItemTypeNone));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(1000, 1000), harborItemTypeNone));
         // No adjoin
-        Assert.assertFalse(serverTerrainService.isFree(new Index(726, 268), harborItemType));
-        Assert.assertFalse(serverTerrainService.isFree(new Index(848, 460), harborItemType));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(726, 268), harborItemTypeAdjoin));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(848, 460), harborItemTypeAdjoin));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(726, 268), harborItemTypeEmpty));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(848, 460), harborItemTypeEmpty));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(726, 268), harborItemTypeNone));
+        Assert.assertTrue(serverTerrainService.isFree(new Index(848, 460), harborItemTypeNone));
+        // Cover coast
+        Assert.assertFalse(serverTerrainService.isFree(new Index(531, 560), harborItemTypeAdjoin));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(531, 560), harborItemTypeEmpty));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(531, 560), harborItemTypeNone));
+        // On cost
+        Assert.assertFalse(serverTerrainService.isFree(new Index(446, 755), harborItemTypeAdjoin));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(446, 755), harborItemTypeEmpty));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(446, 755), harborItemTypeNone));
+        // On land
+        Assert.assertFalse(serverTerrainService.isFree(new Index(248, 765), harborItemTypeAdjoin));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(248, 765), harborItemTypeEmpty));
+        Assert.assertFalse(serverTerrainService.isFree(new Index(248, 765), harborItemTypeNone));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
