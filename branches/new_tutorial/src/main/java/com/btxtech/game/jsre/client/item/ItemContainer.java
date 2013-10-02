@@ -215,13 +215,17 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
     }
 
     public SyncItem createSimulationSyncObject(ItemTypeAndPosition itemTypeAndPosition) throws NoSuchItemTypeException {
-        Id id = createId(Id.SIMULATION_ID);
-        if (items.containsKey(id)) {
-            throw new IllegalStateException(this + " simulated id is already used: " + id);
-        }
         SimpleBase simpleBase = null;
         if (ItemTypeContainer.getInstance().getItemType(itemTypeAndPosition.getItemTypeId()) instanceof BaseItemType) {
             simpleBase = ClientBase.getInstance().getSimpleBase();
+        }
+        return createSimulationSyncObject(itemTypeAndPosition, simpleBase);
+    }
+
+    public SyncItem createSimulationSyncObject(ItemTypeAndPosition itemTypeAndPosition, SimpleBase simpleBase) throws NoSuchItemTypeException {
+        Id id = createId(Id.SIMULATION_ID);
+        if (items.containsKey(id)) {
+            throw new IllegalStateException(this + " simulated id is already used: " + id);
         }
         SyncItem syncItem = createAndAddItem(id, itemTypeAndPosition.getPosition(), itemTypeAndPosition.getItemTypeId(), simpleBase);
         id.setUserTimeStamp(System.currentTimeMillis());

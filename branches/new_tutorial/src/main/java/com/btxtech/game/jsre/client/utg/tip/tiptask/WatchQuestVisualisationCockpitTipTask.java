@@ -1,18 +1,33 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
+import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.QuestVisualisationCockpitInGameTipVisualization;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 
 /**
  * User: beat
  * Date: 09.11.12
  * Time: 12:53
  */
-@Deprecated
-public class WatchQuestVisualisationCockpitTipTask extends AbstractTipTask {
+public class WatchQuestVisualisationCockpitTipTask extends AbstractTipTask implements ActionHandler.CommandListener {
+    private int toBeBuildId;
+
+    public WatchQuestVisualisationCockpitTipTask(int toBeBuildId) {
+        this.toBeBuildId = toBeBuildId;
+        activateConversationOnMouseMove();
+    }
+
     @Override
     public void internalStart() {
-        // Ignore
+        ActionHandler.getInstance().setCommandListener(this);
+    }
+
+    @Override
+    public void internalCleanup() {
+        ActionHandler.getInstance().setCommandListener(null);
     }
 
     @Override
@@ -21,17 +36,21 @@ public class WatchQuestVisualisationCockpitTipTask extends AbstractTipTask {
     }
 
     @Override
-    public void internalCleanup() {
-        // Ignore
-    }
-
-    @Override
     public String getTaskText() {
-        // TODO
-        return "???";
+        // TODO use i18n
+        return "Erfülle die Aufgabe oben rechts";
     }
 
     public GameTipVisualization createInGameTip() {
         return new QuestVisualisationCockpitInGameTipVisualization();
+    }
+
+    @Override
+    public void onCommand(BaseCommand baseCommand) {
+        if (baseCommand instanceof FactoryCommand && ((FactoryCommand) baseCommand).getToBeBuilt() == toBeBuildId) {
+            onSucceed();
+        } else if (baseCommand instanceof BuilderCommand && ((BuilderCommand) baseCommand).getToBeBuilt() == toBeBuildId) {
+            onSucceed();
+        }
     }
 }

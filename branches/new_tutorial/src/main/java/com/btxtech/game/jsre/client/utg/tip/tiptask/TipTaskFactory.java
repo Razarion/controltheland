@@ -36,6 +36,10 @@ public class TipTaskFactory {
                 createScroll(tipTaskContainer, gameTipConfig);
                 break;
             }
+            case WATCH_QUEST: {
+                createWatchQuest(tipTaskContainer, gameTipConfig);
+                break;
+            }
             default:
                 throw new IllegalArgumentException("TipTaskFactory: unknown tip: " + gameTipConfig.getTip());
         }
@@ -85,6 +89,12 @@ public class TipTaskFactory {
 
     private static void createScroll(TipTaskContainer tipTaskContainer, GameTipConfig gameTipConfig) {
         tipTaskContainer.add(new ScrollTipTask(gameTipConfig.getTerrainPositionHint()));
+    }
+
+    private static void createWatchQuest(TipTaskContainer tipTaskContainer, GameTipConfig gameTipConfig) {
+        tipTaskContainer.add(new WatchQuestVisualisationCockpitTipTask(gameTipConfig.getToBeBuiltId()));
+        tipTaskContainer.addFallback(new IdleItemTipTask(gameTipConfig.getActor()));
+        tipTaskContainer.addFallback(new WatchQuestVisualisationCockpitTipTask(gameTipConfig.getToBeBuiltId()));
     }
 
 }

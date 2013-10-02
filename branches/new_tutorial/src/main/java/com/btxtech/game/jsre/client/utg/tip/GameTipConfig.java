@@ -20,7 +20,8 @@ public class GameTipConfig implements Serializable {
         GET_RESOURCE,
         MOVE,
         ATTACK,
-        SCROLL;
+        SCROLL,
+        WATCH_QUEST;
 
         public static List<Tip> getValuesIncludingNull() {
             List<Tip> tips = new ArrayList<Tip>(Arrays.asList(values()));
