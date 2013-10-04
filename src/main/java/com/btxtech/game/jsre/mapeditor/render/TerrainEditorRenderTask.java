@@ -124,7 +124,11 @@ public class TerrainEditorRenderTask extends AbstractMapEditorRenderTask {
                     }
 
                     if (terrainTile.isSurface()) {
-                        sourceXOffset = sourceXOffset % imageElement.getWidth();
+                        if (terrainTile.hasScatterXOffset()) {
+                            sourceXOffset = terrainTile.getScatterXOffset();
+                        } else {
+                            sourceXOffset = sourceXOffset % imageElement.getWidth();
+                        }
                         sourceYOffset = sourceYOffset % imageElement.getHeight();
                     }
 

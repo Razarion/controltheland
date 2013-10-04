@@ -119,6 +119,10 @@ public class GwtCommon {
         }
     }
 
+    public static native void logToBrowserConsole(String message) /*-{
+        console.log(message);
+    }-*/;
+
     public static boolean isOpera() {
         if (isOpera == null) {
             isOpera = Window.Navigator.getUserAgent().contains("Opera");

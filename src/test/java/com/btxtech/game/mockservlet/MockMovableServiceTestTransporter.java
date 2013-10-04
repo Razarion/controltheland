@@ -59,10 +59,10 @@ public class MockMovableServiceTestTransporter extends MockMovableService {
         surfaceRects.add(new SurfaceRect(new Rectangle(16, 0, 34, 50), 3)); // Water
         gameInfo.setSurfaceRects(surfaceRects);
         Collection<SurfaceImage> surfaceImages = new ArrayList<>();
-        surfaceImages.add(new SurfaceImage(SurfaceType.LAND, 0, null, ""));
-        surfaceImages.add(new SurfaceImage(SurfaceType.LAND_COAST, 1, null, ""));
-        surfaceImages.add(new SurfaceImage(SurfaceType.WATER_COAST, 2, null, ""));
-        surfaceImages.add(new SurfaceImage(SurfaceType.WATER, 3, null, ""));
+        surfaceImages.add(new SurfaceImage(SurfaceType.LAND, 0, null, null, ""));
+        surfaceImages.add(new SurfaceImage(SurfaceType.LAND_COAST, 1, null, null, ""));
+        surfaceImages.add(new SurfaceImage(SurfaceType.WATER_COAST, 2, null, null, ""));
+        surfaceImages.add(new SurfaceImage(SurfaceType.WATER, 3, null, null, ""));
         gameInfo.setSurfaceImages(surfaceImages);
         gameInfo.setTerrainImages(new ArrayList<TerrainImage>());
     }

@@ -57,6 +57,7 @@ public class MainTerrainEditor implements EntryPoint {
         canvas.addMouseDownHandler(mapEditorModel);
         canvas.addMouseUpHandler(mapEditorModel);
         canvas.addKeyDownHandler(mapEditorModel);
+        canvas.addKeyUpHandler(mapEditorModel);
         canvas.addMouseOverHandler(mapEditorModel);
         Window.addResizeHandler(new ResizeHandler() {
             @Override

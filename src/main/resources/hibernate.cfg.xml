@@ -29,6 +29,7 @@
         <mapping class="com.btxtech.game.services.terrain.DbTerrainImage"/>
         <mapping class="com.btxtech.game.services.terrain.TerrainImageTileSurfaceType"/>
         <mapping class="com.btxtech.game.services.terrain.DbSurfaceImage"/>
+        <mapping class="com.btxtech.game.services.terrain.DbScatterSurfaceImage"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
         <mapping class="com.btxtech.game.services.terrain.DbRegion"/>
         <mapping class="com.btxtech.game.services.user.User"/>
