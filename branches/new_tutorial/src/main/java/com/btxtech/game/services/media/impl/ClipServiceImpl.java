@@ -7,6 +7,7 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ImageHolder;
+import com.btxtech.game.services.common.SpriteMapAssembler;
 import com.btxtech.game.services.media.ClipService;
 import com.btxtech.game.services.media.DbClip;
 import com.btxtech.game.services.media.DbImageSpriteMap;
@@ -20,17 +21,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -138,30 +132,11 @@ public class ClipServiceImpl implements ClipService {
     }
 
     private ImageHolder setupSpriteMap(DbImageSpriteMap dbImageSpriteMap) throws IOException {
-        byte[] masterImageData = dbImageSpriteMap.getImageSpriteMapFrames().get(0).getData();
-        Iterator<ImageReader> iter = ImageIO.getImageReaders(ImageIO.createImageInputStream(new ByteArrayInputStream(masterImageData)));
-        // Get the format name
-        if (!iter.hasNext()) {
-            throw new IllegalArgumentException("Can not find image reader: " + dbImageSpriteMap);
-        }
-        ImageReader imageReader = iter.next();
-        BufferedImage masterImage = ImageIO.read(new ByteArrayInputStream(masterImageData));
-        BufferedImage spriteMap = new BufferedImage(dbImageSpriteMap.getFrameWidth() * dbImageSpriteMap.getImageSpriteMapFrames().size(), dbImageSpriteMap.getFrameHeight(), masterImage.getType());
-        int xPos = 0;
-        Graphics2D graphics2D = spriteMap.createGraphics();
+        SpriteMapAssembler spriteMapAssembler = new SpriteMapAssembler(dbImageSpriteMap.getImageSpriteMapFrames().size(), dbImageSpriteMap.getImageSpriteMapFrames().get(0).getData());
         for (DbImageSpriteMapFrame dbImageSpriteMapFrame : dbImageSpriteMap.getImageSpriteMapFrames()) {
-            if (dbImageSpriteMapFrame.getData() != null && dbImageSpriteMapFrame.getData().length > 0) {
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(dbImageSpriteMapFrame.getData()));
-                boolean done = graphics2D.drawImage(image, xPos, 0, null);
-                if (!done) {
-                    throw new IllegalStateException("setupSpriteMApAndAddToCache() image could not be drawn. dbImageSpriteMap: " + dbImageSpriteMap + " dbImageSpriteMapFrame: " + dbImageSpriteMapFrame);
-                }
-            }
-            xPos += dbImageSpriteMap.getFrameWidth();
+            spriteMapAssembler.appendImage(dbImageSpriteMapFrame.getData());
         }
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(spriteMap, imageReader.getFormatName(), outputStream);
-        return new ImageHolder(outputStream.toByteArray(), imageReader.getOriginatingProvider().getMIMETypes()[0]);
+        return new ImageHolder(spriteMapAssembler.assemble(), spriteMapAssembler.getMimeType());
     }
 
     @Override

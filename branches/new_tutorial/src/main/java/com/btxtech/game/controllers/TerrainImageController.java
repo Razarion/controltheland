@@ -38,7 +38,6 @@ public class TerrainImageController implements Controller {
     @Autowired
     private TerrainImageService terrainService;
 
-
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         try {
@@ -49,8 +48,8 @@ public class TerrainImageController implements Controller {
             String imageContentType;
             if (Constants.TERRAIN_IMG_TYPE_SURFACE.equalsIgnoreCase(type)) {
                 DbSurfaceImage dbSurfaceImage = terrainService.getDbSurfaceImage(id);
-                imageData = dbSurfaceImage.getImageData();
-                imageContentType = dbSurfaceImage.getContentType();
+                imageData = dbSurfaceImage.getCachedImageData();
+                imageContentType = dbSurfaceImage.getCachedContentType();
             } else if (Constants.TERRAIN_IMG_TYPE_FOREGROUND.equalsIgnoreCase(type)) {
                 DbTerrainImage dbTerrainImage = terrainService.getDbTerrainImage(id);
                 imageData = dbTerrainImage.getImageData();

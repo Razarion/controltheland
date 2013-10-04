@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 
 /**
@@ -14,21 +15,24 @@ public class TerrainTile {
     private int tileXOffset;
     private int tileYOffset;
     private boolean isSurface;
+    private Integer scatterXOffset;
 
-    public TerrainTile(SurfaceType surfaceType, boolean isSurface, int imageId, ImageSpriteMapInfo imageSpriteMapInfo, int tileXOffset, int tileYOffset) {
+    public TerrainTile(SurfaceType surfaceType, boolean isSurface, int imageId, ImageSpriteMapInfo imageSpriteMapInfo, Integer scatterXOffset, int tileXOffset, int tileYOffset) {
         this.surfaceType = surfaceType;
         this.isSurface = isSurface;
         this.imageId = imageId;
         this.imageSpriteMapInfo = imageSpriteMapInfo;
+        this.scatterXOffset = scatterXOffset;
         this.tileXOffset = tileXOffset;
         this.tileYOffset = tileYOffset;
     }
 
-    public void setSurfaceType(SurfaceType surfaceType, boolean isSurface, int imageId, ImageSpriteMapInfo imageSpriteMapInfo, int tileXOffset, int tileYOffset) {
+    public void setSurfaceType(SurfaceType surfaceType, boolean isSurface, int imageId, ImageSpriteMapInfo imageSpriteMapInfo, Integer scatterXOffset, int tileXOffset, int tileYOffset) {
         this.surfaceType = surfaceType;
         this.isSurface = isSurface;
         this.imageId = imageId;
         this.imageSpriteMapInfo = imageSpriteMapInfo;
+        this.scatterXOffset = scatterXOffset;
         this.tileXOffset = tileXOffset;
         this.tileYOffset = tileYOffset;
     }
@@ -59,5 +63,13 @@ public class TerrainTile {
 
     public boolean hasImageSpriteMapInfo() {
         return imageSpriteMapInfo != null;
+    }
+
+    public Integer getScatterXOffset() {
+        return scatterXOffset;
+    }
+
+    public boolean hasScatterXOffset() {
+        return scatterXOffset != null;
     }
 }

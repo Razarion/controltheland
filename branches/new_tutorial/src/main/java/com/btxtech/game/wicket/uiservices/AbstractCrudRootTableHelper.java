@@ -30,8 +30,13 @@ abstract public class AbstractCrudRootTableHelper<T extends CrudChild> implement
                 if (collection instanceof List) {
                     return (List<T>) collection;
                 } else {
-                    return new ArrayList<T>(collection);
+                    return new ArrayList<>(collection);
                 }
+            }
+
+            @Override
+            protected List<T> sortList(List<T> list) {
+                return AbstractCrudRootTableHelper.this.sortList(list);
             }
         };
 
@@ -146,6 +151,16 @@ abstract public class AbstractCrudRootTableHelper<T extends CrudChild> implement
      */
     protected void onEditSubmit(T t) {
 
+    }
+
+    /**
+     * Override in subclasses
+     *
+     * @param list input
+     * @return sorted list. Always make new list
+     */
+    protected List<T> sortList(List<T> list) {
+        return list;
     }
 
     public void swapRow(int i, int j) {

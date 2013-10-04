@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -203,6 +204,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         log.info("Starting setup collision service");
         long time = System.currentTimeMillis();
 
+        Random random = new Random();
         terrainTileField = new TerrainTile[terrainSettings.getTileXCount()][terrainSettings.getTileYCount()];
 
         for (SurfaceRect surfaceRect : surfaceRects) {
@@ -222,7 +224,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
                         continue;
                     }
                     try {
-                        terrainTileField[x][y] = new TerrainTile(surfaceType, true, surfaceRect.getSurfaceImageId(), surfaceImage.getImageSpriteMapInfo(), x, y);
+                        terrainTileField[x][y] = new TerrainTile(surfaceType, true, surfaceRect.getSurfaceImageId(), surfaceImage.getImageSpriteMapInfo(), setupScatterXOffset(surfaceImage, random), x, y);
                     } catch (ArrayIndexOutOfBoundsException e) {
                         log.log(Level.SEVERE, "AbstractTerrainServiceImpl.createTerrainTileField()", e);
                     }
@@ -249,6 +251,15 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         log.info("Time needed to setup terrain field: " + (System.currentTimeMillis() - time) + "ms");
     }
 
+    private Integer setupScatterXOffset(SurfaceImage surfaceImage, Random random) {
+        if (!surfaceImage.hasScatterSurfaceImageInfo()) {
+            return null;
+        }
+        ScatterSurfaceImageInfo scatterSurfaceImageInfo = surfaceImage.getScatterSurfaceImageInfo();
+        int offset = scatterSurfaceImageInfo.getImageOffset(random.nextDouble(), random.nextDouble());
+        return TerrainUtil.getAbsolutXForTerrainTile(offset);
+    }
+
     private void fillTerrainTypeMap(TerrainTile[][] terrainTileField, TerrainImagePosition terrainImagePosition) {
         TerrainImage terrainImage = getCommonTerrainImageService().getTerrainImage(terrainImagePosition.getImageId());
         Index imageIndex = terrainImagePosition.getTileIndex();
@@ -265,9 +276,9 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
                 }
                 TerrainTile terrainTile = terrainTileField[absX][absY];
                 if (terrainTile != null) {
-                    terrainTile.setSurfaceType(surfaceTypes[x][y], false, terrainImage.getId(), terrainImage.getImageSpriteMapInfo(), x, y);
+                    terrainTile.setSurfaceType(surfaceTypes[x][y], false, terrainImage.getId(), terrainImage.getImageSpriteMapInfo(), null, x, y);
                 } else {
-                    terrainTileField[absX][absY] = new TerrainTile(surfaceTypes[x][y], false, terrainImage.getId(), terrainImage.getImageSpriteMapInfo(), x, y);
+                    terrainTileField[absX][absY] = new TerrainTile(surfaceTypes[x][y], false, terrainImage.getId(), terrainImage.getImageSpriteMapInfo(), null, x, y);
                 }
             }
         }

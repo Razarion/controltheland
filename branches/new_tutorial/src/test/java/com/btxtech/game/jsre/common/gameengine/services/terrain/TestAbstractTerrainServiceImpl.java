@@ -57,8 +57,8 @@ public class TestAbstractTerrainServiceImpl {
         tileSurfaceTypes[1][1] = SurfaceType.LAND;
         commonTerrainImageService.putTerrainImage(new TerrainImage(0, null, 2, 2, tileSurfaceTypes));
 
-        commonTerrainImageService.putSurfaceImage(new SurfaceImage(SurfaceType.LAND, 0, null, ""));
-        commonTerrainImageService.putSurfaceImage(new SurfaceImage(SurfaceType.WATER, 1, null, ""));
+        commonTerrainImageService.putSurfaceImage(new SurfaceImage(SurfaceType.LAND, 0, null, null, ""));
+        commonTerrainImageService.putSurfaceImage(new SurfaceImage(SurfaceType.WATER, 1, null, null, ""));
 
         List<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), 0, TerrainImagePosition.ZIndex.LAYER_1));

@@ -32,7 +32,7 @@ public abstract class CrudTableListProvider<T extends CrudChild> implements IDat
 
     @Override
     public Iterator<? extends T> iterator(long first, long count) {
-        return getList().subList((int)first, (int)first + (int)count).iterator();
+        return getList().subList((int) first, (int) first + (int) count).iterator();
     }
 
     @Override
@@ -52,16 +52,18 @@ public abstract class CrudTableListProvider<T extends CrudChild> implements IDat
 
     public List<T> getList() {
         if (list == null) {
-            list = createList();
+            list = sortList(createList());
         }
         return list;
     }
 
     public void refresh() {
-        list = createList();
+        list = sortList(createList());
     }
 
     abstract protected List<T> createList();
+
+    abstract protected List<T> sortList(List<T> list);
 
     private class SerializableModel implements IModel<T> {
         private T modelObject;
