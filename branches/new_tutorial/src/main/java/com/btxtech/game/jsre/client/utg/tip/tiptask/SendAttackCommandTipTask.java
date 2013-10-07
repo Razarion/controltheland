@@ -25,6 +25,7 @@ public class SendAttackCommandTipTask extends AbstractTipTask implements Selecti
 
     public SendAttackCommandTipTask(int actorItemTypeId) {
         this.actorItemTypeId = actorItemTypeId;
+        activateConversionOnMouseMove();
     }
 
     @Override
@@ -53,8 +54,8 @@ public class SendAttackCommandTipTask extends AbstractTipTask implements Selecti
 
     @Override
     public String getTaskText() {
-        // TODO
-        return "???";
+        // TODO use i18n
+        return "Klicke mit der Maus auf die gegnerische Einheit.";
     }
 
     public GameTipVisualization createInGameTip() throws NoSuchItemTypeException {

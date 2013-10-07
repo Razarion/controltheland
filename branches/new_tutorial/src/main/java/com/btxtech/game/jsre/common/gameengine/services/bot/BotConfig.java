@@ -39,6 +39,10 @@ public class BotConfig implements Serializable {
         this.maxActiveMs = maxActiveMs;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public int getActionDelay() {
         return actionDelay;
     }

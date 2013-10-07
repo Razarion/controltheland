@@ -17,7 +17,7 @@ public class WatchQuestVisualisationCockpitTipTask extends AbstractTipTask imple
 
     public WatchQuestVisualisationCockpitTipTask(int toBeBuildId) {
         this.toBeBuildId = toBeBuildId;
-        activateConversationOnMouseMove();
+        activateConversionOnMouseMove();
     }
 
     @Override

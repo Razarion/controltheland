@@ -21,7 +21,7 @@ public class SendBuildCommandTipTask extends AbstractTipTask implements ActionHa
     public SendBuildCommandTipTask(int toBeBuildId, Index positionHint) {
         this.toBeBuildId = toBeBuildId;
         this.positionHint = positionHint;
-        activateConversationOnMouseMove();
+        activateConversionOnMouseMove();
     }
 
     @Override

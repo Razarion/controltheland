@@ -24,7 +24,7 @@ public class ToBeBuildPlacerTipTask extends AbstractTipTask implements CockpitMo
 
     public ToBeBuildPlacerTipTask(int itemTypeToBePlaced) {
         this.itemTypeToBePlaced = itemTypeToBePlaced;
-        activateConversationOnMouseMove();
+        activateConversionOnMouseMove();
     }
 
     @Override
