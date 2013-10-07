@@ -26,7 +26,7 @@ public class SendBuilderFinalizeCommandTipTask extends AbstractTipTask implement
 
     public SendBuilderFinalizeCommandTipTask(int toBeFinalizedId) {
         this.toBeFinalizedId = toBeFinalizedId;
-        activateConversationOnMouseMove();
+        activateConversionOnMouseMove();
     }
 
     @Override

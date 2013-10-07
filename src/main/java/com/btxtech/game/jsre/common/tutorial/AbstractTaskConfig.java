@@ -41,6 +41,7 @@ public abstract class AbstractTaskConfig implements Serializable {
     private int maxMoney;
     private String name;
     private Collection<BotConfig> botConfigs;
+    private Collection<Integer> botIdsToStop;
     private Map<Integer, Integer> itemTypeLimitation;
     private RadarMode radarMode;
     private GameTipConfig gameTipConfig;
@@ -54,7 +55,7 @@ public abstract class AbstractTaskConfig implements Serializable {
     AbstractTaskConfig() {
     }
 
-    public AbstractTaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig, boolean clearGame, StorySplashPopupInfo storySplashPopupInfo, PraiseSplashPopupInfo praiseSplashPopupInfo) {
+    public AbstractTaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Collection<Integer> botIdsToStop, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig, boolean clearGame, StorySplashPopupInfo storySplashPopupInfo, PraiseSplashPopupInfo praiseSplashPopupInfo) {
         this.ownItems = ownItems;
         this.scroll = scroll;
         this.houseCount = houseCount;
@@ -62,6 +63,7 @@ public abstract class AbstractTaskConfig implements Serializable {
         this.maxMoney = maxMoney;
         this.name = name;
         this.botConfigs = botConfigs;
+        this.botIdsToStop = botIdsToStop;
         this.itemTypeLimitation = itemTypeLimitation;
         this.radarMode = radarMode;
         this.gameTipConfig = gameTipConfig;
@@ -90,6 +92,14 @@ public abstract class AbstractTaskConfig implements Serializable {
 
     public boolean hasBots() {
         return botConfigs != null && !botConfigs.isEmpty();
+    }
+
+    public Collection<Integer> getBotIdsToStop() {
+        return botIdsToStop;
+    }
+
+    public boolean hasBotIdsToStop() {
+        return botIdsToStop != null && !botIdsToStop.isEmpty();
     }
 
     public int getMoney() {

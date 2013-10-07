@@ -21,9 +21,8 @@ import com.google.gwt.user.client.Timer;
  */
 public abstract class AbstractTipTask implements MouseMoveHandler {
     private GameTipManager gameTipManager;
-    private boolean conversationOnMouseMove;
+    private boolean conversionOnMouseMove;
     private HandlerRegistration handlerRegistration;
-    private int onMouseMoveDebouncer;
     private Timer poorConversionTimer;
     private long lastConversionTimeStamp;
     private Index lastMousePosition;
@@ -42,8 +41,8 @@ public abstract class AbstractTipTask implements MouseMoveHandler {
 
     public abstract String getTaskText();
 
-    public void activateConversationOnMouseMove() {
-        conversationOnMouseMove = true;
+    public void activateConversionOnMouseMove() {
+        conversionOnMouseMove = true;
     }
 
     protected void onFailed() {
@@ -59,7 +58,7 @@ public abstract class AbstractTipTask implements MouseMoveHandler {
     public void start() {
         stopTimer();
         internalStart();
-        if (conversationOnMouseMove) {
+        if (conversionOnMouseMove) {
             lastMousePosition = null;
             handlerRegistration = MapWindow.getAbsolutePanel().addMouseMoveHandler(this);
             poorConversionTimer = new Timer() {

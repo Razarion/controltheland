@@ -40,6 +40,7 @@ abstract public class AbstractAutomatedTaskConfig extends AbstractTaskConfig {
                 0,
                 "",
                 null,
+                null,
                 Collections.<Integer, Integer>emptyMap(),
                 RadarMode.MAP_AND_UNITS,
                 gameTipConfig,

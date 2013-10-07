@@ -26,7 +26,7 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
 
     public SelectTipTask(int itemTypeId) {
         this.itemTypeId = itemTypeId;
-        activateConversationOnMouseMove();
+        activateConversionOnMouseMove();
     }
 
     @Override

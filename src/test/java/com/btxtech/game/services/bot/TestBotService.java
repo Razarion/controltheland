@@ -266,4 +266,40 @@ public class TestBotService extends AbstractServiceTest {
         }
     }
 
+    @Test
+    @DirtiesContext
+    public void testKillBot() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBotConfig dbBotConfig1 = setupMinimalBot(TEST_PLANET_1_ID, new Rectangle(1, 1, 5000, 5000));
+        BotConfig botConfig1 = dbBotConfig1.createBotConfig(serverItemTypeService);
+        DbBotConfig dbBotConfig2 = setupMinimalBot(TEST_PLANET_1_ID, new Rectangle(5000, 5000, 5000, 5000));
+        BotConfig botConfig2 = dbBotConfig2.createBotConfig(serverItemTypeService);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Wait for bot to complete
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig1);
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig2);
+        assertWholeItemCount(TEST_PLANET_1_ID, 8);
+        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService().getBotRunner(botConfig1));
+        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService().getBotRunner(botConfig2));
+        // Kill bot
+        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService().killBot(dbBotConfig1.getId());
+        Thread.sleep(1000);
+        // Verify
+        Assert.assertNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService().getBotRunner(botConfig1));
+        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService().getBotRunner(botConfig2));
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
+        // Kill bot
+        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService().killBot(dbBotConfig2.getId());
+        Thread.sleep(1000);
+        // Verify
+        Assert.assertNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService().getBotRunner(botConfig1));
+        Assert.assertNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService().getBotRunner(botConfig2));
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+    }
+
 }

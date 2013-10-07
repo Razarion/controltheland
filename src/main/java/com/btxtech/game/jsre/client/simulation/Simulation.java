@@ -27,7 +27,6 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.client.utg.tip.StorySplashPanel;
 import com.btxtech.game.jsre.client.utg.tip.StorySplashPopup;
 import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.AbstractTipTask;
@@ -48,7 +47,6 @@ import java.util.List;
  * Time: 17:21:24
  */
 // TODO noob protection, if unit is send near bot
-// TODO 19.09.2013 -> Tutorial weiter machen: build defence, attack von bot
 public class Simulation implements ClientBase.OwnBaseDestroyedListener {
     private static final int PRAISE_DELAY = 3000;
     private static final Simulation SIMULATION = new Simulation();
@@ -94,9 +92,15 @@ public class Simulation implements ClientBase.OwnBaseDestroyedListener {
         ClientBase.getInstance().createOwnSimulationBaseIfNotExist(tutorialConfig.getOwnBaseName());
         ClientPlanetServices.getInstance().setPlanetInfo(abstractTaskConfig.createPlanetInfo());
         ClientUserGuidanceService.getInstance().setLevel(abstractTaskConfig.createLevelScope(simulationInfo.getLevelNumber()));
+
+        if (abstractTaskConfig.hasBotIdsToStop()) {
+            for (Integer botId : abstractTaskConfig.getBotIdsToStop()) {
+                ClientBotService.getInstance().killBot(botId);
+            }
+        }
+
         if (abstractTaskConfig.hasBots()) {
-            ClientBotService.getInstance().setBotConfigs(abstractTaskConfig.getBotConfigs());
-            ClientBotService.getInstance().start();
+            ClientBotService.getInstance().startBots(abstractTaskConfig.getBotConfigs());
         }
 
         for (ItemTypeAndPosition itemTypeAndPosition : abstractTaskConfig.getOwnItems()) {

@@ -28,8 +28,8 @@ public class ConditionTaskConfig extends AbstractTaskConfig {
     ConditionTaskConfig() {
     }
 
-    public ConditionTaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, ConditionConfig conditionConfig, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig, boolean clearGame, StorySplashPopupInfo storySplashPopupInfo, PraiseSplashPopupInfo praiseSplashPopupInfo) {
-        super(ownItems, scroll, houseCount, money, maxMoney, name, botConfigs, itemTypeLimitation, radarMode, gameTipConfig, clearGame, storySplashPopupInfo, praiseSplashPopupInfo);
+    public ConditionTaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, ConditionConfig conditionConfig, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Collection<Integer> botIdsToStop, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig, boolean clearGame, StorySplashPopupInfo storySplashPopupInfo, PraiseSplashPopupInfo praiseSplashPopupInfo) {
+        super(ownItems, scroll, houseCount, money, maxMoney, name, botConfigs, botIdsToStop, itemTypeLimitation, radarMode, gameTipConfig, clearGame, storySplashPopupInfo, praiseSplashPopupInfo);
         this.conditionConfig = conditionConfig;
     }
 
