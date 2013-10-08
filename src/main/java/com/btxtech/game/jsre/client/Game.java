@@ -33,7 +33,7 @@ public class Game implements EntryPoint {
             GwtCommon.setUncaughtExceptionHandler();
             FacebookUtils.init();
             ClientUserTracker.getInstance().registerWindowsCloseHandler();
-            isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
+            isDebug = Window.Location.getPath().toLowerCase().contains(DEBUG_PARAM.toLowerCase());
             ClientGlobalServices.getInstance().connectStartupListeners();
             ClientGlobalServices.getInstance().getClientRunner().start(getStartupSeqFromHtml());
             Perfmon.getInstance().startTransmit(GwtCommon.getUrlIntegerParameter(PERFMON_PARAM));
