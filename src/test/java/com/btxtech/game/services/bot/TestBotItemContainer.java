@@ -51,7 +51,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
 
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
@@ -83,7 +83,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 2000, 2000), 1), false, null, false, null));
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 2, false, createRegion(new Rectangle(2000, 2000, 2000, 2000), 1), false, null, false, null));
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
 
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
@@ -152,7 +152,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 1, false, createRegion(new Rectangle(4000, 2000, 2000, 2000), 1), false, null, false, null));
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, null, false, null, false, null));
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), 2, true, createRegion(new Rectangle(4000, 4000, 2000, 2000), 1), false, null, false, null));
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
 
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
 
@@ -197,7 +197,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 2000, 2000), 1), false, null, false, null));
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 1, false, createRegion(new Rectangle(4000, 2000, 2000, 2000), 1), false, null, false, null));
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, createRegion(new Rectangle(8000, 8000, 2000, 2000), 1), false, null, false, null));
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
 
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
@@ -226,7 +226,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 6, false, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, null, false, null, false, null));
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
 
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
@@ -266,7 +266,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
         botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, null, false, null, false, null));
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
 
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
@@ -286,7 +286,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
 
         SyncBaseItem defender1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(1, Id.NO_ID));
         SyncBaseItem defender2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1200), new Id(2, Id.NO_ID));
@@ -354,7 +354,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID));
 
         TestPlanetServices testServices = new TestPlanetServices();
@@ -408,7 +408,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID));
 
         TestPlanetServices testServices = new TestPlanetServices();
@@ -448,7 +448,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID));
 
         TestPlanetServices testServices = new TestPlanetServices();
@@ -489,7 +489,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID));
 
         TestPlanetServices testServices = new TestPlanetServices();
@@ -536,8 +536,8 @@ public class TestBotItemContainer extends AbstractServiceTest {
         configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
-        SimpleBase otherBotBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "OtherTest Bot", null, null, null, null));
+        SimpleBase botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase otherBotBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "OtherTest Bot", null, null, null, null));
         SyncBaseItem botBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 500), new Id(1, Id.NO_ID));
         SyncBaseItem otherBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 1000), new Id(2, Id.NO_ID), otherBotBase);
         SyncBaseItem otherItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(3, Id.NO_ID));
@@ -576,7 +576,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, false, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID));
         SyncBaseItem syncBaseItem2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 500), new Id(2, Id.NO_ID));
         SyncBaseItem syncBaseItem3 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 500), new Id(3, Id.NO_ID));

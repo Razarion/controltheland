@@ -20,9 +20,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 /**
  * User: beat
  * Date: 23.04.12
@@ -196,7 +193,7 @@ public class TestSyncBaseItem extends AbstractServiceTest {
     }
 
     private SimpleBase createBotBase(ServerPlanetServices baseService) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        BotConfig botConfig = new BotConfig(1, 0, null, createSimpleRegion(1), "bot", null, null, null, null);
+        BotConfig botConfig = new BotConfig(1, false, 0, null, createSimpleRegion(1), "bot", null, null, null, null);
         return baseService.getBaseService().createBotBase(botConfig);
     }
 
