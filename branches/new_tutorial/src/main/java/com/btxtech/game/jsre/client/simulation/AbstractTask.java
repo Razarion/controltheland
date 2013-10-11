@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.client.simulation;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.PraiseSplashPopupInfo;
-import com.btxtech.game.jsre.client.utg.tip.StorySplashPanel;
 import com.btxtech.game.jsre.client.utg.tip.StorySplashPopup;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.AbstractTipTask;
 import com.btxtech.game.jsre.common.tutorial.AbstractTaskConfig;
@@ -95,9 +94,13 @@ abstract public class AbstractTask {
     }
 
     public void onTipTaskChanged(AbstractTipTask currentTipTask) {
-        if (storySplashPopup != null && currentTipTask.getTaskText() != null) {
-            storySplashPopup.fadeIn();
-            storySplashPopup.setTaskText(currentTipTask.getTaskText());
+        if (storySplashPopup != null) {
+            if (currentTipTask.getTaskText() != null) {
+                storySplashPopup.fadeIn();
+                storySplashPopup.setTaskText(currentTipTask.getTaskText());
+            } else {
+                storySplashPopup.fadeOut();
+            }
         }
     }
 

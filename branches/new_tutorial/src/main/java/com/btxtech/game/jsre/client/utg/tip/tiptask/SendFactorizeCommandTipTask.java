@@ -20,6 +20,7 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
 
     public SendFactorizeCommandTipTask(int itemTypeToFactorized) {
         this.itemTypeToFactorized = itemTypeToFactorized;
+        activateConversionOnMouseMove();
     }
 
     @Override
