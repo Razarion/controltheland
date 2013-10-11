@@ -156,7 +156,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             log.debug("Bot Base created: " + botConfig.getName() + " " + " (" + base + ")");
             serverGlobalServices.getHistoryService().addBaseStartEntry(base.getSimpleBase());
             bases.put(base.getSimpleBase(), base);
-            setBot(base.getSimpleBase(), true);
+            setBot(base.getSimpleBase(), true, botConfig.isAttacksOtherBot());
             sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
             return base.getSimpleBase();
         }
@@ -173,8 +173,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void setBot(SimpleBase simpleBase, boolean bot) {
-        super.setBot(simpleBase, bot);
+    public void setBot(SimpleBase simpleBase, boolean bot, boolean attacksOtherBot) {
+        super.setBot(simpleBase, bot, attacksOtherBot);
     }
 
     private void deleteBase(SimpleBase actor, Base base) {
@@ -576,9 +576,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         int bots = 0;
         Collection<BaseAttributes> baseAttributeses = getAllBaseAttributes();
         for (BaseAttributes baseAttributes : baseAttributeses) {
-            if(baseAttributes.isBot()) {
+            if (baseAttributes.isBot()) {
                 bots++;
-            }   else {
+            } else {
                 bases++;
             }
         }

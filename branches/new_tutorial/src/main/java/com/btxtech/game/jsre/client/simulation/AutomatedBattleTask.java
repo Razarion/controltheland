@@ -39,7 +39,7 @@ public class AutomatedBattleTask extends AbstractTask implements ConditionServic
 
     public void internStart() {
         try {
-            SimpleBase botBase = ClientBase.getInstance().createBotBase(automatedBattleTaskConfig.getBotName());
+            SimpleBase botBase = ClientBase.getInstance().createBotBase(automatedBattleTaskConfig.getBotName(), false);
             SyncBaseItem botAttacker = (SyncBaseItem) ItemContainer.getInstance().createSimulationSyncObject(automatedBattleTaskConfig.getBotAttacker(), botBase);
             botAttacker.setHealth(botAttacker.getHealth() * automatedBattleTaskConfig.getAttackerHealthFactor());
             Collection<SyncBaseItem> targets = ItemContainer.getInstance().getItems4BaseAndType(ClientBase.getInstance().getSimpleBase(), automatedBattleTaskConfig.getTargetItemType());

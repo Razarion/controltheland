@@ -14,6 +14,7 @@ import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.ServerItemService;
 import com.btxtech.game.services.planet.db.DbPlanet;
+import com.btxtech.game.services.terrain.DbRegion;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -300,6 +301,93 @@ public class TestBotService extends AbstractServiceTest {
         Assert.assertNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService().getBotRunner(botConfig1));
         Assert.assertNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService().getBotRunner(botConfig2));
         assertWholeItemCount(TEST_PLANET_1_ID, 0);
+    }
+
+    @Test
+    @DirtiesContext
+    public void testAttacksOtherBots1() throws Exception {
+        configureSimplePlanetNoResources();
+
+        create2BotsRestartAndWait(false, false);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertNoHistoryType(DbHistoryElement.Type.ITEM_DESTROYED);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testAttacksOtherBots2() throws Exception {
+        configureSimplePlanetNoResources();
+
+        create2BotsRestartAndWait(true, false);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertHistoryType(DbHistoryElement.Type.ITEM_DESTROYED);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testAttacksOtherBots3() throws Exception {
+        configureSimplePlanetNoResources();
+
+        create2BotsRestartAndWait(true, true);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertHistoryType(DbHistoryElement.Type.ITEM_DESTROYED);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private void create2BotsRestartAndWait(boolean bot1AttacksOtherBots, boolean bot2AttacksOtherBots) throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBotConfig dbBotConfig1 = setupMinimalBotNoRestart(TEST_PLANET_1_ID, new Rectangle(1, 1, 8000, 8000), bot1AttacksOtherBots);
+        BotConfig botConfig1 = dbBotConfig1.createBotConfig(serverItemTypeService);
+        DbBotConfig dbBotConfig2 = setupMinimalBotNoRestart(TEST_PLANET_1_ID, new Rectangle(1, 1, 8000, 8000), bot2AttacksOtherBots);
+        BotConfig botConfig2 = dbBotConfig2.createBotConfig(serverItemTypeService);
+        planetSystemService.getPlanet(TEST_PLANET_1_ID).deactivate();
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
+        planetSystemService.getPlanet(TEST_PLANET_1_ID).activate(dbPlanet);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Wait for bot to complete
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig1);
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig2);
+        assertWholeItemCount(TEST_PLANET_1_ID, 8);
+        Thread.sleep(2000);
+    }
+
+    private DbBotConfig setupMinimalBotNoRestart(int planetId, Rectangle rectangleRealm, boolean attacksOtherBots) {
+        DbRegion realm = createDbRegion(rectangleRealm);
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(planetId);
+        DbBotConfig dbBotConfig = dbPlanet.getBotCrud().createDbChild();
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setAttacksOtherBots(attacksOtherBots);
+        dbBotConfig.setRealm(realm);
+        DbBotEnragementStateConfig dbBotEnragementStateConfig = dbBotConfig.getEnrageStateCrud().createDbChild();
+        dbBotEnragementStateConfig.setName("NormalTest");
+        DbBotItemConfig builder = dbBotEnragementStateConfig.getBotItemCrud().createDbChild();
+        builder.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setCount(1);
+        builder.setCreateDirectly(true);
+        builder.setRegion(realm);
+        DbBotItemConfig factory = dbBotEnragementStateConfig.getBotItemCrud().createDbChild();
+        factory.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        factory.setCount(1);
+        factory.setRegion(realm);
+        DbBotItemConfig defence = dbBotEnragementStateConfig.getBotItemCrud().createDbChild();
+        defence.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        defence.setCount(2);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        return dbBotConfig;
     }
 
 }

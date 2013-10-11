@@ -346,7 +346,7 @@ abstract public class AbstractServiceTest {
     private PlaybackServiceImpl playbackService;
     private JdbcTemplate jdbcTemplate;
     private Wiser wiser;
-    private Log log = LogFactory.getLog(AbstractServiceTest.class);
+    protected Log log = LogFactory.getLog(AbstractServiceTest.class);
     private WicketTester wicketTester;
 
     // ---------------------- Spring  -----------------------
