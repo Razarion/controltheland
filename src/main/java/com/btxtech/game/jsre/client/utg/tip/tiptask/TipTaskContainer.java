@@ -67,7 +67,7 @@ public class TipTaskContainer {
 
     public void cleanup() {
         if (hasTip()) {
-            getCurrentTask().internalCleanup();
+            getCurrentTask().cleanup();
         }
     }
 

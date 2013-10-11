@@ -22,6 +22,7 @@ public class SendMoveCommandTipTask extends AbstractTipTask implements Selection
 
     public SendMoveCommandTipTask(Index position) {
         this.position = position;
+        activateConversionOnMouseMove();
     }
 
     @Override

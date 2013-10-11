@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
@@ -46,7 +47,7 @@ public abstract class AbstractTipTask implements MouseMoveHandler {
     }
 
     protected void onFailed() {
-        internalCleanup();
+        cleanup();
         gameTipManager.onTaskFailed();
     }
 
@@ -74,7 +75,8 @@ public abstract class AbstractTipTask implements MouseMoveHandler {
         }
     }
 
-    private void cleanup() {
+    public void cleanup() {
+        internalCleanup();
         stopTimer();
         if (handlerRegistration != null) {
             handlerRegistration.removeHandler();

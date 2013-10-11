@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
@@ -41,8 +42,8 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
         if (selectedGroup == null) {
             return false;
         }
-        Map<BaseItemType, Collection<SyncBaseItem>> selectedItems = selectedGroup.getGroupedItems();
-        return selectedItems.size() == 1 && CommonJava.getFirst(selectedItems.keySet()).getId() == itemTypeId;
+        Map<BaseItemType, Collection<SyncBaseItem>> selectedItemTypes = selectedGroup.getGroupedItems();
+        return selectedItemTypes.size() == 1 && CommonJava.getFirst(selectedItemTypes.keySet()).getId() == itemTypeId;
     }
 
     @Override
@@ -63,8 +64,8 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
 
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
-        Map<BaseItemType, Collection<SyncBaseItem>> selectedItems = selectedGroup.getGroupedItems();
-        if (selectedItems.size() == 1 && CommonJava.getFirst(selectedItems.keySet()).getId() == itemTypeId) {
+        Map<BaseItemType, Collection<SyncBaseItem>> selectedItemTypes = selectedGroup.getGroupedItems();
+        if (selectedItemTypes.size() == 1 && CommonJava.getFirst(selectedItemTypes.keySet()).getId() == itemTypeId) {
             onSucceed();
         } else {
             onFailed();

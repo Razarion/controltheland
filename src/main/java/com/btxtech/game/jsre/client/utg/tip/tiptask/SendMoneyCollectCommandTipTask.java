@@ -25,6 +25,7 @@ public class SendMoneyCollectCommandTipTask extends AbstractTipTask implements S
 
     public SendMoneyCollectCommandTipTask(int toCollectFormId) {
         this.toCollectFormId = toCollectFormId;
+        activateConversionOnMouseMove();
     }
 
     @Override
