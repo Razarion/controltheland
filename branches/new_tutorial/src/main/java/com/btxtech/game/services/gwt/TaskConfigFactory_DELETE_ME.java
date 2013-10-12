@@ -331,7 +331,7 @@ public class TaskConfigFactory_DELETE_ME {
         storySplashPopupInfo.setStoryText("Du hast Razarion Industries in die Flucht geschlagen! Razarion Industries betreibt auf diesem Planeten nur noch eine Flakstellung, damit du den Planeten nicht verlassen kannst. Zerstöre die Flakstellung und gehe zum nächsten Planeten.");
         PraiseSplashPopupInfo praiseSplashPopupInfo = new PraiseSplashPopupInfo();
         praiseSplashPopupInfo.setTitle("Gut gemacht");
-        praiseSplashPopupInfo.setPraiseText("Gehe zum nächsten Planeten. Dies ist ein Mehrspielerplanet");
+        praiseSplashPopupInfo.setPraiseText("Gehe zum nächsten Planeten. Dies ist ein Mehrspielerplanet.");
         Map<Integer, Integer> itemTypeLimitation = new HashMap<>();
         itemTypeLimitation.put(3, 1);
         itemTypeLimitation.put(2, 2);
