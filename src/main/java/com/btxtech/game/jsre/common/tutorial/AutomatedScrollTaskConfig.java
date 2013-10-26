@@ -20,7 +20,7 @@ public class AutomatedScrollTaskConfig extends AbstractAutomatedTaskConfig{
     }
 
     public AutomatedScrollTaskConfig(Index scrollToPosition, GameTipConfig gameTipConfig) {
-        super(gameTipConfig, null);
+        super(gameTipConfig, null, null, null);
         this.scrollToPosition = scrollToPosition;
     }
 

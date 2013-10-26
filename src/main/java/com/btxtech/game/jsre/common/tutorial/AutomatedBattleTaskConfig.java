@@ -3,6 +3,9 @@ package com.btxtech.game.jsre.common.tutorial;
 import com.btxtech.game.jsre.client.simulation.AbstractTask;
 import com.btxtech.game.jsre.client.simulation.AutomatedBattleTask;
 import com.btxtech.game.jsre.client.utg.tip.PraiseSplashPopupInfo;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+
+import java.util.Collection;
 
 /**
  * User: beat
@@ -19,8 +22,8 @@ public class AutomatedBattleTaskConfig extends AbstractAutomatedTaskConfig {
     AutomatedBattleTaskConfig() {
     }
 
-    public AutomatedBattleTaskConfig(PraiseSplashPopupInfo praiseSplashPopupInfo, ItemTypeAndPosition botAttacker, double attackerHealthFactor, String botName, int targetItemType) {
-        super(null, praiseSplashPopupInfo);
+    public AutomatedBattleTaskConfig(PraiseSplashPopupInfo praiseSplashPopupInfo, ItemTypeAndPosition botAttacker, double attackerHealthFactor, String botName, int targetItemType, Collection<BotConfig> botConfigs, Collection<Integer> botIdsToStop) {
+        super(null, praiseSplashPopupInfo, botConfigs, botIdsToStop);
         this.botAttacker = botAttacker;
         this.attackerHealthFactor = attackerHealthFactor;
         this.botName = botName;
