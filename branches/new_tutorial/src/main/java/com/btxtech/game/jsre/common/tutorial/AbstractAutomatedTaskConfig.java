@@ -16,7 +16,9 @@ package com.btxtech.game.jsre.common.tutorial;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
 import com.btxtech.game.jsre.client.utg.tip.PraiseSplashPopupInfo;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -32,15 +34,15 @@ abstract public class AbstractAutomatedTaskConfig extends AbstractTaskConfig {
     AbstractAutomatedTaskConfig() {
     }
 
-    public AbstractAutomatedTaskConfig(GameTipConfig gameTipConfig, PraiseSplashPopupInfo praiseSplashPopupInfo) {
+    public AbstractAutomatedTaskConfig(GameTipConfig gameTipConfig, PraiseSplashPopupInfo praiseSplashPopupInfo, Collection<BotConfig> botConfigs, Collection<Integer> botIdsToStop) {
         super(Collections.<ItemTypeAndPosition>emptyList(),
                 null,
                 0,
                 0,
                 0,
                 "",
-                null,
-                null,
+                botConfigs,
+                botIdsToStop,
                 Collections.<Integer, Integer>emptyMap(),
                 RadarMode.MAP_AND_UNITS,
                 gameTipConfig,

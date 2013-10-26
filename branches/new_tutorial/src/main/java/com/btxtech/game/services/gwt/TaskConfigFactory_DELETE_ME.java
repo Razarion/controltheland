@@ -14,6 +14,7 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotEnragementStateConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemTypeService;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.tutorial.AbstractTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.AutomatedBattleTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.AutomatedScrollTaskConfig;
@@ -49,8 +50,8 @@ public class TaskConfigFactory_DELETE_ME {
             abstractTaskConfigs.add(setupBuildOilTruckTask(itemTypeService));
             abstractTaskConfigs.add(setupCollectMoneyTask());
             abstractTaskConfigs.add(setupBuildJeepTask(itemTypeService));
-            abstractTaskConfigs.add(setupBotTowerAttackTask(itemTypeService));
-            abstractTaskConfigs.add(setupBuildArmyTask(itemTypeService));
+            abstractTaskConfigs.add(setupBotAttackTask(itemTypeService));
+            // abstractTaskConfigs.add(setupBuildArmyTask(itemTypeService));
             abstractTaskConfigs.add(setupKillDatacenter(itemTypeService));
             // End
             // abstractTaskConfigs.add(setupEndTask());
@@ -258,9 +259,9 @@ public class TaskConfigFactory_DELETE_ME {
         itemTypeLimitation.put(2, 2);
         itemTypeLimitation.put(1, 1);
         GameTipConfig gameTipConfig = new GameTipConfig();
-        gameTipConfig.setActor(3);
-        gameTipConfig.setTip(GameTipConfig.Tip.FABRICATE);
+        gameTipConfig.setTip(GameTipConfig.Tip.WATCH_QUEST);
         gameTipConfig.setToBeBuiltId(1);
+        gameTipConfig.setActor(3);
         Map<ItemType, Integer> toBeBuilt = new HashMap<>();
         toBeBuilt.put(itemTypeService.getItemType(1), 1);
         return new ConditionTaskConfig(Collections.<ItemTypeAndPosition>emptyList(),
@@ -280,7 +281,15 @@ public class TaskConfigFactory_DELETE_ME {
                 praiseSplashPopupInfo);
     }
 
-    private static AbstractTaskConfig setupBotTowerAttackTask(ItemTypeService itemTypeService) {
+    private static AbstractTaskConfig setupBotAttackTask(ItemTypeService itemTypeService) throws NoSuchItemTypeException {
+        Collection<BotConfig> botConfigs = new ArrayList<>();
+        List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
+        Collection<BotItemConfig> botItems = new ArrayList<>();
+        botItems.add(new BotItemConfig((BaseItemType) itemTypeService.getItemType(64), 1, true, null, true, null, true, null)); // Missle launcher
+        botEnragementStateConfigs.add(new BotEnragementStateConfig("Normal", botItems, null));
+        botConfigs.add(new BotConfig(2, false, 1000, botEnragementStateConfigs, new Region(1, Collections.singletonList(new Rectangle(new Index(23, 13), new Index(32, 18)))), "Razarion Industries", null, null, null, null));
+        Collection<Integer> botToKill = new ArrayList<>();
+        botToKill.add(1);
         PraiseSplashPopupInfo praiseSplashPopupInfo = new PraiseSplashPopupInfo();
         praiseSplashPopupInfo.setTitle("Gut gemacht");
         praiseSplashPopupInfo.setPraiseText("Da hast du Razarion Industries aber kräftig eingeheizt.");
@@ -288,7 +297,9 @@ public class TaskConfigFactory_DELETE_ME {
                 new ItemTypeAndPosition(39, new Index(695, 981), MathHelper.EIGHTH_RADIANT),
                 0.33,
                 "Bot",
-                1);
+                1,
+                botConfigs,
+                botToKill);
     }
 
     private static AbstractTaskConfig setupBuildArmyTask(ItemTypeService itemTypeService) throws Exception {
@@ -341,14 +352,6 @@ public class TaskConfigFactory_DELETE_ME {
         gameTipConfig.setActor(1);
         Map<ItemType, Integer> toBeKilled = new HashMap<>();
         toBeKilled.put(itemTypeService.getItemType(64), 1);
-        Collection<BotConfig> botConfigs = new ArrayList<>();
-        List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
-        Collection<BotItemConfig> botItems = new ArrayList<>();
-        botItems.add(new BotItemConfig((BaseItemType) itemTypeService.getItemType(64), 1, true, null, true, null, true, null)); // Missle launcher
-        botEnragementStateConfigs.add(new BotEnragementStateConfig("Normal", botItems, null));
-        botConfigs.add(new BotConfig(2, false, 1000, botEnragementStateConfigs, new Region(1, Collections.singletonList(new Rectangle(new Index(23, 13), new Index(32, 18)))), "Razarion Industries", null, null, null, null));
-        Collection<Integer> botToKill = new ArrayList<>();
-        botToKill.add(1);
         return new ConditionTaskConfig(Collections.<ItemTypeAndPosition>emptyList(),
                 null,
                 new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(toBeKilled), null, "", false),
@@ -356,8 +359,8 @@ public class TaskConfigFactory_DELETE_ME {
                 1000,
                 10000,
                 "",
-                botConfigs,
-                botToKill,
+                null,
+                null,
                 itemTypeLimitation,
                 RadarMode.MAP_AND_UNITS,
                 gameTipConfig,
