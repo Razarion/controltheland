@@ -16,6 +16,8 @@ package com.btxtech.game.jsre.client.effects;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.ActiveProjectile;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.ActiveProjectileGroup;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.ArrayList;
@@ -27,30 +29,29 @@ import java.util.Iterator;
  * Date: Jun 20, 2009
  * Time: 1:29:15 PM
  */
-public class AttackHandler {
+public class AttackVisualization {
     public final static int ATTACK_EFFECT_TIMER_DELAY = 50;
-    private static final AttackHandler INSTANCE = new AttackHandler();
+    private static final AttackVisualization INSTANCE = new AttackVisualization();
     private Collection<MuzzleFlash> muzzleFlashes = new ArrayList<MuzzleFlash>();
-    private Collection<Projectile> projectiles = new ArrayList<Projectile>();
+    private Collection<ProjectileVisualization> projectileVisualizations = new ArrayList<ProjectileVisualization>();
     private Collection<Detonation> detonations = new ArrayList<Detonation>();
 
-    public static AttackHandler getInstance() {
+    public static AttackVisualization getInstance() {
         return INSTANCE;
     }
 
     /**
      * Singleton
      */
-    private AttackHandler() {
+    private AttackVisualization() {
     }
 
-    public void onFiring(SyncBaseItem syncBaseItem) {
+    public void onFiring(SyncBaseItem syncBaseItem, ActiveProjectileGroup projectileGroup) {
         try {
             if (syncBaseItem.getSyncItemArea().contains(TerrainView.getInstance().getViewRect())) {
-                int count = syncBaseItem.getSyncWeapon().getWeaponType().getMuzzleFlashCount();
-                for (int i = 0; i < count; i++) {
-                    muzzleFlashes.add(new MuzzleFlash(syncBaseItem, i));
-                    projectiles.add(new Projectile(syncBaseItem, i));
+                for (ActiveProjectile activeProjectile : projectileGroup.getProjectiles()) {
+                    muzzleFlashes.add(new MuzzleFlash(syncBaseItem, activeProjectile.getMuzzleNr()));
+                    projectileVisualizations.add(new ProjectileVisualization(syncBaseItem, activeProjectile));
                 }
             }
         } catch (Exception e) {
@@ -82,18 +83,18 @@ public class AttackHandler {
         return muzzleFlashes;
     }
 
-    public Collection<Projectile> getProjectilesInRegion(long timeStamp, Rectangle viewRect) {
-        Collection<Projectile> projectiles = new ArrayList<Projectile>();
-        for (Iterator<Projectile> iterator = this.projectiles.iterator(); iterator.hasNext(); ) {
-            Projectile projectile = iterator.next();
-            projectile.prepareRender(timeStamp, viewRect);
-            if (projectile.isPlaying() && projectile.isInViewRect()) {
-                projectiles.add(projectile);
+    public Collection<ProjectileVisualization> getProjectilesInRegion(long timeStamp, Rectangle viewRect) {
+        Collection<ProjectileVisualization> projectileVisualizations = new ArrayList<ProjectileVisualization>();
+        for (Iterator<ProjectileVisualization> iterator = this.projectileVisualizations.iterator(); iterator.hasNext(); ) {
+            ProjectileVisualization projectileVisualization = iterator.next();
+            projectileVisualization.prepareRender(timeStamp, viewRect);
+            if (projectileVisualization.isPlaying() && projectileVisualization.isInViewRect()) {
+                projectileVisualizations.add(projectileVisualization);
             } else {
                 iterator.remove();
             }
         }
-        return projectiles;
+        return projectileVisualizations;
     }
 
     public Collection<Detonation> getDetonationsInRegion(long timeStamp, Rectangle viewRect) {

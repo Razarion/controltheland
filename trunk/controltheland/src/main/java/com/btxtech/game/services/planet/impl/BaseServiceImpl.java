@@ -469,7 +469,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void onItemChanged(Change change, SyncItem syncItem) {
+    public void onItemChanged(Change change, SyncItem syncItem, Object additionalCustomInfo) {
         switch (change) {
             case BUILD: {
                 if (((SyncBaseItem) syncItem).hasSyncHouse() && ((SyncBaseItem) syncItem).isReady()) {

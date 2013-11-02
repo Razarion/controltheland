@@ -177,7 +177,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         }
         if (getItemType().getId() != syncItemInfo.getItemTypeId()) {
             setItemType(getGlobalServices().getItemTypeService().getItemType(syncItemInfo.getItemTypeId()));
-            fireItemChanged(SyncItemListener.Change.ITEM_TYPE_CHANGED);
+            fireItemChanged(SyncItemListener.Change.ITEM_TYPE_CHANGED, null);
             setup();
         }
         health = syncItemInfo.getHealth();
@@ -285,11 +285,11 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
                 isUpgrading = false;
                 upgradeProgress = 0;
                 setup();
-                fireItemChanged(SyncItemListener.Change.ITEM_TYPE_CHANGED);
+                fireItemChanged(SyncItemListener.Change.ITEM_TYPE_CHANGED, null);
                 return false;
             } else {
                 upgradeProgress += getBaseItemType().getUpgradeProgress() * factor;
-                fireItemChanged(SyncItemListener.Change.UPGRADE_PROGRESS_CHANGED);
+                fireItemChanged(SyncItemListener.Change.UPGRADE_PROGRESS_CHANGED, null);
                 return true;
             }
         }
@@ -560,7 +560,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
     public void decreaseHealth(double progress, SimpleBase actor) {
         health -= progress;
-        fireItemChanged(SyncItemListener.Change.HEALTH);
+        fireItemChanged(SyncItemListener.Change.HEALTH, null);
         if (health <= 0) {
             health = 0;
             getPlanetServices().getItemService().killSyncItem(this, actor, false, true);
@@ -572,7 +572,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         if (health >= getBaseItemType().getHealth()) {
             health = getBaseItemType().getHealth();
         }
-        fireItemChanged(SyncItemListener.Change.HEALTH);
+        fireItemChanged(SyncItemListener.Change.HEALTH, null);
     }
 
     public boolean isReady() {
@@ -614,7 +614,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
             syncGenerator.setGenerating(buildup >= 1.0);
         }
 
-        fireItemChanged(SyncItemListener.Change.BUILD);
+        fireItemChanged(SyncItemListener.Change.BUILD, null);
     }
 
     public BaseItemType getBaseItemType() {
@@ -627,7 +627,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
     public void setHealth(double health) {
         this.health = health;
-        fireItemChanged(SyncItemListener.Change.HEALTH);
+        fireItemChanged(SyncItemListener.Change.HEALTH, null);
     }
 
     public double getUpgradeProgress() {
@@ -649,13 +649,13 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     public void setContained(Id itemContainer) {
         this.containedIn = itemContainer;
         getSyncItemArea().setPosition(null);
-        fireItemChanged(SyncItemListener.Change.CONTAINED_IN_CHANGED);
+        fireItemChanged(SyncItemListener.Change.CONTAINED_IN_CHANGED, null);
     }
 
     public void clearContained(Index position) {
         containedIn = null;
         getSyncItemArea().setPosition(position);
-        fireItemChanged(SyncItemListener.Change.CONTAINED_IN_CHANGED);
+        fireItemChanged(SyncItemListener.Change.CONTAINED_IN_CHANGED, null);
     }
 
     public Id getContainedIn() {
@@ -719,7 +719,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     }
 
     public void onAttacked(SyncBaseItem syncBaseItem) throws TargetHasNoPositionException {
-        fireItemChanged(SyncItemListener.Change.UNDER_ATTACK);
+        fireItemChanged(SyncItemListener.Change.UNDER_ATTACK, null);
         if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;
         }
