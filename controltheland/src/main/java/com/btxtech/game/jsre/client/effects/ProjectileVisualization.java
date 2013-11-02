@@ -6,8 +6,8 @@ import com.btxtech.game.jsre.client.NoSuchImageSpriteMapInfoException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
-import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.renderer.ClipRendererModel;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.ActiveProjectile;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncWeapon;
 
@@ -16,18 +16,18 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncWeapon;
  * Date: 16.10.12
  * Time: 21:42
  */
-public class Projectile extends ClipRendererModel {
+public class ProjectileVisualization extends ClipRendererModel {
     private SyncBaseItem syncBaseItem;
-    private int muzzleFlashNr;
+    private ActiveProjectile activeProjectile;
     private boolean moving;
 
-    public Projectile(SyncBaseItem syncBaseItem, int muzzleFlashNr) throws NoSuchClipException, NoSuchImageSpriteMapInfoException {
+    public ProjectileVisualization(SyncBaseItem syncBaseItem, ActiveProjectile activeProjectile) throws NoSuchClipException, NoSuchImageSpriteMapInfoException {
         this.syncBaseItem = syncBaseItem;
-        this.muzzleFlashNr = muzzleFlashNr;
+        this.activeProjectile = activeProjectile;
         SyncWeapon syncWeapon = syncBaseItem.getSyncWeapon();
         moving = syncWeapon.getWeaponType().getProjectileSpeed() != null;
         ClipInfo clipInfo = ClientClipHandler.getInstance().getProjectileClipInfo(syncBaseItem.getBaseItemType());
-        Index absoluteMiddle = syncWeapon.getProjectilePosition(muzzleFlashNr);
+        Index absoluteMiddle = activeProjectile.getPosition();
         if (!moving) {
             setNoYMiddle();
             setMaxHeight(absoluteMiddle.getDistance(syncWeapon.getProjectileTarget()));
@@ -43,11 +43,11 @@ public class Projectile extends ClipRendererModel {
         }
         if (moving) {
             SyncWeapon syncWeapon = syncBaseItem.getSyncWeapon();
-            Index absoluteMiddle = syncWeapon.getProjectilePosition(muzzleFlashNr);
-            if (absoluteMiddle == null) {
+            if (!activeProjectile.isAlive()) {
                 stop();
                 return;
             }
+            Index absoluteMiddle = activeProjectile.getPosition();
             if (absoluteMiddle.equals(syncWeapon.getProjectileTarget())) {
                 stop();
                 return;

@@ -186,7 +186,7 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
     }
 
     @Override
-    public void onItemChanged(Change change, SyncItem syncItem) {
+    public void onItemChanged(Change change, SyncItem syncItem, Object additionalCustomInfo) {
         switch (change) {
             case BUILD:
                 if (syncItem instanceof SyncBaseItem) {
