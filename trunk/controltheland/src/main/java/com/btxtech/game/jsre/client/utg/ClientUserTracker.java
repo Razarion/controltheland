@@ -23,7 +23,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
-import com.btxtech.game.jsre.client.simulation.Task;
+import com.btxtech.game.jsre.client.simulation.AbstractTask;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -101,8 +101,8 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, levelTaskId, null, duration, clientTimeStamp, runnable);
     }
 
-    public void onTaskFinished(int levelTaskId, Task task, long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, levelTaskId, task.getTaskConfig().getName(), duration, clientTimeStamp, null);
+    public void onTaskFinished(int levelTaskId, AbstractTask abstractTask, long duration, long clientTimeStamp) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, levelTaskId, abstractTask.getAbstractTaskConfig().getName(), duration, clientTimeStamp, null);
     }
 
     public void startEventTracking() {

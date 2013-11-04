@@ -1,0 +1,29 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+        .title {
+            font-size: 25px;
+        }
+
+		.maintext {
+			font-size: 12px;
+		}
+		
+		.taskpanel {
+			margin-top: 7px;
+		}
+	</ui:style>
+		<g:VerticalPanel width="40em">
+			<g:Label ui:field="titleLabel" styleName="{style.title}" />
+			<g:Label ui:field="mainTextLabel" styleName="{style.maintext}" />
+			<g:HorizontalPanel styleName="{style.taskpanel}">
+				<g:Cell verticalAlignment="ALIGN_MIDDLE">
+					<g:Image ui:field="taskImage" width="40px" height="40px" />
+				</g:Cell>
+				<g:Cell verticalAlignment="ALIGN_MIDDLE">
+					<g:Label ui:field="taskTextLabel" />
+				</g:Cell>
+			</g:HorizontalPanel>
+		</g:VerticalPanel>
+</ui:UiBinder>

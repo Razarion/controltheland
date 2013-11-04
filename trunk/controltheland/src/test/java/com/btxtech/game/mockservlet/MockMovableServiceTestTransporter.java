@@ -13,7 +13,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
-import com.btxtech.game.jsre.common.tutorial.TaskConfig;
+import com.btxtech.game.jsre.common.tutorial.AbstractTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 
 import java.util.ArrayList;
@@ -42,9 +42,9 @@ public class MockMovableServiceTestTransporter extends MockMovableService {
         ownItems.add(new ItemTypeAndPosition(MOVABLE_ITEM_TYPE.getId(), new Index(400, 700), MathHelper.WEST));
         ownItems.add(new ItemTypeAndPosition(MOVABLE_ITEM_TYPE.getId(), new Index(400, 900), MathHelper.WEST));
         Map<Integer, Integer> itemTypeLimitation = new HashMap<>();
-        List<TaskConfig> taskConfigs = new ArrayList<>();
-        taskConfigs.add(new TaskConfig(ownItems, null, null, 10, 100, 1000, "TestTask1", null, itemTypeLimitation, RadarMode.MAP, null, false));
-        TutorialConfig tutorialConfig = new TutorialConfig(taskConfigs, "", false, false, false);
+        List<AbstractTaskConfig> abstractTaskConfigs = new ArrayList<>();
+        // TODO abstractTaskConfigs.add(new AbstractTaskConfig(ownItems, null, null, 10, 100, 1000, "TestTask1", null, itemTypeLimitation, RadarMode.MAP, null, false));
+        TutorialConfig tutorialConfig = new TutorialConfig(abstractTaskConfigs, "", false, false, false);
         simulationInfo.setTutorialConfig(tutorialConfig);
         simulationInfo.setLevelNumber(1);
     }

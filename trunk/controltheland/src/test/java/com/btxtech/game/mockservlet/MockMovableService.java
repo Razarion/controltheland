@@ -142,9 +142,9 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         List<ItemTypeAndPosition> ownItems = new ArrayList<ItemTypeAndPosition>();
         ownItems.add(new ItemTypeAndPosition(MOVABLE_ITEM_TYPE.getId(), new Index(100, 100), 0));
         Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
-        List<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
-        taskConfigs.add(new TaskConfig(ownItems, null, conditionConfig1, 10, 100, 1000, "TestTask1", null, itemTypeLimitation, RadarMode.MAP, null));
-        taskConfigs.add(new TaskConfig(ownItems, null, conditionConfig2, 10, 100, 1000, "TestTask2", null, itemTypeLimitation, RadarMode.MAP, null));
+        List<AbstractTaskConfig> taskConfigs = new ArrayList<AbstractTaskConfig>();
+        taskConfigs.add(new AbstractTaskConfig(ownItems, null, conditionConfig1, 10, 100, 1000, "TestTask1", null, itemTypeLimitation, RadarMode.MAP, null));
+        taskConfigs.add(new AbstractTaskConfig(ownItems, null, conditionConfig2, 10, 100, 1000, "TestTask2", null, itemTypeLimitation, RadarMode.MAP, null));
         TutorialConfig tutorialConfig = new TutorialConfig(taskConfigs, "MyTestBase", 500, 500, false, "", false);
         simulationInfo.setTutorialConfig(tutorialConfig);
         simulationInfo.setLevelNumber(1); */

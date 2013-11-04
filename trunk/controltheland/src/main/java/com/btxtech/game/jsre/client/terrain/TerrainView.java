@@ -132,6 +132,10 @@ public class TerrainView {
         return viewOriginTop;
     }
 
+    public Index getViewOrigin() {
+        return new Index(viewOriginLeft, viewOriginTop);
+    }
+
     public int getViewWidth() {
         return viewWidth;
     }

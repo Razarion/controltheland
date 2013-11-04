@@ -11,6 +11,7 @@ import com.btxtech.game.jsre.common.MathHelper;
  */
 public class TerrainInGameTipVisualization implements GameTipVisualization {
     private Index absolutePosition;
+    private double relativeOutOfViewArrowAngel;
 
     public TerrainInGameTipVisualization(Index absolutePosition) {
         this.absolutePosition = absolutePosition;
@@ -37,11 +38,16 @@ public class TerrainInGameTipVisualization implements GameTipVisualization {
 
     @Override
     public Index getRelativeOutOfViewArrowHotSpot(Rectangle viewRect) {
-        return null;
+        if (viewRect.contains(absolutePosition)) {
+            return null;
+        }
+        relativeOutOfViewArrowAngel = viewRect.getCenter().getAngleToNord(absolutePosition);
+
+        return viewRect.getCenter().getPointFromAngelToNord(relativeOutOfViewArrowAngel, 200).sub(viewRect.getStart());
     }
 
     @Override
     public double getRelativeOutOfViewArrowAngel() {
-        return 0;
+        return relativeOutOfViewArrowAngel;
     }
 }

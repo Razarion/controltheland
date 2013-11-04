@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
@@ -26,10 +27,11 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
 
     public SelectTipTask(int itemTypeId) {
         this.itemTypeId = itemTypeId;
+        activateConversionOnMouseMove();
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         SelectionHandler.getInstance().addSelectionListener(this);
         QuestVisualisationModel.getInstance().setShowInGameVisualisation(false);
     }
@@ -37,15 +39,15 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
     @Override
     public boolean isFulfilled() {
         Group selectedGroup = SelectionHandler.getInstance().getOwnSelection();
-        if(selectedGroup == null) {
+        if (selectedGroup == null) {
             return false;
         }
-        Map<BaseItemType, Collection<SyncBaseItem>> selectedItems = selectedGroup.getGroupedItems();
-        return selectedItems.size() == 1 && CommonJava.getFirst(selectedItems.keySet()).getId() == itemTypeId;
+        Map<BaseItemType, Collection<SyncBaseItem>> selectedItemTypes = selectedGroup.getGroupedItems();
+        return selectedItemTypes.size() == 1 && CommonJava.getFirst(selectedItemTypes.keySet()).getId() == itemTypeId;
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         SelectionHandler.getInstance().removeSelectionListener(this);
         QuestVisualisationModel.getInstance().setShowInGameVisualisation(true);
     }
@@ -62,12 +64,20 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
 
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
-        Map<BaseItemType, Collection<SyncBaseItem>> selectedItems = selectedGroup.getGroupedItems();
-        if (selectedItems.size() == 1 && CommonJava.getFirst(selectedItems.keySet()).getId() == itemTypeId) {
+        Map<BaseItemType, Collection<SyncBaseItem>> selectedItemTypes = selectedGroup.getGroupedItems();
+        if (selectedItemTypes.size() == 1 && CommonJava.getFirst(selectedItemTypes.keySet()).getId() == itemTypeId) {
             onSucceed();
         } else {
             onFailed();
         }
+    }
+
+    @Override
+    public String getTaskText() {
+        // TODO use i18n
+        // TODO dynamic create item name
+        // TODO German flexion
+        return "Selektiere deine(n) " + getItemTypeName(itemTypeId) + " mit der Maus";
     }
 
     public GameTipVisualization createInGameTip() {

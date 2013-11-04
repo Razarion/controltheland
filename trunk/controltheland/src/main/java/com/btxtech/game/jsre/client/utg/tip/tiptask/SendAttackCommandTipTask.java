@@ -25,10 +25,11 @@ public class SendAttackCommandTipTask extends AbstractTipTask implements Selecti
 
     public SendAttackCommandTipTask(int actorItemTypeId) {
         this.actorItemTypeId = actorItemTypeId;
+        activateConversionOnMouseMove();
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         SelectionHandler.getInstance().addSelectionListener(this);
         ActionHandler.getInstance().setCommandListener(this);
     }
@@ -39,7 +40,7 @@ public class SendAttackCommandTipTask extends AbstractTipTask implements Selecti
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         ActionHandler.getInstance().setCommandListener(null);
         SelectionHandler.getInstance().removeSelectionListener(this);
     }
@@ -49,6 +50,12 @@ public class SendAttackCommandTipTask extends AbstractTipTask implements Selecti
         if (baseCommand instanceof AttackCommand) {
             onSucceed();
         }
+    }
+
+    @Override
+    public String getTaskText() {
+        // TODO use i18n
+        return "Klicke mit der Maus auf die gegnerische Einheit.";
     }
 
     public GameTipVisualization createInGameTip() throws NoSuchItemTypeException {

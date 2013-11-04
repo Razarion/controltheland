@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -152,7 +153,6 @@ public class SelectionHandler {
             listener.onOwnSelectionChanged(selection);
         }
     }
-
 
     public void itemKilled(SyncItem syncItem) {
         if (syncItem.equals(selectedTargetSyncItem)) {
