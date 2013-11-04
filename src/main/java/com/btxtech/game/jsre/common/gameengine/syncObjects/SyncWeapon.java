@@ -13,16 +13,12 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
-import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * User: beat
@@ -37,8 +33,7 @@ public class SyncWeapon extends SyncBaseAbility {
     private double reloadProgress;
     private Index targetPosition; // Not Synchronized
     private long targetPositionLastCheck; // Not Synchronized
-    private List<DecimalPosition> projectilePositions; // Not Synchronized
-    private Index projectileTarget; // Not Synchronized
+    private ActiveProjectileContainer activeProjectileContainer; // Not Synchronized
     private SyncMovable.OverlappingHandler overlappingHandler = new SyncMovable.OverlappingHandler() {
         @Override
         public Path calculateNewPath() {
@@ -55,6 +50,8 @@ public class SyncWeapon extends SyncBaseAbility {
     public SyncWeapon(WeaponType weaponType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
         this.weaponType = weaponType;
+        reloadProgress = weaponType.getReloadTime();
+        activeProjectileContainer = new ActiveProjectileContainer(weaponType, syncBaseItem);
     }
 
     public boolean isActive() {
@@ -74,44 +71,16 @@ public class SyncWeapon extends SyncBaseAbility {
             reloadProgress += factor;
         }
 
-        if (projectilePositions != null) {
-            return tickProjectile(factor) || returnFalseIfReloaded();
-        } else if (target != null) {
-            return tickAttack(factor);
-        } else {
-            return returnFalseIfReloaded();
+        boolean moreTicksNeeded = false;
+        if (activeProjectileContainer.tick(factor)) {
+            moreTicksNeeded = true;
         }
-    }
 
-    private boolean tickProjectile(double factor) {
-        for (int i = 0, projectilePositionSize = projectilePositions.size(); i < projectilePositionSize; i++) {
-            DecimalPosition projectilePosition = projectilePositions.get(i);
-            if (getWeaponType().getProjectileSpeed() != null) {
-                projectilePosition = projectilePosition.getPointWithDistance(factor * (double) getWeaponType().getProjectileSpeed(), projectileTarget, false);
-                projectilePositions.set(i, projectilePosition);
-            }
-            if (projectilePosition.getPosition().equals(projectileTarget)) {
-                projectileDetonation();
-                return false;
-            }
+        if (target != null && tickAttack(factor)) {
+            moreTicksNeeded = true;
         }
-        return true;
-    }
 
-    private void projectileDetonation() {
-        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.PROJECTILE_DETONATION);
-        try {
-            SyncBaseItem targetItem = (SyncBaseItem) getPlanetServices().getItemService().getItem(target);
-            targetItem.decreaseHealth(weaponType.getDamage() * reloadProgress / weaponType.getReloadTime(), getSyncBaseItem().getBase());
-            targetItem.onAttacked(getSyncBaseItem());
-        } catch (ItemDoesNotExistException e) {
-            // Ignore
-        } catch (TargetHasNoPositionException e) {
-            // Ignore
-        }
-        reloadProgress = 0;
-        projectilePositions = null;
-        projectileTarget = null;
+        return moreTicksNeeded || returnFalseIfReloaded();
     }
 
     private boolean tickAttack(double factor) {
@@ -184,16 +153,8 @@ public class SyncWeapon extends SyncBaseAbility {
     private void doAttack(SyncBaseItem targetItem) {
         getSyncItemArea().turnTo(targetItem);
         if (reloadProgress >= weaponType.getReloadTime()) {
-            projectilePositions = new ArrayList<DecimalPosition>();
-            int angleIndex = getSyncItemArea().getAngelIndex();
-            for (Index[] indexes : weaponType.getMuzzleFlashPositions()) {
-                projectilePositions.add(new DecimalPosition(getSyncItemArea().getPosition().add(indexes[angleIndex])));
-            }
-            projectileTarget = targetItem.getSyncItemArea().getPosition();
-            getSyncBaseItem().fireItemChanged(SyncItemListener.Change.ON_FIRING);
-            if (weaponType.getProjectileSpeed() == null) {
-                projectileDetonation();
-            }
+            activeProjectileContainer.createProjectile(targetItem);
+            reloadProgress = 0;
         }
     }
 
@@ -206,8 +167,7 @@ public class SyncWeapon extends SyncBaseAbility {
         target = null;
         targetPosition = null;
         targetPositionLastCheck = 0;
-        projectilePositions = null;
-        projectileTarget = null;
+        activeProjectileContainer.clear();
         if (getSyncBaseItem().hasSyncMovable()) {
             getSyncBaseItem().getSyncMovable().stop();
         }
@@ -245,8 +205,7 @@ public class SyncWeapon extends SyncBaseAbility {
         setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination());
         targetPosition = null;
         targetPositionLastCheck = 0;
-        projectilePositions = null;
-        projectileTarget = null;
+        activeProjectileContainer.clear();
     }
 
     public boolean isItemTypeAllowed(SyncBaseItem target) {
@@ -301,15 +260,7 @@ public class SyncWeapon extends SyncBaseAbility {
         this.reloadProgress = reloadProgress;
     }
 
-    public Index getProjectilePosition(int muzzleFlashNr) {
-        if (projectilePositions != null) {
-            return projectilePositions.get(muzzleFlashNr).getPosition();
-        } else {
-            return null;
-        }
-    }
-
     public Index getProjectileTarget() {
-        return projectileTarget;
+        return activeProjectileContainer.getProjectileTarget();
     }
 }

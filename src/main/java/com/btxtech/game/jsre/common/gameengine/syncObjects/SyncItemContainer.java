@@ -72,7 +72,7 @@ public class SyncItemContainer extends SyncBaseAbility {
         isAbleToContainThrow(syncBaseItem);
         containedItems.add(syncBaseItem.getId());
         syncBaseItem.setContained(getSyncBaseItem().getId());
-        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.CONTAINER_COUNT_CHANGED);
+        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.CONTAINER_COUNT_CHANGED, null);
         getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
     }
 
@@ -168,7 +168,7 @@ public class SyncItemContainer extends SyncBaseAbility {
                 iterator.remove();
             }
         }
-        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.CONTAINER_COUNT_CHANGED);
+        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.CONTAINER_COUNT_CHANGED, null);
     }
 
     public void stop() {

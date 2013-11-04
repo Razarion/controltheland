@@ -108,7 +108,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         dbBoxRegion.setMinInterval(200);
         dbBoxRegion.setMaxInterval(200);
         dbBoxRegion.setName("DbBoxRegion1");
-        dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 1000)));
+        dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 800)));
         DbBoxRegionCount dbBoxRegionCount = dbBoxRegion.getBoxRegionCountCrud().createDbChild();
         dbBoxRegionCount.setDbBoxItemType(serverItemTypeService.getDbBoxItemType(TEST_BOX_ITEM_1_ID));
         dbBoxRegionCount.setCount(1);
@@ -179,7 +179,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         serverPlanetServices.setServerItemService(mockServerItemService);
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
-        DbRegion dbRegion1 = createDbRegion(new Rectangle(100, 100, 1000, 1000));
+        DbRegion dbRegion1 = createDbRegion(new Rectangle(100, 100, 1000, 800));
         Region region1 = dbRegion1.createRegion();
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType, region1, 100, true, false)).andReturn(new Index(100, 100));
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType, region1, 100, true, false)).andReturn(new Index(100, 100));
@@ -276,8 +276,8 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem6), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
-        DbRegion dbRegion1 = createDbRegion(new Rectangle(100, 100, 1000, 1000));
-        DbRegion dbRegion2 = createDbRegion(new Rectangle(100, 100, 1000, 1000));
+        DbRegion dbRegion1 = createDbRegion(new Rectangle(100, 100, 1000, 800));
+        DbRegion dbRegion2 = createDbRegion(new Rectangle(100, 100, 1000, 800));
         Region region1 = dbRegion1.createRegion();
         Region region2 = dbRegion2.createRegion();
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType1, region1, 100, true, false)).andReturn(new Index(100, 100));
@@ -365,7 +365,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem2), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
-        DbRegion dbRegion1 = createDbRegion(new Rectangle(100, 100, 1000, 1000));
+        DbRegion dbRegion1 = createDbRegion(new Rectangle(100, 100, 1000, 800));
         Region region1 = dbRegion1.createRegion();
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType1, region1, 100, true, false)).andReturn(new Index(100, 100));
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType1, region1, 100, true, false)).andReturn(new Index(100, 100));
@@ -425,7 +425,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         dbBoxRegion.setMinInterval(200);
         dbBoxRegion.setMaxInterval(200);
         dbBoxRegion.setName("DbBoxRegion1");
-        dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 1000)));
+        dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 800)));
         DbBoxRegionCount dbBoxRegionCount = dbBoxRegion.getBoxRegionCountCrud().createDbChild();
         dbBoxRegionCount.setDbBoxItemType(serverItemTypeService.getDbBoxItemType(TEST_BOX_ITEM_2_ID));
         dbBoxRegionCount.setCount(1);
@@ -498,7 +498,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem1), EasyMock.eq(simpleBase), EasyMock.eq(true), EasyMock.eq(false));
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
-        DbRegion dbRegion1 = createDbRegion(new Rectangle(100, 100, 1000, 1000));
+        DbRegion dbRegion1 = createDbRegion(new Rectangle(100, 100, 1000, 800));
         Region region1 = dbRegion1.createRegion();
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType1, region1, 100, true, false)).andReturn(new Index(100, 100));
         serverPlanetServices.setCollisionService(mockCollisionService);
@@ -674,7 +674,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         dbBoxRegion.setMinInterval(500);
         dbBoxRegion.setMaxInterval(500);
         dbBoxRegion.setName("DbBoxRegion1");
-        dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 1000)));
+        dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 800)));
         DbBoxRegionCount dbBoxRegionCount = dbBoxRegion.getBoxRegionCountCrud().createDbChild();
         dbBoxRegionCount.setDbBoxItemType(serverItemTypeService.getDbBoxItemType(TEST_BOX_ITEM_2_ID));
         dbBoxRegionCount.setCount(1);
@@ -831,7 +831,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         dbBoxRegion.setMinInterval(200);
         dbBoxRegion.setMaxInterval(200);
         dbBoxRegion.setName("DbBoxRegion1");
-        dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 1000)));
+        dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 800)));
         DbBoxRegionCount dbBoxRegionCount = dbBoxRegion.getBoxRegionCountCrud().createDbChild();
         dbBoxRegionCount.setDbBoxItemType(dbBoxItemType);
         dbBoxRegionCount.setCount(1);
@@ -1654,7 +1654,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         dbBoxRegion.setMinInterval(300);
         dbBoxRegion.setMaxInterval(300);
         dbBoxRegion.setName("DbBoxRegion1");
-        dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 1000)));
+        dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 800)));
         DbBoxRegionCount dbBoxRegionCount = dbBoxRegion.getBoxRegionCountCrud().createDbChild();
         dbBoxRegionCount.setDbBoxItemType(serverItemTypeService.getDbBoxItemType(TEST_BOX_ITEM_2_ID));
         dbBoxRegionCount.setCount(1);
