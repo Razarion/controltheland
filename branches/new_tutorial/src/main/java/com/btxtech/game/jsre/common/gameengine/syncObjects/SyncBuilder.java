@@ -105,7 +105,7 @@ public class SyncBuilder extends SyncBaseAbility {
                     stop();
                     return false;
                 }
-                getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
+                getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS, null);
                 return true;
             } catch (InsufficientFundsException e) {
                 return true;
@@ -145,7 +145,7 @@ public class SyncBuilder extends SyncBaseAbility {
         toBeBuiltType = null;
         toBeBuildPosition = null;
         getSyncBaseItem().getSyncMovable().stop();
-        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
+        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS, null);
     }
 
     @Override

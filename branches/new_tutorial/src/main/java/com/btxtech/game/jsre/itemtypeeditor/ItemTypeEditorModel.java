@@ -568,7 +568,7 @@ public class ItemTypeEditorModel {
             syncItem = ItemContainer.getInstance().createItemTypeEditorSyncObject(myBase, itemType.getId(), simulationMiddle);
             syncItem.addSyncItemListener(new SyncItemListener() {
                 @Override
-                public void onItemChanged(Change change, SyncItem syncItem) {
+                public void onItemChanged(Change change, SyncItem syncItem, Object additionalCustomInfo) {
                     if (moving && change == Change.POSITION && moveDestination != null && moveDestination.equals(syncItem.getSyncItemArea().getPosition())) {
                         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                             @Override

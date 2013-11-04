@@ -24,6 +24,8 @@ import java.util.Locale;
  * User: beat
  * Date: 19.01.2011
  * Time: 10:42:00
+ *
+ * TODO reanme to user context
  */
 public class UserState {
     private Integer userId;

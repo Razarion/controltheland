@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
-import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
@@ -69,7 +68,7 @@ public class SyncFactory extends SyncBaseAbility {
         try {
             getPlanetServices().getBaseService().withdrawalMoney(buildFactor * (double) toBeBuiltType.getPrice(), getSyncBaseItem().getBase());
             buildup += buildFactor;
-            getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
+            getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS, null);
             if (buildup >= 1.0) {
                 if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
                     // Wait for server to create currentBuildup
@@ -132,7 +131,7 @@ public class SyncFactory extends SyncBaseAbility {
     public void stop() {
         buildup = 0;
         toBeBuiltType = null;
-        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
+        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS, null);
     }
 
     public void executeCommand(FactoryCommand factoryCommand) throws InsufficientFundsException, NoSuchItemTypeException {
