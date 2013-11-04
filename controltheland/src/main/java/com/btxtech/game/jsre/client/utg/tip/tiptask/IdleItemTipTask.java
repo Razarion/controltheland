@@ -4,7 +4,6 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
-import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
@@ -21,28 +20,44 @@ public class IdleItemTipTask extends AbstractTipTask implements ActionHandler.Id
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         ActionHandler.getInstance().setIdleListener(this);
     }
 
     @Override
     public boolean isFulfilled() {
-        return CommonJava.getFirst(ItemContainer.getInstance().getItems4BaseAndType(ClientBase.getInstance().getSimpleBase(), actorItemTypeId)).isIdle();
+        return areAllItemsTypeIdle();
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         ActionHandler.getInstance().setIdleListener(null);
+    }
+
+    @Override
+    public String getTaskText() {
+        return null;
     }
 
     @Override
     public void onIdle(SyncBaseItem syncBaseItem) {
         if (syncBaseItem.getBaseItemType().getId() == actorItemTypeId && ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
-            onSucceed();
+            if (areAllItemsTypeIdle()) {
+                onSucceed();
+            }
         }
     }
 
     public GameTipVisualization createInGameTip() throws NoSuchItemTypeException {
         return null;
+    }
+
+    private boolean areAllItemsTypeIdle() {
+        for (SyncBaseItem syncBaseItem : ItemContainer.getInstance().getItems4BaseAndType(ClientBase.getInstance().getSimpleBase(), actorItemTypeId)) {
+            if (!syncBaseItem.isIdle()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

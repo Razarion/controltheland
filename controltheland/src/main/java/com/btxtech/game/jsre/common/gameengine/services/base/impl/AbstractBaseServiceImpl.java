@@ -170,12 +170,12 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         baseAttributes.setName(name);
     }
 
-    protected void setBot(SimpleBase simpleBase, boolean bot) {
+    protected void setBot(SimpleBase simpleBase, boolean bot, boolean attacksOtherBot) {
         BaseAttributes baseAttributes = getBaseAttributes(simpleBase);
         if (baseAttributes == null) {
             throw new IllegalArgumentException(this + " base does not exits " + simpleBase);
         }
-        baseAttributes.setBot(bot);
+        baseAttributes.setBot(bot, attacksOtherBot);
     }
 
     @Override
@@ -240,6 +240,13 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
 
         if (baseAttributes2 == null) {
             throw new IllegalArgumentException("AbstractBaseServiceImpl.isEnemy() baseAttributes2 == null for base: " + simpleBase2);
+        }
+
+        if(baseAttributes1.isBot() && baseAttributes1.isAttacksOtherBot()) {
+            return true;
+        }
+        if(baseAttributes2.isBot() && baseAttributes2.isAttacksOtherBot()) {
+            return true;
         }
 
         return !(baseAttributes1.isBot() && baseAttributes2.isBot())

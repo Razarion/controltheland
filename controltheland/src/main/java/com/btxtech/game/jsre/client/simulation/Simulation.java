@@ -27,17 +27,16 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidanceService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
+import com.btxtech.game.jsre.client.utg.tip.StorySplashPopup;
 import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
-import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.client.utg.tip.tiptask.AbstractTipTask;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
+import com.btxtech.game.jsre.common.tutorial.AbstractTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
-import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.google.gwt.user.client.Timer;
 
 import java.util.List;
@@ -47,13 +46,16 @@ import java.util.List;
  * Date: 17.07.2010
  * Time: 17:21:24
  */
-public class Simulation implements ConditionServiceListener<SimpleBase, Void>, ClientBase.OwnBaseDestroyedListener {
+// TODO noob protection, if unit is send near bot
+public class Simulation implements ClientBase.OwnBaseDestroyedListener {
+    private static final int PRAISE_DELAY = 3000;
     private static final Simulation SIMULATION = new Simulation();
     private SimulationInfo simulationInfo;
-    private Task activeTask;
+    private AbstractTask activeAbstractTask;
     private long taskTime;
     private long tutorialTime;
     private TutorialConfig tutorialConfig;
+    private StorySplashPopup praiseSplashPopup;
 
     /**
      * Singleton
@@ -72,7 +74,6 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
             return;
         }
         ClientBase.getInstance().setOwnBaseDestroyedListener(this);
-        SimulationConditionServiceImpl.getInstance().setConditionServiceListener(this);
         tutorialTime = System.currentTimeMillis();
         if (tutorialConfig.isEventTracking()) {
             ClientUserTracker.getInstance().startEventTracking();
@@ -84,19 +85,25 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         runNextTask(null);
     }
 
-    private void processPreparation(TaskConfig taskConfig) {
-        if (taskConfig.isClearGame()) {
+    private void processPreparation(AbstractTaskConfig abstractTaskConfig) {
+        if (abstractTaskConfig.isClearGame()) {
             GameCommon.clearGame();
         }
         ClientBase.getInstance().createOwnSimulationBaseIfNotExist(tutorialConfig.getOwnBaseName());
-        ClientPlanetServices.getInstance().setPlanetInfo(taskConfig.createPlanetInfo());
-        ClientUserGuidanceService.getInstance().setLevel(taskConfig.createLevelScope(simulationInfo.getLevelNumber()));
-        if (taskConfig.hasBots()) {
-            ClientBotService.getInstance().setBotConfigs(taskConfig.getBotConfigs());
-            ClientBotService.getInstance().start();
+        ClientPlanetServices.getInstance().setPlanetInfo(abstractTaskConfig.createPlanetInfo());
+        ClientUserGuidanceService.getInstance().setLevel(abstractTaskConfig.createLevelScope(simulationInfo.getLevelNumber()));
+
+        if (abstractTaskConfig.hasBotIdsToStop()) {
+            for (Integer botId : abstractTaskConfig.getBotIdsToStop()) {
+                ClientBotService.getInstance().killBot(botId);
+            }
         }
 
-        for (ItemTypeAndPosition itemTypeAndPosition : taskConfig.getOwnItems()) {
+        if (abstractTaskConfig.hasBots()) {
+            ClientBotService.getInstance().startBots(abstractTaskConfig.getBotConfigs());
+        }
+
+        for (ItemTypeAndPosition itemTypeAndPosition : abstractTaskConfig.getOwnItems()) {
             try {
                 ItemContainer.getInstance().createSimulationSyncObject(itemTypeAndPosition);
             } catch (NoSuchItemTypeException e) {
@@ -104,38 +111,41 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
             }
         }
 
-        if (taskConfig.getScroll() != null) {
-            TerrainView.getInstance().moveAbsolute(taskConfig.getScroll());
+        if (abstractTaskConfig.getScroll() != null) {
+            TerrainView.getInstance().moveAbsolute(abstractTaskConfig.getScroll());
         }
     }
 
-    private void runNextTask(Task closedTask) {
-        TaskConfig taskConfig;
-        List<TaskConfig> tasks = simulationInfo.getTutorialConfig().getTasks();
+    private void runNextTask(AbstractTask closedAbstractTask) {
+        AbstractTaskConfig abstractTaskConfig;
+        List<AbstractTaskConfig> tasks = tutorialConfig.getTasks();
         if (tasks.isEmpty()) {
             tutorialFinished();
             return;
         }
-        if (closedTask != null) {
-            int index = tasks.indexOf(closedTask.getTaskConfig());
+        if (closedAbstractTask != null) {
+            int index = tasks.indexOf(closedAbstractTask.getAbstractTaskConfig());
             index++;
             if (tasks.size() > index) {
-                taskConfig = tasks.get(index);
+                abstractTaskConfig = tasks.get(index);
             } else {
                 tutorialFinished();
                 return;
             }
         } else {
-            taskConfig = tasks.get(0);
+            abstractTaskConfig = tasks.get(0);
         }
-        processPreparation(taskConfig);
+        processPreparation(abstractTaskConfig);
         taskTime = System.currentTimeMillis();
-        activeTask = new Task(taskConfig);
-        activeTask.start();
+        activeAbstractTask = createTask(abstractTaskConfig);
+        activeAbstractTask.start();
     }
 
     private void tutorialFinished() {
-        activeTask = null;
+        if (activeAbstractTask != null) {
+            activeAbstractTask.cleanup();
+        }
+        activeAbstractTask = null;
         long time = System.currentTimeMillis();
         ClientUserTracker.getInstance().onTutorialFinished(simulationInfo.getLevelTaskId(), time - tutorialTime, time, new ParametrisedRunnable<GameFlow>() {
             @Override
@@ -146,26 +156,36 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     }
 
     public void cleanup() {
-        activeTask = null;
-        SimulationConditionServiceImpl.getInstance().setConditionServiceListener(null);
-        SimulationConditionServiceImpl.getInstance().deactivateAll();
-        SimulationConditionServiceImpl.getInstance().stopUpdateTimer();
+        if (activeAbstractTask != null) {
+            activeAbstractTask.cleanup();
+        }
+        activeAbstractTask = null;
         simulationInfo = null;
     }
 
-    @Override
-    public void conditionPassed(SimpleBase actor, Void identifier) {
-        if (!ClientBase.getInstance().isMyOwnBase(actor)) {
-            throw new IllegalStateException("Received conditionPassed for unexpected base: " + actor);
-        }
+    public void onTaskSucceeded() {
         long time = System.currentTimeMillis();
-        ClientUserTracker.getInstance().onTaskFinished(simulationInfo.getLevelTaskId(), activeTask, time - taskTime, time);
-        GameTipManager.getInstance().stop();
-        runNextTask(activeTask);
+        ClientUserTracker.getInstance().onTaskFinished(simulationInfo.getLevelTaskId(), activeAbstractTask, time - taskTime, time);
+        activeAbstractTask.cleanup();
+        if (hasPraisePopup()) {
+            startPraisePopup();
+            Timer deferredTimer = new Timer() {
+
+                @Override
+                public void run() {
+                    hidePraisePopup();
+                    runNextTask(activeAbstractTask);
+                }
+            };
+            deferredTimer.schedule(PRAISE_DELAY);
+        } else {
+            runNextTask(activeAbstractTask);
+        }
     }
 
     @Override
     public void onOwnBaseDestroyed() {
+        // TODO was soll genau geschehen wenn basis zerstört wird
         long time = System.currentTimeMillis();
         ClientUserTracker.getInstance().onTutorialFailed(simulationInfo.getLevelTaskId(), time - tutorialTime, time);
         Timer timer = new TimerPerfmon(PerfmonEnum.SIMULATION) {
@@ -183,5 +203,39 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         } else {
             return null;
         }
+    }
+
+
+    private AbstractTask createTask(AbstractTaskConfig abstractTaskConfig) {
+        AbstractTask abstractTask = abstractTaskConfig.createTask();
+        abstractTask.setSimulation(this);
+        return abstractTask;
+    }
+
+    private void startPraisePopup() {
+        praiseSplashPopup = new StorySplashPopup(activeAbstractTask.getPraiseSplashPopupInfo());
+    }
+
+    private boolean hasPraisePopup() {
+        return activeAbstractTask.getPraiseSplashPopupInfo() != null;
+    }
+
+    private void hidePraisePopup() {
+        if (praiseSplashPopup != null) {
+            praiseSplashPopup.fadeOut();
+            praiseSplashPopup = null;
+        }
+    }
+
+    public void onTipTaskChanged(AbstractTipTask currentTipTask) {
+        activeAbstractTask.onTipTaskChanged(currentTipTask);
+    }
+
+    public void onTipTaskConversion() {
+        activeAbstractTask.onTipTaskConversion();
+    }
+
+    public void onTipTaskPoorConversion() {
+        activeAbstractTask.onTaskPoorConversion();
     }
 }

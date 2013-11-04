@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class BotConfig implements Serializable {
     private int id;
+    private boolean attacksOtherBot;
     private int actionDelay;
     private Region realm;
     private String name;
@@ -27,8 +28,9 @@ public class BotConfig implements Serializable {
     BotConfig() {
     }
 
-    public BotConfig(int id, int actionDelay, List<BotEnragementStateConfig> botEnragementStateConfigs, Region realm, String name, Long minInactiveMs, Long maxInactiveMs, Long minActiveMs, Long maxActiveMs) {
+    public BotConfig(int id, boolean attacksOtherBot, int actionDelay, List<BotEnragementStateConfig> botEnragementStateConfigs, Region realm, String name, Long minInactiveMs, Long maxInactiveMs, Long minActiveMs, Long maxActiveMs) {
         this.id = id;
+        this.attacksOtherBot = attacksOtherBot;
         this.actionDelay = actionDelay;
         this.botEnragementStateConfigs = botEnragementStateConfigs;
         this.realm = realm;
@@ -37,6 +39,14 @@ public class BotConfig implements Serializable {
         this.maxInactiveMs = maxInactiveMs;
         this.minActiveMs = minActiveMs;
         this.maxActiveMs = maxActiveMs;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public boolean isAttacksOtherBot() {
+        return attacksOtherBot;
     }
 
     public int getActionDelay() {

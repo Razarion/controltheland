@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.tutorial;
 
-import com.btxtech.game.jsre.common.tutorial.TaskConfig;
+import com.btxtech.game.jsre.common.tutorial.AbstractTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
@@ -24,7 +24,6 @@ import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -207,12 +206,12 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     }
 
     private TutorialConfig createTutorialConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
-        ArrayList<TaskConfig> taskConfigs = new ArrayList<>();
+        ArrayList<AbstractTaskConfig> abstractTaskConfigs = new ArrayList<>();
         for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
-            taskConfigs.add(dbTaskConfig.createTaskConfig(serverItemTypeService, locale));
+            abstractTaskConfigs.add(dbTaskConfig.createTaskConfig(serverItemTypeService, locale));
         }
 
-        return new TutorialConfig(taskConfigs, ownBaseName, tracking, showTip, disableScroll);
+        return new TutorialConfig(abstractTaskConfigs, ownBaseName, tracking, showTip, disableScroll);
     }
 
 }
