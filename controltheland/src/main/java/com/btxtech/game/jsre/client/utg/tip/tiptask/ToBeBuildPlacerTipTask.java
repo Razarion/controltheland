@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -65,9 +66,7 @@ public class ToBeBuildPlacerTipTask extends AbstractTipTask implements CockpitMo
 
     @Override
     public String getTaskText() {
-        // TODO use i18n
-        // TODO dynamic create item name
-        return "Ziehe die Fabrik von Bulldozer Baumenu auf das Terrain. Folge dem Pfeil";
+        return ClientI18nHelper.CONSTANTS.trainingTipToBeBuiltPlacer(getItemTypeName(itemTypeToBePlaced));
     }
 
     @Override

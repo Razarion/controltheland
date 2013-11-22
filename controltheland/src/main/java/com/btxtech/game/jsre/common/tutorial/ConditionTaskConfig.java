@@ -1,18 +1,8 @@
 package com.btxtech.game.jsre.common.tutorial;
 
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.simulation.AbstractTask;
 import com.btxtech.game.jsre.client.simulation.ConditionTask;
-import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
-import com.btxtech.game.jsre.client.utg.tip.PraiseSplashPopupInfo;
-import com.btxtech.game.jsre.client.utg.tip.StorySplashPopupInfo;
-import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
@@ -21,17 +11,6 @@ import java.util.Map;
  */
 public class ConditionTaskConfig extends AbstractTaskConfig {
     private ConditionConfig conditionConfig;
-
-    /**
-     * Used by GWT
-     */
-    ConditionTaskConfig() {
-    }
-
-    public ConditionTaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, ConditionConfig conditionConfig, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Collection<Integer> botIdsToStop, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig, boolean clearGame, StorySplashPopupInfo storySplashPopupInfo, PraiseSplashPopupInfo praiseSplashPopupInfo) {
-        super(ownItems, scroll, houseCount, money, maxMoney, name, botConfigs, botIdsToStop, itemTypeLimitation, radarMode, gameTipConfig, clearGame, storySplashPopupInfo, praiseSplashPopupInfo);
-        this.conditionConfig = conditionConfig;
-    }
 
     @Override
     public AbstractTask createTask() {
@@ -42,5 +21,7 @@ public class ConditionTaskConfig extends AbstractTaskConfig {
         return conditionConfig;
     }
 
-
+    public void setConditionConfig(ConditionConfig conditionConfig) {
+        this.conditionConfig = conditionConfig;
+    }
 }

@@ -93,8 +93,12 @@ public class DbBotConfig implements CrudChild, CrudParent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DbBotConfig)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DbBotConfig)) {
+            return false;
+        }
 
         DbBotConfig dbBotConfig = (DbBotConfig) o;
 

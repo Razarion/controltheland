@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -47,10 +48,7 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
 
     @Override
     public String getTaskText() {
-        // TODO use i18n
-        // TODO dynamic create item name
-        // TODO german flexion
-        return "Klicke auf das " + getItemTypeName(itemTypeToFactorized) + " Menu. So kannst Du Einheiten Prodizieren";
+        return ClientI18nHelper.CONSTANTS.trainingTipFactorizeCommand(getItemTypeName(itemTypeToFactorized));
     }
 
     @Override

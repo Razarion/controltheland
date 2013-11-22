@@ -52,7 +52,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     @org.hibernate.annotations.IndexColumn(name = "orderIndex", nullable = false, base = 0)
     @JoinColumn(name = "dbTutorialConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private List<DbTaskConfig> dbTaskConfigs;
+    private List<DbAbstractTaskConfig> dbTaskConfigs;
     private String ownBaseName;
     private boolean tracking;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -63,7 +63,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     private boolean disableScroll;
 
     @Transient
-    private CrudChildServiceHelper<DbTaskConfig> dbTaskConfigCrudChildServiceHelper;
+    private CrudChildServiceHelper<DbAbstractTaskConfig> dbTaskConfigCrudChildServiceHelper;
     @Transient
     private TutorialConfig tutorialConfig;
 
@@ -97,11 +97,11 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         this.tracking = tracking;
     }
 
-    public List<DbTaskConfig> getDbTaskConfigs() {
+    public List<DbAbstractTaskConfig> getDbTaskConfigs() {
         return dbTaskConfigs;
     }
 
-    public void setDbTaskConfigs(List<DbTaskConfig> dbTaskConfigs) {
+    public void setDbTaskConfigs(List<DbAbstractTaskConfig> dbTaskConfigs) {
         this.dbTaskConfigs = dbTaskConfigs;
     }
 
@@ -162,25 +162,25 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         return id != null ? id.hashCode() : 0;
     }
 
-    public CrudChildServiceHelper<DbTaskConfig> getDbTaskConfigCrudChildServiceHelper() {
+    public CrudChildServiceHelper<DbAbstractTaskConfig> getDbTaskConfigCrudChildServiceHelper() {
         if (dbTaskConfigCrudChildServiceHelper == null) {
-            dbTaskConfigCrudChildServiceHelper = new CrudChildServiceHelper<>(dbTaskConfigs, DbTaskConfig.class, this);
+            dbTaskConfigCrudChildServiceHelper = new CrudChildServiceHelper<>(dbTaskConfigs, DbAbstractTaskConfig.class, this);
         }
         return dbTaskConfigCrudChildServiceHelper;
     }
 
-    public void moveTaskUp(DbTaskConfig task) {
+    public void moveTaskUp(DbConditionTaskConfig task) {
         int i = dbTaskConfigs.indexOf(task);
         if (i > 0) {
-            DbTaskConfig old = dbTaskConfigs.set(i - 1, task);
+            DbAbstractTaskConfig old = dbTaskConfigs.set(i - 1, task);
             dbTaskConfigs.set(i, old);
         }
     }
 
-    public void moveTaskDown(DbTaskConfig task) {
+    public void moveTaskDown(DbConditionTaskConfig task) {
         int i = dbTaskConfigs.indexOf(task);
         if (i + 1 < dbTaskConfigs.size()) {
-            DbTaskConfig old = dbTaskConfigs.set(i + 1, task);
+            DbAbstractTaskConfig old = dbTaskConfigs.set(i + 1, task);
             dbTaskConfigs.set(i, old);
         }
     }
@@ -207,8 +207,8 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
 
     private TutorialConfig createTutorialConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
         ArrayList<AbstractTaskConfig> abstractTaskConfigs = new ArrayList<>();
-        for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
-            abstractTaskConfigs.add(dbTaskConfig.createTaskConfig(serverItemTypeService, locale));
+        for (DbAbstractTaskConfig dbTaskConfig : dbTaskConfigs) {
+            abstractTaskConfigs.add(dbTaskConfig.createAbstractTaskConfig(serverItemTypeService, locale));
         }
 
         return new TutorialConfig(abstractTaskConfigs, ownBaseName, tracking, showTip, disableScroll);

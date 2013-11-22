@@ -276,12 +276,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig(levelTaskId);
             // Common
             setCommonInfo(simulationInfo, userService, serverItemTypeService, propertyService, cmsUiService, soundService, clipService);
-            // TODO uncomment ----------
-            // simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService, request.getLocale()));
-            // TODO uncomment ends ----------
-            // TODO remove ----------
-            simulationInfo.setTutorialConfig(TaskConfigFactory_DELETE_ME.createTask(serverItemTypeService));
-            // TODO remove ends ----------
+            simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService, request.getLocale()));
             simulationInfo.setLevelTaskId(levelTaskId);
             simulationInfo.setLevelNumber(userGuidanceService.getDbLevel().getNumber());
             simulationInfo.setAbortable(userGuidanceService.getDbLevel().hasDbPlanet());
@@ -626,7 +621,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public RealGameInfo createBase(String startUuid, Index position) throws PositionInBotException, NoConnectionException{
+    public RealGameInfo createBase(String startUuid, Index position) throws PositionInBotException, NoConnectionException {
         try {
             UserState userState = userService.getUserState();
             if (userState.getBase() != null) {

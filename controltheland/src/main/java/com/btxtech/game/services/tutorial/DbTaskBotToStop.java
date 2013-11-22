@@ -1,10 +1,9 @@
 package com.btxtech.game.services.tutorial;
 
+import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.user.UserService;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,29 +16,19 @@ import java.io.Serializable;
  * Date: 18.03.2011
  * Time: 13:09:38
  */
-@Entity(name = "TUTORIAL_TASK_ALLOWED_ITEMS")
-public class DbTaskAllowedItem implements CrudChild<DbAbstractTaskConfig> {
+@Entity(name = "TUTORIAL_TASK_BOT_TO_STOP")
+public class DbTaskBotToStop implements CrudChild<DbAbstractTaskConfig> {
     @Id
     @GeneratedValue
     private Integer id;
     @ManyToOne(fetch = FetchType.LAZY)
-    private DbBaseItemType dbBaseItemType;
-    @Column(name = "theCount")
-    private int count;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private DbBotConfig dbBotConfig;
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbAbstractTaskConfig dbTaskConfig;
 
     @Override
     public Serializable getId() {
         return id;
-    }
-
-    public DbBaseItemType getDbBaseItemType() {
-        return dbBaseItemType;
-    }
-
-    public void setDbBaseItemType(DbBaseItemType dbBaseItemType) {
-        this.dbBaseItemType = dbBaseItemType;
     }
 
     @Override
@@ -52,16 +41,16 @@ public class DbTaskAllowedItem implements CrudChild<DbAbstractTaskConfig> {
         throw new UnsupportedOperationException();
     }
 
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-
     @Override
     public void init(UserService userService) {
+    }
+
+    public DbBotConfig getDbBotConfig() {
+        return dbBotConfig;
+    }
+
+    public void setDbBotConfig(DbBotConfig dbBotConfig) {
+        this.dbBotConfig = dbBotConfig;
     }
 
     @Override
@@ -76,18 +65,20 @@ public class DbTaskAllowedItem implements CrudChild<DbAbstractTaskConfig> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DbTaskAllowedItem)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DbTaskBotToStop)) {
+            return false;
+        }
 
-        DbTaskAllowedItem that = (DbTaskAllowedItem) o;
+        DbTaskBotToStop that = (DbTaskBotToStop) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-
-        return true;
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id : System.identityHashCode(this);
     }
 }

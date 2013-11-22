@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -54,8 +55,7 @@ public class SendAttackCommandTipTask extends AbstractTipTask implements Selecti
 
     @Override
     public String getTaskText() {
-        // TODO use i18n
-        return "Klicke mit der Maus auf die gegnerische Einheit.";
+        return ClientI18nHelper.CONSTANTS.trainingTipClickItem();
     }
 
     public GameTipVisualization createInGameTip() throws NoSuchItemTypeException {

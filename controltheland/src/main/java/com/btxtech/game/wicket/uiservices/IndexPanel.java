@@ -27,6 +27,9 @@ import org.apache.wicket.model.IModel;
 public class IndexPanel extends Panel implements IFormModelUpdateListener {
     private Integer x;
     private Integer y;
+    private boolean clearedX;
+    private boolean clearedY;
+
 
     public IndexPanel(final String id) {
         super(id);
@@ -46,6 +49,9 @@ public class IndexPanel extends Panel implements IFormModelUpdateListener {
             @Override
             public void setObject(Integer integer) {
                 x = integer;
+                if(integer == null) {
+                    clearedX = true;
+                }
             }
 
             @Override
@@ -68,6 +74,9 @@ public class IndexPanel extends Panel implements IFormModelUpdateListener {
             @Override
             public void setObject(Integer integer) {
                 y = integer;
+                if(integer == null) {
+                    clearedY = true;
+                }
             }
 
             @Override
@@ -79,6 +88,12 @@ public class IndexPanel extends Panel implements IFormModelUpdateListener {
 
     @Override
     public void updateModel() {
+        if(clearedX && clearedY) {
+            setDefaultModelObject(null);
+            clearedX = false;
+            clearedY = false;
+            return;
+        }
         if (x == null && y == null) {
             return;
         }

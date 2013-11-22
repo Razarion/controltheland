@@ -798,4 +798,23 @@ public interface ClientI18nConstants extends Messages {
     String moveToPlanet(String name);
 
     String leaveBaseMoveToPlanet(String name);
+
+    // Training
+    String trainingTipScroll();
+
+    String trainingTipSelectItem(String itemTypeName);
+
+    String trainingTipClickItem();
+
+    String trainingTipSendBuildCommand(String itemTypeName);
+
+    String trainingTipSendBuildFinalizeCommand(String itemTypeName);
+
+    String trainingTipFactorizeCommand(String itemTypeName);
+
+    String trainingTipSendCollectCommand(String itemTypeName);
+
+    String trainingTipToBeBuiltPlacer(String itemTypeName);
+
+    String trainingTipWatchQuestDialog();
 }

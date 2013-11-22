@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
@@ -74,10 +74,7 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
 
     @Override
     public String getTaskText() {
-        // TODO use i18n
-        // TODO dynamic create item name
-        // TODO German flexion
-        return "Selektiere deine(n) " + getItemTypeName(itemTypeId) + " mit der Maus";
+        return ClientI18nHelper.CONSTANTS.trainingTipSelectItem(getItemTypeName(itemTypeId));
     }
 
     public GameTipVisualization createInGameTip() {

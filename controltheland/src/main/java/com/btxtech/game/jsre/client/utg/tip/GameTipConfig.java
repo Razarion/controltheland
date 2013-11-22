@@ -1,7 +1,6 @@
 package com.btxtech.game.jsre.client.utg.tip;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,7 +34,6 @@ public class GameTipConfig implements Serializable {
     private int toBeBuiltId;
     private int resourceId;
     private Index terrainPositionHint;
-    private boolean highlightQuestVisualisationCockpit;
 
     public Tip getTip() {
         return tip;
@@ -75,14 +73,5 @@ public class GameTipConfig implements Serializable {
 
     public void setResourceId(int resourceId) {
         this.resourceId = resourceId;
-    }
-
-    @Deprecated
-    public boolean isHighlightQuestVisualisationCockpit() {
-        return highlightQuestVisualisationCockpit;
-    }
-
-    public void setHighlightQuestVisualisationCockpit(boolean highlightQuestVisualisationCockpit) {
-        this.highlightQuestVisualisationCockpit = highlightQuestVisualisationCockpit;
     }
 }

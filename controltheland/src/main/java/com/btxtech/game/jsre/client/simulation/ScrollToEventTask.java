@@ -3,7 +3,7 @@ package com.btxtech.game.jsre.client.simulation;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.tutorial.GuiEventTaskConfig;
+import com.btxtech.game.jsre.common.tutorial.ScrollToEventTaskConfig;
 import com.google.gwt.user.client.Timer;
 
 /**
@@ -11,14 +11,14 @@ import com.google.gwt.user.client.Timer;
  * Date: 11.09.13
  * Time: 16:25
  */
-public class GuiEventTask extends AbstractTask implements TerrainScrollListener {
+public class ScrollToEventTask extends AbstractTask implements TerrainScrollListener {
     private Rectangle scrollTargetRectangle;
     private Timer prompterTimer; // TODO move to ScrollTipTask
     private long lastConversionTimeStamp;
 
-    public GuiEventTask(GuiEventTaskConfig guiEventTaskConfig) {
-        super(guiEventTaskConfig);
-        scrollTargetRectangle = guiEventTaskConfig.getScrollTargetRectangle();
+    public ScrollToEventTask(ScrollToEventTaskConfig scrollToEventTaskConfig) {
+        super(scrollToEventTaskConfig);
+        scrollTargetRectangle = scrollToEventTaskConfig.getScrollTargetRectangle();
     }
 
     @Override

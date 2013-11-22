@@ -2,33 +2,17 @@ package com.btxtech.game.jsre.common.tutorial;
 
 import com.btxtech.game.jsre.client.simulation.AbstractTask;
 import com.btxtech.game.jsre.client.simulation.AutomatedBattleTask;
-import com.btxtech.game.jsre.client.utg.tip.PraiseSplashPopupInfo;
-import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
-
-import java.util.Collection;
 
 /**
  * User: beat
  * Date: 25.09.13
  * Time: 16:36
  */
-public class AutomatedBattleTaskConfig extends AbstractAutomatedTaskConfig {
+public class AutomatedBattleTaskConfig extends AbstractTaskConfig {
     private ItemTypeAndPosition botAttacker;
     private String botName;
     private int targetItemType;
     private double attackerHealthFactor;
-
-
-    AutomatedBattleTaskConfig() {
-    }
-
-    public AutomatedBattleTaskConfig(PraiseSplashPopupInfo praiseSplashPopupInfo, ItemTypeAndPosition botAttacker, double attackerHealthFactor, String botName, int targetItemType, Collection<BotConfig> botConfigs, Collection<Integer> botIdsToStop) {
-        super(null, praiseSplashPopupInfo, botConfigs, botIdsToStop);
-        this.botAttacker = botAttacker;
-        this.attackerHealthFactor = attackerHealthFactor;
-        this.botName = botName;
-        this.targetItemType = targetItemType;
-    }
 
     @Override
     public AbstractTask createTask() {
@@ -49,5 +33,21 @@ public class AutomatedBattleTaskConfig extends AbstractAutomatedTaskConfig {
 
     public double getAttackerHealthFactor() {
         return attackerHealthFactor;
+    }
+
+    public void setAttackerHealthFactor(double attackerHealthFactor) {
+        this.attackerHealthFactor = attackerHealthFactor;
+    }
+
+    public void setBotAttacker(ItemTypeAndPosition botAttacker) {
+        this.botAttacker = botAttacker;
+    }
+
+    public void setBotName(String botName) {
+        this.botName = botName;
+    }
+
+    public void setTargetItemType(int targetItemType) {
+        this.targetItemType = targetItemType;
     }
 }
