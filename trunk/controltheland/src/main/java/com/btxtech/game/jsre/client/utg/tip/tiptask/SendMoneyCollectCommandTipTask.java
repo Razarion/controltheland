@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -54,10 +55,7 @@ public class SendMoneyCollectCommandTipTask extends AbstractTipTask implements S
 
     @Override
     public String getTaskText() {
-        // TODO use i18n
-        // TODO dynamic create item name
-        // TODO german flexion
-        return "Klicke mit der Maus auf den " + getItemTypeName(toCollectFormId) + " um Geld abzubauen";
+        return ClientI18nHelper.CONSTANTS.trainingTipSendCollectCommand(getItemTypeName(toCollectFormId));
     }
 
     public GameTipVisualization createInGameTip() throws NoSuchItemTypeException {

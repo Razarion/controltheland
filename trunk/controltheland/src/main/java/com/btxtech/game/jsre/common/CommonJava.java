@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -90,6 +91,10 @@ public class CommonJava {
 
     public static <T> T getFirst(Iterable<T> iterable) {
         return iterable.iterator().next();
+    }
+
+    public static <T> T getNth(Collection<T> collection, int index) {
+        return new ArrayList<T>(collection).get(index);
     }
 
     public static String getGwtFormattedTimeMilis() {

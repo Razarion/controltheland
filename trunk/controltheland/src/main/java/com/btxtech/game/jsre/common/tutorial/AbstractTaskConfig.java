@@ -49,29 +49,6 @@ public abstract class AbstractTaskConfig implements Serializable {
     private StorySplashPopupInfo storySplashPopupInfo;
     private PraiseSplashPopupInfo praiseSplashPopupInfo;
 
-    /**
-     * Used by GWT
-     */
-    AbstractTaskConfig() {
-    }
-
-    public AbstractTaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Collection<Integer> botIdsToStop, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig, boolean clearGame, StorySplashPopupInfo storySplashPopupInfo, PraiseSplashPopupInfo praiseSplashPopupInfo) {
-        this.ownItems = ownItems;
-        this.scroll = scroll;
-        this.houseCount = houseCount;
-        this.money = money;
-        this.maxMoney = maxMoney;
-        this.name = name;
-        this.botConfigs = botConfigs;
-        this.botIdsToStop = botIdsToStop;
-        this.itemTypeLimitation = itemTypeLimitation;
-        this.radarMode = radarMode;
-        this.gameTipConfig = gameTipConfig;
-        this.clearGame = clearGame;
-        this.storySplashPopupInfo = storySplashPopupInfo;
-        this.praiseSplashPopupInfo = praiseSplashPopupInfo;
-    }
-
     public abstract AbstractTask createTask();
 
     public Collection<ItemTypeAndPosition> getOwnItems() {
@@ -135,5 +112,61 @@ public abstract class AbstractTaskConfig implements Serializable {
 
     public PraiseSplashPopupInfo getPraiseSplashPopupInfo() {
         return praiseSplashPopupInfo;
+    }
+
+    public void setBotConfigs(Collection<BotConfig> botConfigs) {
+        this.botConfigs = botConfigs;
+    }
+
+    public void setBotIdsToStop(Collection<Integer> botIdsToStop) {
+        this.botIdsToStop = botIdsToStop;
+    }
+
+    public void setClearGame(boolean clearGame) {
+        this.clearGame = clearGame;
+    }
+
+    public void setGameTipConfig(GameTipConfig gameTipConfig) {
+        this.gameTipConfig = gameTipConfig;
+    }
+
+    public void setHouseCount(int houseCount) {
+        this.houseCount = houseCount;
+    }
+
+    public void setItemTypeLimitation(Map<Integer, Integer> itemTypeLimitation) {
+        this.itemTypeLimitation = itemTypeLimitation;
+    }
+
+    public void setMaxMoney(int maxMoney) {
+        this.maxMoney = maxMoney;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOwnItems(Collection<ItemTypeAndPosition> ownItems) {
+        this.ownItems = ownItems;
+    }
+
+    public void setPraiseSplashPopupInfo(PraiseSplashPopupInfo praiseSplashPopupInfo) {
+        this.praiseSplashPopupInfo = praiseSplashPopupInfo;
+    }
+
+    public void setRadarMode(RadarMode radarMode) {
+        this.radarMode = radarMode;
+    }
+
+    public void setScroll(Index scroll) {
+        this.scroll = scroll;
+    }
+
+    public void setStorySplashPopupInfo(StorySplashPopupInfo storySplashPopupInfo) {
+        this.storySplashPopupInfo = storySplashPopupInfo;
     }
 }

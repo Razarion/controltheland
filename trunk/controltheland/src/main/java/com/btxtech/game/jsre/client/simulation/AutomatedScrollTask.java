@@ -2,7 +2,6 @@ package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.tutorial.AbstractAutomatedTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.AutomatedScrollTaskConfig;
 import com.google.gwt.user.client.Timer;
 

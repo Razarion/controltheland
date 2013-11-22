@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.item.ToBeBuildPlacer;
@@ -50,10 +51,7 @@ public class SendBuildCommandTipTask extends AbstractTipTask implements ActionHa
 
     @Override
     public String getTaskText() {
-        // TODO use i18n
-        // TODO dynamic create item name
-        // TODO German flexion
-        return "Platziere die " + getItemTypeName(toBeBuildId) + " auf dem vorgschalgenen Platz im Terrain";
+        return ClientI18nHelper.CONSTANTS.trainingTipSendBuildCommand(getItemTypeName(toBeBuildId));
     }
 
     public GameTipVisualization createInGameTip() {

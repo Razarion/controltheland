@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.QuestVisualisationCockpitInGameTipVisualization;
@@ -37,8 +38,7 @@ public class WatchQuestVisualisationCockpitTipTask extends AbstractTipTask imple
 
     @Override
     public String getTaskText() {
-        // TODO use i18n
-        return "Erfülle die Aufgabe oben rechts";
+        return ClientI18nHelper.CONSTANTS.trainingTipWatchQuestDialog();
     }
 
     public GameTipVisualization createInGameTip() {

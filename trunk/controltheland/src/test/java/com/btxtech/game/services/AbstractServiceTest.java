@@ -105,7 +105,7 @@ import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.RegionService;
 import com.btxtech.game.services.terrain.TerrainImageService;
-import com.btxtech.game.services.tutorial.DbTaskConfig;
+import com.btxtech.game.services.tutorial.DbConditionTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.GuildService;
@@ -2027,7 +2027,7 @@ abstract public class AbstractServiceTest {
         dbTerrainSetting.setTileYCount(100);
         dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
         // Task
-        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
+        DbConditionTaskConfig dbTaskConfig = (DbConditionTaskConfig) dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild(DbConditionTaskConfig.class);
         // Condition
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);

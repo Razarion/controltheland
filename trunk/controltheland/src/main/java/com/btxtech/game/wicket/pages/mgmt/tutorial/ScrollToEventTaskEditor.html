@@ -1,0 +1,41 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Scroll to Event Task Editor</title>
+</head>
+<body>
+<h1>Scroll to Event Task Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="taskForm">
+    <div wicket:id ="commonTaskEditorPanel"></div>
+    <h2>Scroll Settings</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Scroll to Position</td>
+            <td wicket:id="scrollToPosition"></td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="back" value="Back">
+</form>
+
+</body>
+</html>

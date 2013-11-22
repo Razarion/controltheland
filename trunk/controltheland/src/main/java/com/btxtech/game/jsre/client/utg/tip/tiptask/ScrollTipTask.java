@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
@@ -34,8 +35,7 @@ public class ScrollTipTask extends AbstractTipTask {
 
     @Override
     public String getTaskText() {
-        // TODO use i18n
-        return "Scrolle auf dem Planeten herum um das Datencenter zu finden. Benutze dazu die Pfeiltasten oder bewege die Maus zum Bildschirmrand. Oben links ist das Radar.";
+        return ClientI18nHelper.CONSTANTS.trainingTipScroll();
     }
 
     public GameTipVisualization createInGameTip() {
