@@ -56,7 +56,7 @@ public class SyncProjectileItem extends SyncTickItem implements SyncBaseObject {
             return false;
         } else {
             position = newPosition;
-            fireItemChanged(SyncItemListener.Change.POSITION);
+            fireItemChanged(SyncItemListener.Change.POSITION, null);
             return true;
         }
     }

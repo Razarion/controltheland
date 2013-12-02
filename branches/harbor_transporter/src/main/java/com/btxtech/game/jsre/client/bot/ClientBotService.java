@@ -24,9 +24,4 @@ public class ClientBotService extends CommonBotServiceImpl {
     public void clear() {
         killAllBots();
     }
-
-    public void start() {
-        startAllBots();
-    }
-
 }

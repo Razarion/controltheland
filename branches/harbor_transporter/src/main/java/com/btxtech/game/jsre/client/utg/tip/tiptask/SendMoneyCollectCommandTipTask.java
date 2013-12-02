@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -25,10 +26,11 @@ public class SendMoneyCollectCommandTipTask extends AbstractTipTask implements S
 
     public SendMoneyCollectCommandTipTask(int toCollectFormId) {
         this.toCollectFormId = toCollectFormId;
+        activateConversionOnMouseMove();
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         SelectionHandler.getInstance().addSelectionListener(this);
         ActionHandler.getInstance().setCommandListener(this);
     }
@@ -39,7 +41,7 @@ public class SendMoneyCollectCommandTipTask extends AbstractTipTask implements S
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         ActionHandler.getInstance().setCommandListener(null);
         SelectionHandler.getInstance().removeSelectionListener(this);
     }
@@ -49,6 +51,11 @@ public class SendMoneyCollectCommandTipTask extends AbstractTipTask implements S
         if (baseCommand instanceof MoneyCollectCommand) {
             onSucceed();
         }
+    }
+
+    @Override
+    public String getTaskText() {
+        return ClientI18nHelper.CONSTANTS.trainingTipSendCollectCommand(getItemTypeName(toCollectFormId));
     }
 
     public GameTipVisualization createInGameTip() throws NoSuchItemTypeException {

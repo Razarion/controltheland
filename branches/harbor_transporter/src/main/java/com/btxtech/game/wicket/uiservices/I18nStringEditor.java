@@ -15,28 +15,46 @@ import org.apache.wicket.model.IModel;
 public class I18nStringEditor extends Panel {
     public I18nStringEditor(String id) {
         super(id);
-        add(new TextField<>("text", new IModel<String>() {
+        add(new TextField<String>("text", new IModel<String>() {
 
             @Override
             public String getObject() {
-                return ((DbI18nString) getDefaultModelObject()).getString();
+                DbI18nString dbI18nString = ((DbI18nString) getDefaultModelObject());
+                if (dbI18nString != null) {
+                    return dbI18nString.getString();
+                } else {
+                    return null;
+                }
             }
 
             @Override
             public void setObject(String string) {
-                ((DbI18nString) getDefaultModelObject()).putString(string);
+                DbI18nString dbI18nString = ((DbI18nString) getDefaultModelObject());
+                if (dbI18nString != null) {
+                    dbI18nString.putString(string);
+                }
             }
 
             @Override
             public void detach() {
                 // Ignore
             }
-        }));
+        }){
+            @Override
+            public boolean isEnabled() {
+                return getDefaultModelObject() != null;
+            }
+        });
         add(new Label("id", new AbstractReadOnlyModel<Integer>() {
 
             @Override
             public Integer getObject() {
-                return ((DbI18nString) getDefaultModelObject()).getId();
+                DbI18nString dbI18nString = ((DbI18nString) getDefaultModelObject());
+                if (dbI18nString != null) {
+                    return dbI18nString.getId();
+                } else {
+                    return null;
+                }
             }
         }));
     }

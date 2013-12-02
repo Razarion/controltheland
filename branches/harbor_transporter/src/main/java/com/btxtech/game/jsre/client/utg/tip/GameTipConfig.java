@@ -18,7 +18,9 @@ public class GameTipConfig implements Serializable {
         FABRICATE,
         GET_RESOURCE,
         MOVE,
-        ATTACK;
+        ATTACK,
+        SCROLL,
+        WATCH_QUEST;
 
         public static List<Tip> getValuesIncludingNull() {
             List<Tip> tips = new ArrayList<Tip>(Arrays.asList(values()));
@@ -32,7 +34,6 @@ public class GameTipConfig implements Serializable {
     private int toBeBuiltId;
     private int resourceId;
     private Index terrainPositionHint;
-    private boolean highlightQuestVisualisationCockpit;
 
     public Tip getTip() {
         return tip;
@@ -72,14 +73,5 @@ public class GameTipConfig implements Serializable {
 
     public void setResourceId(int resourceId) {
         this.resourceId = resourceId;
-    }
-
-    @Deprecated
-    public boolean isHighlightQuestVisualisationCockpit() {
-        return highlightQuestVisualisationCockpit;
-    }
-
-    public void setHighlightQuestVisualisationCockpit(boolean highlightQuestVisualisationCockpit) {
-        this.highlightQuestVisualisationCockpit = highlightQuestVisualisationCockpit;
     }
 }

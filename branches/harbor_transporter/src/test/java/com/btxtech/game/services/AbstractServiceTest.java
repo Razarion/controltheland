@@ -28,7 +28,6 @@ import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
@@ -89,6 +88,7 @@ import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.ServerTerrainService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation;
 import com.btxtech.game.services.planet.db.DbRegionResource;
@@ -106,7 +106,7 @@ import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.RegionService;
 import com.btxtech.game.services.terrain.TerrainImageService;
-import com.btxtech.game.services.tutorial.DbTaskConfig;
+import com.btxtech.game.services.tutorial.DbConditionTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.GuildService;
@@ -352,7 +352,7 @@ abstract public class AbstractServiceTest {
     private PlaybackServiceImpl playbackService;
     private JdbcTemplate jdbcTemplate;
     private Wiser wiser;
-    private Log log = LogFactory.getLog(AbstractServiceTest.class);
+    protected Log log = LogFactory.getLog(AbstractServiceTest.class);
     private WicketTester wicketTester;
 
     // ---------------------- Spring  -----------------------
@@ -454,15 +454,19 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Sync Items --------------------
 
-    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, GlobalServices globalServices, PlanetServices planetServices, SimpleBase simpleBase) throws Exception {
-        SyncBaseItem syncBaseItem = new SyncBaseItem(id, null, (BaseItemType) serverItemTypeService.getItemType(itemTypeId), globalServices, planetServices, simpleBase);
+    public static SyncBaseItem createSyncBaseItem(BaseItemType baseItemType, Index position, Id id, GlobalServices globalServices, PlanetServices planetServices, SimpleBase simpleBase) throws Exception {
+        SyncBaseItem syncBaseItem = new SyncBaseItem(id, null, baseItemType, globalServices, planetServices, simpleBase);
         syncBaseItem.setBuildup(1.0);
         syncBaseItem.getSyncItemArea().setPosition(position);
         return syncBaseItem;
     }
 
+    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, GlobalServices globalServices, PlanetServices planetServices, SimpleBase simpleBase) throws Exception {
+        return createSyncBaseItem((BaseItemType) serverItemTypeService.getItemType(itemTypeId), position, id, globalServices, planetServices, simpleBase);
+    }
+
     protected SyncBaseItem createFactorySyncBaseItem(int itemTypeId, Index position, Id id, GlobalServices globalServices, PlanetServices planetServices, SimpleBase simpleBase) throws Exception {
-        // Due to realy point calculation
+        // Due to rally point calculation
         SyncBaseItem syncBaseItem = new SyncBaseItem(id, position, (BaseItemType) serverItemTypeService.getItemType(itemTypeId), globalServices, planetServices, simpleBase);
         syncBaseItem.setBuildup(1.0);
         return syncBaseItem;
@@ -2115,7 +2119,7 @@ abstract public class AbstractServiceTest {
         dbTerrainSetting.setTileYCount(100);
         dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
         // Task
-        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
+        DbConditionTaskConfig dbTaskConfig = (DbConditionTaskConfig) dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild(DbConditionTaskConfig.class);
         // Condition
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
@@ -2724,18 +2728,18 @@ abstract public class AbstractServiceTest {
     }
     // ------------------- Div --------------------
 
-    protected GlobalServices createMockGlobalServices() {
+    public static GlobalServices createMockGlobalServices() {
         GlobalServices planetServices = EasyMock.createNiceMock(GlobalServices.class);
         EasyMock.replay(planetServices);
         return planetServices;
     }
 
-    protected PlanetServices createMockPlanetServices() {
-        PlanetServices planetServices = EasyMock.createNiceMock(PlanetServices.class);
-        AbstractTerrainService terrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
-        EasyMock.expect(planetServices.getTerrainService()).andReturn(terrainService);
-        EasyMock.replay(planetServices);
-        return planetServices;
+    public static ServerPlanetServicesImpl createMockPlanetServices() {
+        ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
+        ServerTerrainService terrainService = EasyMock.createNiceMock(ServerTerrainService.class);
+        EasyMock.replay(terrainService);
+        serverPlanetServices.setTerrainService(terrainService);
+        return serverPlanetServices;
     }
 
     public static void setPrivateField(Class clazz, Object object, String fieldName, Object value) throws Exception {
@@ -3167,4 +3171,35 @@ abstract public class AbstractServiceTest {
             stringBuffer.append(errorString);
         }
     }
+
+    public static SyncItem createSyncItemMatcher(Id id) {
+        EasyMock.reportMatcher(new SyncItemMatcher(id));
+        return null;
+    }
+
+    private static class SyncItemMatcher implements IArgumentMatcher {
+        private String errorString;
+        private Id id;
+
+        public SyncItemMatcher(Id id) {
+            this.id = id;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            SyncItem actual = (SyncItem) o;
+            if (!actual.getId().equals(id)) {
+                errorString = "Invalid SyncItem id. Expected '" + id + "' actual '" + actual.getId() + "'";
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public void appendTo(StringBuffer stringBuffer) {
+            stringBuffer.append(errorString);
+        }
+    }
+
+
 }

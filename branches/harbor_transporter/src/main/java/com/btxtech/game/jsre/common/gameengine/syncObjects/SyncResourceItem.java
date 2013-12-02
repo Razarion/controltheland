@@ -38,7 +38,7 @@ public class SyncResourceItem extends SyncItem {
     public double harvest(double amount) {
         if (this.amount > amount) {
             this.amount -= amount;
-            fireItemChanged(SyncItemListener.Change.RESOURCE);
+            fireItemChanged(SyncItemListener.Change.RESOURCE, null);
             return amount;
         } else {
             amount = this.amount;

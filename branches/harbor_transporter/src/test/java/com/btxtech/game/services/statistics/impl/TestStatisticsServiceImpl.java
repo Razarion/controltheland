@@ -287,7 +287,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         // Fake a bot factory
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(1, 1, null, null, "bot", null, null, null, null));
+        SimpleBase botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(1, false, 1, null, null, "bot", null, null, null, null));
         Id targetBotFactory = serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Index(3000, 1000), null, botBase).getId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -317,7 +317,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         // Fake a bot unit
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(1, 1, null, null, "bot", null, null, null, null));
+        botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(1, false, 1, null, null, "bot", null, null, null, null));
         Id targetBotUnit = serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), new Index(3000, 2000), null, botBase).getId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -354,7 +354,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         endHttpSession();
 
         // Fake a bot unit and attack unit
-        botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(1, 1, null, null, "bot", null, null, null, null));
+        botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(1, false, 1, null, null, "bot", null, null, null, null));
         SyncBaseItem botAttackUnit = (SyncBaseItem) serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 2000), null, botBase);
         botAttackUnit.setHealth(Integer.MAX_VALUE);
         botAttackUnit.setBuildup(1.0);

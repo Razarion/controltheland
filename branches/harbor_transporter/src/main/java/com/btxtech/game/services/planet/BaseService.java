@@ -54,7 +54,7 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, int startMoney, Index startPoint, int startItemFreeRange) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException, PositionInBotException;
 
-    void setBot(SimpleBase simpleBase, boolean bot);
+    void setBot(SimpleBase simpleBase, boolean bot, boolean attacksOtherBot);
 
     Base getBase(SyncBaseObject syncBaseObject);
 

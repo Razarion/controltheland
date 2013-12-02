@@ -2,8 +2,6 @@ package com.btxtech.game.services.planet.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.info.RealGameInfo;
-import com.btxtech.game.jsre.client.common.info.StartPointInfo;
 import com.btxtech.game.jsre.client.dialogs.starmap.StarMapPlanetInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -12,8 +10,6 @@ import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
-import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
-import com.btxtech.game.jsre.common.packets.BaseLostPacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.TestPlanetHelper;
 import com.btxtech.game.services.bot.DbBotConfig;

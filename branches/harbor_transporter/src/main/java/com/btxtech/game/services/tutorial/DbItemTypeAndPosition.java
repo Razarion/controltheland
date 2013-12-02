@@ -25,6 +25,7 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -37,17 +38,17 @@ import javax.persistence.ManyToOne;
  */
 @Entity(name = "TUTORIAL_ITEM_TYPE_POSITION")
 @TypeDef(name = "index", typeClass = IndexUserType.class)
-public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
+public class DbItemTypeAndPosition implements CrudChild<DbAbstractTaskConfig> {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbItemType itemType;
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xPos"), @Column(name = "yPos")})
     private Index position;
-    @ManyToOne(optional = false)
-    private DbTaskConfig dbTaskConfig;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private DbAbstractTaskConfig dbTaskConfig;
     private Integer angel;
 
     public DbItemType getItemType() {
@@ -97,12 +98,12 @@ public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
     }
 
     @Override
-    public void setParent(DbTaskConfig crudParent) {
+    public void setParent(DbAbstractTaskConfig crudParent) {
         dbTaskConfig = crudParent;
     }
 
     @Override
-    public DbTaskConfig getParent() {
+    public DbAbstractTaskConfig getParent() {
         return dbTaskConfig;
     }
 

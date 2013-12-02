@@ -27,7 +27,7 @@ import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.effects.AttackHandler;
+import com.btxtech.game.jsre.client.effects.AttackVisualization;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.utg.ClientDeadEndProtection;
@@ -42,6 +42,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededEx
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.ItemHandler;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.ActiveProjectileGroup;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -215,13 +216,17 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
     }
 
     public SyncItem createSimulationSyncObject(ItemTypeAndPosition itemTypeAndPosition) throws NoSuchItemTypeException {
-        Id id = createId(Id.SIMULATION_ID);
-        if (items.containsKey(id)) {
-            throw new IllegalStateException(this + " simulated id is already used: " + id);
-        }
         SimpleBase simpleBase = null;
         if (ItemTypeContainer.getInstance().getItemType(itemTypeAndPosition.getItemTypeId()) instanceof BaseItemType) {
             simpleBase = ClientBase.getInstance().getSimpleBase();
+        }
+        return createSimulationSyncObject(itemTypeAndPosition, simpleBase);
+    }
+
+    public SyncItem createSimulationSyncObject(ItemTypeAndPosition itemTypeAndPosition, SimpleBase simpleBase) throws NoSuchItemTypeException {
+        Id id = createId(Id.SIMULATION_ID);
+        if (items.containsKey(id)) {
+            throw new IllegalStateException(this + " simulated id is already used: " + id);
         }
         SyncItem syncItem = createAndAddItem(id, itemTypeAndPosition.getPosition(), itemTypeAndPosition.getItemTypeId(), simpleBase);
         id.setUserTimeStamp(System.currentTimeMillis());
@@ -229,7 +234,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
             syncBaseItem.setBuildup(1.0);
             syncBaseItem.getSyncItemArea().setAngel(itemTypeAndPosition.getAngel());
-            syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL);
+            syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL, null);
             ClientBase.getInstance().onItemCreated(syncBaseItem);
         }
         Connection.getInstance().sendSyncInfo(syncItem);
@@ -408,7 +413,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
     }
 
     @Override
-    public void onItemChanged(Change change, SyncItem syncItem) {
+    public void onItemChanged(Change change, SyncItem syncItem, Object additionalCustomInfo) {
         // TODO Remove if bug found
         switch (change) {
             case POSITION:
@@ -446,8 +451,8 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
                 }
                 SelectionHandler.getInstance().refresh();
                 break;
-            case ON_FIRING:
-                AttackHandler.getInstance().onFiring((SyncBaseItem) syncItem);
+            case PROJECTILE_LAUNCHED:
+                AttackVisualization.getInstance().onFiring((SyncBaseItem) syncItem, (ActiveProjectileGroup) additionalCustomInfo);
                 break;
             case UNDER_ATTACK:
                 if (ClientBase.getInstance().isMyOwnProperty((SyncBaseItem) syncItem)) {
@@ -455,7 +460,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
                 }
                 break;
             case PROJECTILE_DETONATION:
-                AttackHandler.getInstance().onProjectileDetonation((SyncBaseItem) syncItem);
+                AttackVisualization.getInstance().onProjectileDetonation((SyncBaseItem) syncItem);
                 break;
         }
     }

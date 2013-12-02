@@ -31,6 +31,7 @@ public class BaseAttributes implements Serializable {
     private SimpleBase simpleBase;
     private String name;
     private boolean bot = false;
+    private boolean attacksOtherBot = false;
     private boolean abandoned;
     private SimpleGuild simpleGuild;
 
@@ -59,8 +60,13 @@ public class BaseAttributes implements Serializable {
         return bot;
     }
 
-    public void setBot(boolean bot) {
+    public boolean isAttacksOtherBot() {
+        return attacksOtherBot;
+    }
+
+    public void setBot(boolean bot, boolean attacksOtherBot) {
         this.bot = bot;
+        this.attacksOtherBot = attacksOtherBot;
     }
 
     public SimpleBase getSimpleBase() {

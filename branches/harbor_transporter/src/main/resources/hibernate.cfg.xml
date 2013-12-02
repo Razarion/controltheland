@@ -68,10 +68,15 @@
         <mapping class="com.btxtech.game.services.bot.DbBotConfig"/>
         <mapping class="com.btxtech.game.services.bot.DbBotEnragementStateConfig"/>
         <mapping class="com.btxtech.game.services.bot.DbBotItemConfig"/>
+        <!-- Tutorial -->
         <mapping class="com.btxtech.game.services.tutorial.DbTutorialConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.DbTaskConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbConditionTaskConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbAutomatedBattleTaskConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbAutomatedScrollTaskConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbScrollToEventTaskConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskAllowedItem"/>
         <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbTaskBotToStop"/>
         <!-- Condition -->
         <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbConditionConfig"/>

@@ -65,7 +65,7 @@ public class SyncItemArea {
         setPositionNoCheck(position);
         checkPosition();
         if (syncItem != null) {
-            syncItem.fireItemChanged(SyncItemListener.Change.POSITION);
+            syncItem.fireItemChanged(SyncItemListener.Change.POSITION, null);
         }
     }
 
@@ -85,7 +85,7 @@ public class SyncItemArea {
         position = decimalPoint;
         checkPosition();
         if (syncItem != null) {
-            syncItem.fireItemChanged(SyncItemListener.Change.POSITION);
+            syncItem.fireItemChanged(SyncItemListener.Change.POSITION, null);
         }
     }
 
@@ -101,7 +101,7 @@ public class SyncItemArea {
     public void setAngel(double angel) {
         this.angel = angel;
         if (syncItem != null) {
-            syncItem.fireItemChanged(SyncItemListener.Change.ANGEL);
+            syncItem.fireItemChanged(SyncItemListener.Change.ANGEL, null);
         }
     }
 
@@ -133,7 +133,7 @@ public class SyncItemArea {
         if (angel != this.angel) {
             this.angel = angel;
             if (syncItem != null) {
-                syncItem.fireItemChanged(SyncItemListener.Change.ANGEL);
+                syncItem.fireItemChanged(SyncItemListener.Change.ANGEL, null);
             }
         }
     }

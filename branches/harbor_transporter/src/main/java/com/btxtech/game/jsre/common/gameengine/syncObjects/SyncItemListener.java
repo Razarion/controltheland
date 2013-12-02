@@ -22,7 +22,7 @@ public interface SyncItemListener {
     public enum Change {
         ANGEL,
         POSITION,
-        ON_FIRING,
+        PROJECTILE_LAUNCHED,
         HEALTH,
         FACTORY_PROGRESS,
         RESOURCE,
@@ -36,5 +36,5 @@ public interface SyncItemListener {
         UNDER_ATTACK
     }
 
-    void onItemChanged(Change change, SyncItem syncItem);
+    void onItemChanged(Change change, SyncItem syncItem, Object additionalCustomInfo);
 }

@@ -621,7 +621,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public RealGameInfo createBase(String startUuid, Index position) throws PositionInBotException, NoConnectionException{
+    public RealGameInfo createBase(String startUuid, Index position) throws PositionInBotException, NoConnectionException {
         try {
             UserState userState = userService.getUserState();
             if (userState.getBase() != null) {

@@ -20,10 +20,11 @@ import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RegionPanel;
-import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.TimeSelector;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -58,6 +59,8 @@ public class BotEditor extends MgmtWebPage {
                 dbBotConfigRuServiceHelper.updateDbEntity(form.getModelObject());
             }
         });
+        form.add(new CheckBox("attacksOtherBots"));
+
 
         new CrudListChildTableHelper<DbBotConfig, DbBotEnragementStateConfig>("enragement", null, "createEnragementConfig", true, form, true) {
             @Override
