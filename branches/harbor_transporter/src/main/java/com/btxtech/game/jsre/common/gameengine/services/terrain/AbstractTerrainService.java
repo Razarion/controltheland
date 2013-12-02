@@ -39,6 +39,8 @@ public interface AbstractTerrainService {
 
     boolean isFree(Index middlePoint, ItemType itemType);
 
+    boolean hasSurfaceTypeInRegion(SurfaceType surfaceType, Rectangle absRectangle);
+
     SurfaceType getSurfaceType(Index tileIndex);
 
     SurfaceType getSurfaceTypeAbsolute(Index absoluteIndex);

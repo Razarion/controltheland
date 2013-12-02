@@ -191,6 +191,17 @@ public class CockpitMode implements SelectionListener {
         this.toBeBuildPlacerListener = toBeBuildPlacerListener;
     }
 
+    public void onEscape() {
+        CockpitMode.getInstance().setToBeBuildPlacer(null);
+        if (hasInventoryItemPlacer()) {
+            CockpitMode.getInstance().setInventoryItemPlacer(null);
+        } else if (hasToBeBuildPlacer()) {
+            CockpitMode.getInstance().setToBeBuildPlacer(null);
+        } else if(mode == Mode.UNLOAD) {
+            setMode(null);
+        }
+    }
+
     private void clearPossibilities() {
         isMovePossible = false;
         isLoadPossible = false;

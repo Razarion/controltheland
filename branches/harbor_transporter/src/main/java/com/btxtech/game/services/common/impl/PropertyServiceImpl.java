@@ -49,7 +49,7 @@ public class PropertyServiceImpl implements PropertyService {
         try {
             return getIntProperty(propertyServiceEnum);
         } catch (NoSuchPropertyException | WrongPropertyTypeException e) {
-            ExceptionHandler.handleException(e, "No property defined for: " + propertyServiceEnum + " using default value: " + propertyServiceEnum.getFallbackValue());
+            // ExceptionHandler.handleException(e, "No property defined for: " + propertyServiceEnum + " using default value: " + propertyServiceEnum.getFallbackValue());
             return (int) propertyServiceEnum.getFallbackValue();
         }
     }

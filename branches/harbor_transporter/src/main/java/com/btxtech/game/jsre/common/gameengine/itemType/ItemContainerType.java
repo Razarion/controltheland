@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -23,6 +25,7 @@ import java.util.Collection;
  */
 public class ItemContainerType implements Serializable {
     private Collection<Integer> ableToContain;
+    private SurfaceType operationSurfaceType;
     private int maxCount;
     private int range;
 
@@ -32,8 +35,9 @@ public class ItemContainerType implements Serializable {
     public ItemContainerType() {
     }
 
-    public ItemContainerType(Collection<Integer> ableToContain, int maxCount, int range) {
+    public ItemContainerType(Collection<Integer> ableToContain, SurfaceType operationSurfaceType, int maxCount, int range) {
         this.ableToContain = ableToContain;
+        this.operationSurfaceType = operationSurfaceType;
         this.maxCount = maxCount;
         this.range = range;
     }
@@ -50,9 +54,13 @@ public class ItemContainerType implements Serializable {
         return ableToContain.contains(itemTypeId);
     }
 
+    public SurfaceType getOperationSurfaceType() {
+        return operationSurfaceType;
+    }
+
     public boolean isAbleToContainAtLeastOne(Collection<Integer> ids) {
         for (Integer id : ids) {
-            if(ableToContain.contains(id)) {
+            if (ableToContain.contains(id)) {
                 return true;
             }
         }
@@ -61,6 +69,7 @@ public class ItemContainerType implements Serializable {
 
     public void changeTo(ItemContainerType itemContainerType) {
         ableToContain = itemContainerType.ableToContain;
+        operationSurfaceType = itemContainerType.operationSurfaceType;
         maxCount = itemContainerType.maxCount;
         range = itemContainerType.range;
     }

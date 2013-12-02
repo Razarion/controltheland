@@ -23,8 +23,7 @@ public abstract class GroupCommandHelperPosition {
                 } else if (findPathIfNotInRange && syncBaseItem.hasSyncMovable()) {
                     AttackFormationItem format = ClientCollisionService.getInstance().getDestinationHint(syncBaseItem,
                             getRange(syncBaseItem),
-                            targetBaseItemType.getBoundingBox().createSyntheticSyncItemArea(targetPosition),
-                            targetBaseItemType.getTerrainType());
+                            targetBaseItemType.getBoundingBox().createSyntheticSyncItemArea(targetPosition));
                     if (format.isInRange()) {
                         executeCommand(syncBaseItem, targetBaseItemType, targetPosition, format.getDestinationHint(), format.getDestinationAngel());
                     } else {

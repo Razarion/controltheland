@@ -126,7 +126,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     }
 
     @Override
-    public AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType) {
+    public AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target) {
         List<AttackFormationItem> formationItems = new ArrayList<AttackFormationItem>();
         formationItems.add(new AttackFormationItem(syncBaseItem, range));
         setupDestinationHints(target, formationItems);

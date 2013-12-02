@@ -26,6 +26,7 @@ public enum SurfaceType {
     WATER,
     LAND,
     LAND_COAST,
+    @Deprecated
     WATER_COAST;
 
     public static String toString(Collection<SurfaceType> surfaceTypes) {

@@ -122,6 +122,21 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         return surfaceTypes;
     }
 
+    @Override
+    public boolean hasSurfaceTypeInRegion(SurfaceType surfaceType, Rectangle absRectangle) {
+        Rectangle tileRect = TerrainUtil.convertToTilePositionRoundUp(absRectangle);
+
+        for (int x = tileRect.getX(); x < tileRect.getEndX(); x++) {
+            for (int y = tileRect.getY(); y < tileRect.getEndY(); y++) {
+                if(surfaceType == getSurfaceType(new Index(x, y))){
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
     private boolean doesSurfaceAdjoinGivenRegion(Rectangle absRectangle, final SurfaceType adjoinSurface) {
         Rectangle tileRect = TerrainUtil.convertToTilePositionRoundUp(absRectangle);
         tileRect.growNorth(1);
@@ -160,13 +175,13 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         if (y + radius * 2 > terrainSettings.getPlayFieldYSize()) {
             return false;
         }
+        if (allowedSurfaces == null) {
+            return true;
+        }
         Rectangle rectangle = new Rectangle(x, y, radius * 2, radius * 2);
         Collection<SurfaceType> surfaceTypes = getSurfaceTypeTilesInRegion(rectangle);
         if (surfaceTypes.isEmpty()) {
             return false;
-        }
-        if (allowedSurfaces == null) {
-            return true;
         }
         if (!allowedSurfaces.containsAll(surfaceTypes)) {
             return false;

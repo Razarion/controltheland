@@ -13,12 +13,15 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -47,6 +50,8 @@ public class DbItemContainerType implements Serializable {
     private Set<DbBaseItemType> ableToContain;
     @Column(name = "theRange")
     private int range;
+    @Enumerated(value = EnumType.STRING)
+    private SurfaceType operationSurfaceType;
 
     public int getMaxCount() {
         return maxCount;
@@ -74,6 +79,14 @@ public class DbItemContainerType implements Serializable {
 
     public ContentProvider<DbBaseItemType> getAbleToContainCrud() {
         return new ReadonlyCollectionContentProvider<DbBaseItemType>(ableToContain);
+    }
+
+    public SurfaceType getOperationSurfaceType() {
+        return operationSurfaceType;
+    }
+
+    public void setOperationSurfaceType(SurfaceType operationSurfaceType) {
+        this.operationSurfaceType = operationSurfaceType;
     }
 
     @Override
