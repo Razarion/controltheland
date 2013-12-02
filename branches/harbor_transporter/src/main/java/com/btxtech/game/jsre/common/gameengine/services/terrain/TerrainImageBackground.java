@@ -33,10 +33,10 @@ public class TerrainImageBackground implements Serializable {
             surfaceTypeBackground.put(SurfaceType.LAND, bgLand);
         }
         if (bgWaterCoast != null) {
-            surfaceTypeBackground.put(SurfaceType.WATER_COAST, bgWaterCoast);
+            surfaceTypeBackground.put(SurfaceType.COAST, bgWaterCoast);
         }
         if (bgLandCoast != null) {
-            surfaceTypeBackground.put(SurfaceType.LAND_COAST, bgLandCoast);
+            surfaceTypeBackground.put(SurfaceType.COAST, bgLandCoast);
         }
         groupBgMap.put(groupId, surfaceTypeBackground);
     }

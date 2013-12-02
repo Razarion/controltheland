@@ -1263,7 +1263,7 @@ abstract public class AbstractServiceTest {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_START_BUILDER_ITEM);
-        dbBaseItemType.setTerrainType(TerrainType.LAND_LAND_COAST_WATER_COAST);
+        dbBaseItemType.setTerrainType(TerrainType.LAND_COAST);
         dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
@@ -1538,7 +1538,7 @@ abstract public class AbstractServiceTest {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         setupImages(dbBaseItemType, 1);
         dbBaseItemType.setName(TEST_WATER_CONTAINER_ITEM);
-        dbBaseItemType.setTerrainType(TerrainType.WATER_WATER_COAST_LAND_COAST);
+        dbBaseItemType.setTerrainType(TerrainType.WATER_COAST);
         dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
@@ -1546,7 +1546,7 @@ abstract public class AbstractServiceTest {
         DbItemContainerType dbItemContainerType = new DbItemContainerType();
         dbItemContainerType.setMaxCount(2);
         dbItemContainerType.setRange(100);
-        dbItemContainerType.setOperationSurfaceType(SurfaceType.LAND_COAST);
+        dbItemContainerType.setOperationSurfaceType(SurfaceType.COAST);
         dbBaseItemType.setDbItemContainerType(dbItemContainerType);
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
@@ -1564,7 +1564,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 1);
         dbBaseItemType.setName(TEST_HARBOR_TYPE);
         dbBaseItemType.setTerrainType(TerrainType.WATER);
-        dbBaseItemType.setAdjoinSurfaceType(SurfaceType.LAND_COAST);
+        dbBaseItemType.setAdjoinSurfaceType(SurfaceType.COAST);
         dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
@@ -1892,7 +1892,7 @@ abstract public class AbstractServiceTest {
 
     protected DbTerrainSetting setupComplexRealGameTerrain2() {
         DbSurfaceImage land = createDbSurfaceImage(SurfaceType.LAND);
-        DbSurfaceImage landCoast = createDbSurfaceImage(SurfaceType.LAND_COAST);
+        DbSurfaceImage landCoast = createDbSurfaceImage(SurfaceType.COAST);
         DbSurfaceImage water = createDbSurfaceImage(SurfaceType.WATER);
 
         DbTerrainSetting dbTerrainSetting = new DbTerrainSetting();

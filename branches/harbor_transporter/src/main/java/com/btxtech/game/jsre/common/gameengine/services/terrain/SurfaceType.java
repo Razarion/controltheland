@@ -25,12 +25,10 @@ public enum SurfaceType {
     NONE,
     WATER,
     LAND,
-    LAND_COAST,
-    @Deprecated
-    WATER_COAST;
+    COAST;
 
     public static String toString(Collection<SurfaceType> surfaceTypes) {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         stringBuffer.append("[");
         for (Iterator<SurfaceType> iterator = surfaceTypes.iterator(); iterator.hasNext();) {
             SurfaceType surfaceType = iterator.next();

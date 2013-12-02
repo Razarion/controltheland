@@ -140,68 +140,68 @@ public class TestTerrainService extends AbstractServiceTest {
         Assert.assertEquals("#000000", backgrounds.get(dbTerrainImage11.getId(), SurfaceType.NONE));
         Assert.assertEquals("#000001", backgrounds.get(dbTerrainImage11.getId(), SurfaceType.WATER));
         Assert.assertEquals("#000002", backgrounds.get(dbTerrainImage11.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#000003", backgrounds.get(dbTerrainImage11.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#000004", backgrounds.get(dbTerrainImage11.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#000003", backgrounds.get(dbTerrainImage11.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#000004", backgrounds.get(dbTerrainImage11.getId(), SurfaceType.COAST));
 
         Assert.assertEquals("#000000", backgrounds.get(dbTerrainImage12.getId(), SurfaceType.NONE));
         Assert.assertEquals("#000001", backgrounds.get(dbTerrainImage12.getId(), SurfaceType.WATER));
         Assert.assertEquals("#000002", backgrounds.get(dbTerrainImage12.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#000003", backgrounds.get(dbTerrainImage12.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#000004", backgrounds.get(dbTerrainImage12.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#000003", backgrounds.get(dbTerrainImage12.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#000004", backgrounds.get(dbTerrainImage12.getId(), SurfaceType.COAST));
 
         Assert.assertEquals("#000000", backgrounds.get(dbTerrainImage13.getId(), SurfaceType.NONE));
         Assert.assertEquals("#000001", backgrounds.get(dbTerrainImage13.getId(), SurfaceType.WATER));
         Assert.assertEquals("#000002", backgrounds.get(dbTerrainImage13.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#000003", backgrounds.get(dbTerrainImage13.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#000004", backgrounds.get(dbTerrainImage13.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#000003", backgrounds.get(dbTerrainImage13.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#000004", backgrounds.get(dbTerrainImage13.getId(), SurfaceType.COAST));
 
         Assert.assertEquals("#000000", backgrounds.get(dbTerrainImage14.getId(), SurfaceType.NONE));
         Assert.assertEquals("#000001", backgrounds.get(dbTerrainImage14.getId(), SurfaceType.WATER));
         Assert.assertEquals("#000002", backgrounds.get(dbTerrainImage14.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#000003", backgrounds.get(dbTerrainImage14.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#000004", backgrounds.get(dbTerrainImage14.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#000003", backgrounds.get(dbTerrainImage14.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#000004", backgrounds.get(dbTerrainImage14.getId(), SurfaceType.COAST));
 
         Assert.assertEquals("#000000", backgrounds.get(dbTerrainImage15.getId(), SurfaceType.NONE));
         Assert.assertEquals("#000001", backgrounds.get(dbTerrainImage15.getId(), SurfaceType.WATER));
         Assert.assertEquals("#000002", backgrounds.get(dbTerrainImage15.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#000003", backgrounds.get(dbTerrainImage15.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#000004", backgrounds.get(dbTerrainImage15.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#000003", backgrounds.get(dbTerrainImage15.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#000004", backgrounds.get(dbTerrainImage15.getId(), SurfaceType.COAST));
 
         Assert.assertEquals("#000010", backgrounds.get(dbTerrainImage21.getId(), SurfaceType.NONE));
         Assert.assertEquals("#000011", backgrounds.get(dbTerrainImage21.getId(), SurfaceType.WATER));
         Assert.assertEquals("#000012", backgrounds.get(dbTerrainImage21.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#000013", backgrounds.get(dbTerrainImage21.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#000014", backgrounds.get(dbTerrainImage21.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#000013", backgrounds.get(dbTerrainImage21.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#000014", backgrounds.get(dbTerrainImage21.getId(), SurfaceType.COAST));
 
         Assert.assertEquals("#000010", backgrounds.get(dbTerrainImage22.getId(), SurfaceType.NONE));
         Assert.assertEquals("#000011", backgrounds.get(dbTerrainImage22.getId(), SurfaceType.WATER));
         Assert.assertEquals("#000012", backgrounds.get(dbTerrainImage22.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#000013", backgrounds.get(dbTerrainImage22.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#000014", backgrounds.get(dbTerrainImage22.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#000013", backgrounds.get(dbTerrainImage22.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#000014", backgrounds.get(dbTerrainImage22.getId(), SurfaceType.COAST));
 
         Assert.assertEquals("#000010", backgrounds.get(dbTerrainImage23.getId(), SurfaceType.NONE));
         Assert.assertEquals("#000011", backgrounds.get(dbTerrainImage23.getId(), SurfaceType.WATER));
         Assert.assertEquals("#000012", backgrounds.get(dbTerrainImage23.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#000013", backgrounds.get(dbTerrainImage23.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#000014", backgrounds.get(dbTerrainImage23.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#000013", backgrounds.get(dbTerrainImage23.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#000014", backgrounds.get(dbTerrainImage23.getId(), SurfaceType.COAST));
 
         Assert.assertEquals("#000020", backgrounds.get(dbTerrainImage31.getId(), SurfaceType.NONE));
         Assert.assertEquals("#000021", backgrounds.get(dbTerrainImage31.getId(), SurfaceType.WATER));
         Assert.assertEquals("#000022", backgrounds.get(dbTerrainImage31.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#000023", backgrounds.get(dbTerrainImage31.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#FFFFFF", backgrounds.get(dbTerrainImage31.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#000023", backgrounds.get(dbTerrainImage31.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#FFFFFF", backgrounds.get(dbTerrainImage31.getId(), SurfaceType.COAST));
 
         Assert.assertEquals("#000020", backgrounds.get(dbTerrainImage32.getId(), SurfaceType.NONE));
         Assert.assertEquals("#000021", backgrounds.get(dbTerrainImage32.getId(), SurfaceType.WATER));
         Assert.assertEquals("#000022", backgrounds.get(dbTerrainImage32.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#000023", backgrounds.get(dbTerrainImage32.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#FFFFFF", backgrounds.get(dbTerrainImage32.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#000023", backgrounds.get(dbTerrainImage32.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#FFFFFF", backgrounds.get(dbTerrainImage32.getId(), SurfaceType.COAST));
 
         Assert.assertEquals("#000020", backgrounds.get(dbTerrainImage33.getId(), SurfaceType.NONE));
         Assert.assertEquals("#000021", backgrounds.get(dbTerrainImage33.getId(), SurfaceType.WATER));
         Assert.assertEquals("#000022", backgrounds.get(dbTerrainImage33.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#000023", backgrounds.get(dbTerrainImage33.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#FFFFFF", backgrounds.get(dbTerrainImage33.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#000023", backgrounds.get(dbTerrainImage33.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#FFFFFF", backgrounds.get(dbTerrainImage33.getId(), SurfaceType.COAST));
     }
 
     @Test
@@ -259,7 +259,7 @@ public class TestTerrainService extends AbstractServiceTest {
         dbWaterSurfaceImage.setSurfaceType(SurfaceType.WATER);
         terrainImageService.getDbSurfaceImageCrudServiceHelper().updateDbChild(dbWaterSurfaceImage);
         DbSurfaceImage dbCostSurfaceImage = terrainImageService.getDbSurfaceImageCrudServiceHelper().createDbChild();
-        dbCostSurfaceImage.setSurfaceType(SurfaceType.LAND_COAST);
+        dbCostSurfaceImage.setSurfaceType(SurfaceType.COAST);
         terrainImageService.getDbSurfaceImageCrudServiceHelper().updateDbChild(dbCostSurfaceImage);
         terrainImageService.activate();
         // Setup surface ------------------
@@ -279,7 +279,7 @@ public class TestTerrainService extends AbstractServiceTest {
         setupImages(dbHarborItemTypeAdjoin, 1);
         dbHarborItemTypeAdjoin.setName("Harbor Adjoin");
         dbHarborItemTypeAdjoin.setTerrainType(TerrainType.WATER);
-        dbHarborItemTypeAdjoin.setAdjoinSurfaceType(SurfaceType.LAND_COAST);
+        dbHarborItemTypeAdjoin.setAdjoinSurfaceType(SurfaceType.COAST);
         dbHarborItemTypeAdjoin.setBounding(new BoundingBox(80, ANGELS_1));
         dbHarborItemTypeAdjoin.setHealth(10);
         dbHarborItemTypeAdjoin.setBuildup(10);
