@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -20,10 +21,11 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
 
     public SendFactorizeCommandTipTask(int itemTypeToFactorized) {
         this.itemTypeToFactorized = itemTypeToFactorized;
+        activateConversionOnMouseMove();
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         ActionHandler.getInstance().setCommandListener(this);
         SelectionHandler.getInstance().addSelectionListener(this);
     }
@@ -34,7 +36,7 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         SelectionHandler.getInstance().removeSelectionListener(this);
         ActionHandler.getInstance().setCommandListener(null);
     }
@@ -42,6 +44,11 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
     @Override
     public GameTipVisualization createInGameTip() {
         return new ItemCockpitGameOverlayTipVisualization(itemTypeToFactorized);
+    }
+
+    @Override
+    public String getTaskText() {
+        return ClientI18nHelper.CONSTANTS.trainingTipFactorizeCommand(getItemTypeName(itemTypeToFactorized));
     }
 
     @Override

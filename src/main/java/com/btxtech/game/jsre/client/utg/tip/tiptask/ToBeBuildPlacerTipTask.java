@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -24,10 +25,11 @@ public class ToBeBuildPlacerTipTask extends AbstractTipTask implements CockpitMo
 
     public ToBeBuildPlacerTipTask(int itemTypeToBePlaced) {
         this.itemTypeToBePlaced = itemTypeToBePlaced;
+        activateConversionOnMouseMove();
     }
 
     @Override
-    public void start() {
+    public void internalStart() {
         CockpitMode.getInstance().setToBeBuildPlacerListener(this);
         SelectionHandler.getInstance().addSelectionListener(this);
     }
@@ -36,7 +38,7 @@ public class ToBeBuildPlacerTipTask extends AbstractTipTask implements CockpitMo
     public boolean isFulfilled() {
         Collection<SyncBaseItem> existingItems = ItemContainer.getInstance().getItems4BaseAndType(ClientBase.getInstance().getSimpleBase(), itemTypeToBePlaced);
         for (SyncBaseItem existingItem : existingItems) {
-            if (!existingItem.isReady() & SelectionHandler.getInstance().atLeastOneItemTypeAllowed2FinalizeBuild(existingItem)) {
+            if (!existingItem.isReady() && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2FinalizeBuild(existingItem)) {
                 return true;
             }
         }
@@ -45,7 +47,7 @@ public class ToBeBuildPlacerTipTask extends AbstractTipTask implements CockpitMo
     }
 
     @Override
-    public void cleanup() {
+    public void internalCleanup() {
         CockpitMode.getInstance().setToBeBuildPlacerListener(null);
         SelectionHandler.getInstance().removeSelectionListener(this);
     }
@@ -60,6 +62,11 @@ public class ToBeBuildPlacerTipTask extends AbstractTipTask implements CockpitMo
         if (toBeBuildPlacer != null && toBeBuildPlacer.getItemTypeToBuilt().getId() == itemTypeToBePlaced) {
             onSucceed();
         }
+    }
+
+    @Override
+    public String getTaskText() {
+        return ClientI18nHelper.CONSTANTS.trainingTipToBeBuiltPlacer(getItemTypeName(itemTypeToBePlaced));
     }
 
     @Override

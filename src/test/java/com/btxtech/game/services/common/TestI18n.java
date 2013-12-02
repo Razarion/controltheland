@@ -6,7 +6,7 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.common.db.DbI18nString;
-import com.btxtech.game.services.tutorial.DbTaskConfig;
+import com.btxtech.game.services.tutorial.DbConditionTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.SecurityRoles;
@@ -46,7 +46,7 @@ public class TestI18n extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
-        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
+        DbConditionTaskConfig dbTaskConfig = (DbConditionTaskConfig)dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild(DbConditionTaskConfig.class);
         dbTaskConfig.getI18nTitle().putString("Quest");
         dbTaskConfig.getI18nTitle().putString(Locale.GERMAN, "Aufgabe");
         tutorialService.getDbTutorialCrudRootServiceHelper().updateDbChild(dbTutorialConfig);
@@ -57,7 +57,7 @@ public class TestI18n extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertFalse(HibernateUtil.loadAll(getSessionFactory(), DbI18nString.class).isEmpty());
         dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(dbTutorialConfig.getId());
-        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
+        dbTaskConfig = (DbConditionTaskConfig)dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
         Assert.assertEquals("Quest", dbTaskConfig.getI18nTitle().getString());
         Assert.assertEquals("Aufgabe", dbTaskConfig.getI18nTitle().getString(Locale.GERMAN));
         endHttpRequestAndOpenSessionInViewFilter();
@@ -66,7 +66,7 @@ public class TestI18n extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(dbTutorialConfig.getId());
-        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
+        dbTaskConfig = (DbConditionTaskConfig)dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
         dbTaskConfig.getI18nTitle().putString("Quest1");
         dbTaskConfig.getI18nTitle().putString(Locale.GERMAN, "Aufgabe1");
         tutorialService.getDbTutorialCrudRootServiceHelper().updateDbChild(dbTutorialConfig);
@@ -77,7 +77,7 @@ public class TestI18n extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertFalse(HibernateUtil.loadAll(getSessionFactory(), DbI18nString.class).isEmpty());
         dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(dbTutorialConfig.getId());
-        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
+        dbTaskConfig = (DbConditionTaskConfig)dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
         Assert.assertEquals("Quest1", dbTaskConfig.getI18nTitle().getString());
         Assert.assertEquals("Aufgabe1", dbTaskConfig.getI18nTitle().getString(Locale.GERMAN));
         endHttpRequestAndOpenSessionInViewFilter();
@@ -104,7 +104,7 @@ public class TestI18n extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
-        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
+        DbConditionTaskConfig dbTaskConfig = (DbConditionTaskConfig)dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild(DbConditionTaskConfig.class);
         dbTaskConfig.getI18nTitle().putString("Quest");
         tutorialService.getDbTutorialCrudRootServiceHelper().updateDbChild(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -114,7 +114,7 @@ public class TestI18n extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertFalse(HibernateUtil.loadAll(getSessionFactory(), DbI18nString.class).isEmpty());
         dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(dbTutorialConfig.getId());
-        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
+        dbTaskConfig = (DbConditionTaskConfig)dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
         Assert.assertEquals("Quest", dbTaskConfig.getI18nTitle().getString(Locale.GERMAN));
         Assert.assertEquals("Quest", dbTaskConfig.getI18nTitle().getString(Locale.ENGLISH));
         Assert.assertEquals("Quest", dbTaskConfig.getI18nTitle().getString());
@@ -129,7 +129,7 @@ public class TestI18n extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
-        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
+        DbConditionTaskConfig dbTaskConfig = (DbConditionTaskConfig)dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild(DbConditionTaskConfig.class);
         dbTaskConfig.getI18nTitle().putString(Locale.ENGLISH, "Quest");
         tutorialService.getDbTutorialCrudRootServiceHelper().updateDbChild(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -139,7 +139,7 @@ public class TestI18n extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertFalse(HibernateUtil.loadAll(getSessionFactory(), DbI18nString.class).isEmpty());
         dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(dbTutorialConfig.getId());
-        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
+        dbTaskConfig = (DbConditionTaskConfig)dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
         Assert.assertEquals("Quest", dbTaskConfig.getI18nTitle().getString(Locale.GERMAN));
         Assert.assertEquals("Quest", dbTaskConfig.getI18nTitle().getString(Locale.ENGLISH));
         Assert.assertEquals("Quest", dbTaskConfig.getI18nTitle().getString());

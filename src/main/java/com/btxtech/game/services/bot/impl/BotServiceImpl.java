@@ -49,8 +49,7 @@ public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
     @Override
     public void activate(DbPlanet dbPlanet) {
         killAllBots();
-        fillBotConfigs(dbPlanet);
-        startAllBots();
+        startBots(generateBotConfigs(dbPlanet));
     }
 
     @Override
@@ -68,7 +67,7 @@ public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
         activate(dbPlanet);
     }
 
-    private void fillBotConfigs(DbPlanet dbPlanet) {
+    private Collection<BotConfig> generateBotConfigs(DbPlanet dbPlanet) {
         Collection<BotConfig> realGameBotConfigs = new ArrayList<>();
         for (DbBotConfig botConfig : dbPlanet.getBotCrud().readDbChildren()) {
             try {
@@ -77,7 +76,7 @@ public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
                 log.error("", e);
             }
         }
-        setBotConfigs(realGameBotConfigs);
+        return realGameBotConfigs;
     }
 
     @Override

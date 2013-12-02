@@ -66,7 +66,7 @@ public class SyncLauncher extends SyncBaseAbility {
                 getPlanetServices().getBaseService().withdrawalMoney(buildFactor * (double) getProjectileItemType().getPrice(), getSyncBaseItem().getBase());
             }
             buildup += buildFactor;
-            getSyncBaseItem().fireItemChanged(SyncItemListener.Change.LAUNCHER_PROGRESS);
+            getSyncBaseItem().fireItemChanged(SyncItemListener.Change.LAUNCHER_PROGRESS, null);
             return buildup < 1.0;
         } catch (InsufficientFundsException e) {
             return true;
@@ -113,7 +113,7 @@ public class SyncLauncher extends SyncBaseAbility {
         if (projectile != null) {
             getSyncItemArea().turnTo(command.getTarget());
             buildup = 0;
-            getSyncBaseItem().fireItemChanged(SyncItemListener.Change.LAUNCHER_PROGRESS);
+            getSyncBaseItem().fireItemChanged(SyncItemListener.Change.LAUNCHER_PROGRESS, null);
             projectile.setTarget(command.getTarget());
             getPlanetServices().getActionService().syncItemActivated(projectile);
             getPlanetServices().getConnectionService().sendSyncInfo(projectile);

@@ -55,7 +55,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, null, "Bot", null, null, null, null);
+        BotConfig botConfig = new BotConfig(1, false, 10, botEnragementStateConfigs, null, "Bot", null, null, null, null);
 
         EasyMock.replay(mockListener);
 
@@ -84,7 +84,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, null, false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, null, "TestBot", null, null, null, null);
+        BotConfig botConfig = new BotConfig(1, false, 10, botEnragementStateConfigs, null, "TestBot", null, null, null, null);
 
         EasyMock.replay(mockListener);
 
@@ -123,7 +123,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, null, "Bot2", null, null, null, null);
+        BotConfig botConfig = new BotConfig(1, false, 10, botEnragementStateConfigs, null, "Bot2", null, null, null, null);
 
         EasyMock.replay(mockListener);
 
@@ -156,7 +156,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, null, "Bot2", null, null, null, null);
+        BotConfig botConfig = new BotConfig(1, false, 10, botEnragementStateConfigs, null, "Bot2", null, null, null, null);
 
         EasyMock.replay(mockListener);
 
@@ -195,7 +195,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 4, false, null, false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, null, "Bot2", null, null, null, null);
+        BotConfig botConfig = new BotConfig(1, false, 10, botEnragementStateConfigs, null, "Bot2", null, null, null, null);
 
         EasyMock.replay(mockListener);
 
@@ -250,7 +250,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 1, true, createRegion(new Rectangle(0, 0, 1000, 1000), 1), false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot2", null, null, null, null);
+        BotConfig botConfig = new BotConfig(1, false, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot2", null, null, null, null);
 
         EasyMock.replay(mockListener);
 
@@ -283,7 +283,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, true, createRegion(new Rectangle(0, 0, 1000, 1000), 1), false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot4", 100L, 200L, 200L, 300L);
+        BotConfig botConfig = new BotConfig(1, false, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot4", 100L, 200L, 200L, 300L);
 
         EasyMock.replay(mockListener);
 
@@ -313,7 +313,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 5, true, createRegion(new Rectangle(0, 0, 1000, 1000), 1), false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot4", 500L, 500L, 500L, 500L);
+        BotConfig botConfig = new BotConfig(1, false, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot4", 500L, 500L, 500L, 500L);
 
         EasyMock.replay(mockListener);
 
@@ -345,7 +345,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, true, createRegion(new Rectangle(0, 0, 1000, 1000), 1), false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot4", 30L, 50L, 100L, 120L);
+        BotConfig botConfig = new BotConfig(1, false, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot4", 30L, 50L, 100L, 120L);
 
         EasyMock.replay(mockListener);
 
@@ -382,7 +382,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, true, createRegion(new Rectangle(0, 0, 1000, 1000), 1), false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot4", 80L, 100L, 50L, 60L);
+        BotConfig botConfig = new BotConfig(1, false, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot4", 80L, 100L, 50L, 60L);
 
         EasyMock.replay(mockListener);
 
@@ -466,7 +466,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 1, false, null, false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 1000, 1000), 1), "Bot2", null, null, null, null);
+        BotConfig botConfig = new BotConfig(1, false, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 1000, 1000), 1), "Bot2", null, null, null, null);
 
         BotRunner botRunner = new ServerBotRunner(botConfig, serverPlanetServices, null);
         botRunner.start();

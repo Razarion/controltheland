@@ -16,9 +16,11 @@ package com.btxtech.game.services.tutorial;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
+import com.btxtech.game.jsre.client.utg.tip.PraiseSplashPopupInfo;
+import com.btxtech.game.jsre.client.utg.tip.StorySplashPopupInfo;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+import com.btxtech.game.jsre.common.tutorial.AbstractTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
-import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
@@ -29,7 +31,7 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
@@ -38,13 +40,16 @@ import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -65,7 +70,9 @@ import java.util.Set;
  */
 @Entity(name = "TUTORIAL_TASK_CONFIG")
 @TypeDefs({@TypeDef(name = "index", typeClass = IndexUserType.class)})
-public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
+abstract public class DbAbstractTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -77,8 +84,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xScroll"), @Column(name = "yScroll")})
     private Index scroll;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "dbTaskConfig", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "dbTaskConfig", orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbTaskAllowedItem> dbTaskAllowedItems;
     @Column(name = "accountBalance")
@@ -88,13 +94,13 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Enumerated(EnumType.STRING)
     private RadarMode radarMode;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "dbTutorialConfig", insertable = false, updatable = false, nullable = false)
     private DbTutorialConfig dbTutorialConfig;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Collection<DbBotConfig> dbBotConfigs;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private DbConditionConfig conditionConfig;
+    @OneToMany(mappedBy = "dbTaskConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    private Collection<DbTaskBotToStop> dbTaskBotsToStop;
     @Enumerated(EnumType.STRING)
     private GameTipConfig.Tip tip;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -106,9 +112,15 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Type(type = "index")
     @Columns(columns = {@Column(name = "tipXTerrainPositionHint"), @Column(name = "tipYTerrainPositionHint")})
     private Index tipTerrainPositionHint;
-    @Deprecated
-    private boolean tipShowWatchQuestVisualisationCockpit;
     private boolean clearGame;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString i18nStorySplashTitle = new DbI18nString();
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString i18nStorySplashText = new DbI18nString();
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString i18nPraiseSplashTitle = new DbI18nString();
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString i18nPraiseSplashText = new DbI18nString();
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
@@ -116,6 +128,10 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     private CrudChildServiceHelper<DbTaskAllowedItem> allowedItemHelper;
     @Transient
     private CrudChildServiceHelper<DbBotConfig> botCrud;
+    @Transient
+    private CrudChildServiceHelper<DbTaskBotToStop> botToStopCrud;
+
+    protected abstract AbstractTaskConfig createTaskConfig(ServerItemTypeService serverItemTypeService, Locale locale);
 
     public Integer getId() {
         return id;
@@ -137,6 +153,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         scroll = new Index(0, 0);
         dbTaskAllowedItems = new HashSet<>();
         dbBotConfigs = new HashSet<>();
+        dbTaskBotsToStop = new HashSet<>();
         radarMode = RadarMode.NONE;
     }
 
@@ -230,16 +247,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.tipTerrainPositionHint = tipTerrainPositionHint;
     }
 
-    @Deprecated
-    public boolean isTipShowWatchQuestVisualisationCockpit() {
-        return tipShowWatchQuestVisualisationCockpit;
-    }
-
-    @Deprecated
-    public void setTipShowWatchQuestVisualisationCockpit(boolean tipShowWatchQuestVisualisationCockpit) {
-        this.tipShowWatchQuestVisualisationCockpit = tipShowWatchQuestVisualisationCockpit;
-    }
-
     public boolean isClearGame() {
         return clearGame;
     }
@@ -248,7 +255,36 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.clearGame = clearGame;
     }
 
-    public TaskConfig createTaskConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
+    public DbI18nString getI18nPraiseSplashText() {
+        return i18nPraiseSplashText;
+    }
+
+    public DbI18nString getI18nPraiseSplashTitle() {
+        return i18nPraiseSplashTitle;
+    }
+
+    public DbI18nString getI18nStorySplashText() {
+        return i18nStorySplashText;
+    }
+
+    public DbI18nString getI18nStorySplashTitle() {
+        return i18nStorySplashTitle;
+    }
+
+    public AbstractTaskConfig createAbstractTaskConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
+        AbstractTaskConfig abstractTaskConfig = createTaskConfig(serverItemTypeService, locale);
+        abstractTaskConfig.setScroll(scroll);
+        abstractTaskConfig.setHouseCount(houseCount);
+        abstractTaskConfig.setMoney(money);
+        abstractTaskConfig.setMaxMoney(maxMoney);
+        abstractTaskConfig.setName(i18nTitle.getString(locale));
+        abstractTaskConfig.setBotConfigs(convertTaskBots(serverItemTypeService));
+        abstractTaskConfig.setBotIdsToStop(convertTaskBotIdsToStop());
+        abstractTaskConfig.setRadarMode(radarMode);
+        abstractTaskConfig.setGameTipConfig(createGameTipConfig());
+        abstractTaskConfig.setClearGame(clearGame);
+        abstractTaskConfig.setStorySplashPopupInfo(createStorySplashPopupInfo(locale));
+        abstractTaskConfig.setPraiseSplashPopupInfo(createPraiseSplashPopupInfo(locale));
         ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<>();
         for (DbItemTypeAndPosition dbItemTypeAndPosition : getItemCrudServiceHelper().readDbChildren()) {
             ItemTypeAndPosition itemTypeAndPosition = dbItemTypeAndPosition.createItemTypeAndPosition();
@@ -256,6 +292,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
                 itemTypeAndPositions.add(itemTypeAndPosition);
             }
         }
+        abstractTaskConfig.setOwnItems(itemTypeAndPositions);
 
         Map<Integer, Integer> itemTypeLimitation = new HashMap<>();
         for (DbTaskAllowedItem dbTaskAllowedItem : getAllowedItemHelper().readDbChildren()) {
@@ -266,20 +303,34 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
             Integer newCount = count + dbTaskAllowedItem.getCount();
             itemTypeLimitation.put(dbTaskAllowedItem.getDbBaseItemType().getId(), newCount);
         }
+        abstractTaskConfig.setItemTypeLimitation(itemTypeLimitation);
 
+        return abstractTaskConfig;
+    }
 
-        return new TaskConfig(itemTypeAndPositions,
-                scroll,
-                conditionConfig != null ? conditionConfig.createConditionConfig(serverItemTypeService, locale) : null,
-                houseCount,
-                money,
-                maxMoney,
-                i18nTitle.getString(locale),
-                convertTaskBots(serverItemTypeService),
-                itemTypeLimitation,
-                radarMode,
-                createGameTipConfig(),
-                clearGame);
+    private StorySplashPopupInfo createStorySplashPopupInfo(Locale locale) {
+        if (i18nStorySplashTitle == null || StringUtils.isEmpty(i18nStorySplashTitle.getString(locale))) {
+            return null;
+        }
+        StorySplashPopupInfo storySplashPopupInfo = new StorySplashPopupInfo();
+        storySplashPopupInfo.setTitle(i18nStorySplashTitle.getString(locale));
+        if (i18nStorySplashText != null && !StringUtils.isEmpty(i18nStorySplashText.getString(locale))) {
+            storySplashPopupInfo.setStoryText(i18nStorySplashText.getString(locale));
+        }
+        return storySplashPopupInfo;
+    }
+
+    private PraiseSplashPopupInfo createPraiseSplashPopupInfo(Locale locale) {
+        if (i18nPraiseSplashTitle == null || StringUtils.isEmpty(i18nPraiseSplashTitle.getString(locale))) {
+            return null;
+        }
+
+        PraiseSplashPopupInfo praiseSplashPopupInfo = new PraiseSplashPopupInfo();
+        praiseSplashPopupInfo.setTitle(i18nPraiseSplashTitle.getString(locale));
+        if (i18nPraiseSplashText != null && !StringUtils.isEmpty(i18nPraiseSplashText.getString(locale))) {
+            praiseSplashPopupInfo.setPraiseText(i18nPraiseSplashText.getString(locale));
+        }
+        return praiseSplashPopupInfo;
     }
 
     private GameTipConfig createGameTipConfig() {
@@ -292,7 +343,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         gameTipConfig.setToBeBuiltId(tipToBeBuilt != null ? tipToBeBuilt.getId() : 0);
         gameTipConfig.setTerrainPositionHint(tipTerrainPositionHint);
         gameTipConfig.setResourceId(tipResource != null ? tipResource.getId() : 0);
-        gameTipConfig.setHighlightQuestVisualisationCockpit(tipShowWatchQuestVisualisationCockpit);
         return gameTipConfig;
     }
 
@@ -314,6 +364,19 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         return result;
     }
 
+    private Collection<Integer> convertTaskBotIdsToStop() {
+        if (dbTaskBotsToStop == null || dbTaskBotsToStop.isEmpty()) {
+            return null;
+        }
+        List<Integer> result = new ArrayList<>();
+        for (DbTaskBotToStop dbBotConfig : dbTaskBotsToStop) {
+            if (dbBotConfig.getDbBotConfig() != null) {
+                result.add(dbBotConfig.getDbBotConfig().getId());
+            }
+        }
+        return result;
+    }
+
     public CrudChildServiceHelper<DbTaskAllowedItem> getAllowedItemHelper() {
         if (allowedItemHelper == null) {
             allowedItemHelper = new CrudChildServiceHelper<>(dbTaskAllowedItems, DbTaskAllowedItem.class, this);
@@ -328,12 +391,11 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         return botCrud;
     }
 
-    public DbConditionConfig getConditionConfig() {
-        return conditionConfig;
-    }
-
-    public void setConditionConfig(DbConditionConfig conditionConfig) {
-        this.conditionConfig = conditionConfig;
+    public CrudChildServiceHelper<DbTaskBotToStop> getBotToStopCrud() {
+        if (botToStopCrud == null) {
+            botToStopCrud = new CrudChildServiceHelper<>(dbTaskBotsToStop, DbTaskBotToStop.class, this);
+        }
+        return botToStopCrud;
     }
 
     public DbI18nString getI18nTitle() {
@@ -343,9 +405,9 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DbTaskConfig)) return false;
+        if (!(o instanceof DbAbstractTaskConfig)) return false;
 
-        DbTaskConfig that = (DbTaskConfig) o;
+        DbAbstractTaskConfig that = (DbAbstractTaskConfig) o;
 
         return id != null && id.equals(that.id);
     }

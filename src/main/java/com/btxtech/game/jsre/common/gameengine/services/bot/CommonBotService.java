@@ -16,4 +16,6 @@ public interface CommonBotService {
     BotRunner getBotRunner(BotConfig botConfig);
 
     void onBotItemKilled(SyncBaseItem syncBaseItem, SimpleBase actor);
+
+    void killBot(int botId);
 }

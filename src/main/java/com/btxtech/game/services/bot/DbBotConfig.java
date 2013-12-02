@@ -13,30 +13,22 @@
 
 package com.btxtech.game.services.bot;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotEnragementStateConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ServerItemTypeService;
-import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
@@ -53,6 +45,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
     @Id
     @GeneratedValue
     private Integer id;
+    private boolean attacksOtherBots;
     private int actionDelay;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "dbBotConfig_id")
@@ -74,6 +67,14 @@ public class DbBotConfig implements CrudChild, CrudParent {
         return id;
     }
 
+    public boolean isAttacksOtherBots() {
+        return attacksOtherBots;
+    }
+
+    public void setAttacksOtherBots(boolean attacksOtherBots) {
+        this.attacksOtherBots = attacksOtherBots;
+    }
+
     public int getActionDelay() {
         return actionDelay;
     }
@@ -92,8 +93,12 @@ public class DbBotConfig implements CrudChild, CrudParent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DbBotConfig)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DbBotConfig)) {
+            return false;
+        }
 
         DbBotConfig dbBotConfig = (DbBotConfig) o;
 
@@ -151,6 +156,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
     public void init(UserService userService) {
         actionDelay = 3000;
         enragementStateConfigs = new ArrayList<>();
+        attacksOtherBots = false;
     }
 
     @Override
@@ -182,6 +188,6 @@ public class DbBotConfig implements CrudChild, CrudParent {
         } else {
             tmpId = System.identityHashCode(this);
         }
-        return new BotConfig(tmpId, actionDelay, botEnragementStateConfigs, realm.createRegion(), name, minInactiveMs, maxInactiveMs, minActiveMs, maxActiveMs);
+        return new BotConfig(tmpId, attacksOtherBots, actionDelay, botEnragementStateConfigs, realm.createRegion(), name, minInactiveMs, maxInactiveMs, minActiveMs, maxActiveMs);
     }
 }

@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
@@ -19,7 +18,7 @@ import java.io.Serializable;
  * Time: 13:09:38
  */
 @Entity(name = "TUTORIAL_TASK_ALLOWED_ITEMS")
-public class DbTaskAllowedItem implements CrudChild<DbTaskConfig> {
+public class DbTaskAllowedItem implements CrudChild<DbAbstractTaskConfig> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -28,8 +27,7 @@ public class DbTaskAllowedItem implements CrudChild<DbTaskConfig> {
     @Column(name = "theCount")
     private int count;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "dbTaskConfig", insertable = false, updatable = false, nullable = false)
-    private DbTaskConfig dbTaskConfig;
+    private DbAbstractTaskConfig dbTaskConfig;
 
     @Override
     public Serializable getId() {
@@ -67,12 +65,12 @@ public class DbTaskAllowedItem implements CrudChild<DbTaskConfig> {
     }
 
     @Override
-    public void setParent(DbTaskConfig dbTaskConfig) {
+    public void setParent(DbAbstractTaskConfig dbTaskConfig) {
         this.dbTaskConfig = dbTaskConfig;
     }
 
     @Override
-    public DbTaskConfig getParent() {
+    public DbAbstractTaskConfig getParent() {
         return dbTaskConfig;
     }
 

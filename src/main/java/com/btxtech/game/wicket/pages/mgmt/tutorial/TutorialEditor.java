@@ -16,20 +16,27 @@ package com.btxtech.game.wicket.pages.mgmt.tutorial;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.terrain.TerrainImageService;
-import com.btxtech.game.services.tutorial.DbTaskConfig;
+import com.btxtech.game.services.tutorial.DbAbstractTaskConfig;
+import com.btxtech.game.services.tutorial.DbAutomatedBattleTaskConfig;
+import com.btxtech.game.services.tutorial.DbAutomatedScrollTaskConfig;
+import com.btxtech.game.services.tutorial.DbConditionTaskConfig;
+import com.btxtech.game.services.tutorial.DbScrollToEventTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
-import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.TerrainPanel;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -49,7 +56,7 @@ public class TutorialEditor extends MgmtWebPage {
     public TutorialEditor(DbTutorialConfig dbTutorialConfig) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbTutorialConfig> form = new Form<>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(new RuModel<DbTutorialConfig>(dbTutorialConfig, DbTutorialConfig.class) {
+        final Form<DbTutorialConfig> form = new Form<>("tutorialForm", new CompoundPropertyModel<>(new RuModel<DbTutorialConfig>(dbTutorialConfig, DbTutorialConfig.class) {
             @Override
             protected RuServiceHelper<DbTutorialConfig> getRuServiceHelper() {
                 return ruServiceHelper;
@@ -63,16 +70,32 @@ public class TutorialEditor extends MgmtWebPage {
         form.add(new CheckBox("disableScroll"));
         form.add(new TerrainPanel("dbTerrainSetting", new TerrainLinkHelper(dbTutorialConfig)));
 
-        new CrudChildTableHelper<DbTutorialConfig, DbTaskConfig>("taskTable", null, "createTask", true, form, true) {
+        new CrudChildTableHelper<DbTutorialConfig, DbAbstractTaskConfig>("taskTable", null, "createTask", true, form, true) {
             @Override
-            protected void extendedPopulateItem(Item<DbTaskConfig> item) {
+            protected void extendedPopulateItem(final Item<DbAbstractTaskConfig> item) {
                 displayId(item);
+                item.add(new Label("type", new AbstractReadOnlyModel<String>() {
+                    @Override
+                    public String getObject() {
+                        return item.getModelObject().getClass().getSimpleName();
+                    }
+                }));
                 super.extendedPopulateItem(item);
             }
 
             @Override
-            protected void onEditSubmit(DbTaskConfig dbTaskConfig) {
-                setResponsePage(new TaskEditor(dbTaskConfig, new TerrainLinkHelper(form.getModelObject())));
+            protected void onEditSubmit(DbAbstractTaskConfig dbTaskConfig) {
+                if (dbTaskConfig instanceof DbAutomatedBattleTaskConfig) {
+                    setResponsePage(new AutomatedBattleTaskEditor((DbAutomatedBattleTaskConfig) dbTaskConfig, new TerrainLinkHelper(form.getModelObject())));
+                } else if (dbTaskConfig instanceof DbAutomatedScrollTaskConfig) {
+                    setResponsePage(new AutomatedScrollTaskEditor((DbAutomatedScrollTaskConfig) dbTaskConfig, new TerrainLinkHelper(form.getModelObject())));
+                } else if (dbTaskConfig instanceof DbConditionTaskConfig) {
+                    setResponsePage(new ConditionTaskEditor((DbConditionTaskConfig) dbTaskConfig, new TerrainLinkHelper(form.getModelObject())));
+                } else if (dbTaskConfig instanceof DbScrollToEventTaskConfig) {
+                    setResponsePage(new ScrollToEventTaskEditor((DbScrollToEventTaskConfig) dbTaskConfig, new TerrainLinkHelper(form.getModelObject())));
+                } else {
+                    throw new IllegalArgumentException("Can not find editor for: " + dbTaskConfig);
+                }
             }
 
             @Override
@@ -86,8 +109,39 @@ public class TutorialEditor extends MgmtWebPage {
             }
 
             @Override
-            protected CrudChildServiceHelper<DbTaskConfig> getCrudChildServiceHelperImpl() {
+            protected CrudChildServiceHelper<DbAbstractTaskConfig> getCrudChildServiceHelperImpl() {
                 return ((DbTutorialConfig) form.getDefaultModelObject()).getDbTaskConfigCrudChildServiceHelper();
+            }
+
+            protected void setupCreate(WebMarkupContainer markupContainer, String createId) {
+                markupContainer.add(new Button("createConditionTask") {
+                    @Override
+                    public void onSubmit() {
+                        createDbChild(DbConditionTaskConfig.class);
+                        refresh();
+                    }
+                });
+                markupContainer.add(new Button("createAutomatedBattleTask") {
+                    @Override
+                    public void onSubmit() {
+                        createDbChild(DbAutomatedBattleTaskConfig.class);
+                        refresh();
+                    }
+                });
+                markupContainer.add(new Button("createAutomatedScrollTask") {
+                    @Override
+                    public void onSubmit() {
+                        createDbChild(DbAutomatedScrollTaskConfig.class);
+                        refresh();
+                    }
+                });
+                markupContainer.add(new Button("createScrollToEvent") {
+                    @Override
+                    public void onSubmit() {
+                        createDbChild(DbScrollToEventTaskConfig.class);
+                        refresh();
+                    }
+                });
             }
         };
 
@@ -105,7 +159,5 @@ public class TutorialEditor extends MgmtWebPage {
                 setResponsePage(TutorialTable.class);
             }
         });
-
     }
-
 }

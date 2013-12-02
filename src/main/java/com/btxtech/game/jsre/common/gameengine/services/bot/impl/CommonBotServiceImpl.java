@@ -8,6 +8,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,13 +19,12 @@ import java.util.logging.Logger;
  * Time: 13:30:00
  */
 public abstract class CommonBotServiceImpl implements CommonBotService {
-    private Collection<BotConfig> botConfigs;
     final private Map<BotConfig, BotRunner> botRunners = new HashMap<BotConfig, BotRunner>();
     private Logger log = Logger.getLogger(CommonBotServiceImpl.class.getName());
 
     protected abstract BotRunner createBotRunner(BotConfig botConfig);
 
-    protected void startAllBots() {
+    public void startBots(Collection<BotConfig> botConfigs) {
         for (BotConfig botConfig : botConfigs) {
             try {
                 startBot(botConfig);
@@ -52,8 +52,18 @@ public abstract class CommonBotServiceImpl implements CommonBotService {
         botRunners.clear();
     }
 
-    public void setBotConfigs(Collection<BotConfig> botConfigs) {
-        this.botConfigs = botConfigs;
+    @Override
+    public void killBot(int botId) {
+        synchronized (botRunners) {
+            for (Iterator<Map.Entry<BotConfig, BotRunner>> iterator = botRunners.entrySet().iterator(); iterator.hasNext(); ) {
+                Map.Entry<BotConfig, BotRunner> entry = iterator.next();
+                if (entry.getKey().getId() == botId) {
+                    entry.getValue().kill();
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
     }
 
     public BotRunner getBotRunner(BotConfig botConfig) {

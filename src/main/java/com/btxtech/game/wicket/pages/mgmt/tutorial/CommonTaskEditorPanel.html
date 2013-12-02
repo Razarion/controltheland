@@ -18,11 +18,7 @@
     <title>Tutorial Editor</title>
 </head>
 <body>
-<h1>Task Config</h1>
-
-<span wicket:id="msgs"/>
-
-<form wicket:id="taskForm">
+<wicket:panel>
     <h2>General</h2>
     <table border="0">
         <tr>
@@ -53,11 +49,8 @@
             <td bgcolor="#dadada">Radar Mode</td>
             <td><select wicket:id="radarMode" size="1"></select></td>
         </tr>
-        <tr>
-            <td bgcolor="#dadada">Condition</td>
-            <td wicket:id="conditionConfig"></td>
-        </tr>        
     </table>
+
     <h2>Allowed Items</h2>
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
@@ -93,6 +86,7 @@
         </tr>
     </table>
     <input type="submit" wicket:id="createItem" value="Create">
+
     <h2>Bots</h2>
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
@@ -113,6 +107,44 @@
         </tr>
     </table>
     <input type="submit" value="Create" wicket:id="createBot"/>
+
+    <h2>Bots to stop</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Bot</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="botsToStop">
+            <td wicket:id="id"></td>
+            <td wicket:id="dbBotConfig" />
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Create" wicket:id="createBotToStop"/>
+
+    <h2>Splash</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Story Splash Title (Localized)</td>
+            <td wicket:id="i18nStorySplashTitle"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Story Splash Text (Localized)</td>
+            <td wicket:id="i18nStorySplashText"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Praise Splash Title (Localized)</td>
+            <td wicket:id="i18nPraiseSplashTitle"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Praise Splash Text (Localized)</td>
+            <td wicket:id="i18nPraiseSplashText"/>
+        </tr>
+    </table>
+
     <h2>Tip</h2>
     <table border="0">
         <tr>
@@ -135,16 +167,7 @@
             <td bgcolor="#dadada">Terrain Position</td>
             <td wicket:id="tipTerrainPositionHint"></td>
         </tr>
-        <tr>
-            <td bgcolor="#dadada">[Ignored]<br>Arrow to Quest Visualisation Cockpit<br>if task Tip is fulfilled</td>
-            <td><input type="checkbox" wicket:id="tipShowWatchQuestVisualisationCockpit"></td>
-        </tr>
     </table>
-    <br>
-    <br>
-    <input type="submit" wicket:id="save" value="Save">
-    <input type="submit" wicket:id="back" value="Back">
-</form>
-
+</wicket:panel>
 </body>
 </html>

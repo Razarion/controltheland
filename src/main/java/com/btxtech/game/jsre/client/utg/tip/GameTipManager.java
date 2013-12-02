@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.utg.tip;
 
+import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.AbstractTipTask;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.TipTaskContainer;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.TipTaskFactory;
@@ -60,11 +61,12 @@ public class GameTipManager {
 
     private void startTipTask() throws NoSuchItemTypeException {
         AbstractTipTask currentTipTask = tipTaskContainer.getCurrentTask();
-        if(currentTipTask.isFulfilled()) {
+        if (currentTipTask.isFulfilled()) {
             tipTaskContainer.next();
             currentTipTask = tipTaskContainer.getCurrentTask();
         }
         currentTipTask.start();
+        Simulation.getInstance().onTipTaskChanged(currentTipTask);
         startVisualization(currentTipTask.createInGameTip());
     }
 
@@ -119,5 +121,4 @@ public class GameTipManager {
         }
         gameTipVisualization = null;
     }
-
 }

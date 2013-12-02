@@ -98,11 +98,11 @@ public abstract class SyncItem {
         }
     }
 
-    public void fireItemChanged(SyncItemListener.Change change) {
+    public void fireItemChanged(SyncItemListener.Change change, Object additionalCustomInfo) {
         synchronized (syncItemListeners) {
             for (SyncItemListener syncItemListener : syncItemListeners) {
                 try {
-                    syncItemListener.onItemChanged(change, this);
+                    syncItemListener.onItemChanged(change, this, additionalCustomInfo);
                 } catch (Throwable t) {
                     ClientExceptionHandler.handleException("Unable to fire change for sync item: " + this, t);
                 }
