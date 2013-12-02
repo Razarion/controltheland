@@ -53,7 +53,7 @@ public class TestAbstractTerrainServiceImpl {
         SurfaceType[][] tileSurfaceTypes = new SurfaceType[2][2];
         tileSurfaceTypes[0][0] = SurfaceType.LAND;
         tileSurfaceTypes[0][1] = SurfaceType.WATER;
-        tileSurfaceTypes[1][0] = SurfaceType.LAND_COAST;
+        tileSurfaceTypes[1][0] = SurfaceType.COAST;
         tileSurfaceTypes[1][1] = SurfaceType.LAND;
         commonTerrainImageService.putTerrainImage(new TerrainImage(0, null, 2, 2, tileSurfaceTypes));
 
@@ -74,8 +74,8 @@ public class TestAbstractTerrainServiceImpl {
         abstractTerrainService.createTerrainTileField(terrainImagePositions, surfaceRects);
         TerrainTile[][] terrainTile = abstractTerrainService.getTerrainTileField();
 
-        assertLine(terrainTile, 0, LAND, LAND_COAST, LAND, LAND, LAND, LAND, LAND_COAST, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
-        assertLine(terrainTile, 1, WATER, LAND, LAND_COAST, LAND, LAND, WATER, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 0, LAND, COAST, LAND, LAND, LAND, LAND, COAST, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 1, WATER, LAND, COAST, LAND, LAND, WATER, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
         assertLine(terrainTile, 2, LAND, WATER, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
         assertLine(terrainTile, 3, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
         assertLine(terrainTile, 4, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);

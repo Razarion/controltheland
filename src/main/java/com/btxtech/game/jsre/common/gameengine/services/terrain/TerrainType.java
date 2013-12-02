@@ -28,9 +28,9 @@ import java.util.Map;
 public enum TerrainType {
     LAND(SurfaceType.LAND), // Tank
     WATER(SurfaceType.WATER), // Ships
-    WATER_COAST(SurfaceType.WATER_COAST), // Harbor, land-water-attacking
-    LAND_LAND_COAST_WATER_COAST(SurfaceType.LAND, SurfaceType.LAND_COAST, SurfaceType.WATER_COAST), // Harbor builder
-    WATER_WATER_COAST_LAND_COAST(SurfaceType.WATER, SurfaceType.LAND_COAST, SurfaceType.WATER_COAST);  // Water transporter
+    COAST(SurfaceType.COAST), // Harbor, land-water-attacking
+    LAND_COAST(SurfaceType.LAND, SurfaceType.COAST), // Harbor builder
+    WATER_COAST(SurfaceType.WATER, SurfaceType.COAST);  // Water transporter
     final private static Map<SurfaceType, Collection<TerrainType>> surfaceTypeCollectionMap = new HashMap<SurfaceType, Collection<TerrainType>>();
     private List<SurfaceType> surfaceTypes;
 

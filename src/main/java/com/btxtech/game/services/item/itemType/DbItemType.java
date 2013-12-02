@@ -81,6 +81,7 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemType", orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbItemTypeImage> itemTypeImages;
+    @Enumerated(value = EnumType.STRING)
     private TerrainType terrainType;
     @Enumerated(value = EnumType.STRING)
     private SurfaceType adjoinSurfaceType;

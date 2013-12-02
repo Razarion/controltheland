@@ -1,7 +1,6 @@
 package com.btxtech.game.mockservlet;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
@@ -60,8 +59,8 @@ public class MockMovableServiceTestTransporter extends MockMovableService {
         gameInfo.setSurfaceRects(surfaceRects);
         Collection<SurfaceImage> surfaceImages = new ArrayList<>();
         surfaceImages.add(new SurfaceImage(SurfaceType.LAND, 0, null, null, ""));
-        surfaceImages.add(new SurfaceImage(SurfaceType.LAND_COAST, 1, null, null, ""));
-        surfaceImages.add(new SurfaceImage(SurfaceType.WATER_COAST, 2, null, null, ""));
+        surfaceImages.add(new SurfaceImage(SurfaceType.COAST, 1, null, null, ""));
+        surfaceImages.add(new SurfaceImage(SurfaceType.COAST, 2, null, null, ""));
         surfaceImages.add(new SurfaceImage(SurfaceType.WATER, 3, null, null, ""));
         gameInfo.setSurfaceImages(surfaceImages);
         gameInfo.setTerrainImages(new ArrayList<TerrainImage>());

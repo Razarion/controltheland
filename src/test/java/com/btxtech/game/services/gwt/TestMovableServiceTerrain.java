@@ -75,10 +75,10 @@ public class TestMovableServiceTerrain extends AbstractServiceTest {
         DbTerrainImage dbTerrainImage11 = dbTerrainImageGroup1.getTerrainImageCrud().createDbChild();
         dbTerrainImage11.setTiles(1, 2);
         dbTerrainImage11.setSurfaceType(0, 0, SurfaceType.LAND);
-        dbTerrainImage11.setSurfaceType(0, 1, SurfaceType.WATER_COAST);
+        dbTerrainImage11.setSurfaceType(0, 1, SurfaceType.COAST);
         DbTerrainImage dbTerrainImage12 = dbTerrainImageGroup1.getTerrainImageCrud().createDbChild();
         dbTerrainImage12.setTiles(2, 1);
-        dbTerrainImage12.setSurfaceType(0, 0, SurfaceType.LAND_COAST);
+        dbTerrainImage12.setSurfaceType(0, 0, SurfaceType.COAST);
         dbTerrainImage12.setSurfaceType(1, 0, SurfaceType.WATER);
         terrainService.getDbTerrainImageGroupCrudServiceHelper().updateDbChild(dbTerrainImageGroup1);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -186,14 +186,14 @@ public class TestMovableServiceTerrain extends AbstractServiceTest {
         assertSurfaceImage(realGameInfo.getSurfaceImages(), dbSurfaceImage3.getId(), null, scatterSurfaceImageInfo, "back3", SurfaceType.LAND);
         // Test terrain images
         Assert.assertEquals(4, realGameInfo.getTerrainImages().size());
-        assertTerrainImage(realGameInfo.getTerrainImages(), dbTerrainImage11.getId(), dbImageSpriteMap1.getId(), 1, 2, new SurfaceType[][]{{SurfaceType.LAND, SurfaceType.WATER_COAST}});
-        assertTerrainImage(realGameInfo.getTerrainImages(), dbTerrainImage12.getId(), dbImageSpriteMap1.getId(), 2, 1, new SurfaceType[][]{{SurfaceType.LAND_COAST}, {SurfaceType.WATER}});
+        assertTerrainImage(realGameInfo.getTerrainImages(), dbTerrainImage11.getId(), dbImageSpriteMap1.getId(), 1, 2, new SurfaceType[][]{{SurfaceType.LAND, SurfaceType.COAST}});
+        assertTerrainImage(realGameInfo.getTerrainImages(), dbTerrainImage12.getId(), dbImageSpriteMap1.getId(), 2, 1, new SurfaceType[][]{{SurfaceType.COAST}, {SurfaceType.WATER}});
         assertTerrainImage(realGameInfo.getTerrainImages(), dbTerrainImage21.getId(), null, 3, 2, new SurfaceType[][]{{SurfaceType.NONE, SurfaceType.NONE}, {SurfaceType.NONE, SurfaceType.NONE}, {SurfaceType.NONE, SurfaceType.NONE}});
         assertTerrainImage(realGameInfo.getTerrainImages(), dbTerrainImage22.getId(), null, 4, 3, new SurfaceType[][]{{SurfaceType.NONE, SurfaceType.NONE, SurfaceType.NONE}, {SurfaceType.NONE, SurfaceType.NONE, SurfaceType.NONE}, {SurfaceType.NONE, SurfaceType.NONE, SurfaceType.NONE}, {SurfaceType.NONE, SurfaceType.NONE, SurfaceType.NONE}});
         // Test terrain images background. Only short tests. Is fully tested in TestTerrainService
         Assert.assertEquals("#111111", realGameInfo.getTerrainImageBackground().get(dbTerrainImage11.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#555555", realGameInfo.getTerrainImageBackground().get(dbTerrainImage11.getId(), SurfaceType.WATER_COAST));
-        Assert.assertEquals("#222222", realGameInfo.getTerrainImageBackground().get(dbTerrainImage12.getId(), SurfaceType.LAND_COAST));
+        Assert.assertEquals("#555555", realGameInfo.getTerrainImageBackground().get(dbTerrainImage11.getId(), SurfaceType.COAST));
+        Assert.assertEquals("#222222", realGameInfo.getTerrainImageBackground().get(dbTerrainImage12.getId(), SurfaceType.COAST));
         Assert.assertEquals("#444444", realGameInfo.getTerrainImageBackground().get(dbTerrainImage12.getId(), SurfaceType.WATER));
         Assert.assertEquals("#A33333", realGameInfo.getTerrainImageBackground().get(dbTerrainImage21.getId(), SurfaceType.NONE));
         Assert.assertEquals("#A33333", realGameInfo.getTerrainImageBackground().get(dbTerrainImage22.getId(), SurfaceType.NONE));
