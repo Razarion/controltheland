@@ -97,8 +97,7 @@ public class IntruderHandler {
             try {
                 AttackFormationItem attackFormationItem = planetServices.getCollisionService().getDestinationHint(attacker.getSyncBaseItem(),
                         attacker.getSyncBaseItem().getBaseItemType().getWeaponType().getRange(),
-                        intruder.getSyncItemArea(),
-                        intruder.getTerrainType());
+                        intruder.getSyncItemArea());
                 if (attackFormationItem.isInRange()) {
                     attacker.attack(intruder, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel());
                     intruders.put(intruder, attacker);

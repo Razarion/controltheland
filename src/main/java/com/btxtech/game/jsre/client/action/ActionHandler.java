@@ -336,7 +336,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
 
             @Override
             protected void executeCommand(SyncBaseItem syncBaseItem, SyncBaseItem container, Index destinationHint, double destinationAngel) {
-                loadContainer(container, syncBaseItem);
+                loadContainer(container, syncBaseItem, destinationHint, destinationAngel);
             }
 
             @Override
@@ -344,7 +344,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 return container.getSyncItemContainer().getRange();
             }
         };
-        commandHelperItemType.process(items, container, false);
+        commandHelperItemType.process(items, container, true);
     }
 
     public void unloadContainerFindPosition(SyncBaseItem container, Index unloadPos) {

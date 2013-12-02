@@ -32,7 +32,7 @@ public class SyncHarvester extends SyncBaseAbility {
         public Path calculateNewPath() {
             try {
                 SyncResourceItem resource = (SyncResourceItem) getPlanetServices().getItemService().getItem(target);
-                return recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea(), resource.getTerrainType());
+                return recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea());
             } catch (ItemDoesNotExistException e) {
                 stop();
                 return null;
@@ -63,7 +63,7 @@ public class SyncHarvester extends SyncBaseAbility {
             if (!isInRange(resource)) {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one.
-                    recalculateAndSetNewPath(harvesterType.getRange(), resource.getSyncItemArea(), resource.getTerrainType());
+                    recalculateAndSetNewPath(harvesterType.getRange(), resource.getSyncItemArea());
                     getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {

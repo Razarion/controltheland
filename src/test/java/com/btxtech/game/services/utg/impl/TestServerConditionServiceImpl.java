@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
@@ -349,9 +350,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendMoveCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), new Index(2000, 2000)); // Prevent container move over other unit
         sendMoveCommand(container, new Index(400, 400)); // Prevent container move over other unit
         waitForActionServiceDone();
-        sendMoveCommand(builder, new Index(220, 400));
-        waitForActionServiceDone();
-        sendContainerLoadCommand(builder, container);
+        sendContainerLoadCommand(builder, container, new Index(220, 400), MathHelper.EIGHTH_RADIANT);
         waitForActionServiceDone();
 
         sendMoveCommand(container, new Index(1100, 1100));

@@ -337,7 +337,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
             baseItemType.setSpecialType(new SpecialType(dbSpecialType.getRadarMode()));
         }
         if (dbItemContainerType != null) {
-            baseItemType.setItemContainerType(new ItemContainerType(Utils.dbBaseItemTypesToInts(dbItemContainerType.getAbleToContain()), dbItemContainerType.getMaxCount(), dbItemContainerType.getRange()));
+            baseItemType.setItemContainerType(new ItemContainerType(Utils.dbBaseItemTypesToInts(dbItemContainerType.getAbleToContain()), dbItemContainerType.getOperationSurfaceType(), dbItemContainerType.getMaxCount(), dbItemContainerType.getRange()));
         }
         if (dbHouseType != null) {
             baseItemType.setHouseType(new HouseType(dbHouseType.getSpace()));
