@@ -38,7 +38,7 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
         Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket) packets.get(0)).getType());
         Assert.assertEquals(simpleBase, ((BaseChangedPacket) packets.get(0)).getBaseAttributes().getSimpleBase());
         Assert.assertEquals(1000.0, ((AccountBalancePacket) packets.get(2)).getAccountBalance(), 0.001);
-        // TODO failed (ClassCastException): 23.11.2013
+        // TODO failed (ClassCastException): 23.11.2013, 06.12.2013
         Assert.assertEquals(new Index(1000, 1000), ((SyncItemInfo) packets.get(3)).getPosition());
         Assert.assertEquals(TEST_START_BUILDER_ITEM_ID, ((SyncItemInfo) packets.get(3)).getItemTypeId());
         Assert.assertEquals(simpleBase, ((SyncItemInfo) packets.get(3)).getBase());
