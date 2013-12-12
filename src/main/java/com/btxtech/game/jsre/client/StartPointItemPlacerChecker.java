@@ -39,7 +39,7 @@ abstract public class StartPointItemPlacerChecker {
             isItemsOk = !planetServices.getItemService().hasItemsInRectangleFast(Rectangle.generateRectangleFromMiddlePoint(absoluteMiddlePosition, baseItemType.getBoundingBox().getDiameter(), baseItemType.getBoundingBox().getDiameter()));
         }
         if (isItemsOk) {
-            isTerrainOk = planetServices.getTerrainService().isFree(absoluteMiddlePosition, baseItemType);
+            isTerrainOk = planetServices.getTerrainService().isFree(absoluteMiddlePosition, baseItemType, null, null);
         }
     }
 

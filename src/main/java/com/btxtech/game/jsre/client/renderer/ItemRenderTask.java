@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.renderer;
 
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
@@ -31,6 +32,15 @@ public class ItemRenderTask extends AbstractRenderTask {
                 continue;
             }
             SyncItemArea syncItemArea = syncItem.getSyncItemArea();
+            if (Game.isDebug()) {
+                Index relativeMiddle = syncItemArea.getPosition().sub(viewRect.getStart());
+                context2d.setGlobalAlpha(0.5);
+                context2d.setFillStyle("rgb(200, 0, 0)");
+                context2d.beginPath();
+                context2d.arc(relativeMiddle.getX(), relativeMiddle.getY(), syncItemArea.getBoundingBox().getRadius(), 0, 2 * Math.PI, false);
+                context2d.fill();
+                context2d.setGlobalAlpha(1.0);
+            }
             ItemTypeSpriteMap itemTypeSpriteMap = syncItem.getItemType().getItemTypeSpriteMap();
             Index absoluteImagePosition = syncItemArea.getTopLeftFromImagePosition();
             Index relativeImagePosition = new Index(absoluteImagePosition.getX() - viewRect.getX(), absoluteImagePosition.getY() - viewRect.getY());

@@ -35,9 +35,9 @@ public interface AbstractTerrainService {
 
     void addTerrainListener(TerrainListener terrainListener);
 
-    boolean isFree(Index middlePoint, int radius, Collection<SurfaceType> allowedSurfaces, SurfaceType adjoinSurface);
+    boolean isFree(Index middlePoint, int radius, Collection<SurfaceType> allowedSurfaces, SurfaceType adjoinSurface, TerrainType builderTerrainType, Integer maxAdjoinDistance);
 
-    boolean isFree(Index middlePoint, ItemType itemType);
+    boolean isFree(Index middlePoint, ItemType itemType, TerrainType builderTerrainType, Integer builderMaxAdjoinDistance);
 
     boolean hasSurfaceTypeInRegion(SurfaceType surfaceType, Rectangle absRectangle);
 

@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.renderer;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -41,6 +42,9 @@ public class Renderer {
 
     private Renderer() {
         gameRenderTasks.add(new TerrainRenderTask(TerrainView.getInstance().getTerrainHandler(), TerrainView.getInstance().getContext2d()));
+        if(Game.isDebug()) {
+            gameRenderTasks.add(new DebugTerrainOverlayRenderTask(TerrainView.getInstance().getTerrainHandler(), TerrainView.getInstance().getContext2d()));
+        }
         gameRenderTasks.add(new InGameTipBottomRenderTask(TerrainView.getInstance().getContext2d()));
         ItemRenderTask itemRenderTask = new ItemRenderTask(TerrainView.getInstance().getContext2d());
         gameRenderTasks.add(itemRenderTask);

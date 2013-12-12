@@ -183,7 +183,7 @@ public class SyncBuilder extends SyncBaseAbility {
         if (getGlobalServices().getUnlockService().isItemLocked(tmpToBeBuiltType, getSyncBaseItem().getBase())) {
             throw new IllegalArgumentException(this + " item is locked: " + builderCommand.getToBeBuilt());
         }
-        if (!getPlanetServices().getTerrainService().isFree(builderCommand.getPositionToBeBuilt(), tmpToBeBuiltType)) {
+        if (!getPlanetServices().getTerrainService().isFree(builderCommand.getPositionToBeBuilt(), tmpToBeBuiltType, null, null)) {
             throw new PositionTakenException(builderCommand.getPositionToBeBuilt(), builderCommand.getToBeBuilt());
         }
 

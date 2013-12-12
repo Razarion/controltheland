@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -93,7 +94,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         while (attackFormation.hasNext()) {
             AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
             SyncBaseItem syncBaseItem = attackFormationItem.getSyncBaseItem();
-            if (!getServices().getTerrainService().isFree(attackFormationItem.getDestinationHint(), syncBaseItem.getItemType())) {
+            if (!getServices().getTerrainService().isFree(attackFormationItem.getDestinationHint(), syncBaseItem.getItemType(), null, null)) {
                 continue;
             }
             if (getServices().getItemService().isSyncItemOverlapping(syncBaseItem,
@@ -168,7 +169,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
                 Index point = origin.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, distance + targetMinRange);
 
-                if (!getServices().getTerrainService().isFree(point, maxRadius, allowedSurfaces, null)) {
+                if (!getServices().getTerrainService().isFree(point, maxRadius, allowedSurfaces, null, null, null)) {
                     continue;
                 }
 
@@ -200,7 +201,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
                 continue;
             }
 
-            if (!getServices().getTerrainService().isFree(point, itemType)) {
+            if (!getServices().getTerrainService().isFree(point, itemType, null, null)) {
                 continue;
             }
             if (ignoreMovable) {
@@ -229,7 +230,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
                 continue;
             }
 
-            if (!getServices().getTerrainService().isFree(absolutePosition, itemType)) {
+            if (!getServices().getTerrainService().isFree(absolutePosition, itemType, null, null)) {
                 continue;
             }
             if (ignoreMovable) {
