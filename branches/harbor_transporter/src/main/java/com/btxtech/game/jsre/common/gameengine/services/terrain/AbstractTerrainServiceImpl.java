@@ -162,7 +162,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     }
 
     @Override
-    public boolean isFree(Index middlePoint, int radius, Collection<SurfaceType> allowedSurfaces, SurfaceType adjoinSurface) {
+    public boolean isFree(Index middlePoint, int radius, Collection<SurfaceType> allowedSurfaces, SurfaceType adjoinSurface, TerrainType builderTerrainType, Integer maxAdjoinDistance) {
         int x = middlePoint.getX() - radius;
         int y = middlePoint.getY() - radius;
 
@@ -187,18 +187,39 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
             return false;
         }
         if (adjoinSurface != null && adjoinSurface != SurfaceType.NONE) {
-            return doesSurfaceAdjoinGivenRegion(rectangle, adjoinSurface);
+            return isTerrainTypeDistanceFulfilled(builderTerrainType, maxAdjoinDistance, middlePoint, radius) && doesSurfaceAdjoinGivenRegion(rectangle, adjoinSurface);
         } else {
             return true;
         }
     }
 
+    private boolean isTerrainTypeDistanceFulfilled(TerrainType builderTerrainType, Integer maxAdjoinDistance, Index middlePoint, int radius) {
+        if(builderTerrainType == null || maxAdjoinDistance == null) {
+            return true;
+        }
+        int length = 2 * (radius + maxAdjoinDistance);
+        Rectangle absRectangle = Rectangle.generateRectangleFromMiddlePoint(middlePoint, length, length);
+        Rectangle tileRect = TerrainUtil.convertToTilePositionRoundUp(absRectangle);
+
+        for (int x = tileRect.getX(); x < tileRect.getEndX(); x++) {
+            for (int y = tileRect.getY(); y < tileRect.getEndY(); y++) {
+                if(builderTerrainType.allowSurfaceType(getSurfaceType(new Index(x, y)))){
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
     @Override
-    public boolean isFree(Index middlePoint, ItemType itemType) {
+    public boolean isFree(Index middlePoint, ItemType itemType, TerrainType builderTerrainType, Integer builderMaxAdjoinDistance) {
         return isFree(middlePoint,
                 itemType.getBoundingBox().getRadius(),
                 itemType.getTerrainType().getSurfaceTypes(),
-                itemType.getAdjoinSurfaceType());
+                itemType.getAdjoinSurfaceType(),
+                builderTerrainType,
+                builderMaxAdjoinDistance);
     }
 
     @Override

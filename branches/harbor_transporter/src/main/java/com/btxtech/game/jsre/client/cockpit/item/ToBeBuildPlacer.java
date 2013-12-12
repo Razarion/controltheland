@@ -1,6 +1,5 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
-import com.btxtech.game.jsre.client.ClientI18nConstants;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.action.ActionHandler;
@@ -10,6 +9,8 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +27,8 @@ public class ToBeBuildPlacer {
     private boolean isTerrainOk;
     private boolean isItemsOk;
     private String errorText;
+    private int maxDistance;
+    private TerrainType builderTerrainType;
     private Logger log = Logger.getLogger(ToBeBuildPlacer.class.getName());
 
     public ToBeBuildPlacer(BaseItemType itemTypeToBuilt, Group builders, Index relativeMiddlePos) {
@@ -34,6 +37,15 @@ public class ToBeBuildPlacer {
         this.relativeMiddlePos = relativeMiddlePos;
         checkPlacingForAllAllowed(TerrainView.getInstance().toAbsoluteIndex(relativeMiddlePos));
         setupErrorText();
+        maxDistance = 0;
+        for (SyncBaseItem syncBaseItem : builders.getSyncBaseItems()) {
+            if (syncBaseItem.hasSyncBuilder()) {
+                builderTerrainType = syncBaseItem.getTerrainType();
+                if (maxDistance < syncBaseItem.getSyncBuilder().getBuilderType().getRange()) {
+                    maxDistance = syncBaseItem.getSyncBuilder().getBuilderType().getRange();
+                }
+            }
+        }
     }
 
     public void onMove(int relativeX, int relativeY, int absoluteX, int absoluteY) {
@@ -77,7 +89,7 @@ public class ToBeBuildPlacer {
         isTerrainOk = false;
         isItemsOk = false;
 
-        isTerrainOk = ClientPlanetServices.getInstance().getTerrainService().isFree(absolute, itemTypeToBuilt);
+        isTerrainOk = ClientPlanetServices.getInstance().getTerrainService().isFree(absolute, itemTypeToBuilt, builderTerrainType, maxDistance);
         if (!isTerrainOk) {
             return;
         }
@@ -94,7 +106,7 @@ public class ToBeBuildPlacer {
         if (!isTerrainOk) {
             errorText = ClientI18nHelper.CONSTANTS.notPlaceHere();
         } else if (!isItemsOk) {
-            errorText =  ClientI18nHelper.CONSTANTS.notPlaceOver();
+            errorText = ClientI18nHelper.CONSTANTS.notPlaceOver();
         } else {
             errorText = null;
         }

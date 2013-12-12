@@ -109,7 +109,7 @@ public class RegionResource {
         synchronized (syncResourceItems) {
             ArrayList<SyncResourceItem> copy = new ArrayList<>(syncResourceItems);
             for (SyncResourceItem syncResourceItem : copy) {
-                if (!planetServices.getTerrainService().isFree(syncResourceItem.getSyncItemArea().getPosition(), resourceType)) {
+                if (!planetServices.getTerrainService().isFree(syncResourceItem.getSyncItemArea().getPosition(), resourceType, null, null)) {
                     planetServices.getItemService().killSyncItem(syncResourceItem, null, true, false);
                 }
             }

@@ -211,7 +211,7 @@ public class SyncItemContainer extends SyncBaseAbility {
     }
 
     private boolean allowedUnload(Index position, Id containedItem) throws ItemDoesNotExistException {
-        return getPlanetServices().getTerrainService().isFree(position, getPlanetServices().getItemService().getItem(containedItem).getItemType());
+        return getPlanetServices().getTerrainService().isFree(position, getPlanetServices().getItemService().getItem(containedItem).getItemType(), null, null);
     }
 
     private boolean isInUnloadRange(Index unloadPos) {
