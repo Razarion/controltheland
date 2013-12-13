@@ -1376,8 +1376,8 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         // Terrain Service
         ServerTerrainService mockTerrainService = EasyMock.createStrictMock(ServerTerrainService.class);
-        EasyMock.expect(mockTerrainService.isFree(new Index(1000, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID))).andReturn(false);
-        EasyMock.expect(mockTerrainService.isFree(new Index(1000, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID))).andReturn(true);
+        EasyMock.expect(mockTerrainService.isFree(new Index(1000, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), null, null)).andReturn(false);
+        EasyMock.expect(mockTerrainService.isFree(new Index(1000, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), null, null)).andReturn(true);
         serverPlanetServices.setTerrainService(mockTerrainService);
 
         // History Service
@@ -1497,9 +1497,9 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         serverPlanetServices.setServerItemService(mockServerItemService);
         // Terrain Service
         ServerTerrainService mockTerrainService = EasyMock.createStrictMock(ServerTerrainService.class);
-        EasyMock.expect(mockTerrainService.isFree(new Index(1000, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID))).andReturn(true);
-        EasyMock.expect(mockTerrainService.isFree(new Index(1200, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID))).andReturn(true);
-        EasyMock.expect(mockTerrainService.isFree(new Index(1200, 1200), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID))).andReturn(true);
+        EasyMock.expect(mockTerrainService.isFree(new Index(1000, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), null, null)).andReturn(true);
+        EasyMock.expect(mockTerrainService.isFree(new Index(1200, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), null, null)).andReturn(true);
+        EasyMock.expect(mockTerrainService.isFree(new Index(1200, 1200), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), null, null)).andReturn(true);
         serverPlanetServices.setTerrainService(mockTerrainService);
         // History Service
         HistoryService mockHistoryService = EasyMock.createStrictMock(HistoryService.class);
