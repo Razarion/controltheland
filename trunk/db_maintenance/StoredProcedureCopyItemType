@@ -27,7 +27,6 @@ DECLARE originalDemolitionClipId INTEGER;
 DECLARE newDemolitionClipId INTEGER;
 DECLARE originaldbClipId INTEGER;
 
-
 DECLARE oldMovableType_id INTEGER;
 DECLARE newMovableType_id INTEGER;
 
@@ -40,6 +39,15 @@ DECLARE originalMuzzleNumber INTEGER;
 DECLARE origWeaponTypeMuzzle_id INTEGER;
 DECLARE newWeaponTypeMuzzle_id INTEGER;
 DECLARE weaponCursorFinished INTEGER DEFAULT 0;  
+
+DECLARE oldConsumerType_id INTEGER;
+DECLARE newConsumerType_id INTEGER;
+
+DECLARE oldGeneratorType_id INTEGER;
+DECLARE newGeneratorType_id INTEGER;
+
+DECLARE newHouseType_id INTEGER;
+DECLARE oldHouseType_id INTEGER;
 
 DECLARE demolitionStepCursor CURSOR FOR SELECT id, animationDuration, animationFrames, step FROM ITEM_TYPE_DEMOLITION_STEP WHERE itemType_id = originalItemTypeId;
 DECLARE CONTINUE HANDLER FOR NOT FOUND SET demolitionStepCursorFinished = 1;
@@ -126,6 +134,30 @@ IF oldWeaponType_id IS NOT NULL THEN
     END WEAPON_BLOCK;
 	UPDATE ITEM_TYPE SET dbWeaponType_id = newWeaponType_id WHERE id = createdItemTypeId; 
 END IF; 
+
+-- dbConsumerType_id
+SELECT dbConsumerType_id INTO oldConsumerType_id FROM ITEM_TYPE WHERE id = originalItemTypeId; 
+IF oldConsumerType_id IS NOT NULL THEN
+  INSERT INTO ITEM_CONSUMER_TYPE(wattage) SELECT wattage FROM ITEM_CONSUMER_TYPE WHERE id = oldConsumerType_id;
+  SET newConsumerType_id = LAST_INSERT_ID();
+  UPDATE ITEM_TYPE SET dbConsumerType_id = oldConsumerType_id WHERE id = createdItemTypeId; 
+END IF;  
+
+-- dbGeneratorType_id
+SELECT dbGeneratorType_id INTO oldGeneratorType_id FROM ITEM_TYPE WHERE id = originalItemTypeId; 
+IF oldGeneratorType_id IS NOT NULL THEN
+  INSERT INTO ITEM_GENERATOR_TYPE(wattage) SELECT wattage FROM ITEM_GENERATOR_TYPE WHERE id = oldGeneratorType_id;
+  SET newGeneratorType_id = LAST_INSERT_ID();
+  UPDATE ITEM_TYPE SET dbGeneratorType_id = newGeneratorType_id WHERE id = createdItemTypeId; 
+END IF;  
+
+-- dbHouseType_id
+SELECT dbHouseType_id INTO oldHouseType_id FROM ITEM_TYPE WHERE id = originalItemTypeId; 
+IF oldHouseType_id IS NOT NULL THEN
+  INSERT INTO ITEM_HOUSE_TYPE(space) SELECT space FROM ITEM_HOUSE_TYPE WHERE id = oldHouseType_id;
+  SET newHouseType_id = LAST_INSERT_ID();
+  UPDATE ITEM_TYPE SET dbHouseType_id = newHouseType_id WHERE id = createdItemTypeId; 
+END IF;  
 
 -- ***************** Bounding box & images ***************** 
 -- itemTypeImages
