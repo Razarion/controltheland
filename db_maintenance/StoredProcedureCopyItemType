@@ -55,6 +55,12 @@ DECLARE oldHarvesterType_id INTEGER;
 DECLARE oldSpecialType_id INTEGER;
 DECLARE newSpecialType_id INTEGER;
 
+DECLARE oldFactoryType_id INTEGER;
+DECLARE newFactoryType_id INTEGER;
+
+DECLARE oldItemContainerType_id INTEGER;
+DECLARE newItemContainerType_id INTEGER;
+
 DECLARE demolitionStepCursor CURSOR FOR SELECT id, animationDuration, animationFrames, step FROM ITEM_TYPE_DEMOLITION_STEP WHERE itemType_id = originalItemTypeId;
 DECLARE CONTINUE HANDLER FOR NOT FOUND SET demolitionStepCursorFinished = 1;
 
@@ -180,6 +186,24 @@ IF oldSpecialType_id IS NOT NULL THEN
   SET newSpecialType_id = LAST_INSERT_ID();
   UPDATE ITEM_TYPE SET dbSpecialType_id = newSpecialType_id WHERE id = createdItemTypeId; 
 END IF;  
+
+-- dbFactoryType_id
+SELECT dbFactoryType_id INTO oldFactoryType_id FROM ITEM_TYPE WHERE id = originalItemTypeId; 
+IF oldFactoryType_id IS NOT NULL THEN
+  INSERT INTO ITEM_FACTORY_TYPE(progress) SELECT progress FROM ITEM_FACTORY_TYPE WHERE id = oldFactoryType_id;
+  SET newFactoryType_id = LAST_INSERT_ID();
+  INSERT INTO ITEM_FACTORY_TYPE_ABLE_TO_BUILD(factoryId, itemTypeId) SELECT newFactoryType_id, itemTypeId FROM ITEM_FACTORY_TYPE_ABLE_TO_BUILD WHERE factoryId = oldFactoryType_id; 
+  UPDATE ITEM_TYPE SET dbFactoryType_id = newFactoryType_id WHERE id = createdItemTypeId; 
+END IF; 
+
+-- dbItemContainerType_id
+SELECT dbItemContainerType_id INTO oldItemContainerType_id FROM ITEM_TYPE WHERE id = originalItemTypeId; 
+IF oldItemContainerType_id IS NOT NULL THEN
+  INSERT INTO ITEM_ITEM_CONTAINER_TYPE(maxCount, theRange) SELECT maxCount, theRange FROM ITEM_ITEM_CONTAINER_TYPE WHERE id = oldItemContainerType_id;
+  SET newItemContainerType_id = LAST_INSERT_ID();
+  INSERT INTO ITEM_ITEM_CONTAINER_TYPE_ABLE_TO_CONTAIN(containId, itemTypeId) SELECT newItemContainerType_id, itemTypeId FROM ITEM_ITEM_CONTAINER_TYPE_ABLE_TO_CONTAIN WHERE containId = oldItemContainerType_id; 
+  UPDATE ITEM_TYPE SET dbItemContainerType_id = newItemContainerType_id WHERE id = createdItemTypeId; 
+END IF; 
 
 -- ***************** Bounding box & images ***************** 
 -- itemTypeImages
