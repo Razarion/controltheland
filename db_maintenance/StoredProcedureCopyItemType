@@ -49,6 +49,12 @@ DECLARE newGeneratorType_id INTEGER;
 DECLARE newHouseType_id INTEGER;
 DECLARE oldHouseType_id INTEGER;
 
+DECLARE newHarvesterType_id INTEGER;
+DECLARE oldHarvesterType_id INTEGER;
+
+DECLARE oldSpecialType_id INTEGER;
+DECLARE newSpecialType_id INTEGER;
+
 DECLARE demolitionStepCursor CURSOR FOR SELECT id, animationDuration, animationFrames, step FROM ITEM_TYPE_DEMOLITION_STEP WHERE itemType_id = originalItemTypeId;
 DECLARE CONTINUE HANDLER FOR NOT FOUND SET demolitionStepCursorFinished = 1;
 
@@ -157,6 +163,22 @@ IF oldHouseType_id IS NOT NULL THEN
   INSERT INTO ITEM_HOUSE_TYPE(space) SELECT space FROM ITEM_HOUSE_TYPE WHERE id = oldHouseType_id;
   SET newHouseType_id = LAST_INSERT_ID();
   UPDATE ITEM_TYPE SET dbHouseType_id = newHouseType_id WHERE id = createdItemTypeId; 
+END IF;  
+
+-- dbHarvesterType_id
+SELECT dbHarvesterType_id INTO oldHarvesterType_id FROM ITEM_TYPE WHERE id = originalItemTypeId; 
+IF oldHarvesterType_id IS NOT NULL THEN
+  INSERT INTO ITEM_HARVESTER_TYPE(progress, theRange) SELECT progress, theRange FROM ITEM_HARVESTER_TYPE WHERE id = oldHarvesterType_id;
+  SET newHarvesterType_id = LAST_INSERT_ID();
+  UPDATE ITEM_TYPE SET dbHarvesterType_id = newHarvesterType_id WHERE id = createdItemTypeId; 
+END IF;  
+
+-- dbSpecialType_id
+SELECT dbSpecialType_id INTO oldSpecialType_id FROM ITEM_TYPE WHERE id = originalItemTypeId; 
+IF oldSpecialType_id IS NOT NULL THEN
+  INSERT INTO ITEM_SPECIAL_TYPE(radarMode) SELECT radarMode FROM ITEM_SPECIAL_TYPE WHERE id = oldSpecialType_id;
+  SET newSpecialType_id = LAST_INSERT_ID();
+  UPDATE ITEM_TYPE SET dbSpecialType_id = newSpecialType_id WHERE id = createdItemTypeId; 
 END IF;  
 
 -- ***************** Bounding box & images ***************** 
