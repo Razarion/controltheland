@@ -34,6 +34,13 @@ DECLARE newMovableType_id INTEGER;
 DECLARE oldBuilderType_id INTEGER;
 DECLARE newBuilderType_id INTEGER;
 
+DECLARE oldWeaponType_id INTEGER;
+DECLARE newWeaponType_id INTEGER;
+DECLARE originalMuzzleNumber INTEGER;
+DECLARE origWeaponTypeMuzzle_id INTEGER;
+DECLARE newWeaponTypeMuzzle_id INTEGER;
+DECLARE weaponCursorFinished INTEGER DEFAULT 0;  
+
 DECLARE demolitionStepCursor CURSOR FOR SELECT id, animationDuration, animationFrames, step FROM ITEM_TYPE_DEMOLITION_STEP WHERE itemType_id = originalItemTypeId;
 DECLARE CONTINUE HANDLER FOR NOT FOUND SET demolitionStepCursorFinished = 1;
 
@@ -90,7 +97,35 @@ IF oldBuilderType_id IS NOT NULL THEN
   SET newBuilderType_id = LAST_INSERT_ID();
   INSERT INTO ITEM_BUILDER_TYPE_ABLE_TO_BUILD(builderId, itemTypeId) SELECT newBuilderType_id, itemTypeId FROM ITEM_BUILDER_TYPE_ABLE_TO_BUILD WHERE builderId = oldBuilderType_id; 
   UPDATE ITEM_TYPE SET dbBuilderType_id = newBuilderType_id WHERE id = createdItemTypeId; 
-END IF;  
+END IF; 
+
+-- item_weapon_type
+SELECT dbWeaponType_id INTO oldWeaponType_id FROM ITEM_TYPE WHERE id = originalItemTypeId; 
+IF oldWeaponType_id IS NOT NULL THEN
+	INSERT INTO ITEM_WEAPON_TYPE(damage, theRange, reloadTime, projectileSpeed, muzzleFlashClip_id, projectileClip_id, projectileDetonationClip_id) 
+		SELECT damage, theRange, reloadTime, projectileSpeed, muzzleFlashClip_id, projectileClip_id, projectileDetonationClip_id FROM ITEM_WEAPON_TYPE WHERE id = oldWeaponType_id;
+	SET newWeaponType_id = LAST_INSERT_ID();
+	INSERT INTO ITEM_WEAPON_TYPE_ALLOWED_ITEM_TYPE(weaponItemTypeId, allowedItemTypeId) 
+		SELECT newWeaponType_id, allowedItemTypeId FROM ITEM_WEAPON_TYPE_ALLOWED_ITEM_TYPE WHERE weaponItemTypeId = oldWeaponType_id; 
+  
+    WEAPON_BLOCK: BEGIN
+		DECLARE weaponTypeMuzzleCursor CURSOR FOR SELECT id, muzzleNumber FROM ITEM_WEAPON_TYPE_MUZZLE WHERE weaponType_id = oldWeaponType_id;
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET weaponCursorFinished = 1;
+		OPEN weaponTypeMuzzleCursor;
+		readWeaponTypeMuzzle: LOOP
+			FETCH weaponTypeMuzzleCursor INTO origWeaponTypeMuzzle_id, originalMuzzleNumber;
+			IF weaponCursorFinished = 1 THEN 
+				LEAVE readWeaponTypeMuzzle;
+			END IF;
+			INSERT INTO ITEM_WEAPON_TYPE_MUZZLE(muzzleNumber, weaponType_id) VALUES (originalMuzzleNumber, newWeaponType_id);
+			SET newWeaponTypeMuzzle_id = LAST_INSERT_ID();
+			INSERT INTO ITEM_WEAPON_TYPE_MUZZLE_POSITION(imageNumber, xPos, yPos, weaponTypeMuzzle_id) 
+				SELECT imageNumber, xPos, yPos, newWeaponTypeMuzzle_id FROM ITEM_WEAPON_TYPE_MUZZLE_POSITION WHERE weaponTypeMuzzle_id = origWeaponTypeMuzzle_id; 
+		END LOOP readWeaponTypeMuzzle;
+		CLOSE weaponTypeMuzzleCursor;
+    END WEAPON_BLOCK;
+	UPDATE ITEM_TYPE SET dbWeaponType_id = newWeaponType_id WHERE id = createdItemTypeId; 
+END IF; 
 
 -- ***************** Bounding box & images ***************** 
 -- itemTypeImages
