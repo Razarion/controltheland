@@ -1,0 +1,90 @@
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+CREATE DEFINER=`admin`@`%` PROCEDURE `AnalyzeCrystalBuyingBehavior`()
+BEGIN
+DECLARE resultText VARCHAR(100000) DEFAULT "";
+
+-- Paypal cursor
+DECLARE count INTEGER;
+DECLARE paypalUserId INTEGER;
+DECLARE paypalDate DATETIME;
+DECLARE paypalItemNumber TEXT;
+DECLARE userName TEXT DEFAULT "";
+DECLARE paypalFinished INTEGER DEFAULT 0;  
+
+-- History cursor
+DECLARE historyFinished INTEGER DEFAULT 0;  
+DECLARE historyDate DATETIME;
+DECLARE historyType TEXT;
+DECLARE historyDisplay TEXT;
+DECLARE historyInventory TEXT;
+DECLARE historyPlanetName TEXT;
+DECLARE historyItemTypeName TEXT;
+DECLARE historyLevelTaskName TEXT;
+
+
+  DECLARE paypalCursor CURSOR FOR SELECT user, date, itemNumber FROM PAYPAL_TRANSACTION WHERE payerEmail <> 'beat.keller@btxtech.com' ORDER BY date ASC;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET paypalFinished = 1;
+
+  OPEN paypalCursor;
+  readPaypal: LOOP
+    FETCH paypalCursor INTO paypalUserId, paypalDate, paypalItemNumber;
+    IF paypalFinished = 1 THEN 
+        LEAVE readPaypal;
+    END IF;
+    
+    SELECT count(*) into count FROM USER WHERE id = paypalUserId;
+    IF count > 0 THEN
+    SELECT name INTO userName FROM USER WHERE id = paypalUserId;
+    END IF;    
+
+    SET resultText = CONCAT(resultText, " ", paypalDate, " ", userName,  " ", paypalItemNumber, "\n");
+
+    SET historyFinished = 0;
+    HISTORY_BLOCK: BEGIN
+    DECLARE historyCursor CURSOR FOR SELECT timeStamp, type, inventory, planetName, itemTypeName, levelTaskName FROM GAME_HISTORY WHERE actorUserId = paypalUserId AND timeStamp >= paypalDate AND deltaCrystals IS NOT NULL AND type NOT IN ("CRYSTALS_BOUGHT", "CRYSTALS_FROM_BOX") ORDER BY timeStamp ASC LIMIT 5;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET historyFinished = 1;
+	OPEN historyCursor;
+
+    readHistory: LOOP
+
+    FETCH historyCursor INTO historyDate, historyType, historyInventory, historyPlanetName, historyItemTypeName, historyLevelTaskName;
+    IF historyFinished = 1 THEN 
+        LEAVE readHistory;
+    END IF;
+
+    CASE historyType
+        WHEN  'INVENTORY_ITEM_BOUGHT' THEN
+           SET historyDisplay = CONCAT('INVENTORY_ITEM_BOUGHT: ', historyInventory);
+        WHEN 'INVENTORY_ARTIFACT_BOUGHT' THEN
+           SET historyDisplay = CONCAT('INVENTORY_ARTIFACT_BOUGHT: ', historyInventory);
+       WHEN 'UNLOCKED_PLANET' THEN
+           SET historyDisplay = CONCAT('UNLOCKED_PLANET: ', historyPlanetName);
+        WHEN 'UNLOCKED_ITEM' THEN
+           SET historyDisplay = CONCAT('UNLOCKED_ITEM: ', historyItemTypeName);
+        WHEN 'UNLOCKED_QUEST' THEN
+           SET historyDisplay = CONCAT('UNLOCKED_QUEST: ', historyLevelTaskName);
+        ELSE
+           SET historyDisplay = CONCAT('***** UNKNOWN *******: ', historyType);
+    END CASE;
+
+
+    SET resultText = CONCAT(resultText, " ", historyDate, " ", historyDisplay, "\n");
+    END LOOP readHistory;
+     CLOSE historyCursor;
+
+	END HISTORY_BLOCK;
+
+
+    SET resultText = CONCAT(resultText, "\n");
+
+
+END LOOP readPaypal;
+
+  CLOSE paypalCursor;
+SELECT resultText;
+END
