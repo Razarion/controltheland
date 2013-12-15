@@ -116,8 +116,9 @@ readDemolitionStep: LOOP
     DECLARE demolitionClipCursor CURSOR FOR SELECT id, dbClip_id FROM ITEM_TYPE_DEMOLITION_CLIP WHERE dbItemTypeDemolitionStep_id = originalDemolitionStepId;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET demolitionClipCursorFinished = 1;
     OPEN demolitionClipCursor;
- 	readDemolitionClip: LOOP
- 		FETCH demolitionClipCursor INTO originalDemolitionClipId, originaldbClipId;
+    SET demolitionClipCursorFinished = 0;
+    readDemolitionClip: LOOP
+		FETCH demolitionClipCursor INTO originalDemolitionClipId, originaldbClipId;
  		IF demolitionClipCursorFinished = 1 THEN 
  			LEAVE readDemolitionClip;
  		END IF;
