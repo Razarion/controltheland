@@ -85,10 +85,6 @@ public class SyncItemContainer extends SyncBaseAbility {
             return false;
         }
 
-        if (!isInUnloadRange(unloadPos)) {
-            return false;
-        }
-
         getSyncItemArea().turnTo(unloadPos);
         unload();
         stop();
@@ -211,7 +207,7 @@ public class SyncItemContainer extends SyncBaseAbility {
     }
 
     private boolean allowedUnload(Index position, Id containedItem) throws ItemDoesNotExistException {
-        return getPlanetServices().getTerrainService().isFree(position, getPlanetServices().getItemService().getItem(containedItem).getItemType(), null, null);
+        return isInUnloadRange(position) && getPlanetServices().getTerrainService().isFree(position, getPlanetServices().getItemService().getItem(containedItem).getItemType(), null, null);
     }
 
     private boolean isInUnloadRange(Index unloadPos) {
