@@ -67,10 +67,9 @@ public class TestMovableServiceTerrain extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTerrainImageGroup dbTerrainImageGroup1 = terrainService.getDbTerrainImageGroupCrudServiceHelper().createDbChild();
         dbTerrainImageGroup1.setHtmlBackgroundColorLand("#111111");
-        dbTerrainImageGroup1.setHtmlBackgroundColorLandCoast("#222222");
+        dbTerrainImageGroup1.setHtmlBackgroundColorCoast("#222222");
         dbTerrainImageGroup1.setHtmlBackgroundColorNone("#333333");
         dbTerrainImageGroup1.setHtmlBackgroundColorWater("#444444");
-        dbTerrainImageGroup1.setHtmlBackgroundColorWaterCoast("#555555");
         dbTerrainImageGroup1.setImageSpriteMap(clipService.getImageSpriteMapCrud().readDbChild(dbImageSpriteMap1.getId()));
         DbTerrainImage dbTerrainImage11 = dbTerrainImageGroup1.getTerrainImageCrud().createDbChild();
         dbTerrainImage11.setTiles(1, 2);
@@ -87,10 +86,9 @@ public class TestMovableServiceTerrain extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTerrainImageGroup dbTerrainImageGroup2 = terrainService.getDbTerrainImageGroupCrudServiceHelper().createDbChild();
         dbTerrainImageGroup2.setHtmlBackgroundColorLand("#A11111");
-        dbTerrainImageGroup2.setHtmlBackgroundColorLandCoast("#A22222");
+        dbTerrainImageGroup2.setHtmlBackgroundColorCoast("#A22222");
         dbTerrainImageGroup2.setHtmlBackgroundColorNone("#A33333");
         dbTerrainImageGroup2.setHtmlBackgroundColorWater("#A44444");
-        dbTerrainImageGroup2.setHtmlBackgroundColorWaterCoast("#A55555");
         DbTerrainImage dbTerrainImage21 = dbTerrainImageGroup2.getTerrainImageCrud().createDbChild();
         dbTerrainImage21.setTiles(3, 2);
         DbTerrainImage dbTerrainImage22 = dbTerrainImageGroup2.getTerrainImageCrud().createDbChild();
@@ -192,7 +190,6 @@ public class TestMovableServiceTerrain extends AbstractServiceTest {
         assertTerrainImage(realGameInfo.getTerrainImages(), dbTerrainImage22.getId(), null, 4, 3, new SurfaceType[][]{{SurfaceType.NONE, SurfaceType.NONE, SurfaceType.NONE}, {SurfaceType.NONE, SurfaceType.NONE, SurfaceType.NONE}, {SurfaceType.NONE, SurfaceType.NONE, SurfaceType.NONE}, {SurfaceType.NONE, SurfaceType.NONE, SurfaceType.NONE}});
         // Test terrain images background. Only short tests. Is fully tested in TestTerrainService
         Assert.assertEquals("#111111", realGameInfo.getTerrainImageBackground().get(dbTerrainImage11.getId(), SurfaceType.LAND));
-        Assert.assertEquals("#555555", realGameInfo.getTerrainImageBackground().get(dbTerrainImage11.getId(), SurfaceType.COAST));
         Assert.assertEquals("#222222", realGameInfo.getTerrainImageBackground().get(dbTerrainImage12.getId(), SurfaceType.COAST));
         Assert.assertEquals("#444444", realGameInfo.getTerrainImageBackground().get(dbTerrainImage12.getId(), SurfaceType.WATER));
         Assert.assertEquals("#A33333", realGameInfo.getTerrainImageBackground().get(dbTerrainImage21.getId(), SurfaceType.NONE));
