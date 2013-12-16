@@ -117,8 +117,12 @@ public class TestItemContainer extends AbstractServiceTest {
         sendMoveCommand(getFirstSynItemId(TEST_WATER_CONTAINER_ITEM_ID), new Index(2550, 1700));
         waitForActionServiceDone();
         Assert.assertTrue(syncItemContainer.atLeastOneAllowedToUnload(new Index(2450, 1700)));
+        Assert.assertTrue(syncItemContainer.atLeastOneAllowedToUnload(new Index(2370, 1700)));
         Assert.assertFalse(syncItemContainer.atLeastOneAllowedToUnload(new Index(2650, 1700)));
         Assert.assertFalse(syncItemContainer.atLeastOneAllowedToUnload(new Index(2550, 1600)));
+        // Not in range
+        Assert.assertFalse(syncItemContainer.atLeastOneAllowedToUnload(new Index(2369, 1700)));
+        Assert.assertFalse(syncItemContainer.atLeastOneAllowedToUnload(new Index(2550, 1881)));
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
