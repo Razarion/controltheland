@@ -36,8 +36,7 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
     private String htmlBackgroundColorNone;
     private String htmlBackgroundColorWater;
     private String htmlBackgroundColorLand;
-    private String htmlBackgroundColorLandCoast;
-    private String htmlBackgroundColorWaterCoast;
+    private String htmlBackgroundColorCoast;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbImageSpriteMap imageSpriteMap;
     @Transient
@@ -82,20 +81,12 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
         this.htmlBackgroundColorLand = htmlBackgroundColorLand;
     }
 
-    public String getHtmlBackgroundColorLandCoast() {
-        return htmlBackgroundColorLandCoast;
+    public String getHtmlBackgroundColorCoast() {
+        return htmlBackgroundColorCoast;
     }
 
-    public void setHtmlBackgroundColorLandCoast(String htmlBackgroundColorLandCoast) {
-        this.htmlBackgroundColorLandCoast = htmlBackgroundColorLandCoast;
-    }
-
-    public String getHtmlBackgroundColorWaterCoast() {
-        return htmlBackgroundColorWaterCoast;
-    }
-
-    public void setHtmlBackgroundColorWaterCoast(String htmlBackgroundColorWaterCoast) {
-        this.htmlBackgroundColorWaterCoast = htmlBackgroundColorWaterCoast;
+    public void setHtmlBackgroundColorCoast(String htmlBackgroundColorLandCoast) {
+        this.htmlBackgroundColorCoast = htmlBackgroundColorLandCoast;
     }
 
     public DbImageSpriteMap getImageSpriteMap() {
@@ -112,8 +103,7 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
         htmlBackgroundColorNone = "#FFFFFF";
         htmlBackgroundColorWater = "#FFFFFF";
         htmlBackgroundColorLand = "#FFFFFF";
-        htmlBackgroundColorLandCoast = "#FFFFFF";
-        htmlBackgroundColorWaterCoast = "#FFFFFF";
+        htmlBackgroundColorCoast = "#FFFFFF";
     }
 
     public CrudChildServiceHelper<DbTerrainImage> getTerrainImageCrud() {
