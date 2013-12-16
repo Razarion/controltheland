@@ -14,14 +14,14 @@ public class TerrainImageBackground implements Serializable {
     private Map<Integer, Integer> imageGroupMap = new HashMap<Integer, Integer>();
     private Map<Integer, Map<SurfaceType, String>> groupBgMap = new HashMap<Integer, Map<SurfaceType, String>>();
 
-    public void put(int imageId, int groupId, String bgNone, String bgWater, String bgLand, String bgWaterCoast, String bgLandCoast) {
+    public void put(int imageId, int groupId, String bgNone, String bgWater, String bgLand, String bgCoast) {
         if (!groupBgMap.containsKey(groupId)) {
-            createAndAddGroup(groupId, bgNone, bgWater, bgLand, bgWaterCoast, bgLandCoast);
+            createAndAddGroup(groupId, bgNone, bgWater, bgLand, bgCoast);
         }
         imageGroupMap.put(imageId, groupId);
     }
 
-    private void createAndAddGroup(int groupId, String bgNone, String bgWater, String bgLand, String bgWaterCoast, String bgLandCoast) {
+    private void createAndAddGroup(int groupId, String bgNone, String bgWater, String bgLand, String bgCoast) {
         Map<SurfaceType, String> surfaceTypeBackground = new HashMap<SurfaceType, String>();
         if (bgNone != null) {
             surfaceTypeBackground.put(SurfaceType.NONE, bgNone);
@@ -32,11 +32,8 @@ public class TerrainImageBackground implements Serializable {
         if (bgLand != null) {
             surfaceTypeBackground.put(SurfaceType.LAND, bgLand);
         }
-        if (bgWaterCoast != null) {
-            surfaceTypeBackground.put(SurfaceType.COAST, bgWaterCoast);
-        }
-        if (bgLandCoast != null) {
-            surfaceTypeBackground.put(SurfaceType.COAST, bgLandCoast);
+        if (bgCoast != null) {
+            surfaceTypeBackground.put(SurfaceType.COAST, bgCoast);
         }
         groupBgMap.put(groupId, surfaceTypeBackground);
     }
