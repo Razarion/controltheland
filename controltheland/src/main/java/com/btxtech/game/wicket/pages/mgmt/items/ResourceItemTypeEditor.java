@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.items;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
@@ -54,6 +55,7 @@ public class ResourceItemTypeEditor extends MgmtWebPage {
         form.add(new I18nStringWYSIWYGEditor("dbI18nDescription"));
         form.add(new TextField<String>("amount"));
         form.add(new DropDownChoice<>("terrainType", Arrays.asList(TerrainType.values())));
+        form.add(new DropDownChoice<>("adjoinSurfaceType", Arrays.asList(SurfaceType.values())));
 
         form.add(new Button("editSounds") {
             @Override

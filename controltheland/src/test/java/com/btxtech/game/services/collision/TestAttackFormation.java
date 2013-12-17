@@ -11,7 +11,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.debug.DebugService;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.ServerTerrainService;
@@ -20,7 +19,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -257,7 +255,7 @@ public class TestAttackFormation extends AbstractServiceTest {
         AttackFormation attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), angel, items);
         while (attackFormation.hasNext()) {
             AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
-            if (!terrainService.isFree(attackFormationItem.getDestinationHint(), syncBaseItem.getItemType())) {
+            if (!terrainService.isFree(attackFormationItem.getDestinationHint(), syncBaseItem.getItemType(), null, null)) {
                 continue;
             }
 
@@ -330,5 +328,43 @@ public class TestAttackFormation extends AbstractServiceTest {
             System.out.println("attackerAngel: " + MathHelper.radToGrad(attackerAngel));
             throw t;
         }
+    }
+
+    @Test
+    @DirtiesContext
+    public void testStartPositionFinding() throws Throwable {
+        configureSimplePlanetNoResources();
+
+        ItemType targetItemType = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
+        targetItemType.setBoundingBox(new BoundingBox(100, ANGELS_24));
+        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100));
+
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 600), new Id(1, -101));
+        List<AttackFormationItem> items = new ArrayList<>();
+        items.add(new AttackFormationItem(syncBaseItem, 10));
+
+        AttackFormation attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), MathHelper.HALF_RADIANT, items);
+        assertAttackFormationItem(400, 609, attackFormation.calculateNextEntry());
+        assertAttackFormationItem(400, 609, attackFormation.calculateNextEntry());
+        assertAttackFormationItem(399, 609, attackFormation.calculateNextEntry());
+        assertAttackFormationItem(401, 609, attackFormation.calculateNextEntry());
+        assertAttackFormationItem(398, 609, attackFormation.calculateNextEntry());
+        assertAttackFormationItem(402, 609, attackFormation.calculateNextEntry());
+        assertAttackFormationItem(397, 609, attackFormation.calculateNextEntry());
+        assertAttackFormationItem(403, 609, attackFormation.calculateNextEntry());
+        assertAttackFormationItem(396, 609, attackFormation.calculateNextEntry());
+        assertAttackFormationItem(404, 609, attackFormation.calculateNextEntry());
+
+        for(int i = 0; i < 100; i++) {
+            attackFormation.calculateNextEntry();
+        }
+        assertAttackFormationItem(346, 602, attackFormation.calculateNextEntry());
+        assertAttackFormationItem(454, 602, attackFormation.calculateNextEntry());
+
+
+    }
+
+    private void assertAttackFormationItem(int expectedX, int expectedY, AttackFormationItem attackFormationItem) {
+        Assert.assertEquals(new Index(expectedX, expectedY), attackFormationItem.getDestinationHint());
     }
 }

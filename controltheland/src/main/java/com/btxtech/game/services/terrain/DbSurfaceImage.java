@@ -30,6 +30,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -64,6 +66,7 @@ public class DbSurfaceImage implements CrudChild, CrudParent, Serializable {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Collection<DbScatterSurfaceImage> scatterSurfaceImages;
     @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
     private SurfaceType surfaceType;
     private String htmlBackgroundColor;
     private double uncommon;

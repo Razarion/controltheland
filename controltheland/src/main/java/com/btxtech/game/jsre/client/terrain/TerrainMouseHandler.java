@@ -6,7 +6,6 @@ import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.StartPointMode;
 import com.btxtech.game.jsre.client.action.ActionHandler;
-import com.btxtech.game.jsre.client.cockpit.chat.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
@@ -14,6 +13,7 @@ import com.btxtech.game.jsre.client.cockpit.GroupSelectionFrame;
 import com.btxtech.game.jsre.client.cockpit.ItemMouseOverHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.chat.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.item.ToBeBuildPlacer;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemPlacer;
@@ -73,6 +73,10 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                     }
 
                     if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.UNLOAD) {
+                        if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
+                            CockpitMode.getInstance().setMode(null);
+                            SelectionHandler.getInstance().clearSelection();
+                        }
                         return;
                     }
 

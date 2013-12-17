@@ -89,7 +89,7 @@ public class TestPathFinding extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPathDifferentTerrains() throws Exception {
-        configureOneLevelOnePlaneComplexTerrain2();
+        configureOneLevelOnePlanetComplexTerrain2();
         CollisionService collisionService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService();
         SyncItemArea target = new BoundingBox(100, ANGELS_24).createSyntheticSyncItemArea(new Index(2750, 350));
         List<AttackFormationItem> attacker = new ArrayList<>();

@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
 import com.btxtech.game.jsre.client.I18nString;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 
 import java.io.Serializable;
@@ -29,6 +30,7 @@ public abstract class ItemType implements Serializable {
     private I18nString i18Name;
     private I18nString description;
     private TerrainType terrainType;
+    private SurfaceType adjoinSurfaceType;
     private BoundingBox boundingBox;
     private ItemTypeSpriteMap itemTypeSpriteMap;
     private Integer selectionSound;
@@ -84,6 +86,14 @@ public abstract class ItemType implements Serializable {
         return terrainType;
     }
 
+    public SurfaceType getAdjoinSurfaceType() {
+        return adjoinSurfaceType;
+    }
+
+    public void setAdjoinSurfaceType(SurfaceType adjoinSurfaceType) {
+        this.adjoinSurfaceType = adjoinSurfaceType;
+    }
+
     public ItemTypeSpriteMap getItemTypeSpriteMap() {
         return itemTypeSpriteMap;
     }
@@ -133,6 +143,7 @@ public abstract class ItemType implements Serializable {
         i18Name = itemType.i18Name;
         description = itemType.description;
         terrainType = itemType.terrainType;
+        adjoinSurfaceType = itemType.adjoinSurfaceType;
         itemTypeSpriteMap = itemType.itemTypeSpriteMap;
         selectionSound = itemType.selectionSound;
         buildupSound = itemType.buildupSound;

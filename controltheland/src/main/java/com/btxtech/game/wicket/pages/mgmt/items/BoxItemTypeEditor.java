@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.items;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
@@ -61,6 +62,7 @@ public class BoxItemTypeEditor extends MgmtWebPage {
         form.add(new I18nStringEditor("dbI18nName"));
         form.add(new I18nStringWYSIWYGEditor("dbI18nDescription"));
         form.add(new DropDownChoice<>("terrainType", Arrays.asList(TerrainType.values())));
+        form.add(new DropDownChoice<>("adjoinSurfaceType", Arrays.asList(SurfaceType.values())));
         form.add(new MinutePanel("ttl"));
 
         new CrudChildTableHelper<DbBoxItemType, DbBoxItemTypePossibility>("possibilities", null, "createPossibility", false, form, false) {

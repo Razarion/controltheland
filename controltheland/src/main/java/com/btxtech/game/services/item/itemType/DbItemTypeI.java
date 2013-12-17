@@ -1,5 +1,6 @@
 package com.btxtech.game.services.item.itemType;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.db.DbI18nString;
 
@@ -22,6 +23,8 @@ public interface DbItemTypeI {
     TerrainType getTerrainType();
 
     void setTerrainType(TerrainType terrainType);
+
+    void setAdjoinSurfaceType(SurfaceType adjoinSurfaceType);
 
     int getImageWidth();
 

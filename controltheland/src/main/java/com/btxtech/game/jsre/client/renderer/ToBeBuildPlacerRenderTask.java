@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.renderer;
 
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.item.ToBeBuildPlacer;
 import com.btxtech.game.jsre.client.common.Index;
@@ -32,9 +33,19 @@ public class ToBeBuildPlacerRenderTask extends AbstractRenderTask {
         if (!CockpitMode.getInstance().hasToBeBuildPlacer()) {
             return;
         }
+
         ToBeBuildPlacer toBeBuildPlacer = CockpitMode.getInstance().getToBeBuildPlacer();
         BaseItemType baseItemType = toBeBuildPlacer.getItemTypeToBuilt();
         ItemTypeSpriteMap itemTypeSpriteMap = baseItemType.getItemTypeSpriteMap();
+
+        if (Game.isDebug()) {
+            context2d.setGlobalAlpha(0.5);
+            context2d.setFillStyle("rgb(200, 0, 0)");
+            context2d.beginPath();
+            context2d.arc(toBeBuildPlacer.getRelativeMiddlePos().getX(), toBeBuildPlacer.getRelativeMiddlePos().getY(), baseItemType.getBoundingBox().getRadius(), 0, 2 * Math.PI, false);
+            context2d.fill();
+            context2d.setGlobalAlpha(1.0);
+        }
 
         // Draw Item
         Index offset = itemTypeSpriteMap.getCosmeticImageOffset();

@@ -356,7 +356,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
     }
 
-    public void executeCommand(BaseCommand baseCommand) throws ItemDoesNotExistException, InsufficientFundsException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+    public void executeCommand(BaseCommand baseCommand) throws ItemDoesNotExistException, InsufficientFundsException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException, WrongOperationSurfaceException {
         checkId(baseCommand);
 
         if (baseCommand instanceof AttackCommand) {

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.items;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -28,7 +29,6 @@ import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -48,7 +48,7 @@ public class BaseItemTypeEditor extends MgmtWebPage {
     public BaseItemTypeEditor(DbBaseItemType dbBaseItemType) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbBaseItemType> form = new Form<>("itemTypeForm", new CompoundPropertyModel<DbBaseItemType>(new RuModel<DbBaseItemType>(dbBaseItemType, DbBaseItemType.class) {
+        final Form<DbBaseItemType> form = new Form<>("itemTypeForm", new CompoundPropertyModel<>(new RuModel<DbBaseItemType>(dbBaseItemType, DbBaseItemType.class) {
             @Override
             protected RuServiceHelper<DbBaseItemType> getRuServiceHelper() {
                 return ruServiceHelper;
@@ -65,6 +65,7 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         form.add(new TextField<Integer>("consumingHouseSpace"));
         form.add(new TextField<Double>("buildup"));
         form.add(new DropDownChoice<>("terrainType", Arrays.asList(TerrainType.values())));
+        form.add(new DropDownChoice<>("adjoinSurfaceType", Arrays.asList(SurfaceType.values())));
         form.add(new BaseItemTypePanel("upgradable"));
         form.add(new TextField<String>("upgradeProgress"));
         form.add(new TextField<Integer>("boxPickupRange"));

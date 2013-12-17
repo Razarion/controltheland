@@ -15,6 +15,7 @@ import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
@@ -241,6 +242,11 @@ abstract public class AbstractServiceTest {
     protected static int TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID = -1;
     protected static final String TEST_GENERATOR_TYPE = "TEST_GENERATOR_TYPE";
     protected static int TEST_GENERATOR_TYPE_ID = -1;
+    protected static final String TEST_HARBOR_TYPE = "TEST_HARBOR_TYPE";
+    protected static int TEST_HARBOR_TYPE_ID = -1;
+    protected static int TEST_WATER_CONTAINER_ITEM_ID = -1;
+    protected static final String TEST_WATER_CONTAINER_ITEM = "TEST_WATER_CONTAINER_ITEM";
+
     // Planets
     protected static final String TEST_PLANET_1 = "TEST_PLANET_1";
     protected static int TEST_PLANET_1_ID = -1;
@@ -651,6 +657,18 @@ abstract public class AbstractServiceTest {
         return new ArrayList<>(getAllResourceItems(planetId, itemTypeId)).get(0).getId();
     }
 
+    protected SyncItem getSynItem(int planetId, Id id) throws ItemDoesNotExistException {
+        return planetSystemService.getServerPlanetServices(planetId).getItemService().getItem(id);
+    }
+
+    protected SyncBaseItem getSynBaseItem(int planetId, Id id) throws ItemDoesNotExistException {
+        return (SyncBaseItem) getSynItem(planetId, id);
+    }
+
+    protected SyncResourceItem getSyncResourceItem(int planetId, Id id) throws ItemDoesNotExistException {
+        return (SyncResourceItem) getSynItem(planetId, id);
+    }
+
     // ------------------- Connection --------------------
 
     protected void clearPackets() throws Exception {
@@ -1004,8 +1022,7 @@ abstract public class AbstractServiceTest {
         SyncBaseItem target = (SyncBaseItem) serverPlanetServices.getItemService().getItem(targetId);
         AttackFormationItem attackFormationItem = serverPlanetServices.getCollisionService().getDestinationHint(actor,
                 actor.getBaseItemType().getWeaponType().getRange(),
-                target.getSyncItemArea(),
-                target.getTerrainType());
+                target.getSyncItemArea());
         if (!attackFormationItem.isInRange()) {
             throw new IllegalStateException("Not in range");
         }
@@ -1028,19 +1045,18 @@ abstract public class AbstractServiceTest {
         SyncResourceItem syncResourceItem = (SyncResourceItem) serverPlanetServices.getItemService().getItem(resourceId);
         AttackFormationItem attackFormationItem = serverPlanetServices.getCollisionService().getDestinationHint(harvester,
                 harvester.getBaseItemType().getHarvesterType().getRange(),
-                syncResourceItem.getSyncItemArea(),
-                syncResourceItem.getTerrainType());
+                syncResourceItem.getSyncItemArea());
         if (!attackFormationItem.isInRange()) {
             throw new IllegalStateException("Not in range");
         }
         serverPlanetServices.getActionService().collect(harvester, syncResourceItem, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel());
     }
 
-    protected void sendContainerLoadCommand(Id item, Id containerId) throws Exception {
+    protected void sendContainerLoadCommand(Id item, Id containerId, Index destinationHint, double destinationAngel) throws Exception {
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
         SyncBaseItem container = (SyncBaseItem) serverPlanetServices.getItemService().getItem(containerId);
         SyncBaseItem syncItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(item);
-        serverPlanetServices.getActionService().loadContainer(container, syncItem);
+        serverPlanetServices.getActionService().loadContainer(container, syncItem, destinationHint, destinationAngel);
     }
 
     protected void sendUnloadContainerCommand(Id containerId, Index position) throws Exception {
@@ -1055,8 +1071,7 @@ abstract public class AbstractServiceTest {
         SyncBoxItem boxItem = (SyncBoxItem) serverPlanetServices.getItemService().getItem(box);
         AttackFormationItem attackFormationItem = serverPlanetServices.getCollisionService().getDestinationHint(baseItem,
                 baseItem.getBaseItemType().getBoxPickupRange(),
-                boxItem.getSyncItemArea(),
-                boxItem.getTerrainType());
+                boxItem.getSyncItemArea());
         if (!attackFormationItem.isInRange()) {
             throw new IllegalStateException("Not in range");
         }
@@ -1152,24 +1167,6 @@ abstract public class AbstractServiceTest {
         endHttpSession();
     }
 
-    protected void setupItemTypes() {
-        createSimpleBuilding();
-        createHarvesterItemType();
-        createAttackBaseItemType();
-        createContainerBaseItemType();
-        createHouseItemType();
-        createConsumerType();
-        createConsumerAttackMovableType();
-        createGeneratorType();
-        createFactoryBaseItemType();
-        createBuilderBaseItemType();
-        finishAttackBaseItemType();
-        finishContainerBaseItemType();
-        finishConsumerAttackMovableType();
-        createAttackBaseItemType2();
-        createMoney();
-    }
-
     protected void configureOneLevelOnePlaneComplexTerrain() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -1181,12 +1178,15 @@ abstract public class AbstractServiceTest {
         createConsumerType();
         createConsumerAttackMovableType();
         createGeneratorType();
+        createWaterContainerType();
+        createHarborType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         createSimpleBuilding();
         finishAttackBaseItemType();
         finishContainerBaseItemType();
         finishConsumerAttackMovableType();
+        finishWaterContainerType();
         createMoney();
         // Planet
         DbPlanet dbPlanet1 = setupPlanet1();
@@ -1201,7 +1201,7 @@ abstract public class AbstractServiceTest {
         endHttpSession();
     }
 
-    protected void configureOneLevelOnePlaneComplexTerrain2() throws Exception {
+    protected void configureOneLevelOnePlanetComplexTerrain2() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Item Types
@@ -1212,12 +1212,15 @@ abstract public class AbstractServiceTest {
         createConsumerType();
         createConsumerAttackMovableType();
         createGeneratorType();
+        createWaterContainerType();
+        createHarborType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         createSimpleBuilding();
         finishAttackBaseItemType();
         finishContainerBaseItemType();
         finishConsumerAttackMovableType();
+        finishWaterContainerType();
         createMoney();
         // Planet
         DbPlanet dbPlanet1 = setupPlanet1();
@@ -1226,6 +1229,7 @@ abstract public class AbstractServiceTest {
         // QuestHubs
         setupOneLevel(dbPlanet1);
         //setupXpSettings();
+        dbPlanet1.setMinLevel(userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID));
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
         planetSystemService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1234,11 +1238,32 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Setup Item Types --------------------
 
+    protected void setupItemTypes() {
+        createSimpleBuilding();
+        createHarvesterItemType();
+        createAttackBaseItemType();
+        createContainerBaseItemType();
+        createHouseItemType();
+        createConsumerType();
+        createConsumerAttackMovableType();
+        createGeneratorType();
+        createWaterContainerType();
+        createHarborType();
+        createFactoryBaseItemType();
+        createBuilderBaseItemType();
+        finishAttackBaseItemType();
+        finishContainerBaseItemType();
+        finishConsumerAttackMovableType();
+        finishWaterContainerType();
+        createAttackBaseItemType2();
+        createMoney();
+    }
+
     protected DbBaseItemType createBuilderBaseItemType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_START_BUILDER_ITEM);
-        dbBaseItemType.setTerrainType(TerrainType.LAND);
+        dbBaseItemType.setTerrainType(TerrainType.LAND_COAST);
         dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
@@ -1254,6 +1279,7 @@ abstract public class AbstractServiceTest {
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HOUSE_ID));
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_TYPE_ID));
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_GENERATOR_TYPE_ID));
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARBOR_TYPE_ID));
         dbBuilderType.setAbleToBuild(ableToBuild);
         dbBaseItemType.setDbBuilderType(dbBuilderType);
         // DbMovableType
@@ -1339,6 +1365,16 @@ abstract public class AbstractServiceTest {
     private void finishConsumerAttackMovableType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID);
         dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
+    }
+
+    private void finishWaterContainerType() {
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_WATER_CONTAINER_ITEM_ID);
+        Set<DbBaseItemType> ableToContain = new HashSet<>();
+        ableToContain.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        ableToContain.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        dbBaseItemType.getDbItemContainerType().setAbleToContain(ableToContain);
         serverItemTypeService.saveDbItemType(dbBaseItemType);
         serverItemTypeService.activate();
     }
@@ -1498,6 +1534,55 @@ abstract public class AbstractServiceTest {
         return dbBaseItemType;
     }
 
+    private DbBaseItemType createWaterContainerType() {
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 1);
+        dbBaseItemType.setName(TEST_WATER_CONTAINER_ITEM);
+        dbBaseItemType.setTerrainType(TerrainType.WATER_COAST);
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_24));
+        dbBaseItemType.setHealth(10);
+        dbBaseItemType.setBuildup(10);
+        // DbItemContainerType
+        DbItemContainerType dbItemContainerType = new DbItemContainerType();
+        dbItemContainerType.setMaxCount(2);
+        dbItemContainerType.setRange(100);
+        dbItemContainerType.setOperationSurfaceType(SurfaceType.COAST);
+        dbBaseItemType.setDbItemContainerType(dbItemContainerType);
+        // DbMovableType
+        DbMovableType dbMovableType = new DbMovableType();
+        dbMovableType.setSpeed(10000);
+        dbBaseItemType.setDbMovableType(dbMovableType);
+
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
+        TEST_WATER_CONTAINER_ITEM_ID = dbBaseItemType.getId();
+        return dbBaseItemType;
+    }
+
+    private DbBaseItemType createHarborType() {
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 1);
+        dbBaseItemType.setName(TEST_HARBOR_TYPE);
+        dbBaseItemType.setTerrainType(TerrainType.WATER);
+        dbBaseItemType.setAdjoinSurfaceType(SurfaceType.COAST);
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_1));
+        dbBaseItemType.setHealth(10);
+        dbBaseItemType.setBuildup(10);
+        // DbFactoryType
+        DbFactoryType dbFactoryType = new DbFactoryType();
+        dbFactoryType.setProgress(1000);
+        Set<DbBaseItemType> ableToBuild = new HashSet<>();
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_WATER_CONTAINER_ITEM_ID));
+        dbFactoryType.setAbleToBuild(ableToBuild);
+        dbBaseItemType.setDbFactoryType(dbFactoryType);
+
+
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
+        TEST_HARBOR_TYPE_ID = dbBaseItemType.getId();
+        return dbBaseItemType;
+    }
+
     private void finishContainerBaseItemType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID);
         // DbItemContainerType
@@ -1630,6 +1715,12 @@ abstract public class AbstractServiceTest {
         DbPlanetItemTypeLimitation consumerMovableAttacker = dbPlanet.getItemLimitationCrud().createDbChild();
         consumerMovableAttacker.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID));
         consumerMovableAttacker.setCount(10);
+        DbPlanetItemTypeLimitation waterContainer = dbPlanet.getItemLimitationCrud().createDbChild();
+        waterContainer.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_WATER_CONTAINER_ITEM_ID));
+        waterContainer.setCount(10);
+        DbPlanetItemTypeLimitation harbor = dbPlanet.getItemLimitationCrud().createDbChild();
+        harbor.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARBOR_TYPE_ID));
+        harbor.setCount(10);
 
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
         TEST_PLANET_1_ID = dbPlanet.getId();
@@ -1668,7 +1759,6 @@ abstract public class AbstractServiceTest {
         TEST_PLANET_2_ID = dbPlanet.getId();
         return dbPlanet;
     }
-
 
     private DbPlanet setupPlanet3() {
         DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
@@ -1802,11 +1892,8 @@ abstract public class AbstractServiceTest {
 
     protected DbTerrainSetting setupComplexRealGameTerrain2() {
         DbSurfaceImage land = createDbSurfaceImage(SurfaceType.LAND);
-        DbSurfaceImage landCoast = createDbSurfaceImage(SurfaceType.LAND_COAST);
-        DbSurfaceImage waterCoast = createDbSurfaceImage(SurfaceType.WATER_COAST);
+        DbSurfaceImage landCoast = createDbSurfaceImage(SurfaceType.COAST);
         DbSurfaceImage water = createDbSurfaceImage(SurfaceType.WATER);
-
-        DbTerrainImageGroup dbTerrainImageGroup = terrainService.getDbTerrainImageGroupCrudServiceHelper().readDbChildren().iterator().next();
 
         DbTerrainSetting dbTerrainSetting = new DbTerrainSetting();
         dbTerrainSetting.init(null);
@@ -1816,12 +1903,11 @@ abstract public class AbstractServiceTest {
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(0, 0, 25, 40), land), null);
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(25, 0, 1, 41), landCoast), null);
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(0, 40, 25, 1), landCoast), null);
-        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(0, 41, 27, 1), waterCoast), null);
-        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(26, 0, 1, 41), waterCoast), null);
-        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(27, 0, 25, 50), water), null);
-        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(0, 42, 27, 8), water), null);
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(26, 0, 26, 50), water), null);
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(0, 41, 26, 9), water), null);
         return dbTerrainSetting;
     }
+
 
     // ------------------- Setup Levels --------------------
 
@@ -1861,6 +1947,12 @@ abstract public class AbstractServiceTest {
         DbLevelItemTypeLimitation consumerMovableAttacker = dbLevel.getItemTypeLimitationCrud().createDbChild();
         consumerMovableAttacker.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID));
         consumerMovableAttacker.setCount(10);
+        DbLevelItemTypeLimitation waterContainer = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        waterContainer.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_WATER_CONTAINER_ITEM_ID));
+        waterContainer.setCount(10);
+        DbLevelItemTypeLimitation harbor = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        harbor.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARBOR_TYPE_ID));
+        harbor.setCount(10);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         TEST_LEVEL_2_REAL_ID = dbLevel.getId();

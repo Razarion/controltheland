@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
 /**
@@ -62,17 +61,16 @@ public abstract class SyncBaseAbility {
         return getPlanetServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER;
     }
 
-    public void recalculateAndSetNewPath(int range, SyncItemArea target, TerrainType targetTerrainType) {
-        Path path = recalculateNewPath(range, target, targetTerrainType);
+    public void recalculateAndSetNewPath(int range, SyncItemArea target) {
+        Path path = recalculateNewPath(range, target);
         setPathToDestinationIfSyncMovable(path);
     }
 
-    public Path recalculateNewPath(int range, SyncItemArea target, TerrainType targetTerrainType) {
+    public Path recalculateNewPath(int range, SyncItemArea target) {
         SyncBaseItem syncItem = getSyncBaseItem();
         AttackFormationItem format = getPlanetServices().getCollisionService().getDestinationHint(syncItem,
                 range,
-                target,
-                targetTerrainType);
+                target);
         if (format.isInRange()) {
             Path path = getPlanetServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint());
             if (!path.isDestinationReachable()) {
