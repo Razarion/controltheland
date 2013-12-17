@@ -104,10 +104,10 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         MOVABLE_CONTAINER_ITEM_TYPE.setTerrainType(TerrainType.LAND);
         MOVABLE_CONTAINER_ITEM_TYPE.setBoundingBox(new BoundingBox(80, AbstractServiceTest.ANGELS_24));
         MOVABLE_CONTAINER_ITEM_TYPE.setMovableType(new MovableType(100));
-        MOVABLE_CONTAINER_ITEM_TYPE.setTerrainType(TerrainType.WATER_WATER_COAST_LAND_COAST);
+        MOVABLE_CONTAINER_ITEM_TYPE.setTerrainType(TerrainType.WATER_COAST);
         Collection<Integer> ableToContain = new ArrayList<Integer>();
         ableToContain.add(MOVABLE_ITEM_TYPE.getId());
-        MOVABLE_CONTAINER_ITEM_TYPE.setItemContainerType(new ItemContainerType(ableToContain, 5, 150));
+        MOVABLE_CONTAINER_ITEM_TYPE.setItemContainerType(new ItemContainerType(ableToContain, null, 5, 150));
         ITEM_TYPES.add(MOVABLE_CONTAINER_ITEM_TYPE);
     }
 

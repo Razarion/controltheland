@@ -41,7 +41,7 @@ public class SyncBuilder extends SyncBaseAbility {
     private SyncMovable.OverlappingHandler overlappingHandler = new SyncMovable.OverlappingHandler() {
         @Override
         public Path calculateNewPath() {
-            return recalculateNewPath(builderType.getRange(), getTargetSyncItemArea(), toBeBuiltType.getTerrainType());
+            return recalculateNewPath(builderType.getRange(), getTargetSyncItemArea());
         }
     };
 
@@ -67,7 +67,7 @@ public class SyncBuilder extends SyncBaseAbility {
             // Destination place was may be taken. Calculate a new one.
             if (isNewPathRecalculationAllowed()) {
                 SyncItemArea syncItemArea = getTargetSyncItemArea();
-                recalculateAndSetNewPath(builderType.getRange(), syncItemArea, toBeBuiltType.getTerrainType());
+                recalculateAndSetNewPath(builderType.getRange(), syncItemArea);
                 getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                 return true;
             } else {
@@ -183,7 +183,7 @@ public class SyncBuilder extends SyncBaseAbility {
         if (getGlobalServices().getUnlockService().isItemLocked(tmpToBeBuiltType, getSyncBaseItem().getBase())) {
             throw new IllegalArgumentException(this + " item is locked: " + builderCommand.getToBeBuilt());
         }
-        if (!getPlanetServices().getTerrainService().isFree(builderCommand.getPositionToBeBuilt(), tmpToBeBuiltType)) {
+        if (!getPlanetServices().getTerrainService().isFree(builderCommand.getPositionToBeBuilt(), tmpToBeBuiltType, null, null)) {
             throw new PositionTakenException(builderCommand.getPositionToBeBuilt(), builderCommand.getToBeBuilt());
         }
 

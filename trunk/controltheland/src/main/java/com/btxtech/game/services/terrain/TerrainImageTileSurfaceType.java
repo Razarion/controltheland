@@ -16,6 +16,8 @@ package com.btxtech.game.services.terrain;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -31,6 +33,7 @@ public class TerrainImageTileSurfaceType implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
+    @Enumerated(value = EnumType.STRING)
     private SurfaceType surfaceType;
     private int tileX;
     private int tileY;

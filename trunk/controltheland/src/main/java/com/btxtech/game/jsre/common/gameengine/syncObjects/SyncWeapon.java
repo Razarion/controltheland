@@ -39,7 +39,7 @@ public class SyncWeapon extends SyncBaseAbility {
         public Path calculateNewPath() {
             try {
                 SyncBaseItem targetItem = (SyncBaseItem) getPlanetServices().getItemService().getItem(target);
-                return recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea(), targetItem.getTerrainType());
+                return recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea());
             } catch (ItemDoesNotExistException e) {
                 stop();
                 return null;
@@ -106,7 +106,7 @@ public class SyncWeapon extends SyncBaseAbility {
                             doAttack(targetItem);
                             return true;
                         } else {
-                            recalculateAndSetNewPath(weaponType.getRange(), targetItem.getSyncItemArea(), targetItem.getTerrainType());
+                            recalculateAndSetNewPath(weaponType.getRange(), targetItem.getSyncItemArea());
                             getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                             return getSyncBaseItem().getSyncMovable().tickMove(factor, overlappingHandler);
                         }
@@ -129,7 +129,7 @@ public class SyncWeapon extends SyncBaseAbility {
             if (!isInRange(targetItem)) {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one or target has moved away
-                    recalculateAndSetNewPath(weaponType.getRange(), targetItem.getSyncItemArea(), targetItem.getTerrainType());
+                    recalculateAndSetNewPath(weaponType.getRange(), targetItem.getSyncItemArea());
                     getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {

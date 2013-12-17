@@ -28,14 +28,8 @@ public class TerrainKeyHandler implements KeyDownHandler, BlurHandler {
 
     @Override
     public void onKeyDown(KeyDownEvent event) {
-        if (CockpitMode.getInstance().hasInventoryItemPlacer()) {
-            if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-                CockpitMode.getInstance().setInventoryItemPlacer(null);
-            }
-        } else if (CockpitMode.getInstance().hasToBeBuildPlacer()) {
-            if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-                CockpitMode.getInstance().setToBeBuildPlacer(null);
-            }
+        if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+            CockpitMode.getInstance().onEscape();
         }
     }
 
@@ -98,7 +92,8 @@ public class TerrainKeyHandler implements KeyDownHandler, BlurHandler {
                     break;
                 }
                 case KeyCodes.KEY_ESCAPE: {
-                    CockpitMode.getInstance().setToBeBuildPlacer(null);
+                    CockpitMode.getInstance().onEscape();
+                    break;
                 }
             }
         } else if (event.getTypeInt() == Event.ONKEYUP) {

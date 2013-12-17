@@ -15,8 +15,10 @@ package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.IndexCallback;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
+import com.btxtech.game.jsre.common.ObjectHolder;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
@@ -107,7 +109,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         }
     }
 
-    public Collection<SurfaceType> getSurfaceTypeTilesInRegion(Rectangle absRectangle) {
+    private Collection<SurfaceType> getSurfaceTypeTilesInRegion(Rectangle absRectangle) {
         ArrayList<SurfaceType> surfaceTypes = new ArrayList<SurfaceType>();
         Rectangle tileRect = TerrainUtil.convertToTilePositionRoundUp(absRectangle);
 
@@ -121,7 +123,46 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     }
 
     @Override
-    public boolean isFree(Index middlePoint, int radius, Collection<SurfaceType> allowedSurfaces) {
+    public boolean hasSurfaceTypeInRegion(SurfaceType surfaceType, Rectangle absRectangle) {
+        Rectangle tileRect = TerrainUtil.convertToTilePositionRoundUp(absRectangle);
+
+        for (int x = tileRect.getX(); x < tileRect.getEndX(); x++) {
+            for (int y = tileRect.getY(); y < tileRect.getEndY(); y++) {
+                if(surfaceType == getSurfaceType(new Index(x, y))){
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+    private boolean doesSurfaceAdjoinGivenRegion(Rectangle absRectangle, final SurfaceType adjoinSurface) {
+        Rectangle tileRect = TerrainUtil.convertToTilePositionRoundUp(absRectangle);
+        tileRect.growNorth(1);
+        tileRect.growEast(1);
+        tileRect.growSouth(1);
+        tileRect.growWest(1);
+        final ObjectHolder<Boolean> found = new ObjectHolder<Boolean>();
+        // Iterate north
+        tileRect.iterateOverPerimeterInclusive(new IndexCallback() {
+
+            @Override
+            public boolean onIndex(Index index) {
+                SurfaceType surfaceType = getSurfaceType(index);
+                if (surfaceType == adjoinSurface) {
+                    found.setObject(true);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        });
+        return found.getObject() != null && found.getObject();
+    }
+
+    @Override
+    public boolean isFree(Index middlePoint, int radius, Collection<SurfaceType> allowedSurfaces, SurfaceType adjoinSurface, TerrainType builderTerrainType, Integer maxAdjoinDistance) {
         int x = middlePoint.getX() - radius;
         int y = middlePoint.getY() - radius;
 
@@ -134,16 +175,51 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         if (y + radius * 2 > terrainSettings.getPlayFieldYSize()) {
             return false;
         }
+        if (allowedSurfaces == null) {
+            return true;
+        }
         Rectangle rectangle = new Rectangle(x, y, radius * 2, radius * 2);
         Collection<SurfaceType> surfaceTypes = getSurfaceTypeTilesInRegion(rectangle);
-        return !surfaceTypes.isEmpty() && (allowedSurfaces == null || allowedSurfaces.containsAll(surfaceTypes));
+        if (surfaceTypes.isEmpty()) {
+            return false;
+        }
+        if (!allowedSurfaces.containsAll(surfaceTypes)) {
+            return false;
+        }
+        if (adjoinSurface != null && adjoinSurface != SurfaceType.NONE) {
+            return isTerrainTypeDistanceFulfilled(builderTerrainType, maxAdjoinDistance, middlePoint, radius) && doesSurfaceAdjoinGivenRegion(rectangle, adjoinSurface);
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isTerrainTypeDistanceFulfilled(TerrainType builderTerrainType, Integer maxAdjoinDistance, Index middlePoint, int radius) {
+        if(builderTerrainType == null || maxAdjoinDistance == null) {
+            return true;
+        }
+        int length = 2 * (radius + maxAdjoinDistance);
+        Rectangle absRectangle = Rectangle.generateRectangleFromMiddlePoint(middlePoint, length, length);
+        Rectangle tileRect = TerrainUtil.convertToTilePositionRoundUp(absRectangle);
+
+        for (int x = tileRect.getX(); x < tileRect.getEndX(); x++) {
+            for (int y = tileRect.getY(); y < tileRect.getEndY(); y++) {
+                if(builderTerrainType.allowSurfaceType(getSurfaceType(new Index(x, y)))){
+                    return true;
+                }
+            }
+
+        }
+        return false;
     }
 
     @Override
-    public boolean isFree(Index middlePoint, ItemType itemType) {
+    public boolean isFree(Index middlePoint, ItemType itemType, TerrainType builderTerrainType, Integer builderMaxAdjoinDistance) {
         return isFree(middlePoint,
                 itemType.getBoundingBox().getRadius(),
-                itemType.getTerrainType().getSurfaceTypes());
+                itemType.getTerrainType().getSurfaceTypes(),
+                itemType.getAdjoinSurfaceType(),
+                builderTerrainType,
+                builderMaxAdjoinDistance);
     }
 
     @Override
@@ -154,7 +230,11 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
 
     @Override
     public SurfaceType getSurfaceType(Index tileIndex) {
-        if (tileIndex == null || tileIndex.getX() >= terrainSettings.getPlayFieldXSize() || tileIndex.getY() >= terrainSettings.getPlayFieldYSize()) {
+        if (tileIndex == null
+                || tileIndex.getX() >= terrainSettings.getTileXCount()
+                || tileIndex.getY() >= terrainSettings.getTileYCount()
+                || tileIndex.getX() < 0
+                || tileIndex.getY() < 0) {
             return null;
         }
         TerrainTile terrainTile = terrainTileField[tileIndex.getX()][tileIndex.getY()];

@@ -49,7 +49,7 @@ public interface CommonActionService {
 
     void upgrade(SyncBaseItem item) throws InsufficientFundsException;
 
-    void loadContainer(SyncBaseItem container, SyncBaseItem item);
+    void loadContainer(SyncBaseItem container, SyncBaseItem item, Index destinationHint, double destinationAngel);
 
     void unloadContainer(SyncBaseItem container, Index unloadPos);
 

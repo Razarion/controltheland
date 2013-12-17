@@ -150,14 +150,14 @@ abstract public class AbstractItemService implements ItemService {
                 }
 
                 if (otherItem instanceof SyncBaseItem) {
-                    SyncBaseItem syncBaseItem = (SyncBaseItem) otherItem;
-                    if (!syncBaseItem.hasSyncMovable() || !syncBaseItem.getSyncMovable().isActive()) {
+                    SyncBaseItem otherBaseItem = (SyncBaseItem) otherItem;
+                    if (!otherBaseItem.hasSyncMovable() || !otherBaseItem.getSyncMovable().isActive()) {
                         if (positionToCheck == null) {
-                            if (syncItem.getSyncItemArea().contains(syncBaseItem)) {
+                            if (syncItem.getSyncItemArea().contains(otherBaseItem)) {
                                 return true;
                             }
                         } else {
-                            if (syncItem.getSyncItemArea().contains(syncBaseItem, positionToCheck, angelToCheck)) {
+                            if (syncItem.getSyncItemArea().contains(otherBaseItem, positionToCheck, angelToCheck)) {
                                 return true;
                             }
                         }

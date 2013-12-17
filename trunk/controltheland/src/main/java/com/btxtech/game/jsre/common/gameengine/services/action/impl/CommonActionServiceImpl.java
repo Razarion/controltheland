@@ -135,8 +135,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         builderCommand.setPositionToBeBuilt(positionToBeBuild);
         AttackFormationItem format = getPlanetServices().getCollisionService().getDestinationHint(syncItem,
                 syncItem.getSyncBuilder().getBuilderType().getRange(),
-                toBeBuilt.getBoundingBox().createSyntheticSyncItemArea(positionToBeBuild),
-                toBeBuilt.getTerrainType());
+                toBeBuilt.getBoundingBox().createSyntheticSyncItemArea(positionToBeBuild));
         if (format.isInRange()) {
             Path path = getPlanetServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint());
             if (moveIfPathTargetUnreachable(syncItem, path)) {
@@ -263,7 +262,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
     }
 
     @Override
-    public void loadContainer(SyncBaseItem container, SyncBaseItem item) {
+    public void loadContainer(SyncBaseItem container, SyncBaseItem item, Index destinationHint, double destinationAngel) {
         if (checkCommand(item)) {
             return;
         }
@@ -276,6 +275,12 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         loadContainCommand.setId(item.getId());
         loadContainCommand.setTimeStamp();
         loadContainCommand.setItemContainer(container.getId());
+        Path path = getPlanetServices().getCollisionService().setupPathToDestination(item, destinationHint);
+        if (moveIfPathTargetUnreachable(item, path)) {
+            return;
+        }
+        loadContainCommand.setPathToDestination(path);
+        path.setDestinationAngel(destinationAngel);
 
         try {
             executeCommand(item, loadContainCommand);

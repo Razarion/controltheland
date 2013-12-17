@@ -35,7 +35,7 @@ import java.util.List;
 public interface CommonCollisionService {
     Index getRallyPoint(SyncBaseItem factory, Collection<ItemType> ableToBuild);
 
-    AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType);
+    AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target);
 
     Path setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem);
 

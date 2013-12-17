@@ -18,12 +18,18 @@ public class I18nStringWYSIWYGEditor extends Panel {
         additionalDescription.setDefaultModel(new IModel<String>() {
             @Override
             public String getObject() {
-                return ((DbI18nString) getDefaultModelObject()).getString();
+                if (getDefaultModelObject() != null) {
+                    return ((DbI18nString) getDefaultModelObject()).getString();
+                } else {
+                    return null;
+                }
             }
 
             @Override
             public void setObject(String string) {
-                ((DbI18nString) getDefaultModelObject()).putString(string);
+                if (getDefaultModelObject() != null) {
+                    ((DbI18nString) getDefaultModelObject()).putString(string);
+                }
             }
 
             @Override
@@ -35,7 +41,11 @@ public class I18nStringWYSIWYGEditor extends Panel {
 
             @Override
             public Integer getObject() {
-                return ((DbI18nString) getDefaultModelObject()).getId();
+                if (getDefaultModelObject() != null) {
+                    return ((DbI18nString) getDefaultModelObject()).getId();
+                } else {
+                    return null;
+                }
             }
         }));
     }

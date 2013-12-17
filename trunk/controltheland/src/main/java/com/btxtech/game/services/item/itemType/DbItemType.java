@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.DemolitionStepSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.common.CrudChild;
@@ -39,6 +40,8 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -78,7 +81,10 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemType", orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbItemTypeImage> itemTypeImages;
+    @Enumerated(value = EnumType.STRING)
     private TerrainType terrainType;
+    @Enumerated(value = EnumType.STRING)
+    private SurfaceType adjoinSurfaceType;
     private int boundingBoxRadius;
     private int imageWidth;
     private int imageHeight;
@@ -157,6 +163,15 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     @Override
     public void setTerrainType(TerrainType terrainType) {
         this.terrainType = terrainType;
+    }
+
+    public SurfaceType getAdjoinSurfaceType() {
+        return adjoinSurfaceType;
+    }
+
+    @Override
+    public void setAdjoinSurfaceType(SurfaceType adjoinSurfaceType) {
+        this.adjoinSurfaceType = adjoinSurfaceType;
     }
 
     @Override
@@ -437,6 +452,7 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
         itemType.setBoundingBox(boundingBox);
         itemType.setItemTypeSpriteMap(createItemTypeSpriteMap(boundingBox));
         itemType.setTerrainType(terrainType);
+        itemType.setAdjoinSurfaceType(adjoinSurfaceType);
         itemType.setSelectionSound(selectionSound != null ? selectionSound.getId() : null);
         itemType.setBuildupSound(buildupSound != null ? buildupSound.getId() : null);
         itemType.setCommandSound(commandSound != null ? commandSound.getId() : null);

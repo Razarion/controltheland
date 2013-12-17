@@ -48,9 +48,10 @@ public class SyncMovable extends SyncBaseAbility {
             try {
                 if (syncBoxItemId != null) {
                     SyncBoxItem syncBoxItem = (SyncBoxItem) getPlanetServices().getItemService().getItem(syncBoxItemId);
-                    return recalculateNewPath(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem.getSyncItemArea(), syncBoxItem.getTerrainType());
+                    return recalculateNewPath(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem.getSyncItemArea());
                 } else if (targetContainer != null) {
-                    throw new IllegalStateException("Don't know what to do...: " + getSyncBaseItem());
+                    SyncBaseItem container = (SyncBaseItem) getPlanetServices().getItemService().getItem(targetContainer);
+                    return recalculateNewPath(container.getSyncItemContainer().getRange(), container.getSyncItemArea());
                 } else {
                     return getPlanetServices().getCollisionService().setupPathToSyncMovableRandomPositionIfTaken(getSyncBaseItem());
                 }
@@ -75,7 +76,7 @@ public class SyncMovable extends SyncBaseAbility {
      * @return true if more tick are needed to fulfil the job
      */
     public boolean tick(double factor) {
-        return tickMove(factor, overlappingHandler) || targetContainer != null && putInContainer() || syncBoxItemId != null && pickupBox();
+        return tickMove(factor, overlappingHandler) || targetContainer != null && putInContainer(factor) || syncBoxItemId != null && pickupBox();
 
     }
 
@@ -136,7 +137,11 @@ public class SyncMovable extends SyncBaseAbility {
         }
     }
 
-    private boolean putInContainer() {
+    private boolean putInContainer(double factor) {
+        if (tickMove(factor, overlappingHandler)) {
+            return true;
+        }
+
         try {
             SyncBaseItem syncItemContainer = (SyncBaseItem) getPlanetServices().getItemService().getItem(targetContainer);
             if (getSyncItemArea().isInRange(syncItemContainer.getSyncItemContainer().getRange(), syncItemContainer)) {
@@ -151,6 +156,8 @@ public class SyncMovable extends SyncBaseAbility {
             // Item container full
         } catch (TargetHasNoPositionException e) {
             // Target container has moved to a container
+        } catch (WrongOperationSurfaceException e) {
+            // Item container is at the wrong position
         }
         stop();
         return false;
@@ -167,7 +174,7 @@ public class SyncMovable extends SyncBaseAbility {
             } else {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one or target has moved away
-                    recalculateAndSetNewPath(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem.getSyncItemArea(), syncBoxItem.getTerrainType());
+                    recalculateAndSetNewPath(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem.getSyncItemArea());
                     getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {
@@ -225,8 +232,8 @@ public class SyncMovable extends SyncBaseAbility {
             throw new IllegalArgumentException("Can not contain oneself: " + getSyncBaseItem());
         }
         targetContainer = loadContainCommand.getItemContainer();
-        pathToDestination = null;
-        destinationAngel = null;
+        pathToDestination = loadContainCommand.getPathToDestination().getPath();
+        destinationAngel = loadContainCommand.getPathToDestination().getActualDestinationAngel();
     }
 
     public void executeCommand(PickupBoxCommand pickupBoxCommand) {

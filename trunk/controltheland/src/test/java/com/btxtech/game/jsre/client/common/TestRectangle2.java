@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.common;
 
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -96,7 +97,7 @@ public class TestRectangle2 {
 
     @Test
     public void testAdjoinsExclusive1() {
-        Collection<Rectangle> rectangles = new ArrayList<Rectangle>();
+        Collection<Rectangle> rectangles = new ArrayList<>();
         rectangles.add(new Rectangle(0, 0, 5, 5));
         rectangles.add(new Rectangle(10, 10, 5, 5));
         Assert.assertFalse(Rectangle.adjoinsExclusive(rectangles));
@@ -104,7 +105,7 @@ public class TestRectangle2 {
 
     @Test
     public void testAdjoinsExclusive2() {
-        Collection<Rectangle> rectangles = new ArrayList<Rectangle>();
+        Collection<Rectangle> rectangles = new ArrayList<>();
         rectangles.add(new Rectangle(0, 0, 15, 15));
         rectangles.add(new Rectangle(10, 10, 5, 5));
         Assert.assertTrue(Rectangle.adjoinsExclusive(rectangles));
@@ -112,7 +113,7 @@ public class TestRectangle2 {
 
     @Test
     public void testAdjoinsExclusive3() {
-        Collection<Rectangle> rectangles = new ArrayList<Rectangle>();
+        Collection<Rectangle> rectangles = new ArrayList<>();
         rectangles.add(new Rectangle(0, 0, 10, 10));
         rectangles.add(new Rectangle(10, 10, 5, 5));
         Assert.assertFalse(Rectangle.adjoinsExclusive(rectangles));
@@ -128,4 +129,126 @@ public class TestRectangle2 {
         Assert.assertEquals(new Index(769, 560), crossSections.get(0));
     }
 
+    @Test
+    public void testIterateOverPerimeterInclusive1() {
+        IndexCallback indexCallbackMock = EasyMock.createStrictMock(IndexCallback.class);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(3, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(3, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(4, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(4, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(5, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(5, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 4))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 4))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 5))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 5))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 6))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 6))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 7))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 7))).andReturn(true);
+        EasyMock.replay(indexCallbackMock);
+        Rectangle rectangle = new Rectangle(2, 3, 5, 6);
+        rectangle.iterateOverPerimeterInclusive(indexCallbackMock);
+        EasyMock.verify(indexCallbackMock);
+    }
+
+    @Test
+    public void testIterateOverPerimeterInclusive2() {
+        IndexCallback indexCallbackMock = EasyMock.createStrictMock(IndexCallback.class);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 4))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 5))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 6))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 7))).andReturn(true);
+        EasyMock.replay(indexCallbackMock);
+        Rectangle rectangle = new Rectangle(2, 3, 1, 6);
+        rectangle.iterateOverPerimeterInclusive(indexCallbackMock);
+        EasyMock.verify(indexCallbackMock);
+    }
+
+    @Test
+    public void testIterateOverPerimeterInclusive3() {
+        IndexCallback indexCallbackMock = EasyMock.createStrictMock(IndexCallback.class);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(4, 5))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(5, 5))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 5))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(7, 5))).andReturn(true);
+        EasyMock.replay(indexCallbackMock);
+        Rectangle rectangle = new Rectangle(4, 5, 4, 1);
+        rectangle.iterateOverPerimeterInclusive(indexCallbackMock);
+        EasyMock.verify(indexCallbackMock);
+    }
+
+    @Test
+    public void testIterateOverPerimeterInclusive4() {
+        IndexCallback indexCallbackMock = EasyMock.createStrictMock(IndexCallback.class);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(3, 8))).andReturn(true);
+        EasyMock.replay(indexCallbackMock);
+        Rectangle rectangle = new Rectangle(3, 8, 1, 1);
+        rectangle.iterateOverPerimeterInclusive(indexCallbackMock);
+        EasyMock.verify(indexCallbackMock);
+    }
+
+    @Test
+    public void testIterateOverPerimeterInclusive5() {
+        IndexCallback indexCallbackMock = EasyMock.createStrictMock(IndexCallback.class);
+        EasyMock.replay(indexCallbackMock);
+        Rectangle rectangle = new Rectangle(3, 8, 0, 1);
+        rectangle.iterateOverPerimeterInclusive(indexCallbackMock);
+        rectangle = new Rectangle(3, 8, 1, 0);
+        rectangle.iterateOverPerimeterInclusive(indexCallbackMock);
+        rectangle = new Rectangle(3, 8, 0, 0);
+        rectangle.iterateOverPerimeterInclusive(indexCallbackMock);
+        EasyMock.verify(indexCallbackMock);
+    }
+
+    @Test
+    public void testIterateOverPerimeterInclusiveBreak() {
+        IndexCallback indexCallbackMock = EasyMock.createStrictMock(IndexCallback.class);
+        // Break north
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 3))).andReturn(false);
+        // Break south
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 8))).andReturn(false);
+        // Break east
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(3, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(3, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(4, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(4, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(5, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(5, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 4))).andReturn(false);
+        // Break west
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(3, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(3, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(4, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(4, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(5, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(5, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 3))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 8))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(2, 4))).andReturn(true);
+        EasyMock.expect(indexCallbackMock.onIndex(new Index(6, 4))).andReturn(false);
+        EasyMock.replay(indexCallbackMock);
+        Rectangle rectangle = new Rectangle(2, 3, 5, 6);
+        rectangle.iterateOverPerimeterInclusive(indexCallbackMock);
+        rectangle = new Rectangle(2, 3, 5, 6);
+        rectangle.iterateOverPerimeterInclusive(indexCallbackMock);
+        rectangle = new Rectangle(2, 3, 5, 6);
+        rectangle.iterateOverPerimeterInclusive(indexCallbackMock);
+        rectangle = new Rectangle(2, 3, 5, 6);
+        rectangle.iterateOverPerimeterInclusive(indexCallbackMock);
+        EasyMock.verify(indexCallbackMock);
+    }
 }

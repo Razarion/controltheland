@@ -240,6 +240,10 @@ public class SyncItemArea {
         return rectangle.getNearestPoint(getPosition()).getDistanceDouble(getPosition()) <= boundingBox.getRadius();
     }
 
+    public Rectangle generateCoveringRectangle() {
+        return Rectangle.generateRectangleFromMiddlePoint(getPosition(), boundingBox.getDiameter(), boundingBox.getDiameter());
+    }
+
     public boolean positionReached(Index destination) {
         return getPosition().equals(destination);
     }
@@ -268,7 +272,7 @@ public class SyncItemArea {
     }
 
     public double getDistance(SyncItemArea syncItemArea) throws TargetHasNoPositionException {
-        if(!syncItemArea.hasPosition()) {
+        if (!syncItemArea.hasPosition()) {
             throw new TargetHasNoPositionException(syncItem);
         }
         if (contains(syncItemArea)) {

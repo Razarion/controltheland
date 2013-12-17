@@ -65,7 +65,7 @@ public class InventoryItemPlacerChecker {
     }
 
     private boolean checkPlacingAllowed(Index absolutePos) {
-        isTerrainOk = planetServices.getTerrainService().isFree(absolutePos, baseItemType);
+        isTerrainOk = planetServices.getTerrainService().isFree(absolutePos, baseItemType, null, null);
         return isTerrainOk;
     }
 

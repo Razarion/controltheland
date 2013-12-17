@@ -19,9 +19,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemContainerType;
-import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
@@ -39,13 +38,6 @@ public class SyncItemContainer extends SyncBaseAbility {
     private ItemContainerType itemContainerType;
     private List<Id> containedItems = new ArrayList<Id>();
     private Index unloadPos;
-    private SyncMovable.OverlappingHandler overlappingHandler = new SyncMovable.OverlappingHandler() {
-        @Override
-        public Path calculateNewPath() {
-            TerrainType targetTerrainType = getUglyTerrainType(SyncItemContainer.this);
-            return recalculateNewPath(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos), targetTerrainType);
-        }
-    };
 
     public SyncItemContainer(ItemContainerType itemContainerType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -64,53 +56,24 @@ public class SyncItemContainer extends SyncBaseAbility {
         syncItemInfo.setContainedItems(CommonJava.saveArrayListCopy(containedItems));
     }
 
-    public void load(SyncBaseItem syncBaseItem) throws ItemContainerFullException {
+    public void load(SyncBaseItem syncBaseItem) throws ItemContainerFullException, WrongOperationSurfaceException {
         if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;
         }
 
         isAbleToContainThrow(syncBaseItem);
+        isOnOperationSurfaceThrow();
         containedItems.add(syncBaseItem.getId());
         syncBaseItem.setContained(getSyncBaseItem().getId());
         getSyncBaseItem().fireItemChanged(SyncItemListener.Change.CONTAINER_COUNT_CHANGED, null);
         getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
     }
 
-    private void isAbleToContainThrow(SyncBaseItem syncBaseItem) throws ItemContainerFullException {
-        if (getSyncBaseItem().equals(syncBaseItem)) {
-            throw new IllegalArgumentException("Can not contain oneself: " + this);
-        }
-
-        if (!itemContainerType.isAbleToContain(syncBaseItem.getBaseItemType().getId())) {
-            throw new IllegalArgumentException("Container " + getSyncBaseItem() + " is not able to contain: " + syncBaseItem);
-        }
-
-        if (containedItems.size() >= itemContainerType.getMaxCount()) {
-            throw new ItemContainerFullException(this, containedItems.size());
-        }
-    }
-
-    public boolean isAbleToLoad(SyncBaseItem syncBaseItem) {
-        try {
-            if (!isInLoadRange(syncBaseItem)) {
-                return false;
-            }
-            isAbleToContainThrow(syncBaseItem);
-            return true;
-        } catch (IllegalArgumentException ignore) {
-            return false;
-        } catch (ItemContainerFullException ignore) {
-            return false;
-        } catch (TargetHasNoPositionException e) {
-            return false;
-        }
-    }
-
-    public void executeCommand(UnloadContainerCommand unloadContainerCommand) {
+    public void executeCommand(UnloadContainerCommand unloadContainerCommand) throws WrongOperationSurfaceException {
         if (containedItems.isEmpty()) {
             throw new IllegalStateException("No items in item container: " + getSyncBaseItem());
         }
-
+        isOnOperationSurfaceThrow();
         unloadPos = unloadContainerCommand.getUnloadPos();
     }
 
@@ -122,34 +85,10 @@ public class SyncItemContainer extends SyncBaseAbility {
             return false;
         }
 
-        if (getSyncBaseItem().getSyncMovable().tickMove(factor, overlappingHandler)) {
-            return true;
-        }
-
-        if (!isInUnloadRange(unloadPos)) {
-            if (isNewPathRecalculationAllowed()) {
-                // Destination place was may be taken. Calculate a new one.
-                TerrainType targetTerrainType = getUglyTerrainType(this);
-                recalculateAndSetNewPath(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos), targetTerrainType);
-                getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
-                return true;
-            } else {
-                return false;
-            }
-        }
-
         getSyncItemArea().turnTo(unloadPos);
         unload();
         stop();
         return false;
-    }
-
-    private boolean isInUnloadRange(Index unloadPos) {
-        return getSyncItemArea().isInRange(itemContainerType.getRange(), unloadPos);
-    }
-
-    private boolean isInLoadRange(SyncBaseItem syncBaseItem) throws TargetHasNoPositionException {
-        return getSyncItemArea().isInRange(itemContainerType.getRange(), syncBaseItem);
     }
 
     private void unload() throws ItemDoesNotExistException {
@@ -161,9 +100,7 @@ public class SyncItemContainer extends SyncBaseAbility {
             if (allowedUnload(unloadPos, containedItem)) {
                 SyncBaseItem syncItem = (SyncBaseItem) getPlanetServices().getItemService().getItem(containedItem);
                 syncItem.clearContained(unloadPos);
-                if (getPlanetServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER) {
-                    getGlobalServices().getConditionService().onSyncItemUnloaded(syncItem);
-                }
+                getGlobalServices().getConditionService().onSyncItemUnloaded(syncItem);
                 getPlanetServices().getConnectionService().sendSyncInfo(syncItem);
                 iterator.remove();
             }
@@ -206,7 +143,45 @@ public class SyncItemContainer extends SyncBaseAbility {
         this.containedItems = containedItems;
     }
 
-    public boolean isAbleToLoad(Collection<SyncBaseItem> syncBaseItems) {
+    private void isAbleToContainThrow(SyncBaseItem syncBaseItem) throws ItemContainerFullException {
+        if (getSyncBaseItem().equals(syncBaseItem)) {
+            throw new IllegalArgumentException("Can not contain oneself: " + this);
+        }
+
+        if (!itemContainerType.isAbleToContain(syncBaseItem.getBaseItemType().getId())) {
+            throw new IllegalArgumentException("Container " + getSyncBaseItem() + " is not able to contain: " + syncBaseItem);
+        }
+
+        if (containedItems.size() >= itemContainerType.getMaxCount()) {
+            throw new ItemContainerFullException(this, containedItems.size());
+        }
+    }
+
+    private void isOnOperationSurfaceThrow() throws WrongOperationSurfaceException {
+        SurfaceType operationSurfaceType = itemContainerType.getOperationSurfaceType();
+        if (operationSurfaceType == null || operationSurfaceType == SurfaceType.NONE) {
+            return;
+        }
+        if (!getPlanetServices().getTerrainService().hasSurfaceTypeInRegion(operationSurfaceType, getSyncItemArea().generateCoveringRectangle())) {
+            throw new WrongOperationSurfaceException(getSyncBaseItem());
+        }
+    }
+
+    public boolean isAbleToLoad(SyncBaseItem syncBaseItem) {
+        try {
+            isAbleToContainThrow(syncBaseItem);
+            isOnOperationSurfaceThrow();
+            return true;
+        } catch (IllegalArgumentException ignore) {
+            return false;
+        } catch (ItemContainerFullException ignore) {
+            return false;
+        } catch (WrongOperationSurfaceException e) {
+            return false;
+        }
+    }
+
+    public boolean atLeastOneAllowedToLoad(Collection<SyncBaseItem> syncBaseItems) {
         for (SyncBaseItem syncBaseItem : syncBaseItems) {
             if (isAbleToLoad(syncBaseItem)) {
                 return true;
@@ -216,10 +191,8 @@ public class SyncItemContainer extends SyncBaseAbility {
     }
 
     public boolean atLeastOneAllowedToUnload(Index position) {
-        if (!isInUnloadRange(position)) {
-            return false;
-        }
         try {
+            isOnOperationSurfaceThrow();
             for (Id containedItem : containedItems) {
                 if (allowedUnload(position, containedItem)) {
                     return true;
@@ -227,23 +200,17 @@ public class SyncItemContainer extends SyncBaseAbility {
             }
         } catch (ItemDoesNotExistException e) {
             ClientExceptionHandler.handleException(e);
+        } catch (WrongOperationSurfaceException e) {
+            return false;
         }
         return false;
     }
 
     private boolean allowedUnload(Index position, Id containedItem) throws ItemDoesNotExistException {
-        return getPlanetServices().getTerrainService().isFree(position, getPlanetServices().getItemService().getItem(containedItem).getItemType());
+        return isInUnloadRange(position) && getPlanetServices().getTerrainService().isFree(position, getPlanetServices().getItemService().getItem(containedItem).getItemType(), null, null);
     }
 
-    private TerrainType getUglyTerrainType(SyncItemContainer container) {
-        // TODO this is ugly. Getting the TerrainType only of the first item. Problem: If different Items have different TerrainTypes
-        Id id = CommonJava.getFirst(container.getContainedItems());
-        TerrainType targetTerrainType;
-        try {
-            targetTerrainType = getPlanetServices().getItemService().getItem(id).getTerrainType();
-        } catch (ItemDoesNotExistException e) {
-            throw new RuntimeException(e);
-        }
-        return targetTerrainType;
+    private boolean isInUnloadRange(Index unloadPos) {
+        return getSyncItemArea().isInRange(getRange(), unloadPos);
     }
 }

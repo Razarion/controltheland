@@ -100,7 +100,7 @@ public class CursorHandler {
             if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
                 if (CockpitMode.getInstance().isLoadPossible() && syncBaseItem.hasSyncItemContainer() && isNotMyself(syncBaseItem)) {
                     SyncItemContainer syncItemContainer = syncBaseItem.getSyncItemContainer();
-                    boolean allowed = syncItemContainer.isAbleToLoad(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems());
+                    boolean allowed = syncItemContainer.atLeastOneAllowedToLoad(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems());
                     setCursor(CursorType.LOAD, allowed);
                 } else if (CockpitMode.getInstance().isFinalizeBuildPossible() && !syncBaseItem.isReady() && isNotMyself(syncBaseItem)) {
                     setCursor(CursorType.FINALIZE_BUILD, SelectionHandler.getInstance().atLeastOneItemTypeAllowed2FinalizeBuild(syncBaseItem));

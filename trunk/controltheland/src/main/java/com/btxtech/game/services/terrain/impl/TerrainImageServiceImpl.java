@@ -93,8 +93,7 @@ public class TerrainImageServiceImpl extends CommonTerrainImageServiceImpl imple
                         dbTerrainImageGroup.getHtmlBackgroundColorNone(),
                         dbTerrainImageGroup.getHtmlBackgroundColorWater(),
                         dbTerrainImageGroup.getHtmlBackgroundColorLand(),
-                        dbTerrainImageGroup.getHtmlBackgroundColorWaterCoast(),
-                        dbTerrainImageGroup.getHtmlBackgroundColorLandCoast()
+                        dbTerrainImageGroup.getHtmlBackgroundColorCoast()
                 );
             }
         }
