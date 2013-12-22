@@ -179,6 +179,7 @@ public class CommonTaskEditorPanel extends Panel {
 
         add(new DropDownChoice<>("tip", GameTipConfig.Tip.getValuesIncludingNull()));
         add(new BaseItemTypePanel("tipActor"));
+        add(new BaseItemTypePanel("tipTarget"));
         add(new BaseItemTypePanel("tipToBeBuilt"));
         add(new ResourceItemTypePanel("tipResource"));
         add(new IndexPanel("tipTerrainPositionHint"));

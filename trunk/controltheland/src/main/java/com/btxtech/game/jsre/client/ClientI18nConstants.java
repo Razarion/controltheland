@@ -817,4 +817,6 @@ public interface ClientI18nConstants extends Messages {
     String trainingTipToBeBuiltPlacer(String itemTypeName);
 
     String trainingTipWatchQuestDialog();
+
+    String trainingTipClickContainerItem(String itemTypeName);
 }

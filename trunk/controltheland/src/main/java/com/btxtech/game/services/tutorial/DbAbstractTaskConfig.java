@@ -106,6 +106,8 @@ abstract public class DbAbstractTaskConfig implements CrudParent, CrudChild<DbTu
     @ManyToOne(fetch = FetchType.LAZY)
     private DbBaseItemType tipActor;
     @ManyToOne(fetch = FetchType.LAZY)
+    private DbBaseItemType tipTarget;
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbBaseItemType tipToBeBuilt;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbResourceItemType tipResource;
@@ -221,6 +223,14 @@ abstract public class DbAbstractTaskConfig implements CrudParent, CrudChild<DbTu
 
     public void setTipActor(DbBaseItemType tipActor) {
         this.tipActor = tipActor;
+    }
+
+    public DbBaseItemType getTipTarget() {
+        return tipTarget;
+    }
+
+    public void setTipTarget(DbBaseItemType tipTarget) {
+        this.tipTarget = tipTarget;
     }
 
     public DbBaseItemType getTipToBeBuilt() {
@@ -340,6 +350,7 @@ abstract public class DbAbstractTaskConfig implements CrudParent, CrudChild<DbTu
         GameTipConfig gameTipConfig = new GameTipConfig();
         gameTipConfig.setTip(tip);
         gameTipConfig.setActor(tipActor != null ? tipActor.getId() : 0);
+        gameTipConfig.setTarget(tipTarget != null ? tipTarget.getId() : 0);
         gameTipConfig.setToBeBuiltId(tipToBeBuilt != null ? tipToBeBuilt.getId() : 0);
         gameTipConfig.setTerrainPositionHint(tipTerrainPositionHint);
         gameTipConfig.setResourceId(tipResource != null ? tipResource.getId() : 0);

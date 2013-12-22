@@ -245,6 +245,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         dbAutomatedBattleTaskConfig.setRadarMode(RadarMode.MAP_AND_UNITS);
         dbAutomatedBattleTaskConfig.setTip(GameTipConfig.Tip.BUILD);
         dbAutomatedBattleTaskConfig.setTipActor(serverItemTypeService.getDbBaseItemType(TEST_CONTAINER_ITEM_ID));
+        dbAutomatedBattleTaskConfig.setTipTarget(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
         dbAutomatedBattleTaskConfig.setTipResource(serverItemTypeService.getDbResourceItemType(TEST_RESOURCE_ITEM_ID));
         dbAutomatedBattleTaskConfig.setTipTerrainPositionHint(new Index(111, 222));
         dbAutomatedBattleTaskConfig.setTipToBeBuilt(serverItemTypeService.getDbBaseItemType(TEST_CONSUMER_TYPE_ID));
@@ -383,6 +384,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         Assert.assertEquals(RadarMode.MAP_AND_UNITS, planetInfo.getRadarMode());
         gameTipConfig = automatedBattleTaskConfig.getGameTipConfig();
         Assert.assertEquals(TEST_CONTAINER_ITEM_ID, gameTipConfig.getActor());
+        Assert.assertEquals(TEST_START_BUILDER_ITEM_ID, gameTipConfig.getTarget());
         Assert.assertEquals(TEST_RESOURCE_ITEM_ID, gameTipConfig.getResourceId());
         Assert.assertEquals(TEST_CONSUMER_TYPE_ID, gameTipConfig.getToBeBuiltId());
         Assert.assertEquals(new Index(111, 222), gameTipConfig.getTerrainPositionHint());
