@@ -32,7 +32,7 @@ public class SendBuilderFinalizeCommandTipTask extends AbstractTipTask implement
 
     @Override
     public void internalStart() {
-        ActionHandler.getInstance().setCommandListener(this);
+        ActionHandler.getInstance().addCommandListener(this);
         Collection<SyncBaseItem> existingItems = ItemContainer.getInstance().getItems4BaseAndType(ClientBase.getInstance().getSimpleBase(), toBeFinalizedId);
         for (SyncBaseItem existingItem : existingItems) {
             if (!existingItem.isReady()) {
@@ -50,6 +50,7 @@ public class SendBuilderFinalizeCommandTipTask extends AbstractTipTask implement
 
     @Override
     public void internalCleanup() {
+        ActionHandler.getInstance().removeCommandListener(this);
         SelectionHandler.getInstance().removeSelectionListener(this);
     }
 

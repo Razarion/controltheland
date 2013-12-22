@@ -26,7 +26,7 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
 
     @Override
     public void internalStart() {
-        ActionHandler.getInstance().setCommandListener(this);
+        ActionHandler.getInstance().addCommandListener(this);
         SelectionHandler.getInstance().addSelectionListener(this);
     }
 
@@ -38,7 +38,7 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
     @Override
     public void internalCleanup() {
         SelectionHandler.getInstance().removeSelectionListener(this);
-        ActionHandler.getInstance().setCommandListener(null);
+        ActionHandler.getInstance().removeCommandListener(this);
     }
 
     @Override

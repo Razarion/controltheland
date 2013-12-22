@@ -82,7 +82,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     private HashSet<SyncTickItem> tmpAddActiveItems = new HashSet<SyncTickItem>();
     private HashSet<SyncTickItem> tmpRemoveActiveItems = new HashSet<SyncTickItem>();
     private Logger log = Logger.getLogger(ActionHandler.class.getName());
-    private CommandListener commandListener;
+    private Collection<CommandListener> commandListeners = new ArrayList<CommandListener>();
     private IdleListener idleListener;
 
     public static ActionHandler getInstance() {
@@ -409,7 +409,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         }
         Connection.getInstance().sendSyncInfo(syncItem);
         SoundHandler.getInstance().playCommandSound(syncItem);
-        if (commandListener != null) {
+        for (CommandListener commandListener : commandListeners) {
             commandListener.onCommand(baseCommand);
         }
     }
@@ -463,8 +463,12 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         }
     }
 
-    public void setCommandListener(CommandListener commandListener) {
-        this.commandListener = commandListener;
+    public void addCommandListener(CommandListener commandListener) {
+        commandListeners.add(commandListener);
+    }
+
+    public void removeCommandListener(CommandListener commandListener) {
+        commandListeners.remove(commandListener);
     }
 
     public void setIdleListener(IdleListener idleListener) {

@@ -6,11 +6,13 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.tutorial.AbstractTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.AutomatedBattleTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.AutomatedScrollTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.ConditionTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.ScrollToEventTaskConfig;
+import com.btxtech.game.jsre.common.tutorial.SyncItemListenerTaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -284,6 +286,24 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         dbScrollToEventTaskConfig.setTipTerrainPositionHint(new Index(615, 354));
         dbScrollToEventTaskConfig.setClearGame(false);
         dbScrollToEventTaskConfig.setScrollToPosition(new Rectangle(5, 9, 11, 22));
+        // Create DbScrollToEventTaskConfig
+        DbSyncItemListenerTaskConfig dbSyncItemListenerTaskConfig = (DbSyncItemListenerTaskConfig) crudChildServiceHelper.createDbChild(DbSyncItemListenerTaskConfig.class);
+        dbSyncItemListenerTaskConfig.getI18nStorySplashTitle().putString("I18nStorySplashTitle");
+        dbSyncItemListenerTaskConfig.getI18nStorySplashText().putString("I18nStorySplashText");
+        dbSyncItemListenerTaskConfig.getI18nPraiseSplashTitle().putString("I18nPraiseSplashTitle");
+        dbSyncItemListenerTaskConfig.getI18nPraiseSplashText().putString("I18nPraiseSplashText");
+        dbSyncItemListenerTaskConfig.getI18nTitle().putString("i18n title4");
+        dbSyncItemListenerTaskConfig.setScroll(new Index(7, 8));
+        dbSyncItemListenerTaskConfig.setHouseCount(99);
+        dbSyncItemListenerTaskConfig.setMoney(345);
+        dbSyncItemListenerTaskConfig.setMaxMoney(254);
+        dbSyncItemListenerTaskConfig.setRadarMode(RadarMode.NONE);
+        dbSyncItemListenerTaskConfig.setTip(GameTipConfig.Tip.SCROLL);
+        dbSyncItemListenerTaskConfig.setTipToBeBuilt(serverItemTypeService.getDbBaseItemType(TEST_CONTAINER_ITEM_ID));
+        dbSyncItemListenerTaskConfig.setTipTerrainPositionHint(new Index(615, 354));
+        dbSyncItemListenerTaskConfig.setClearGame(false);
+        dbSyncItemListenerTaskConfig.setSyncItemChange(SyncItemListener.Change.CONTAINED_IN_CHANGED);
+        dbSyncItemListenerTaskConfig.setSyncItemTypeToWatch(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
         //
         ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -328,7 +348,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         Assert.assertTrue(tutorialConfig.isShowTip());
         Assert.assertFalse(tutorialConfig.isDisableScroll());
         List<AbstractTaskConfig> abstractTaskConfigs = tutorialConfig.getTasks();
-        Assert.assertEquals(4, abstractTaskConfigs.size());
+        Assert.assertEquals(5, abstractTaskConfigs.size());
         // Verify ConditionTaskConfig
         ConditionTaskConfig conditionTaskConfig = (ConditionTaskConfig) abstractTaskConfigs.get(0);
         Assert.assertEquals(new Index(1, 2), conditionTaskConfig.getScroll());
@@ -411,6 +431,25 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         Assert.assertEquals("I18nStorySplashText", scrollToEventTaskConfig.getStorySplashPopupInfo().getStoryText());
         Assert.assertEquals("I18nPraiseSplashTitle", scrollToEventTaskConfig.getPraiseSplashPopupInfo().getTitle());
         Assert.assertEquals("I18nPraiseSplashText", scrollToEventTaskConfig.getPraiseSplashPopupInfo().getPraiseText());
+        // Verify Send Command Task Config
+        SyncItemListenerTaskConfig syncItemListenerTaskConfig = (SyncItemListenerTaskConfig) abstractTaskConfigs.get(4);
+        Assert.assertEquals(new Index(7, 8), syncItemListenerTaskConfig.getScroll());
+        Assert.assertEquals(345, syncItemListenerTaskConfig.getMoney());
+        Assert.assertEquals("i18n title4", syncItemListenerTaskConfig.getName());
+        planetInfo = syncItemListenerTaskConfig.createPlanetInfo();
+        Assert.assertEquals(99, planetInfo.getHouseSpace());
+        Assert.assertEquals(254, planetInfo.getMaxMoney());
+        Assert.assertEquals(RadarMode.NONE, planetInfo.getRadarMode());
+        gameTipConfig = syncItemListenerTaskConfig.getGameTipConfig();
+        Assert.assertEquals(new Index(615, 354), gameTipConfig.getTerrainPositionHint());
+        Assert.assertEquals(GameTipConfig.Tip.SCROLL, gameTipConfig.getTip());
+        Assert.assertFalse(syncItemListenerTaskConfig.isClearGame());
+        Assert.assertEquals(SyncItemListener.Change.CONTAINED_IN_CHANGED, syncItemListenerTaskConfig.getSyncItemChange());
+        Assert.assertEquals(TEST_START_BUILDER_ITEM_ID, syncItemListenerTaskConfig.getSyncItemTypeToWatch());
+        Assert.assertEquals("I18nStorySplashTitle", syncItemListenerTaskConfig.getStorySplashPopupInfo().getTitle());
+        Assert.assertEquals("I18nStorySplashText", syncItemListenerTaskConfig.getStorySplashPopupInfo().getStoryText());
+        Assert.assertEquals("I18nPraiseSplashTitle", syncItemListenerTaskConfig.getPraiseSplashPopupInfo().getTitle());
+        Assert.assertEquals("I18nPraiseSplashText", syncItemListenerTaskConfig.getPraiseSplashPopupInfo().getPraiseText());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

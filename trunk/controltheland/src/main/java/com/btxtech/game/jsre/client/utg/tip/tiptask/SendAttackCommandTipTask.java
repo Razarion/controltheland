@@ -32,7 +32,7 @@ public class SendAttackCommandTipTask extends AbstractTipTask implements Selecti
     @Override
     public void internalStart() {
         SelectionHandler.getInstance().addSelectionListener(this);
-        ActionHandler.getInstance().setCommandListener(this);
+        ActionHandler.getInstance().addCommandListener(this);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SendAttackCommandTipTask extends AbstractTipTask implements Selecti
 
     @Override
     public void internalCleanup() {
-        ActionHandler.getInstance().setCommandListener(null);
+        ActionHandler.getInstance().removeCommandListener(this);
         SelectionHandler.getInstance().removeSelectionListener(this);
     }
 

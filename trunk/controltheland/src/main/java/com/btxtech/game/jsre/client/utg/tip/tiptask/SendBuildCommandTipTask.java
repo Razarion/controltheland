@@ -27,7 +27,7 @@ public class SendBuildCommandTipTask extends AbstractTipTask implements ActionHa
 
     @Override
     public void internalStart() {
-        ActionHandler.getInstance().setCommandListener(this);
+        ActionHandler.getInstance().addCommandListener(this);
         CockpitMode.getInstance().setToBeBuildPlacerListener(this);
     }
 
@@ -38,7 +38,7 @@ public class SendBuildCommandTipTask extends AbstractTipTask implements ActionHa
 
     @Override
     public void internalCleanup() {
-        ActionHandler.getInstance().setCommandListener(null);
+        ActionHandler.getInstance().removeCommandListener(this);
         CockpitMode.getInstance().setToBeBuildPlacerListener(null);
     }
 
