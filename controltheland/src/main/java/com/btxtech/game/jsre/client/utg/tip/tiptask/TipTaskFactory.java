@@ -40,6 +40,10 @@ public class TipTaskFactory {
                 createWatchQuest(tipTaskContainer, gameTipConfig);
                 break;
             }
+            case LOAD_CONTAINER: {
+                createLoadContainer(tipTaskContainer, gameTipConfig);
+                break;
+            }
             default:
                 throw new IllegalArgumentException("TipTaskFactory: unknown tip: " + gameTipConfig.getTip());
         }
@@ -95,6 +99,14 @@ public class TipTaskFactory {
         tipTaskContainer.add(new WatchQuestVisualisationCockpitTipTask(gameTipConfig.getToBeBuiltId()));
         tipTaskContainer.addFallback(new IdleItemTipTask(gameTipConfig.getActor()));
         tipTaskContainer.addFallback(new WatchQuestVisualisationCockpitTipTask(gameTipConfig.getToBeBuiltId()));
+    }
+
+    private static void createLoadContainer(TipTaskContainer tipTaskContainer, GameTipConfig gameTipConfig) {
+        tipTaskContainer.add(new SelectTipTask(gameTipConfig.getActor()));
+        tipTaskContainer.add(new SendLoadContainerCommandTipTask(gameTipConfig.getTarget()));
+        tipTaskContainer.addFallback(new IdleItemTipTask(gameTipConfig.getActor()));
+        tipTaskContainer.addFallback(new SelectTipTask(gameTipConfig.getActor()));
+        tipTaskContainer.addFallback(new SendLoadContainerCommandTipTask(gameTipConfig.getTarget()));
     }
 
 }

@@ -20,7 +20,8 @@ public class GameTipConfig implements Serializable {
         MOVE,
         ATTACK,
         SCROLL,
-        WATCH_QUEST;
+        WATCH_QUEST,
+        LOAD_CONTAINER;
 
         public static List<Tip> getValuesIncludingNull() {
             List<Tip> tips = new ArrayList<Tip>(Arrays.asList(values()));
@@ -31,6 +32,7 @@ public class GameTipConfig implements Serializable {
 
     private Tip tip;
     private int actor;
+    private int target;
     private int toBeBuiltId;
     private int resourceId;
     private Index terrainPositionHint;
@@ -49,6 +51,14 @@ public class GameTipConfig implements Serializable {
 
     public void setActor(int actor) {
         this.actor = actor;
+    }
+
+    public int getTarget() {
+        return target;
+    }
+
+    public void setTarget(int target) {
+        this.target = target;
     }
 
     public int getToBeBuiltId() {
