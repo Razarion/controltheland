@@ -74,6 +74,7 @@
         <mapping class="com.btxtech.game.services.tutorial.DbAutomatedBattleTaskConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbAutomatedScrollTaskConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbScrollToEventTaskConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbSyncItemListenerTaskConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskAllowedItem"/>
         <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskBotToStop"/>

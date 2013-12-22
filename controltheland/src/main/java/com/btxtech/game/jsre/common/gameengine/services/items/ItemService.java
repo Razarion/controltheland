@@ -60,6 +60,8 @@ public interface ItemService {
 
     Collection<SyncBaseItem> getItems4BaseAndType(SimpleBase simpleBase, int itemTypeId);
 
+    Collection<SyncBaseItem> getItems4BaseAndType(boolean includingNoPosition, final SimpleBase simpleBase, final int itemTypeId);
+
     Collection<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase);
 
     Collection<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region);

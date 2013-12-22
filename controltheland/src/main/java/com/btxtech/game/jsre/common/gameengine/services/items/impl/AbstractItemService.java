@@ -37,9 +37,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.TargetHasNoPositionException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.TargetHasNoPositionException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -258,9 +258,14 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
-    public Collection<SyncBaseItem> getItems4BaseAndType(final SimpleBase simpleBase, final int itemTypeId) {
+    public Collection<SyncBaseItem> getItems4BaseAndType(SimpleBase simpleBase, int itemTypeId) {
+        return getItems4BaseAndType(false, simpleBase, itemTypeId);
+    }
+
+    @Override
+    public Collection<SyncBaseItem> getItems4BaseAndType(boolean includingNoPosition, final SimpleBase simpleBase, final int itemTypeId) {
         final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
-        iterateOverItems(false, false, null, new ItemHandler<Void>() {
+        iterateOverItems(includingNoPosition, false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
                 if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBase().equals(simpleBase) && syncItem.getItemType().getId() == itemTypeId) {

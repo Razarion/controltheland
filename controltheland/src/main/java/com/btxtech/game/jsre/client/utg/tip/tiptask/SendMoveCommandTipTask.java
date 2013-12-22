@@ -28,7 +28,7 @@ public class SendMoveCommandTipTask extends AbstractTipTask implements Selection
     @Override
     public void internalStart() {
         SelectionHandler.getInstance().addSelectionListener(this);
-        ActionHandler.getInstance().setCommandListener(this);
+        ActionHandler.getInstance().addCommandListener(this);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class SendMoveCommandTipTask extends AbstractTipTask implements Selection
 
     @Override
     public void internalCleanup() {
-        ActionHandler.getInstance().setCommandListener(null);
+        ActionHandler.getInstance().removeCommandListener(this);
         SelectionHandler.getInstance().removeSelectionListener(this);
     }
 

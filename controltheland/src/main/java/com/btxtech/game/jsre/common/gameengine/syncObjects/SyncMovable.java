@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PathToDestinationCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PickupBoxCommand;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
@@ -227,13 +227,13 @@ public class SyncMovable extends SyncBaseAbility {
         destinationAngel = pathToDestinationCommand.getPathToDestination().getActualDestinationAngel();
     }
 
-    public void executeCommand(LoadContainCommand loadContainCommand) {
-        if (loadContainCommand.getId().equals(loadContainCommand.getItemContainer())) {
+    public void executeCommand(LoadContainerCommand loadContainerCommand) {
+        if (loadContainerCommand.getId().equals(loadContainerCommand.getItemContainer())) {
             throw new IllegalArgumentException("Can not contain oneself: " + getSyncBaseItem());
         }
-        targetContainer = loadContainCommand.getItemContainer();
-        pathToDestination = loadContainCommand.getPathToDestination().getPath();
-        destinationAngel = loadContainCommand.getPathToDestination().getActualDestinationAngel();
+        targetContainer = loadContainerCommand.getItemContainer();
+        pathToDestination = loadContainerCommand.getPathToDestination().getPath();
+        destinationAngel = loadContainerCommand.getPathToDestination().getActualDestinationAngel();
     }
 
     public void executeCommand(PickupBoxCommand pickupBoxCommand) {

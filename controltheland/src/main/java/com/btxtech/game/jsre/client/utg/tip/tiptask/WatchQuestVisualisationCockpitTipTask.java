@@ -23,12 +23,12 @@ public class WatchQuestVisualisationCockpitTipTask extends AbstractTipTask imple
 
     @Override
     public void internalStart() {
-        ActionHandler.getInstance().setCommandListener(this);
+        ActionHandler.getInstance().addCommandListener(this);
     }
 
     @Override
     public void internalCleanup() {
-        ActionHandler.getInstance().setCommandListener(null);
+        ActionHandler.getInstance().removeCommandListener(this);
     }
 
     @Override

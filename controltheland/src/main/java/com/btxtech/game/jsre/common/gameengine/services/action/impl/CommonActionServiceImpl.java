@@ -27,7 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LaunchCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PickupBoxCommand;
@@ -271,19 +271,19 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         }
 
         container.stop();
-        LoadContainCommand loadContainCommand = new LoadContainCommand();
-        loadContainCommand.setId(item.getId());
-        loadContainCommand.setTimeStamp();
-        loadContainCommand.setItemContainer(container.getId());
+        LoadContainerCommand loadContainerCommand = new LoadContainerCommand();
+        loadContainerCommand.setId(item.getId());
+        loadContainerCommand.setTimeStamp();
+        loadContainerCommand.setItemContainer(container.getId());
         Path path = getPlanetServices().getCollisionService().setupPathToDestination(item, destinationHint);
         if (moveIfPathTargetUnreachable(item, path)) {
             return;
         }
-        loadContainCommand.setPathToDestination(path);
+        loadContainerCommand.setPathToDestination(path);
         path.setDestinationAngel(destinationAngel);
 
         try {
-            executeCommand(item, loadContainCommand);
+            executeCommand(item, loadContainerCommand);
         } catch (Exception e) {
             log.log(Level.SEVERE, "", e);
         }

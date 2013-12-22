@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
  * Date: 01.05.2010
  * Time: 12:42:05
  */
-public class LoadContainCommand extends PathToDestinationCommand {
+public class LoadContainerCommand extends PathToDestinationCommand {
     private Id itemContainer;
 
     public Id getItemContainer() {
