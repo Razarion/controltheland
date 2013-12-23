@@ -1,6 +1,5 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -225,7 +224,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         for (int i = 0; i < MAX_TRIES; i++) {
             int tileIndex = random.nextInt(region.tileSize());
             Index tile = region.getIndexForRandomPosition(tileIndex);
-            Index absolutePosition = TerrainUtil.getAbsolutIndexForTerrainTileIndex(tile).add(Constants.TERRAIN_TILE_WIDTH / 2,Constants.TERRAIN_TILE_HEIGHT / 2);
+            Index absolutePosition = TerrainUtil.getAbsolutIndexForTerrainTileIndex(tile).add(random.nextInt(Constants.TERRAIN_TILE_WIDTH), random.nextInt(Constants.TERRAIN_TILE_HEIGHT));
             if (botFree && getServices().getBotService().isInRealm(absolutePosition)) {
                 continue;
             }
