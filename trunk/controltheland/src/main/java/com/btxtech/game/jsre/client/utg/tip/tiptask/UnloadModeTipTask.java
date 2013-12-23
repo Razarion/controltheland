@@ -1,33 +1,29 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
-import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
-import com.btxtech.game.jsre.client.utg.tip.visualization.ToBeBuiltItemCockpitGameOverlayTipVisualization;
+import com.btxtech.game.jsre.client.utg.tip.visualization.UnloadModeCockpitGameOverlayTipVisualization;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 
 /**
  * User: beat
- * Date: 22.08.12
+ * Date: 22.12.13
  * Time: 13:19
  */
-public class SendFactorizeCommandTipTask extends AbstractTipTask implements SelectionListener, ActionHandler.CommandListener {
-    private int itemTypeToFactorized;
+public class UnloadModeTipTask extends AbstractTipTask implements CockpitMode.CockpitModeListener, SelectionListener {
 
-    public SendFactorizeCommandTipTask(int itemTypeToFactorized) {
-        this.itemTypeToFactorized = itemTypeToFactorized;
+    public UnloadModeTipTask() {
         activateConversionOnMouseMove();
     }
 
     @Override
     public void internalStart() {
-        ActionHandler.getInstance().addCommandListener(this);
         SelectionHandler.getInstance().addSelectionListener(this);
+        CockpitMode.getInstance().addCockpitModeListener(this);
     }
 
     @Override
@@ -37,18 +33,18 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
 
     @Override
     public void internalCleanup() {
+        CockpitMode.getInstance().removeCockpitModeListener(this);
         SelectionHandler.getInstance().removeSelectionListener(this);
-        ActionHandler.getInstance().removeCommandListener(this);
     }
 
     @Override
     public GameTipVisualization createInGameTip() {
-        return new ToBeBuiltItemCockpitGameOverlayTipVisualization(itemTypeToFactorized);
+        return new UnloadModeCockpitGameOverlayTipVisualization();
     }
 
     @Override
     public String getTaskText() {
-        return ClientI18nHelper.CONSTANTS.trainingTipFactorizeCommand(getItemTypeName(itemTypeToFactorized));
+        return ClientI18nHelper.CONSTANTS.trainingTipClickUnloadMode();
     }
 
     @Override
@@ -66,9 +62,10 @@ public class SendFactorizeCommandTipTask extends AbstractTipTask implements Sele
         // Ignore
     }
 
+
     @Override
-    public void onCommand(BaseCommand baseCommand) {
-        if (baseCommand instanceof FactoryCommand && ((FactoryCommand) baseCommand).getToBeBuilt() == itemTypeToFactorized) {
+    public void onCockpitModChanged(CockpitMode.Mode mode) {
+        if (mode == CockpitMode.Mode.UNLOAD) {
             onSucceed();
         }
     }

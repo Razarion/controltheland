@@ -819,4 +819,10 @@ public interface ClientI18nConstants extends Messages {
     String trainingTipWatchQuestDialog();
 
     String trainingTipClickContainerItem(String itemTypeName);
+    
+    String trainingTipClickMove();
+
+    String trainingTipClickUnload();
+
+    String trainingTipClickUnloadMode();
 }

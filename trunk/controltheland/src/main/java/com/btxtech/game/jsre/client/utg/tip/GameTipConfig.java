@@ -21,7 +21,8 @@ public class GameTipConfig implements Serializable {
         ATTACK,
         SCROLL,
         WATCH_QUEST,
-        LOAD_CONTAINER;
+        LOAD_CONTAINER,
+        UNLOAD_CONTAINER;
 
         public static List<Tip> getValuesIncludingNull() {
             List<Tip> tips = new ArrayList<Tip>(Arrays.asList(values()));

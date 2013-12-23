@@ -5,7 +5,7 @@ import com.btxtech.game.jsre.client.utg.tip.tiptask.AbstractTipTask;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.TipTaskContainer;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.TipTaskFactory;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
-import com.btxtech.game.jsre.client.utg.tip.visualization.ItemCockpitGameOverlayTipVisualization;
+import com.btxtech.game.jsre.client.utg.tip.visualization.OverlayTipVisualization;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 
 import java.util.logging.Level;
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class GameTipManager {
     private static final GameTipManager INSTANCE = new GameTipManager();
     private GameTipVisualization gameTipVisualization;
-    private ItemCockpitGameOverlayTipVisualization overlayVisualization;
+    private OverlayTipVisualization overlayTipVisualization;
     private TipTaskContainer tipTaskContainer;
     private OverlayTipPanel overlayTipPanel = new OverlayTipPanel();
     private static Logger log = Logger.getLogger(GameTipManager.class.getName());
@@ -74,8 +74,8 @@ public class GameTipManager {
         return gameTipVisualization;
     }
 
-    public ItemCockpitGameOverlayTipVisualization getOverlayVisualization() {
-        return overlayVisualization;
+    public OverlayTipVisualization getOverlayTipVisualization() {
+        return overlayTipVisualization;
     }
 
     public void onTaskFailed() {
@@ -106,18 +106,18 @@ public class GameTipManager {
     }
 
     private void startVisualization(GameTipVisualization visualization) {
-        if (visualization instanceof ItemCockpitGameOverlayTipVisualization) {
-            overlayVisualization = (ItemCockpitGameOverlayTipVisualization) visualization;
-            overlayTipPanel.create(overlayVisualization.getAbsoluteBuildupPositionHotSpot());
+        if (visualization instanceof OverlayTipVisualization) {
+            overlayTipVisualization = (OverlayTipVisualization) visualization;
+            overlayTipPanel.create(overlayTipVisualization.getAbsoluteArrowHotSpot());
         } else {
             gameTipVisualization = visualization;
         }
     }
 
     private void cleanupVisualization() {
-        if (overlayVisualization != null) {
+        if (overlayTipVisualization != null) {
             overlayTipPanel.close();
-            overlayVisualization = null;
+            overlayTipVisualization = null;
         }
         gameTipVisualization = null;
     }

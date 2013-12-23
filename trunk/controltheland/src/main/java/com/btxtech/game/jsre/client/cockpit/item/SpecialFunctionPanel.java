@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -32,7 +33,9 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * User: beat Date: 18.11.2010 Time: 10:51:09
+ * User: beat
+ * Date: 18.11.2010
+ * Time: 10:51:09
  */
 public class SpecialFunctionPanel extends Composite {
     private static SpecialFunctionPanelUiBinder uiBinder = GWT.create(SpecialFunctionPanelUiBinder.class);
@@ -99,5 +102,12 @@ public class SpecialFunctionPanel extends Composite {
     @UiHandler("launchButton")
     void onLaunchButtonClick(ClickEvent event) {
         CockpitMode.getInstance().setMode(CockpitMode.Mode.LAUNCH);
+    }
+
+    public Index getAbsoluteUnloadButtonTopPosition() {
+        if (!unloadButton.isVisible()) {
+            throw new IllegalArgumentException("SpecialFunctionPanel.getAbsoluteUnloadButtonTopPosition() unloadButton is not visible");
+        }
+        return new Index(unloadButton.getAbsoluteLeft() + unloadButton.getOffsetWidth() / 2, unloadButton.getAbsoluteTop());
     }
 }
