@@ -172,6 +172,13 @@ public class ItemCockpit extends Composite implements SelectionListener {
         return buildupItemPanel.getAbsoluteMiddleTopPosition(buildupItemTypeId);
     }
 
+    public Index getAbsoluteUnloadButtonTopPositionFromSpecialFunctionPanel() {
+        if (specialFunctionPanel.getWidget() == null) {
+            throw new IllegalArgumentException("ItemCockpit.getAbsoluteMiddleTopPositionFromBuildupPanel() specialFunctionPanel is not visible");
+        }
+        return ((SpecialFunctionPanel)specialFunctionPanel.getWidget()).getAbsoluteUnloadButtonTopPosition();
+    }
+
     public boolean isInside(int x, int y) {
         return new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), getOffsetWidth(), getOffsetHeight()).contains(new Index(x, y));
     }

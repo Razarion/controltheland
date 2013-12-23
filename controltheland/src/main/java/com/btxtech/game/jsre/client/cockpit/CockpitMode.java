@@ -20,6 +20,9 @@ import com.btxtech.game.jsre.client.renderer.ToBeBuildPlacerRenderTask;
 import com.btxtech.game.jsre.client.terrain.OverlayPanel;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * User: beat
  * Date: 16.11.2010
@@ -36,6 +39,10 @@ public class CockpitMode implements SelectionListener {
         void onToBeBuildPlacerSet(ToBeBuildPlacer toBeBuildPlacer);
     }
 
+    public interface CockpitModeListener {
+        void onCockpitModChanged(Mode mode);
+    }
+
     private static final CockpitMode INSTANCE = new CockpitMode();
     private Mode mode;
     private boolean isMovePossible;
@@ -48,6 +55,7 @@ public class CockpitMode implements SelectionListener {
     private ToBeBuildPlacer toBeBuildPlacer;
     private ToBeBuildPlacerListener toBeBuildPlacerListener;
     private ToBeBuildPlacerRenderTask toBeBuildPlacerRenderTask;
+    private Collection<CockpitModeListener> cockpitModeListeners = new ArrayList<CockpitModeListener>();
 
     public static CockpitMode getInstance() {
         return INSTANCE;
@@ -76,6 +84,9 @@ public class CockpitMode implements SelectionListener {
             }
             if (mode != Mode.SELL) {
                 SideCockpit.getInstance().clearSellMode();
+            }
+            for (CockpitModeListener cockpitModeListener : cockpitModeListeners) {
+                cockpitModeListener.onCockpitModChanged(mode);
             }
         }
     }
@@ -197,7 +208,7 @@ public class CockpitMode implements SelectionListener {
             CockpitMode.getInstance().setInventoryItemPlacer(null);
         } else if (hasToBeBuildPlacer()) {
             CockpitMode.getInstance().setToBeBuildPlacer(null);
-        } else if(mode == Mode.UNLOAD) {
+        } else if (mode == Mode.UNLOAD) {
             setMode(null);
         }
     }
@@ -210,5 +221,13 @@ public class CockpitMode implements SelectionListener {
         isFinalizeBuildPossible = false;
         groupSelectionFrame = null;
         toBeBuildPlacer = null;
+    }
+
+    public void addCockpitModeListener(CockpitModeListener cockpitModeListener) {
+        cockpitModeListeners.add(cockpitModeListener);
+    }
+
+    public void removeCockpitModeListener(CockpitModeListener cockpitModeListener) {
+        cockpitModeListeners.remove(cockpitModeListener);
     }
 }

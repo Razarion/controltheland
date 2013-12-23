@@ -4,7 +4,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.OverlayTipPanel;
-import com.btxtech.game.jsre.client.utg.tip.visualization.ItemCockpitGameOverlayTipVisualization;
+import com.btxtech.game.jsre.client.utg.tip.visualization.OverlayTipVisualization;
+import com.btxtech.game.jsre.client.utg.tip.visualization.ToBeBuiltItemCockpitGameOverlayTipVisualization;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.dom.client.Context2d;
 
@@ -26,7 +27,7 @@ public class OverlayTipRenderTask extends AbstractRenderTask {
     @Override
     public void render(long timeStamp, Collection<SyncItem> itemsInView, Rectangle viewRect, final Rectangle tileViewRect) {
         context2d.clearRect(0, 0, OverlayTipPanel.WIDTH, OverlayTipPanel.WIDTH);
-        ItemCockpitGameOverlayTipVisualization overlayTipVisualization = GameTipManager.getInstance().getOverlayVisualization();
+        OverlayTipVisualization overlayTipVisualization = GameTipManager.getInstance().getOverlayTipVisualization();
         if (overlayTipVisualization == null) {
             return;
         }

@@ -9,7 +9,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.cockpit.item.ToBeBuildPlacer;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
-import com.btxtech.game.jsre.client.utg.tip.visualization.ItemCockpitGameOverlayTipVisualization;
+import com.btxtech.game.jsre.client.utg.tip.visualization.ToBeBuiltItemCockpitGameOverlayTipVisualization;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
@@ -54,7 +54,7 @@ public class ToBeBuildPlacerTipTask extends AbstractTipTask implements CockpitMo
 
     @Override
     public GameTipVisualization createInGameTip() {
-        return new ItemCockpitGameOverlayTipVisualization(itemTypeToBePlaced);
+        return new ToBeBuiltItemCockpitGameOverlayTipVisualization(itemTypeToBePlaced);
     }
 
     @Override

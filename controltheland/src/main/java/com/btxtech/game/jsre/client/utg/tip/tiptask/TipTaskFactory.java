@@ -44,6 +44,10 @@ public class TipTaskFactory {
                 createLoadContainer(tipTaskContainer, gameTipConfig);
                 break;
             }
+            case UNLOAD_CONTAINER: {
+                createUnloadContainer(tipTaskContainer, gameTipConfig);
+                break;
+            }
             default:
                 throw new IllegalArgumentException("TipTaskFactory: unknown tip: " + gameTipConfig.getTip());
         }
@@ -107,6 +111,15 @@ public class TipTaskFactory {
         tipTaskContainer.addFallback(new IdleItemTipTask(gameTipConfig.getActor()));
         tipTaskContainer.addFallback(new SelectTipTask(gameTipConfig.getActor()));
         tipTaskContainer.addFallback(new SendLoadContainerCommandTipTask(gameTipConfig.getTarget()));
+    }
+
+    private static void createUnloadContainer(TipTaskContainer tipTaskContainer, GameTipConfig gameTipConfig) {
+        tipTaskContainer.add(new SelectTipTask(gameTipConfig.getActor()));
+        tipTaskContainer.add(new UnloadModeTipTask());
+        tipTaskContainer.add(new SendUnloadContainerCommandTipTask(gameTipConfig.getActor(), gameTipConfig.getTerrainPositionHint()));
+        tipTaskContainer.addFallback(new IdleItemTipTask(gameTipConfig.getActor()));
+        tipTaskContainer.add(new UnloadModeTipTask());
+        tipTaskContainer.add(new SendUnloadContainerCommandTipTask(gameTipConfig.getActor(), gameTipConfig.getTerrainPositionHint()));
     }
 
 }
