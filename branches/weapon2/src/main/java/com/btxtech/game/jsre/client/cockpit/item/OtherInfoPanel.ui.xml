@@ -1,0 +1,100 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .itemtypeimage {
+            margin: 5px;
+            -webkit-box-shadow: 1px 1px 1px 1px rgba(100, 100, 100, 1);
+            box-shadow: 1px 1px 1px 1px rgba(100, 100, 100, 1);
+        }
+
+        .itemtypename {
+            font-size: 13px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+        }
+
+        .itemtypedescr {
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .guildButton {
+            font-size: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 0px 0px;
+            -moz-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+            -webkit-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+            box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #4095eb), color-stop(1, #0d2238));
+            background: -moz-linear-gradient(center top, #4095eb 5%, #0d2238 100%);
+            background: -ms-linear-gradient(top, #4095eb 5%, #0d2238 100%);
+            filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr='#4095eb', endColorstr='#0d2238')");
+            background: -o-linear-gradient(#4095eb, #0d2238);
+            background-color: #4095eb;
+            -moz-border-radius: 2px;
+            -webkit-border-radius: 2px;
+            border-radius: 2px;
+            border: 1px solid #1e3a57;
+            display: inline-block;
+            color: #C7C4BB;
+            text-decoration: none;
+            text-shadow: 1px 1px 0px #0a131c;
+        }
+
+        .guildButton:hover {
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0d2238), color-stop(1, #4095eb));
+            background: -moz-linear-gradient(center top, #0d2238 5%, #4095eb 100%);
+            background: -ms-linear-gradient(top, #0d2238 5%, #4095eb 100%);
+            filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr='#0d2238', endColorstr='#4095eb')");
+            background: -o-linear-gradient(#0d2238, #4095eb);
+            background-color: #0d2238;
+        }
+
+        .guildButton:active {
+            position: relative;
+            top: 1px;
+        }
+    </ui:style>
+    <ui:with field='res'
+             type='com.btxtech.game.jsre.client.cockpit.item.ItemCokpitBundle'/>
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:HorizontalPanel width="100%">
+        <g:Cell verticalAlignment="ALIGN_MIDDLE">
+            <g:Image ui:field="image" styleName="{style.itemtypeimage}"/>
+        </g:Cell>
+        <g:Cell width="100%">
+            <g:VerticalPanel>
+                <g:Label ui:field="itemTypeName" styleName="{style.itemtypename}"/>
+                <g:Label ui:field="baseName" styleName="{style.itemtypedescr}"/>
+                <g:HorizontalPanel>
+                    <g:Cell verticalAlignment="ALIGN_MIDDLE">
+                        <g:Label ui:field="guildName"/>
+                    </g:Cell>
+                    <g:Cell verticalAlignment="ALIGN_MIDDLE">
+                        <g:Button ui:field="inviteGuildButton" styleName="{style.guildButton}"
+                                  text="{msg.inviteMember}" />
+                    </g:Cell>
+                    <g:Cell verticalAlignment="ALIGN_MIDDLE">
+                        <g:Button ui:field="requestMembership" styleName="{style.guildButton}"
+                                  text="{msg.guildMembershipRequestItemCockpit}"/>
+                    </g:Cell>
+                </g:HorizontalPanel>
+                <g:HorizontalPanel>
+                    <g:Cell verticalAlignment="ALIGN_MIDDLE">
+                        <g:Image ui:field="friendImage" resource="{res.friend}"/>
+                    </g:Cell>
+                    <g:Cell verticalAlignment="ALIGN_MIDDLE">
+                        <g:Image ui:field="enemyImage" resource="{res.enemy}"/>
+                    </g:Cell>
+                    <g:Cell verticalAlignment="ALIGN_MIDDLE">
+                        <g:Label ui:field="type" styleName="{style.itemtypedescr}"/>
+                    </g:Cell>
+                </g:HorizontalPanel>
+                <g:HTML ui:field="itemTypeDescr" styleName="{style.itemtypedescr}"/>
+            </g:VerticalPanel>
+        </g:Cell>
+    </g:HorizontalPanel>
+</ui:UiBinder>

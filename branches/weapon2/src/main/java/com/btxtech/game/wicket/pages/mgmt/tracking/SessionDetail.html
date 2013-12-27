@@ -1,0 +1,135 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <link rel="stylesheet" type="text/css" href="GameEditor.css">
+    <title>Visitor Details</title>
+</head>
+<body>
+<h1>User Tracking</h1>
+
+<h2>Session Info</h2>
+<table border="0">
+    <tr>
+        <td bgcolor="#dadada">Session Id</td>
+        <td wicket:id="sessionId"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Time</td>
+        <td wicket:id="timeStamp"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">User Agent</td>
+        <td wicket:id="userAgent"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Language</td>
+        <td wicket:id="language"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Remote Host</td>
+        <td wicket:id="remoteHost"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Remote Addr</td>
+        <td wicket:id="remoteAddr"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Cookie Id</td>
+        <td wicket:id="cookieId"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">JS Detected</td>
+        <td wicket:id="javaScriptDetected"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Referer</td>
+        <td wicket:id="referer"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Facebook-App fb_source</td>
+        <td wicket:id="dbFacebookSource.fbSource"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Facebook-App Ad</td>
+        <td wicket:id="dbFacebookSource.optionalAdValue"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Facebook-App whole string</td>
+        <td wicket:id="dbFacebookSource.wholeString"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Invited via User</td>
+        <td wicket:id="dbInvitationInfo.host.username"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Invited via</td>
+        <td wicket:id="dbInvitationInfo.source"/>
+    </tr>
+</table>
+
+<h2>Overview</h2>
+<table border="0">
+    <tr>
+        <td bgcolor="#dadada">Game Attempts</td>
+        <td wicket:id="gameAttempts"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Move Commands</td>
+        <td wicket:id="moveCommands"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Build Commands</td>
+        <td wicket:id="builderCommands"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Factory Commands</td>
+        <td wicket:id="factoryCommands"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Collect Commands</td>
+        <td wicket:id="collectCommands"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Attack Commands</td>
+        <td wicket:id="attackCommands"/>
+    </tr>
+</table>
+
+<h2>Pages</h2>
+<table border="0">
+    <tr>
+        <th bgcolor="#dadada">Time</th>
+        <th bgcolor="#dadada">Delta Time</th>
+        <th bgcolor="#dadada">Page</th>
+        <th bgcolor="#dadada">Additional</th>
+    </tr>
+    <tr wicket:id="pageAccessHistory">
+        <td wicket:id="time"/>
+        <td align="center" wicket:id="delta"/>
+        <td wicket:id="page"/>
+        <td wicket:id="additional"/>
+    </tr>
+</table>
+
+<table border="0">
+    <tr wicket:id="detailTrackings">
+        <td wicket:id="detailTracking"/>
+    </tr>
+</table>
+
+</body>
+</html>

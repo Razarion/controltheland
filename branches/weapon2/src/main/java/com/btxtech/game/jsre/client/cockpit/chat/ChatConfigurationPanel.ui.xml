@@ -1,0 +1,32 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+    </ui:style>
+    <ui:with field='res' type='com.btxtech.game.jsre.client.cockpit.chat.images.ChatImages'/>
+    <ui:with field='msg' type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:VerticalPanel>
+        <g:Grid>
+            <g:row>
+                <g:customCell>
+                    <g:Image resource='{res.globe}'/>
+                </g:customCell>
+                <g:customCell>
+                    <g:RadioButton name="group" text="{msg.globalChat}" ui:field="globalChatRadioButton"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:Image resource='{res.guild}'/>
+                </g:customCell>
+                <g:customCell>
+                    <g:RadioButton name="group" text="{msg.guildChat}" ui:field="guildChatRadioButton"/>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+        <g:Cell horizontalAlignment="ALIGN_CENTER">
+            <g:Button text="{msg.close}" ui:field="closeButton" styleName="singleButton"/>
+        </g:Cell>
+    </g:VerticalPanel>
+</ui:UiBinder> 

@@ -1,0 +1,177 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Tutorial Editor</title>
+</head>
+<body>
+<wicket:panel>
+    <h2>General</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Title [Quest Progress Cockpit]</td>
+            <td wicket:id="I18nTitle"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Clear Game</td>
+            <td><input wicket:id="clearGame" type="checkbox"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Scroll</td>
+            <td wicket:id="scroll"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Money</td>
+            <td><input wicket:id="money" type="text" size="10"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Max Money</td>
+            <td><input wicket:id="maxMoney" type="text" size="10"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">House Count</td>
+            <td><input wicket:id="houseCount" type="text" size="10"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Radar Mode</td>
+            <td><select wicket:id="radarMode" size="1"></select></td>
+        </tr>
+    </table>
+
+    <h2>Allowed Items</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Item Type</th>
+            <th bgcolor="#dadada">Count</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="allowedItemTable">
+            <td wicket:id="dbBaseItemType"/>
+            <td><input type="text" wicket:id="count" size="6"></td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" wicket:id="createAllowedItem" value="Create">
+
+    <h2>Items</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Item Type</th>
+            <th bgcolor="#dadada">Position</th>
+            <th bgcolor="#dadada">Angel</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="itemTable">
+            <td wicket:id="itemType"/>
+            <td wicket:id="position"/>
+            <td><input type="text" wicket:id="angel" size="5"/></td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" wicket:id="createItem" value="Create">
+
+    <h2>Bots</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Name</th>
+            <th bgcolor="#dadada">Edit</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="bots">
+            <td wicket:id="id"></td>
+            <td><input wicket:id="name" type="text" size="30"></td>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Create" wicket:id="createBot"/>
+
+    <h2>Bots to stop</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Bot</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="botsToStop">
+            <td wicket:id="id"></td>
+            <td wicket:id="dbBotConfig" />
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Create" wicket:id="createBotToStop"/>
+
+    <h2>Splash</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Story Splash Title (Localized)</td>
+            <td wicket:id="i18nStorySplashTitle"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Story Splash Text (Localized)</td>
+            <td wicket:id="i18nStorySplashText"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Praise Splash Title (Localized)</td>
+            <td wicket:id="i18nPraiseSplashTitle"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Praise Splash Text (Localized)</td>
+            <td wicket:id="i18nPraiseSplashText"/>
+        </tr>
+    </table>
+
+    <h2>Tip</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Tip Type</td>
+            <td valign="top"><select wicket:id="tip" size="1"></select></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Actor Item Type Id</td>
+            <td wicket:id="tipActor"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Target Item Type Id</td>
+            <td wicket:id="tipTarget"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">To be built Id</td>
+            <td wicket:id="tipToBeBuilt"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Resource Type Id</td>
+            <td wicket:id="tipResource"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Terrain Position</td>
+            <td wicket:id="tipTerrainPositionHint"></td>
+        </tr>
+    </table>
+</wicket:panel>
+</body>
+</html>

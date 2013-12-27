@@ -1,0 +1,79 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .itemtypeview {
+          border: 1px solid black;
+        }
+    </ui:style>
+    <g:VerticalPanel>
+        <g:Grid>
+            <g:row>
+                <g:customCell>
+                    <g:InlineLabel text="Image Width"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label ui:field="imageWidthLabel"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:Label text="Image Height"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label ui:field="imageHeightLabel"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:InlineLabel text="Radius"/>
+                </g:customCell>
+                <g:customCell>
+                	<g:HorizontalPanel>
+                		<g:IntegerBox ui:field="radiusField"/>
+                        <g:Button text="+" ui:field="radiusPlus"/>
+                		<g:Button text="-" ui:field="radiusMinus"/>
+                	</g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:InlineLabel text="Angels"/>
+                </g:customCell>
+                <g:customCell>
+                	<g:HorizontalPanel>
+                		<g:IntegerBox ui:field="angels"/>
+                		<g:Button text="Apply (!)" ui:field="applyButton"/>
+                	</g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
+            	<g:customCell>
+                	<g:InlineLabel text="Rotation"/>
+                </g:customCell>
+                <g:customCell>
+                	<g:HorizontalPanel>
+                		<g:Button text="Left" ui:field="left"/>
+                		<g:Cell verticalAlignment="ALIGN_MIDDLE">
+                			<g:Label text="New Label" ui:field="currentAngelIndex" horizontalAlignment="ALIGN_CENTER"/>
+                		</g:Cell>
+                		<g:Button text="Right" ui:field="right"/>
+                	</g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:InlineLabel text="Current Angel"/>
+                </g:customCell>
+                <g:customCell>
+                	<g:HorizontalPanel>
+                		<g:IntegerBox ui:field="currentAngelField"/>
+                		<g:Button text="+" ui:field="currentAngelPlus"/>
+                		<g:Button text="-" ui:field="currentAngelMinus"/>
+                	</g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+        <g:SimplePanel ui:field="itemTypeView" width="400px" height="400px" styleName="{style.itemtypeview}"/>
+    </g:VerticalPanel>
+</ui:UiBinder>

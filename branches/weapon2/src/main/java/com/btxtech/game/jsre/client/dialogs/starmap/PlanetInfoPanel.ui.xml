@@ -1,0 +1,109 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .main {
+            background-color: rgba(215, 237, 254, .8);
+            color: #000000;
+            padding: 10px;
+            border: 5px solid rgba(36, 101, 147, .8);
+            background-clip: padding-box;
+            border-radius: 10px;
+            box-shadow: inset 1px 1px 10px 2px rgba(0, 0, 0, 1);
+        }
+
+        .planetName {
+            font-size: 18px;
+            font-weight: bold;
+            padding-bottom: 20px;
+        }
+
+        .landPanel {
+            padding-top: 20px;
+            padding-bottom: 10px;
+        }
+
+        .wrongPlanetLabel {
+            color: #d40000;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .infoTable {
+            border-collapse: collapse;
+        }
+
+        .infoTable td {
+            border: 1px solid rgba(0, 0, 90, 0.13);
+        }
+
+        a.unitLink {
+            text-decoration: underline;
+            font-size: 13px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        a.unitLink, a.unitLink:visited {
+            color: rgba(0, 0, 133, 0.68);
+        }
+
+        a.unitLink:hover {
+            color: rgba(0, 0, 255, 0.37);
+        }
+    </ui:style>
+    <ui:with field='msg' type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+    <g:VerticalPanel styleName="{style.main}" width="17em">
+        <g:Label styleName="{style.planetName}" ui:field="planetName"/>
+        <g:Grid styleName="{style.infoTable}" width="100%">
+            <g:row>
+                <g:customCell>
+                    <g:Label text="{msg.minLevel}"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label ui:field="levelLabel"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:Label text="{msg.planetSize}"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label ui:field="sizeLabel"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:Label text="{msg.allowedUnits}"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Anchor text="{msg.units}" styleName="{style.unitLink}" ui:field="unitLink" title="{msg.tooltipShowUnitsOnPlanet}"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:Label text="{msg.bases}"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label ui:field="basesLabel"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:Label text="{msg.bots}"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label ui:field="botLabel"/>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+        <g:Cell horizontalAlignment="ALIGN_CENTER">
+            <g:FlowPanel styleName="{style.landPanel}">
+                <g:Label text="{msg.wrongLevelForLand}" styleName="{style.wrongPlanetLabel}"
+                         ui:field="wrongLevelLabel"/>
+                <g:Button text="{msg.land}" ui:field="landingButton" title="{msg.tooltipLandOnPlanet}"/>
+            </g:FlowPanel>
+        </g:Cell>
+    </g:VerticalPanel>
+</ui:UiBinder> 

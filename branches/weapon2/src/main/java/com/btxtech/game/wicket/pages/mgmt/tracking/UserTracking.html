@@ -1,0 +1,179 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>User Tracking</title>
+    <style>
+        div.wicket-aa {
+            font-family: "Lucida Grande", "Lucida Sans Unicode", Tahoma, Verdana;
+            font-size: 12px;
+            background-color: white;
+            border-width: 1px;
+            border-color: #cccccc;
+            border-style: solid;
+            padding: 2px;
+            margin: 1px 0 0 0;
+            text-align: left;
+        }
+
+        div.wicket-aa ul {
+            list-style: none;
+            padding: 2px;
+            margin: 0;
+        }
+
+        div.wicket-aa ul li.selected {
+            background-color: #FFFF00;
+            padding: 2px;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<h1>User Tracking</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="filterForm">
+    <table style="border: 2px dotted #000000; width: 400px; padding: 5px;">
+        <tr>
+            <td valign="top">User Name [%/_ allowed]</td>
+            <td valign="top"><input wicket:id="userName" type="text" size="20"></td>
+        </tr>
+        <tr>
+            <td valign="top">User Id</td>
+            <td valign="top"><input wicket:id="userId" type="text" size="6"></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <input wicket:id="search" type="submit" value="Search"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<h2>User Details</h2>
+<table border="0">
+    <tr>
+        <td bgcolor="#dadada">User Name</td>
+        <td wicket:id="username"></td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">User Id</td>
+        <td wicket:id="id"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Account Verified</td>
+        <td wicket:id="accountNonLocked"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Register Date</td>
+        <td wicket:id="registerDate"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Last Login Date</td>
+        <td wicket:id="lastLoginDate"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Email</td>
+        <td wicket:id="email"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Login count</td>
+        <td wicket:id="loginCount"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Social Net</td>
+        <td wicket:id="socialNet"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Facebook-App fb_source</td>
+        <td wicket:id="dbFacebookSource.fbSource"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Facebook-App Ad</td>
+        <td wicket:id="dbFacebookSource.optionalAdValue"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Facebook-App whole string</td>
+        <td wicket:id="dbFacebookSource.wholeString"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Invited via User</td>
+        <td wicket:id="dbInvitationInfo.host.username"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Invited via</td>
+        <td wicket:id="dbInvitationInfo.source"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">In Game Time [h:mm:ss]<br><span style="color:red;font-size:12px;">experimental, no tutorials</span>
+        </td>
+        <td wicket:id="inGameTime"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">User state</td>
+        <td>
+            <form wicket:id="userStateForm">
+                <input type="submit" value="Go"/>
+            </form>
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Base</td>
+        <td>
+            <form wicket:id="baseForm">
+                <input type="submit" value="Go"/>
+            </form>
+        </td>
+    </tr>
+</table>
+
+
+<h2>History</h2>
+<table border="0">
+    <tr>
+        <th bgcolor="#dadada">Date</th>
+        <th bgcolor="#dadada">Pages Hits</th>
+        <th bgcolor="#dadada">New Cookie</th>
+        <th bgcolor="#dadada">Enter Game</th>
+        <th bgcolor="#dadada">St Attempts</th>
+        <th bgcolor="#dadada">St Success</th>
+        <th bgcolor="#dadada">F</th>
+        <th bgcolor="#dadada">Promotions</th>
+        <th bgcolor="#dadada">Commands</th>
+        <th bgcolor="#dadada">Session Id</th>
+        <th bgcolor="#dadada">Referer</th>
+    </tr>
+    <tr wicket:id="visits">
+        <td wicket:id="date"/>
+        <td align="right" wicket:id="pageHits"/>
+        <td align="right" wicket:id="newUser"/>
+        <td align="right" wicket:id="enterGame"/>
+        <td align="right" wicket:id="startAttempts"/>
+        <td align="right" wicket:id="successfulStarts"/>
+        <td align="right" style="font-weight:bold;color:red;" wicket:id="startupFailure"/>
+        <td align="right" wicket:id="levelPromotions"/>
+        <td align="right" wicket:id="commands"/>
+        <td align="right">
+            <a href="" wicket:id="visitorLink" target="_blank"><span wicket:id="sessionId">xxx</span></a>
+        </td>
+        <td align="right" wicket:id="referer"/>
+    </tr>
+</table>
+
+</body>
+</html>

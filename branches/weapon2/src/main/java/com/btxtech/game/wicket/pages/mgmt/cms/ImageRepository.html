@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Image Repository</title>
+</head>
+<body>
+<h1>CMS</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Picture</th>
+            <th bgcolor="#dadada">Upload</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="images">
+            <td wicket:id="id"/>
+            <td valign="center">
+                <img wicket:id="image" height="100" width="100"/></td>
+            <td><input type="file" wicket:id="upload"/></td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" value="Save" wicket:id="saveImages"/>
+    <input type="submit" value="Create" wicket:id="createImage"/>
+    <br>
+    <input type="submit" value="CMS" wicket:id="cms"/>
+</form>
+
+</body>
+</html>

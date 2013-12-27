@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Content Invoker Button Editor</title>
+</head>
+<body>
+<h1>Content Invoker Button Editor</h1>
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <div wicket:id="commonPanel"></div>
+    <h2>Config</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Content Invoker</td>
+            <td><input type="submit" value="Create" wicket:id="createDbContentInvoker"/>
+                <input type="submit" value="Edit" wicket:id="editDbContentInvoker"/>
+                <input type="submit" value="Delete" wicket:id="deleteDbContentInvoker"/></td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" value="Save" wicket:id="save"/>
+</form>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Mission Target</title>
+</head>
+<body>
+<h1>Level Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <table border="0" cellSpacing="1" cellPadding="0">
+        <tr>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">General</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Level number</td>
+            <td wicket:id="number"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">XP to Level Up</td>
+            <td><input wicket:id="xp" type="text" size="5"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Planet</td>
+            <td wicket:id="dbPlanet"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Friend invitation bonus</td>
+            <td><input wicket:id="friendInvitationBonus" type="text" size="5"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">Scope</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Item Limitation</td>
+            <td>
+                <table cellpadding="1" cellspacing="1" border="0">
+                    <tr>
+                        <th bgcolor="#dadada">Item Type</th>
+                        <th bgcolor="#dadada">Count</th>
+                        <th bgcolor="#dadada">Delete</th>
+                    </tr>
+                    <tr wicket:id="itemTypeLimitation">
+                        <td wicket:id="dbBaseItemType" size="20"></td>
+                        <td><input type="text" wicket:id="count" size="4"></td>
+                        <td valign="center">
+                            <input type="submit" value="Delete" wicket:id="delete"/>
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" wicket:id="createItemTypeLimitation" value="Add Limitation">
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">Level Tasks</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Level Tasks</td>
+            <td>
+                <table cellpadding="1" cellspacing="1" border="0">
+                    <tr>
+                        <th bgcolor="#dadada">Id</th>
+                        <th bgcolor="#dadada">Name [Internal only]</th>
+                        <th bgcolor="#dadada">Modify</th>
+                        <th bgcolor="#dadada">Up</th>
+                        <th bgcolor="#dadada">Down</th>
+                        <th bgcolor="#dadada">Delete</th>
+                    </tr>
+                    <tr wicket:id="levelTasks">
+                        <td wicket:id="id"></td>
+                        <td><input type="text" wicket:id="name" size="20"></td>
+                        <td valign="center">
+                            <input type="submit" value="Edit" wicket:id="edit"/>
+                        </td>
+                        <td valign="center">
+                            <input type="submit" value="Up" wicket:id="up"/>
+                        </td>
+                        <td valign="center">
+                            <input type="submit" value="Down" wicket:id="down"/>
+                        </td>
+                        <td valign="center">
+                            <input type="submit" value="Delete" wicket:id="delete"/>
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" wicket:id="createLevelTask" value="Add Level Task">
+            </td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="back" value="Back">
+</form>
+</body>
+</html>

@@ -1,0 +1,561 @@
+/** Add css rules here for your application. */
+
+/** Example rules used by the template application (remove for your app) */
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+    color: #777777;
+    margin: 40px 0px 70px;
+    text-align: center;
+}
+
+td.box {
+    border: 1px dashed blue;
+    padding: 10px;
+}
+
+.sendButton {
+    display: block;
+    font-size: 16pt;
+}
+
+.dialogVPanel {
+    margin: 5px;
+}
+
+.serverResponseLabelError {
+    color: red;
+}
+
+/** Set ids using widget.getElement().setId("idOfElement") */
+#closeButton {
+    margin: 15px 6px 6px;
+}
+
+.gwt-marked {
+    border-color: white;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.gwt-unmarked {
+    border-style: none;
+}
+
+.gwt-ProgressBar-shell {
+    border: 0px solid #faf9f7;
+    border-right: 0px solid #848280;
+    border-bottom: 0px solid #848280;
+    background-color: #FF0000;
+    height: 3px;
+    width: 100%;
+}
+
+.gwt-ProgressBar-shell .gwt-ProgressBar-bar {
+    background-color: #00FF00;
+}
+
+.gwt-ProgressBar-shell .gwt-ProgressBar-text {
+    padding: 0px;
+    margin: 0px;
+    color: white;
+}
+
+.gwt-DeviceBuildBar-shell {
+    border: 0px solid #faf9f7;
+    border-right: 0px solid #848280;
+    border-bottom: 0px solid #848280;
+    height: 4px;
+    width: 100%;
+}
+
+.gwt-DeviceBuildBar-shell .gwt-ProgressBar-bar {
+    background-color: #5555FF;
+}
+
+.gwt-ProjectileBar-shell {
+    border: 0px solid #faf9f7;
+    border-right: 0px solid #848280;
+    border-bottom: 0px solid #848280;
+    height: 3px;
+    width: 100%;
+}
+
+.gwt-ProjectileBar-shell .gwt-ProgressBar-bar {
+    background-color: #FFFF00;
+}
+
+.gwt-EnergyBar-shell {
+    border: 0px solid #faf9f7;
+    border-right: 0px solid #848280;
+    border-bottom: 0px solid #848280;
+    background-color: #00FF00;
+    height: 4px;
+    width: 100%;
+}
+
+.gwt-EnergyBar-shell .gwt-ProgressBar-bar {
+    background-color: #FF0000;
+}
+
+.gwt-PushButton-up,
+.gwt-PushButton-up-hovering,
+.gwt-PushButton-up-disabled,
+.gwt-PushButton-down,
+.gwt-PushButton-down-hovering,
+.gwt-PushButton-down-disabled {
+    margin: 0;
+    text-decoration: none;
+    background: url("images/hborder.png") repeat-x 0px -27px;
+}
+
+.gwt-PushButton-up,
+.gwt-PushButton-up-hovering,
+.gwt-PushButton-up-disabled {
+    padding: 3px 5px 3px 5px;
+}
+
+.gwt-PushButton-up {
+    border: 1px outset #ccc;
+    cursor: pointer;
+}
+
+.gwt-PushButton-up-hovering {
+    border: 1px outset;
+    border-color: #9cf #69e #69e #7af;
+    cursor: pointer;
+}
+
+.gwt-PushButton-up-disabled {
+    border: 1px outset #ccc;
+    cursor: default;
+    opacity: .5;
+    filter: alpha(opacity = 40);
+    zoom: 1;
+}
+
+.gwt-PushButton-down,
+.gwt-PushButton-down-hovering,
+.gwt-PushButton-down-disabled {
+    padding: 4px 4px 2px 6px;
+}
+
+.gwt-PushButton-down {
+    border: 1px inset #666;
+    cursor: pointer;
+}
+
+.gwt-PushButton-down-hovering {
+    border: 1px inset;
+    border-color: #9cf #69e #69e #7af;
+    cursor: pointer;
+}
+
+.gwt-PushButton-down-disabled {
+    border: 1px outset #ccc;
+    cursor: default;
+    opacity: 0.5;
+    filter: alpha(opacity = 40);
+    zoom: 1;
+}
+
+.speechBubble {
+    border: none;
+    padding: 0px;
+    background: transparent;
+}
+
+.topMapPanel {
+}
+
+.topMapPanel .topCenter {
+    background: url(images/template/border/borderT.png) repeat-X;
+    height: 20px;
+}
+
+.topMapPanel .bottomCenter {
+    background: url(images/template/border/borderB.png) repeat-X;
+    height: 20px;
+}
+
+.topMapPanel .middleLeft {
+    background: url(images/template/border/borderL.png) repeat-y;
+    width: 20px;
+}
+
+.topMapPanel .middleRight {
+    background: url(images/template/border/borderR.png) repeat-y;
+    width: 20px;
+}
+
+.topMapPanel .topLeft {
+    background: url(images/template/border/cornerTL.png) no-repeat;
+}
+
+.topMapPanel .topRight {
+    background: url(images/template/border/cornerTR.png) no-repeat;
+}
+
+.topMapPanel .bottomLeft {
+    background: url(images/template/border/cornerBL.png) no-repeat;
+}
+
+.topMapPanel .bottomRight {
+    background: url(images/template/border/cornerBR.png) no-repeat;
+}
+
+.topMapPanel .topLeftInner,
+.topMapPanel .topRightInner,
+.topMapPanel .bottomLeftInner,
+.topMapPanel .bottomRightInner {
+    width: 5px;
+    height: 5px;
+    zoom: 1;
+}
+
+* html .topMapPanel .topLeftInner,
+* html .topMapPanel .topRightInner,
+* html .topMapPanel .bottomLeftInner,
+* html .topMapPanel .bottomRightInner {
+    width: 5px;
+    height: 5px;
+    overflow: hidden;
+}
+
+.middleCenterInner {
+}
+
+.topMapPanelText {
+    color: darkorange;
+}
+
+/* -------------- Dialog ----------------- */
+.dialogBox {
+    font-size: 11px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.dialogBox input[type="text"], .dialogBox input[type="password"]{
+    padding: 2px 3px;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0d2238), color-stop(1, #4095eb));
+    background: -moz-linear-gradient(center top, #0d2238 5%, #4095eb 100%);
+    background: -ms-linear-gradient(top, #0d2238 5%, #4095eb 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb');
+    background: -o-linear-gradient(#0d2238, #4095eb);
+    background-color: #4095eb;
+    border: 1px solid #1e3a57;
+    width: 11em;
+    display: inline-block;
+    color: #C7C4BB;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #0a131c;
+}
+
+.dialogBox input[type="text"]:hover,.dialogBox input[type="password"]:hover {
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb');
+    background-color: #0d2238;
+}
+
+.dialogBox input[type="text"]:active, .dialogBox input[type="password"]:active {
+    position: relative;
+    top: 1px;
+}
+
+.dialogBox button {
+    padding: 2px 3px;
+    -moz-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+    -webkit-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+    box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+    background: -ms-linear-gradient(top, #4095eb 5%, #0d2238 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #4095eb), color-stop(1, #0d2238));
+    background: -moz-linear-gradient(center top, #4095eb 5%, #0d2238 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#4095eb', endColorstr = '#0d2238');
+    background: -o-linear-gradient(#4095eb, #0d2238);
+    background-color: #4095eb;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #1e3a57;
+    min-width: 6em;
+    display: inline-block;
+    color: #C7C4BB;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #0a131c;
+}
+
+.dialogBox button:hover {
+    background: -ms-linear-gradient(top, #0d2238 5%, #4095eb 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0d2238), color-stop(1, #4095eb));
+    background: -moz-linear-gradient(center top, #0d2238 5%, #4095eb 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb');
+    background: -o-linear-gradient(#0d2238, #4095eb);
+    background-color: #0d2238;
+}
+
+.dialogBox button:active {
+    position: relative;
+    top: 1px;
+}
+
+.dialogBox button[disabled], .dialogBox button[disabled]:active, .dialogBox button[disabled]:hover {
+    padding: 2px 3px;
+    -moz-box-shadow: inset 0px 1px 0px 0px #ebebeb;
+    -webkit-box-shadow: inset 0px 1px 0px 0px #ebebeb;
+    box-shadow: inset 0px 1px 0px 0px #ebebeb;
+    background: linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background: -ms-linear-gradient(top, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background-image: -o-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background-image: -moz-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background-image: -webkit-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background-image: -ms-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#404040', endColorstr = '#808080');
+    background-color: #575757;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #575757;
+    min-width: 6em;
+    display: inline-block;
+    color: #C7C4BB;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #0a131c;
+}
+
+.dialogBox .Caption {
+    color: #e2ded4;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #0a131c;
+    font-size: 13px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    cursor: default;
+}
+
+.dialogBox .dialogMiddleCenter {
+    background-color: #001420;
+}
+
+.dialogBox .dialogTopCenter {
+    vertical-align: top;
+    padding-top: 3px;
+    height: 23px;
+    background: url(/images/dialog/topbottom.png) repeat-x 0px 0px;
+}
+
+.dialogBox .dialogBottomCenter {
+    height: 17px;
+    background: url(/images/dialog/topbottom.png) 0px 17px;
+}
+
+.dialogBox .dialogMiddleLeft {
+    background: url(/images/dialog/leftright.png) 0px 0px;
+    width: 9px;
+}
+
+.dialogBox .dialogMiddleRight {
+    width: 18px;
+    background: url(/images/dialog/leftright.png) 18px 0px;
+}
+
+.dialogBox .dialogTopLeft {
+    background: url(/images/dialog/corners.png) no-repeat 0px 0px;
+}
+
+.dialogBox .dialogTopRight {
+    background: url(/images/dialog/corners.png) -9px 0px;
+}
+
+.dialogBox .dialogBottomLeft {
+    background: url(/images/dialog/corners.png) 0px 17px;
+}
+
+.dialogBox .dialogBottomRight {
+    background: url(/images/dialog/corners.png) 18px 17px;
+}
+
+.dialogMiddleCenterInner {
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #C7C4BB;
+    padding: 8px;
+}
+
+.dialogBox a, .dialogBox a:visited{
+    color: #C7C4BB;
+}
+
+.dialogBox a:hover{
+    color: #fcf9f0;
+}
+
+
+/* -------------- Dialog ends----------------- */
+/* -------------- Button----------------- */
+.excustombutton:focus {
+    outline: none;
+}
+
+/* -------------- Button ends----------------- */
+.singleButton {
+    padding: 2px 3px;
+    -moz-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+    -webkit-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+    box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #4095eb), color-stop(1, #0d2238));
+    background: -moz-linear-gradient(center top, #4095eb 5%, #0d2238 100%);
+    background: -ms-linear-gradient(top, #4095eb 5%, #0d2238 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#4095eb', endColorstr = '#0d2238');
+    background: -o-linear-gradient(#4095eb, #0d2238);
+    background-color: #4095eb;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #1e3a57;
+    width: 8em;
+    display: inline-block;
+    color: #C7C4BB;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #0a131c;
+    font-size: 11px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.singleButton:hover {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0d2238), color-stop(1, #4095eb));
+    background: -moz-linear-gradient(center top, #0d2238 5%, #4095eb 100%);
+    background: -ms-linear-gradient(top, #0d2238 5%, #4095eb 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb');
+    background: -o-linear-gradient(#0d2238, #4095eb);
+    background-color: #0d2238;
+}
+
+.singleButton:active {
+    position: relative;
+    top: 1px;
+}
+
+.singleButton[disabled], .singleButton[disabled]:active, .singleButton[disabled]:hover {
+    padding: 2px 3px;
+    -moz-box-shadow: inset 0px 1px 0px 0px #ebebeb;
+    -webkit-box-shadow: inset 0px 1px 0px 0px #ebebeb;
+    box-shadow: inset 0px 1px 0px 0px #ebebeb;
+    background-image: linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background-image: -o-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background-image: -moz-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background-image: -ms-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background-image: -webkit-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background-image: -ms-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#404040', endColorstr = '#808080');
+    background-color: #575757;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #575757;
+    min-width: 6em;
+    display: inline-block;
+    color: #C7C4BB;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #0a131c;
+}
+
+#fbconnectbutton {
+    -moz-box-shadow:inset 1px 1px 2px 0px #afbede;
+    -webkit-box-shadow:inset 1px 1px 2px 0px #afbede;
+    box-shadow:inset 1px 1px 2px 0px #afbede;
+    background:#5b73a8;
+    border:1px solid #394ea3;
+    display:inline-block;
+    color:#ffffff;
+    font-family:'lucida grande',tahoma,verdana,arial,sans-serif;
+    font-size:13px;
+    padding:4px 6px;
+    text-decoration:none;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    width: auto;
+}
+
+#fbconnectbutton:hover {
+    background:#3d537d;
+}
+
+#fbconnectbutton:active {
+    position:relative;
+    top:1px;
+}
+
+.fbconnectbuttonBold{
+    font-weight: bold;
+}
+/* ------------------------------------------------------------------------------ */
+
+.gwt-MenuBar-blink {
+    animation:myfirst 1s infinite;
+    -webkit-animation:myfirst 1s infinite; /* Safari and Chrome */
+}
+
+@keyframes myfirst
+{
+    0%   {background:none;}
+    50%  {background:red;}
+    100%  {background:none;}
+}
+
+@-webkit-keyframes myfirst /* Safari and Chrome */
+{
+    0%   {background:none;}
+    50%  {background:red;}
+    100%  {background:none;}
+}
+
+/* -----------------------------Story popup panel------------------------------------------------- */
+.raz-fade-out {
+    animation:razFadeOutFirst 500ms;
+    -webkit-animation:razFadeOutFirst 500ms; /* Safari and Chrome */
+    opacity:0.0;
+}
+
+@keyframes razFadeOutFirst
+{
+    from   {opacity:1.0;}
+    to  {opacity:0;}
+}
+
+@-webkit-keyframes razFadeOutFirst /* Safari and Chrome */
+{
+    from   {opacity:1.0;}
+    to  {opacity:0;}
+}
+
+.raz-fade-in {
+    animation:razFadeInFirst 500ms;
+    -webkit-animation:razFadeInFirst 500ms; /* Safari and Chrome */
+    opacity:1.0;
+}
+
+@keyframes razFadeInFirst
+{
+    from   {opacity:0.0;}
+    to  {opacity:1.0;}
+}
+
+@-webkit-keyframes razFadeInFirst /* Safari and Chrome */
+{
+    from   {opacity:0.0;}
+    to  {opacity:1.0;}
+}
+
+.storyPopup {
+    position:  absolute;
+    background-color: rgba(215, 237, 254, .8);
+    color: #000000;
+    padding: 10px;
+    border: 5px solid rgba(36, 101, 147, .8);
+    background-clip: padding-box;
+    border-radius: 10px;
+    box-shadow: inset 1px 1px 10px 2px rgba(0, 0, 0, 1);
+}
+
+/* ------------------------------------------------------------------------------ */
+

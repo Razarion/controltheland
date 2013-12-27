@@ -1,0 +1,101 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Bot Editor</title>
+</head>
+<body>
+<h1>Bot Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="from">
+    <h2>Common</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Action Delay [ms]</td>
+            <td><input wicket:id="actionDelay" type="text" size="6"></td>
+        </tr>
+    </table>
+    <h2>Rage Table</h2>
+    The top most entry is the normal state. There must be at least on entry for the normal state. If the a base reaches<br/>
+    the enrageUpKills amout withuout leaving the realm, the next entry is activeted. If there are no enemy items<br/>
+    in the realm, the top most entry is activated.
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Name [History]</th>
+            <th bgcolor="#dadada">Enrage up kills</th>
+            <th bgcolor="#dadada">Bot Items</th>
+            <th bgcolor="#dadada">Up</th>
+            <th bgcolor="#dadada">Down</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="enragement">
+            <td><input type="text" wicket:id="name" size="20"></td>
+            <td><input type="text" wicket:id="enrageUpKills" size="6"></td>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Up" wicket:id="up"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Down" wicket:id="down"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" wicket:id="createEnragementConfig" value="Create">
+
+    <h2>Attack Strategy</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Realm Region</td>
+            <td wicket:id="realm"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Attacks other Bots</td>
+            <td><input type="checkbox" wicket:id="attacksOtherBots"/></td>
+        </tr>
+    </table>
+
+    <h2>Interval</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Min Inactive Minutes</td>
+            <td wicket:id="minInactiveMs"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Max Inactive Minutes</td>
+            <td wicket:id="maxInactiveMs"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Min Active Minutes</td>
+            <td wicket:id="minActiveMs"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Max Active Minutes</td>
+            <td wicket:id="maxActiveMs"></td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+</form>
+</body>
+</html>

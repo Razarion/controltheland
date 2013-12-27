@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Boolean Expression Image Editor</title>
+</head>
+<body>
+
+<h1>Boolean Expression Image Editor</h1>
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <div wicket:id="commonPanel"></div>
+    <h2>Config</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Spring Bean</td>
+            <td><input type="text" wicket:id="springBeanName"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Expression</td>
+            <td><input type="text" wicket:id="expression"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">True Image</td>
+            <td wicket:id="trueImage"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">False Image</td>
+            <td wicket:id="falseImage"/>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" value="Save" wicket:id="save"/>    
+</form>
+</body>
+</html>

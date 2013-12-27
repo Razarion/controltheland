@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="send">Send</entry>
+    <entry key="email">Email</entry>
+    <entry key="registerEmailVerified">The email confirmation link you followed has already been verified.</entry>
+    <entry key="LOAD_JAVA_SCRIPT">Loading java script</entry>
+    <entry key="registerThanks">Thanks for registering.</entry>
+    <entry key="registerUserExists">The user already exists</entry>
+    <entry key="loginFailedTitle">Razarion login</entry>
+    <entry key="loginFailed">Login failed. Please try again.</entry>
+    <entry key="userEmailNoConfirmed">This account has not been confirmed by email. Please check your email and click the confirmation link.</entry>
+    <entry key="forgotPassword">Forgot password</entry>
+    <entry key="resetPasswordRequestTitle">Reset password</entry>
+    <entry key="resetPasswordRequest">Please enter your email address in the box below to receive a email to reset your password.</entry>
+    <entry key="passwordRequestEmailHasBeenSent">An email has been sent to reset the password.</entry>
+    <entry key="emailIsUnknown">Unknown email address</entry>
+    <entry key="passwordNotMatch">The password and confirmation password do not match.</entry>
+    <entry key="noPasswordForgotRequest">This link is invalid. There is no request to reset the password.</entry>
+    <entry key="changePasswordTitle">Change password</entry>
+    <entry key="changePassword">Enter New Password Here</entry>
+    <entry key="password">Password</entry>
+    <entry key="confirmPassword">Confirm password</entry>
+    <entry key="loginAlready">Already logged in as: {0}</entry>
+    <entry key="registerConfirmationInvalid">The email confirmation link you followed is invalid. Please re-register.</entry>
+    <entry key="error">Error: {0}</entry>
+    <entry key="loadingGame">Loading game...</entry>
+    <entry key="registerNoMatch">Password and confirm password do not match</entry>
+    <entry key="loggedIn">Logged in</entry>
+    <entry key="play">Play</entry>
+    <entry key="nameToShort">Name must have at least 3 characters</entry>
+    <entry key="nameAlreadyUsed">Name has already been taken</entry>
+    <entry key="unknownErrorReceived">Unknown error</entry>
+    <entry key="NickNameError">${error}</entry>
+    <entry key="chooseYourNickName">Choose your nickname</entry>
+    <entry key="facebookAlreadyLoggedIn">You are already logged in as {0}. Please logout before you login via Facebook</entry>
+</properties>

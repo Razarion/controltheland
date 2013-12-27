@@ -1,0 +1,79 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .scrollpanel {
+            max-height: 300px;
+            overflow-y: scroll;
+        }
+
+        .crystalplate {
+            background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(245, 246, 246, 1)), color-stop(21%, rgba(219, 220, 226, 1)), color-stop(49%, rgba(184, 186, 198, 1)), color-stop(80%, rgba(221, 223, 227, 1)), color-stop(100%, rgba(245, 246, 246, 1)));
+            background: -webkit-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%, rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%, rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100%);
+            background: -moz-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%, rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%, rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100%);
+            background: -ms-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%, rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%, rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100%);
+            background: -o-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%, rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%, rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100%);
+            filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr = '#F8F8F8', endColorstr = '#A0A0A0')");
+            margin-bottom: 10px;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            border-right: 1px solid #888;
+            border-bottom: 1px solid #888;
+            border-left: 1px solid #ccc;
+        }
+
+        .text {
+            color: black;
+            font-size: 16px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+        }
+    </ui:style>
+
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:VerticalPanel>
+        <g:HorizontalPanel styleName="{style.crystalplate}"
+                           width="100%">
+            <g:HorizontalPanel>
+                <g:HTML text="{msg.filter}&nbsp;" styleName="{style.text}"/>
+                <g:ListBox visibleItemCount="1" ui:field="filterListBox"/>
+            </g:HorizontalPanel>
+            <g:Cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_RIGHT">
+                <g:Label styleName="{style.text}" ui:field="crystalLabel"/>
+            </g:Cell>
+        </g:HorizontalPanel>
+        <g:TabPanel ui:field="tabPanel">
+            <g:Tab text="{msg.inventory}">
+                <g:SimplePanel styleName="{style.scrollpanel}">
+                    <g:FlexTable width="5cm" ui:field="inventoryTable"/>
+                </g:SimplePanel>
+            </g:Tab>
+            <g:Tab text="{msg.workshop}">
+                <g:SimplePanel styleName="{style.scrollpanel}">
+                    <g:FlexTable width="5cm" ui:field="workshopTable"/>
+                </g:SimplePanel>
+            </g:Tab>
+            <g:Tab text="{msg.dealer}">
+                <g:TabPanel width="5cm" height="3cm" ui:field="dealerPanel">
+                    <g:Tab text="{msg.items}">
+                        <g:SimplePanel styleName="{style.scrollpanel}">
+                            <g:FlexTable width="5cm" ui:field="itemTable"/>
+                        </g:SimplePanel>
+                    </g:Tab>
+                    <g:Tab text="{msg.funds}">
+                        <g:SimplePanel styleName="{style.scrollpanel}">
+                            <g:FlexTable width="5cm" ui:field="fundsTable"/>
+                        </g:SimplePanel>
+                    </g:Tab>
+                    <g:Tab text="{msg.artifacts}">
+                        <g:SimplePanel styleName="{style.scrollpanel}">
+                            <g:FlexTable width="5cm" ui:field="artifactTable"/>
+                        </g:SimplePanel>
+                    </g:Tab>
+                </g:TabPanel>
+            </g:Tab>
+        </g:TabPanel>
+    </g:VerticalPanel>
+</ui:UiBinder> 

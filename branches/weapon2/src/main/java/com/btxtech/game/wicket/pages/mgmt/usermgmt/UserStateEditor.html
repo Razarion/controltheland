@@ -1,0 +1,244 @@
+<!--
+  ~ Copyright (c) 2011.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Online User State</title>
+</head>
+<body>
+
+<h1>Online User State</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <table border="0">
+        <td bgcolor="#aaaaaa" colspan="3" valign="top">Diverse</td>
+        <tr>
+            <td bgcolor="#dadada">Session Id</td>
+            <td wicket:id="sessionId" colspan="2"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">User Name</td>
+            <td wicket:id="userName" colspan="2"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">User Id</td>
+            <td wicket:id="userId" colspan="2"/>
+        </tr>
+        <td bgcolor="#aaaaaa" colspan="3" valign="top">Crystals bought via PayPal (adds history entry)</td>
+        <tr>
+            <td bgcolor="#dadada">Crystals bought</td>
+            <td><input type="text" wicket:id="crystalsBought" size="4"/></td>
+            <td><input type="submit" wicket:id="activateCrystalsBought" value="Activate"></td>
+        </tr>
+        <td bgcolor="#aaaaaa" colspan="3" valign="top">Level</td>
+        <tr>
+            <td bgcolor="#dadada">Level</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Level</td>
+            <td wicket:id="dbLevelId" colspan="2"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">New Level (DB Id)</td>
+            <td><input type="text" wicket:id="newDbLevelId" size="4"/></td>
+            <td><input type="submit" wicket:id="activateLevel" value="Activate"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">XP</td>
+            <td wicket:id="xp"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">XP for next Level</td>
+            <td wicket:id="xpToLevelUp"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Add XP (Like Reward)</td>
+            <td><input type="text" wicket:id="addXp" size="4"/></td>
+            <td><input type="submit" wicket:id="activateXp" value="Activate"></td>
+        </tr>
+        <td bgcolor="#aaaaaa" colspan="3" valign="top">Inventory</td>
+        <tr>
+            <td bgcolor="#dadada">Inventory Items</td>
+            <td>
+                <table cellpadding="1" cellspacing="1" border="0">
+                    <tr>
+                        <th bgcolor="#dadada">Name</th>
+                        <th bgcolor="#dadada">Count</th>
+                        <th bgcolor="#dadada">Delete</th>
+                    </tr>
+                    <tr wicket:id="inventoryItems">
+                        <td wicket:id="name"/>
+                        <td><input type="text" wicket:id="count" size="4"/></td>
+                        <td valign="center">
+                            <input type="submit" value="Delete" wicket:id="delete"/>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Activate Inventory Item</td>
+            <td colspan="2"><input type="submit" wicket:id="activateItemIdBtn" value="Activate"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Add Inventory Item [Id]</td>
+            <td><input type="text" wicket:id="addItemId" size="4"/></td>
+            <td><input type="submit" wicket:id="addItemIdBtn" value="Add"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Artifact Items</td>
+            <td>
+                <table cellpadding="1" cellspacing="1" border="0">
+                    <tr>
+                        <th bgcolor="#dadada">Name</th>
+                        <th bgcolor="#dadada">Count</th>
+                        <th bgcolor="#dadada">Delete</th>
+                    </tr>
+                    <tr wicket:id="inventoryArtifacts">
+                        <td wicket:id="name"/>
+                        <td><input type="text" wicket:id="count" size="4"/></td>
+                        <td valign="center">
+                            <input type="submit" value="Delete" wicket:id="delete"/>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Activate Artifact Item</td>
+            <td colspan="2"><input type="submit" wicket:id="activateArtifactIdBtn" value="Activate"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Add Artifact Item [Id]</td>
+            <td><input type="text" wicket:id="addArtifactId" size="4"/></td>
+            <td><input type="submit" wicket:id="addArtifactIdBtn" value="Add"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Crystals<br>should not be used if crystals<br>were bought via PayPal</td>
+            <td><input type="text" wicket:id="crystals" size="4"/></td>
+            <td><input type="submit" wicket:id="activateCrystals" value="Activate"></td>
+        </tr>
+        <td bgcolor="#aaaaaa" colspan="3" valign="top">Unlocked</td>
+        <tr>
+            <td bgcolor="#dadada">Item Types [Id with ';']</td>
+            <td wicket:id="unlockedItems" size="20"></td>
+            <td><input type="submit" wicket:id="saveUnlockedItems" value="Activate"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Quests [Id with ';']</td>
+            <td wicket:id="unlockedQuests" size="20"></td>
+            <td><input type="submit" wicket:id="saveUnlockedQuests" value="Activate"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Planets [Id with ';']<br>Client reload needed</td>
+            <td wicket:id="unlockedPlanets" size="20"></td>
+            <td><input type="submit" wicket:id="saveUnlockedPlanets" value="Activate"></td>
+        </tr>
+        <td bgcolor="#aaaaaa" colspan="3" valign="top">Quests</td>
+        <tr>
+            <td bgcolor="#dadada">Quests done [Id with ';']<br><span style="color:red;font-size:12px;">Active task not affected<br>No XP rewards</span></td>
+            <td wicket:id="questsDone" size="20"></td>
+            <td><input type="submit" wicket:id="saveQuestsDone" value="Activate"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Quests overview</td>
+            <td colspan="2">
+                <table border="1" style="border-collapse:collapse">
+                    <tr>
+                        <th bgcolor="#dadada">Id</th>
+                        <th bgcolor="#dadada">Quest</th>
+                        <th bgcolor="#dadada">Type</th>
+                        <th bgcolor="#dadada">State</th>
+                    </tr>
+                    <tr wicket:id="questTable">
+                        <td wicket:id="id"></td>
+                        <td wicket:id="name"></td>
+                        <td wicket:id="type"></td>
+                        <td wicket:id="state"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <td bgcolor="#aaaaaa" colspan="3" valign="top">HighScore</td>
+    </table>
+</form>
+<form wicket:id="formStatistics">
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Killed Structure Bot</td>
+            <td><input type="text" wicket:id="killedStructureBot" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Killed Units Bot</td>
+            <td><input type="text" wicket:id="killedUnitsBot" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Killed Structure Player</td>
+            <td><input type="text" wicket:id="killedStructurePlayer" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Killed Units Player</td>
+            <td><input type="text" wicket:id="killedUnitsPlayer" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Lost Structure Bot</td>
+            <td><input type="text" wicket:id="lostStructureBot" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Lost Units Bot</td>
+            <td><input type="text" wicket:id="lostUnitsBot" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Lost Structure Player</td>
+            <td><input type="text" wicket:id="lostStructurePlayer" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Lost Units Player</td>
+            <td><input type="text" wicket:id="lostUnitsPlayer" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Built Structures</td>
+            <td colspan="2"><input type="text" wicket:id="builtStructures" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Built Units</td>
+            <td><input type="text" wicket:id="builtUnits" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Bases Destroyed Bot</td>
+            <td><input type="text" wicket:id="basesDestroyedBot" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Bases Destroyed Player</td>
+            <td><input type="text" wicket:id="basesDestroyedPlayer" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Bases Lost Bot</td>
+            <td><input type="text" wicket:id="basesLostBot" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Bases Lost Player</td>
+            <td><input type="text" wicket:id="basesLostPlayer" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Activate</td>
+            <td><input type="submit" wicket:id="activate" value="Activate"></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>
