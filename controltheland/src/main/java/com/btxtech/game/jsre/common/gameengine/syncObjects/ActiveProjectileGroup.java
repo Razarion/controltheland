@@ -15,21 +15,21 @@ public class ActiveProjectileGroup {
     private Collection<ActiveProjectile> projectiles = new ArrayList<ActiveProjectile>();
     private boolean alive;
 
-    public ActiveProjectileGroup(SyncBaseItem syncBaseItem, WeaponType weaponType) {
+    public ActiveProjectileGroup(SyncBaseItem syncBaseItem, WeaponType weaponType, Index projectileTarget) {
         int angleIndex = syncBaseItem.getSyncItemArea().getAngelIndex();
         for (int muzzleFlashNr = 0; muzzleFlashNr < weaponType.getMuzzleFlashCount(); muzzleFlashNr++) {
-            ActiveProjectile activeProjectile = new ActiveProjectile(this, syncBaseItem, angleIndex, weaponType, muzzleFlashNr);
+            ActiveProjectile activeProjectile = new ActiveProjectile(this, syncBaseItem, projectileTarget, angleIndex, weaponType, muzzleFlashNr);
             projectiles.add(activeProjectile);
         }
         alive = true;
         syncBaseItem.fireItemChanged(SyncItemListener.Change.PROJECTILE_LAUNCHED, this);
     }
 
-    public void tick(double factor, WeaponType weaponType, Index projectileTarget) {
+    public void tick(double factor, WeaponType weaponType) {
         for (ActiveProjectile activeProjectile : projectiles) {
             if (weaponType.getProjectileSpeed() != null) {
-                activeProjectile.tick(factor, weaponType.getProjectileSpeed(), projectileTarget);
-                if (activeProjectile.isTargetReached(projectileTarget)) {
+                activeProjectile.tick(factor);
+                if (activeProjectile.isTargetReached()) {
                     alive = false;
                 }
             }
