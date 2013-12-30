@@ -22,4 +22,12 @@ public class ObjectHolder<T> {
     public void setObject(T object) {
         this.object = object;
     }
+
+    public void clearObject() {
+        object = null;
+    }
+
+    public boolean hasObject() {
+        return object != null;
+    }
 }

@@ -47,7 +47,7 @@ public class ProjectileVisualization extends ClipRendererModel {
                 stop();
                 return;
             }
-            Index absoluteMiddle = activeProjectile.getPosition();
+            Index absoluteMiddle = activeProjectile.getInterpolatedPosition(timeStamp);
             if (absoluteMiddle.equals(syncWeapon.getProjectileTarget())) {
                 stop();
                 return;
