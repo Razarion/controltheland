@@ -69,6 +69,9 @@ public class ItemSelectionAndHoverRenderTask extends AbstractRenderTask {
         context2d.setTextAlign(Context2d.TextAlign.CENTER);
         context2d.setFont("12px Arial");
         context2d.setFillStyle(ClientBase.getInstance().getBaseHtmlColor(mouseOverItem.getBase()));
+        context2d.setShadowOffsetX(1);
+        context2d.setShadowOffsetY(1);
+        context2d.setShadowColor("black");
         int relativeX = syncItemArea.getPosition().getX() - viewRect.getX();
         int relativeY = syncItemArea.getPosition().getY() - viewRect.getY() - syncItemArea.getBoundingBox().getRadius();
         SimpleGuild simpleGuild = ClientBase.getInstance().getGuild(mouseOverItem.getBase());
