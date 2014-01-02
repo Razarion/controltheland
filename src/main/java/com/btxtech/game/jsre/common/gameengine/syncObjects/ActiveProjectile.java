@@ -11,25 +11,40 @@ import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
  */
 public class ActiveProjectile {
     private DecimalPosition decimalPosition;
+    private Index projectileTarget;
+    private WeaponType weaponType;
     private int muzzleNr;
     private ActiveProjectileGroup activeProjectileGroup;
+    private long lastTick;
 
-    public ActiveProjectile(ActiveProjectileGroup activeProjectileGroup, SyncBaseItem syncBaseItem, int angleIndex, WeaponType weaponType, int muzzleNr) {
+    public ActiveProjectile(ActiveProjectileGroup activeProjectileGroup, SyncBaseItem syncBaseItem, Index projectileTarget, int angleIndex, WeaponType weaponType, int muzzleNr) {
         this.activeProjectileGroup = activeProjectileGroup;
+        this.projectileTarget = projectileTarget;
+        this.weaponType = weaponType;
         this.muzzleNr = muzzleNr;
         decimalPosition = new DecimalPosition(syncBaseItem.getSyncItemArea().getPosition().add(weaponType.getMuzzleFlashPosition(muzzleNr, angleIndex)));
     }
 
-    public void tick(double factor, Integer projectileSpeed, Index projectileTarget) {
-        decimalPosition = decimalPosition.getPointWithDistance(factor * (double) projectileSpeed, projectileTarget, false);
+    public void tick(double factor) {
+        decimalPosition = decimalPosition.getPointWithDistance(factor * (double) weaponType.getProjectileSpeed(), projectileTarget, false);
+        lastTick = System.currentTimeMillis();
     }
 
-    public boolean isTargetReached(Index projectileTarget) {
+    public boolean isTargetReached() {
         return decimalPosition.getPosition().equals(projectileTarget);
     }
 
     public Index getPosition() {
         return decimalPosition.getPosition();
+    }
+
+    public Index getInterpolatedPosition(long timeStamp) {
+        if (lastTick == 0) {
+            return getPosition();
+        } else {
+            double factor = (double)(timeStamp - lastTick) / 1000.0;
+            return decimalPosition.getPointWithDistance(factor * (double) weaponType.getProjectileSpeed(), projectileTarget, false).getPosition();
+        }
     }
 
     public int getMuzzleNr() {
@@ -46,5 +61,9 @@ public class ActiveProjectile {
                 "decimalPosition=" + decimalPosition +
                 ", muzzleNr=" + muzzleNr +
                 '}';
+    }
+
+    public long getLastTick() {
+        return lastTick;
     }
 }

@@ -20,7 +20,7 @@ package com.btxtech.game.jsre.client.common;
  */
 public class Constants {
     // System
-    public static final int INTERFACE_VERSION = 15;
+    public static final int INTERFACE_VERSION = 16;
 
     // Game
     public static final double ITEM_SELL_FACTOR = 0.5;

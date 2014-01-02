@@ -15,10 +15,10 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
-    <title>Sync Item Listener Task Editor</title>
+    <title>Contained In Listener Task Editor</title>
 </head>
 <body>
-<h1>Sync Item Listener Task Editor</h1>
+<h1>Contained In Listener Task Editor</h1>
 
 <span wicket:id="msgs"/>
 
@@ -31,8 +31,12 @@
             <td wicket:id="syncItemTypeToWatch" />
         </tr>
         <tr>
-            <td bgcolor="#dadada">Sync Item Change</td>
-            <td><select wicket:id="syncItemChange" size="1"></select></td>
+            <td bgcolor="#dadada">Contained in<br>(Checked load; unchecked unload)</td>
+            <td><input wicket:id="containedIn" type="checkbox"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Check contained on start<br>(Skip task if already loaded/unloaded)</td>
+            <td><input wicket:id="checkContainedInOnStart" type="checkbox"></td>
         </tr>
     </table>
     <br>

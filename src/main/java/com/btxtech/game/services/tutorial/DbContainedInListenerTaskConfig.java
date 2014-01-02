@@ -14,14 +14,12 @@
 package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
-import com.btxtech.game.jsre.common.tutorial.SyncItemListenerTaskConfig;
+import com.btxtech.game.jsre.common.tutorial.ContainedInListenerTaskConfig;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import java.util.Locale;
@@ -32,20 +30,12 @@ import java.util.Locale;
  * Time: 14:11:15
  */
 @Entity
-@DiscriminatorValue("SYNC_ITEM_LISTENER_TASK_CONFIG")
-public class DbSyncItemListenerTaskConfig extends DbAbstractTaskConfig {
+@DiscriminatorValue("CONTAINED_IN_LISTENER_TASK_CONFIG")
+public class DbContainedInListenerTaskConfig extends DbAbstractTaskConfig {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbBaseItemType syncItemTypeToWatch;
-    @Enumerated(EnumType.STRING)
-    private SyncItemListener.Change syncItemChange;
-
-    public SyncItemListener.Change getSyncItemChange() {
-        return syncItemChange;
-    }
-
-    public void setSyncItemChange(SyncItemListener.Change syncItemChange) {
-        this.syncItemChange = syncItemChange;
-    }
+    private boolean containedIn;
+    private boolean checkContainedInOnStart;
 
     public DbBaseItemType getSyncItemTypeToWatch() {
         return syncItemTypeToWatch;
@@ -55,11 +45,28 @@ public class DbSyncItemListenerTaskConfig extends DbAbstractTaskConfig {
         this.syncItemTypeToWatch = syncItemTypeToWatch;
     }
 
+    public boolean isCheckContainedInOnStart() {
+        return checkContainedInOnStart;
+    }
+
+    public void setCheckContainedInOnStart(boolean checkContainedInOnStart) {
+        this.checkContainedInOnStart = checkContainedInOnStart;
+    }
+
+    public boolean isContainedIn() {
+        return containedIn;
+    }
+
+    public void setContainedIn(boolean containedIn) {
+        this.containedIn = containedIn;
+    }
+
     @Override
-    protected SyncItemListenerTaskConfig createTaskConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
-        SyncItemListenerTaskConfig syncItemListenerTaskConfig = new SyncItemListenerTaskConfig();
-        syncItemListenerTaskConfig.setSyncItemTypeToWatch(syncItemTypeToWatch.getId());
-        syncItemListenerTaskConfig.setSyncItemChange(syncItemChange);
-        return syncItemListenerTaskConfig;
+    protected ContainedInListenerTaskConfig createTaskConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
+        ContainedInListenerTaskConfig containedInListenerTaskConfig = new ContainedInListenerTaskConfig();
+        containedInListenerTaskConfig.setSyncItemTypeToWatch(syncItemTypeToWatch.getId());
+        containedInListenerTaskConfig.setContainedIn(containedIn);
+        containedInListenerTaskConfig.setCheckOnStart(checkContainedInOnStart);
+        return containedInListenerTaskConfig;
     }
 }

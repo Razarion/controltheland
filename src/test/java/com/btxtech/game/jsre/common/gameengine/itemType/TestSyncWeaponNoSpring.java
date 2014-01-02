@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.common.gameengine.itemType;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.ObjectHolder;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -682,6 +683,110 @@ public class TestSyncWeaponNoSpring {
         assertProjectile(activeProjectileGroups, 3, 2, 1, true, new Index(110, 105));
         EasyMock.verify(syncItemListenerMock);
     }
+
+    @Test
+    public void checkInterpolated() throws Exception {
+        // Setup target base item type
+        BaseItemType targetBaseItemType = new BaseItemType();
+        targetBaseItemType.setBoundingBox(new BoundingBox(100, new double[]{0.0, MathHelper.QUARTER_RADIANT, MathHelper.HALF_RADIANT, MathHelper.THREE_QUARTER_RADIANT}));
+        targetBaseItemType.setHealth(1000);
+        targetBaseItemType.setId(1);
+        // Setup attacker base item type
+        BaseItemType attackBaseItemType = new BaseItemType();
+        attackBaseItemType.setId(2);
+        attackBaseItemType.setBoundingBox(new BoundingBox(100, new double[]{0.0, MathHelper.QUARTER_RADIANT, MathHelper.HALF_RADIANT, MathHelper.THREE_QUARTER_RADIANT}));
+        attackBaseItemType.setHealth(1000);
+        Index[][] muzzlePositions = new Index[][]{{new Index(0, -10), new Index(-10, 0), new Index(0, 10), new Index(10, 0)}};
+        WeaponType weaponType = new WeaponType(300, 100, 10, 0.5, null, null, null, Collections.singletonList(1), muzzlePositions);
+        attackBaseItemType.setWeaponType(weaponType);
+        // Create planet services & items
+        Id targetId = new Id(1, 0);
+        Id attackerId = new Id(2, 0);
+        ServerPlanetServicesImpl planetServices = AbstractServiceTest.createMockPlanetServices();
+        SyncBaseItem target = AbstractServiceTest.createSyncBaseItem(targetBaseItemType, new Index(300, 100), targetId, AbstractServiceTest.createMockGlobalServices(), planetServices, new SimpleBase(1, 1));
+        SyncBaseItem attacker = AbstractServiceTest.createSyncBaseItem(attackBaseItemType, new Index(100, 100), attackerId, AbstractServiceTest.createMockGlobalServices(), planetServices, new SimpleBase(2, 1));
+        ServerItemService serverItemServiceMock = EasyMock.createNiceMock(ServerItemService.class);
+        EasyMock.expect(serverItemServiceMock.getItem(targetId)).andReturn(target).anyTimes();
+        EasyMock.expect(serverItemServiceMock.getItem(attackerId)).andReturn(attacker).anyTimes();
+        EasyMock.replay(serverItemServiceMock);
+        planetServices.setServerItemService(serverItemServiceMock);
+        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
+        EasyMock.expect(baseService.isEnemy(target, attacker)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(attacker, target)).andReturn(true).anyTimes();
+        EasyMock.replay(baseService);
+        planetServices.setBaseService(baseService);
+        ServerConnectionService connectionService = EasyMock.createNiceMock(ServerConnectionService.class);
+        EasyMock.expect(connectionService.getGameEngineMode()).andReturn(GameEngineMode.MASTER).anyTimes();
+        planetServices.setServerConnectionService(connectionService);
+        EasyMock.replay(connectionService);
+        // Check SyncItemListener
+        final ObjectHolder<ActiveProjectile> activeProjectileHolder = new ObjectHolder<>();
+        attacker.addSyncItemListener(new SyncItemListener() {
+            @Override
+            public void onItemChanged(Change change, SyncItem syncItem, Object additionalCustomInfo) {
+                if (change == Change.PROJECTILE_LAUNCHED) {
+                    ActiveProjectileGroup projectileGroup = (ActiveProjectileGroup) additionalCustomInfo;
+                    activeProjectileHolder.setObject(CommonJava.getFirst(projectileGroup.getProjectiles()));
+                }
+            }
+        });
+        // Attack
+        AttackCommand attackCommand = new AttackCommand();
+        attackCommand.setId(attackerId);
+        attackCommand.setTimeStamp();
+        attackCommand.setTarget(targetId);
+        attacker.executeCommand(attackCommand);
+        Assert.assertTrue(target.isIdle());
+        Assert.assertFalse(attacker.isIdle());
+        Assert.assertFalse(activeProjectileHolder.hasObject());
+        // Launch projectile
+        Assert.assertTrue(attacker.tick(0.01));
+        Assert.assertTrue(activeProjectileHolder.hasObject());
+        ActiveProjectile activeProjectile1 = activeProjectileHolder.getObject();
+        activeProjectileHolder.clearObject();
+        Assert.assertEquals(new Index(110, 100), activeProjectile1.getPosition());
+        Assert.assertEquals(new Index(110, 100), activeProjectile1.getInterpolatedPosition(0));
+        Assert.assertEquals(new Index(110, 100), activeProjectile1.getInterpolatedPosition(10000));
+
+        // Move projectile
+        Assert.assertTrue(attacker.tick(0.25));
+        long timeStamp1a = activeProjectile1.getLastTick();
+        Assert.assertEquals(new Index(135, 100), activeProjectile1.getPosition());
+        Assert.assertEquals(new Index(135, 100), activeProjectile1.getInterpolatedPosition(timeStamp1a));
+        Assert.assertEquals(new Index(136, 100), activeProjectile1.getInterpolatedPosition(timeStamp1a + 10));
+        Assert.assertEquals(new Index(145, 100), activeProjectile1.getInterpolatedPosition(timeStamp1a + 100));
+
+        Thread.sleep(10); // lastTick
+
+        // Launch projectile
+        Assert.assertTrue(attacker.tick(0.25));
+        long timeStamp2a = activeProjectile1.getLastTick();
+        Assert.assertTrue(timeStamp2a > timeStamp1a);
+        Assert.assertTrue(activeProjectileHolder.hasObject());
+        ActiveProjectile activeProjectile2 = activeProjectileHolder.getObject();
+        activeProjectileHolder.clearObject();
+        Assert.assertEquals(new Index(160, 100), activeProjectile1.getPosition());
+        Assert.assertEquals(new Index(160, 100), activeProjectile1.getInterpolatedPosition(timeStamp2a + 4));
+        Assert.assertEquals(new Index(161, 100), activeProjectile1.getInterpolatedPosition(timeStamp2a + 5));
+        Assert.assertEquals(new Index(170, 100), activeProjectile1.getInterpolatedPosition(timeStamp2a + 100));
+        Assert.assertEquals(new Index(110, 100), activeProjectile2.getPosition());
+        long timeStamp1b = activeProjectile1.getLastTick();
+        Assert.assertEquals(new Index(110, 100), activeProjectile2.getInterpolatedPosition(timeStamp1b + 10));
+        Assert.assertEquals(new Index(110, 100), activeProjectile2.getInterpolatedPosition(timeStamp1b + 100));
+        // Move projectile
+        Assert.assertTrue(attacker.tick(0.25));
+        Assert.assertEquals(new Index(185, 100), activeProjectile1.getPosition());
+        long timeStamp3a = activeProjectile1.getLastTick();
+        Assert.assertEquals(new Index(186, 100), activeProjectile1.getInterpolatedPosition(timeStamp3a + 5));
+        Assert.assertEquals(new Index(187, 100), activeProjectile1.getInterpolatedPosition(timeStamp3a + 20));
+        Assert.assertEquals(new Index(285, 100), activeProjectile1.getInterpolatedPosition(timeStamp3a + 1000));
+        Assert.assertEquals(new Index(300, 100), activeProjectile1.getInterpolatedPosition(timeStamp3a + 10000));
+        Assert.assertEquals(new Index(135, 100), activeProjectile2.getPosition());
+        long timeStamp2b = activeProjectile2.getLastTick();
+        Assert.assertEquals(new Index(136, 100), activeProjectile2.getInterpolatedPosition(timeStamp2b + 10));
+        Assert.assertEquals(new Index(145, 100), activeProjectile2.getInterpolatedPosition(timeStamp2b + 100));
+    }
+
 
     private void assertProjectile(List<ActiveProjectileGroup> activeProjectileGroups, int index, int projectileCount, int muzzleFlash, boolean alive, Index position) {
         Assert.assertEquals(projectileCount, activeProjectileGroups.get(index).getProjectiles().size());

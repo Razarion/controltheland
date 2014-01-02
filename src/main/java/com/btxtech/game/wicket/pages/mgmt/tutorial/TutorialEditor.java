@@ -21,7 +21,7 @@ import com.btxtech.game.services.tutorial.DbAutomatedBattleTaskConfig;
 import com.btxtech.game.services.tutorial.DbAutomatedScrollTaskConfig;
 import com.btxtech.game.services.tutorial.DbConditionTaskConfig;
 import com.btxtech.game.services.tutorial.DbScrollToEventTaskConfig;
-import com.btxtech.game.services.tutorial.DbSyncItemListenerTaskConfig;
+import com.btxtech.game.services.tutorial.DbContainedInListenerTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
@@ -94,8 +94,8 @@ public class TutorialEditor extends MgmtWebPage {
                     setResponsePage(new ConditionTaskEditor((DbConditionTaskConfig) dbTaskConfig, new TerrainLinkHelper(form.getModelObject())));
                 } else if (dbTaskConfig instanceof DbScrollToEventTaskConfig) {
                     setResponsePage(new ScrollToEventTaskEditor((DbScrollToEventTaskConfig) dbTaskConfig, new TerrainLinkHelper(form.getModelObject())));
-                } else if (dbTaskConfig instanceof DbSyncItemListenerTaskConfig) {
-                    setResponsePage(new SyncItemListenerTaskEditor((DbSyncItemListenerTaskConfig) dbTaskConfig, new TerrainLinkHelper(form.getModelObject())));
+                } else if (dbTaskConfig instanceof DbContainedInListenerTaskConfig) {
+                    setResponsePage(new ContainedInListenerTaskEditor((DbContainedInListenerTaskConfig) dbTaskConfig, new TerrainLinkHelper(form.getModelObject())));
                 } else {
                     throw new IllegalArgumentException("Can not find editor for: " + dbTaskConfig);
                 }
@@ -148,7 +148,7 @@ public class TutorialEditor extends MgmtWebPage {
                 markupContainer.add(new Button("createSyncItemListenerTask") {
                     @Override
                     public void onSubmit() {
-                        createDbChild(DbSyncItemListenerTaskConfig.class);
+                        createDbChild(DbContainedInListenerTaskConfig.class);
                         refresh();
                     }
                 });
