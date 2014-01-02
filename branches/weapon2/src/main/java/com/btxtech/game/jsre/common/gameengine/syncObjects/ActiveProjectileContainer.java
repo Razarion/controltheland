@@ -27,7 +27,7 @@ public class ActiveProjectileContainer {
     public void createProjectile(SyncBaseItem target) {
         this.target = target;
         projectileTarget = target.getSyncItemArea().getPosition();
-        ActiveProjectileGroup projectileGroup = new ActiveProjectileGroup(syncBaseItem, weaponType);
+        ActiveProjectileGroup projectileGroup = new ActiveProjectileGroup(syncBaseItem, weaponType, projectileTarget);
         projectiles.add(projectileGroup);
         if (weaponType.getProjectileSpeed() == null) {
             projectileDetonation(projectileGroup);
@@ -37,8 +37,8 @@ public class ActiveProjectileContainer {
     public boolean tick(double factor) {
         Collection<ActiveProjectileGroup> detonation = new ArrayList<ActiveProjectileGroup>();
         for (ActiveProjectileGroup projectileGroup : projectiles) {
-            projectileGroup.tick(factor, weaponType, projectileTarget);
-            if(!projectileGroup.isAlive())  {
+            projectileGroup.tick(factor, weaponType);
+            if (!projectileGroup.isAlive()) {
                 detonation.add(projectileGroup);
             }
         }

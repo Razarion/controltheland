@@ -71,7 +71,7 @@ import java.util.Set;
 @Entity(name = "TUTORIAL_TASK_CONFIG")
 @TypeDefs({@TypeDef(name = "index", typeClass = IndexUserType.class)})
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 50)
 abstract public class DbAbstractTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Id
     @GeneratedValue

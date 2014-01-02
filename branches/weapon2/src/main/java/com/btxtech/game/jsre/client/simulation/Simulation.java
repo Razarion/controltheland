@@ -138,7 +138,11 @@ public class Simulation implements ClientBase.OwnBaseDestroyedListener {
         processPreparation(abstractTaskConfig);
         taskTime = System.currentTimeMillis();
         activeAbstractTask = createTask(abstractTaskConfig);
-        activeAbstractTask.start();
+        if (activeAbstractTask.isFulfilled()) {
+            onTaskSucceeded(false);
+        } else {
+            activeAbstractTask.start();
+        }
     }
 
     private void tutorialFinished() {
@@ -163,10 +167,12 @@ public class Simulation implements ClientBase.OwnBaseDestroyedListener {
         simulationInfo = null;
     }
 
-    public void onTaskSucceeded() {
+    public void onTaskSucceeded(boolean doCleanup) {
         long time = System.currentTimeMillis();
         ClientUserTracker.getInstance().onTaskFinished(simulationInfo.getLevelTaskId(), activeAbstractTask, time - taskTime, time);
-        activeAbstractTask.cleanup();
+        if (doCleanup) {
+            activeAbstractTask.cleanup();
+        }
         if (hasPraisePopup()) {
             startPraisePopup();
             Timer deferredTimer = new Timer() {
