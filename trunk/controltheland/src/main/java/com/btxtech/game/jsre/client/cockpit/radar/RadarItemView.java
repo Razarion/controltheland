@@ -84,6 +84,10 @@ public class RadarItemView extends MiniMap {
             resourceItemSize = RESOURCE_ITEM_SIZE;
         }
 
+        getContext2d().setShadowOffsetX(1);
+        getContext2d().setShadowOffsetY(1);
+        getContext2d().setShadowColor("black");
+
         for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangleFast(getAbsoluteViewRectangle())) {
             try {
                 if (syncItem instanceof SyncBaseItem) {
@@ -109,6 +113,8 @@ public class RadarItemView extends MiniMap {
                 ClientExceptionHandler.handleExceptionOnlyOnce("RadarItemView.render() failed", e);
             }
         }
+        getContext2d().setShadowOffsetX(0);
+        getContext2d().setShadowOffsetY(0);
     }
 
     @Override
