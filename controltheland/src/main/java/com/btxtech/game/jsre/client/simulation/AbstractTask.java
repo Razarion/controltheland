@@ -36,6 +36,10 @@ abstract public class AbstractTask {
 
     protected abstract void internCleanup();
 
+    protected boolean isFulfilled() {
+        return false;
+    }
+
     public final void start() {
         ClientBase.getInstance().setAccountBalance(abstractTaskConfig.getMoney());
         startSplashDialog();
@@ -58,7 +62,7 @@ abstract public class AbstractTask {
     }
 
     protected void onTaskSucceeded() {
-        simulation.onTaskSucceeded();
+        simulation.onTaskSucceeded(true);
     }
 
     public void onTaskConversion() {
