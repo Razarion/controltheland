@@ -1,0 +1,71 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket>
+<head>
+    <title>Multi User Level Converter</title>
+    <style>
+        .dataTable th, .dataTable td {
+            border: 1px solid #717171;
+        }
+
+        table.dataTable {
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<h1>Multi User Level Converter</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="levelSelectForm">
+    <table style="border: 2px dotted #000000; width: 400px; padding: 5px;">
+        <tr>
+            <td valign="top">Current Level Id</td>
+            <td valign="top"><input wicket:id="currentLevelId" type="text" size="20">(<span input wicket:id="currentLevel"></span>)</td>
+        </tr>
+        <tr>
+            <td valign="top">New Level Id</td>
+            <td valign="top"><input wicket:id="newLevelId" type="text" size="20">(<span input wicket:id="newLevel"></span>)</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td align="left">
+                <input wicket:id="listUsers" type="submit" value="List"/>
+            </td>
+        </tr>
+    </table>
+</form>
+<br>
+
+<form wicket:id="foundUserForm">
+    Users found:<span wicket:id="userCount"></span>
+    <table class="dataTable">
+        <tr>
+            <th bgcolor="#dadada">User</th>
+            <th bgcolor="#dadada">Include</th>
+        </tr>
+        <tr wicket:id="foundUserTable">
+            <td><a href="" wicket:id="userLink" target="_blank"><span wicket:id="name">xxx</span></a></td>
+            <td><input type="checkbox" wicket:id="include"></td>
+        </tr>
+    </table>
+    <input wicket:id="convertUsers" type="submit" value="Convert selected users"/>
+</form>
+
+
+<body>
+</body>
+</html>

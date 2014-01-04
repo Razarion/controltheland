@@ -1,6 +1,7 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.client.VerificationRequestCallback;
+import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.jsre.client.common.info.Suggestion;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
@@ -11,6 +12,7 @@ import com.btxtech.game.services.common.NameErrorPair;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.user.impl.UserServiceImpl;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import junit.framework.Assert;
 import org.easymock.EasyMock;
@@ -35,6 +37,8 @@ public class TestUserService extends AbstractServiceTest {
     private GuildService guildService;
     @Autowired
     private PropertyService propertyService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
 
     @Test
     @DirtiesContext
@@ -488,6 +492,66 @@ public class TestUserService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void getAllSimpleUsersWithLevel() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        createUserInOwnSession("U10", "");
+        createUserInOwnSession("U09", "");
+        createUserInOwnSession("U03", "");
+        createUserInOwnSession("U05", "");
+        createUserInOwnSession("U02", "");
+        createUserInOwnSession("U06", "");
+        createUserInOwnSession("U07", "");
+        createUserInOwnSession("U08", "");
+        createUserInOwnSession("U04", "");
+        createUserInOwnSession("U01", "");
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(userService.getUserState(userService.getUser("U10")), TEST_LEVEL_1_SIMULATED_ID);
+        userGuidanceService.promote(userService.getUserState(userService.getUser("U01")), TEST_LEVEL_2_REAL_ID);
+        userGuidanceService.promote(userService.getUserState(userService.getUser("U09")), TEST_LEVEL_2_REAL_ID);
+        userGuidanceService.promote(userService.getUserState(userService.getUser("U03")), TEST_LEVEL_2_REAL_ID);
+        userGuidanceService.promote(userService.getUserState(userService.getUser("U05")), TEST_LEVEL_4_REAL_ID);
+        userGuidanceService.promote(userService.getUserState(userService.getUser("U02")), TEST_LEVEL_4_REAL_ID);
+        userGuidanceService.promote(userService.getUserState(userService.getUser("U06")), TEST_LEVEL_4_REAL_ID);
+        userGuidanceService.promote(userService.getUserState(userService.getUser("U07")), TEST_LEVEL_1_SIMULATED_ID);
+        userGuidanceService.promote(userService.getUserState(userService.getUser("U08")), TEST_LEVEL_4_REAL_ID);
+        userGuidanceService.promote(userService.getUserState(userService.getUser("U04")), TEST_LEVEL_4_REAL_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // No users in level
+        List<SimpleUser> users = userService.getAllSimpleUsersWithLevel(TEST_LEVEL_6_REAL_ID);
+        Assert.assertEquals(0, users.size());
+        // TEST_LEVEL_1_SIMULATED_ID
+        users = userService.getAllSimpleUsersWithLevel(TEST_LEVEL_1_SIMULATED_ID);
+        Assert.assertEquals(2, users.size());
+        Assert.assertEquals("U07", users.get(0).getName());
+        Assert.assertEquals("U10", users.get(1).getName());
+        // TEST_LEVEL_2_REAL_ID
+        users = userService.getAllSimpleUsersWithLevel(TEST_LEVEL_2_REAL_ID);
+        Assert.assertEquals(3, users.size());
+        Assert.assertEquals("U01", users.get(0).getName());
+        Assert.assertEquals("U03", users.get(1).getName());
+        Assert.assertEquals("U09", users.get(2).getName());
+        // TEST_LEVEL_2_REAL_ID
+        users = userService.getAllSimpleUsersWithLevel(TEST_LEVEL_4_REAL_ID);
+        Assert.assertEquals(5, users.size());
+        Assert.assertEquals("U02", users.get(0).getName());
+        Assert.assertEquals("U04", users.get(1).getName());
+        Assert.assertEquals("U05", users.get(2).getName());
+        Assert.assertEquals("U06", users.get(3).getName());
+        Assert.assertEquals("U08", users.get(4).getName());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 
     @Test
     @DirtiesContext

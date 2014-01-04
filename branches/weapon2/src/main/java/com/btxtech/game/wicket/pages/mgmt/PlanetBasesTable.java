@@ -16,58 +16,48 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.services.planet.PlanetSystemService;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
  * Date: 16.02.2010
  * Time: 21:35:44
  */
-public class BasesTable extends Panel {
+public class PlanetBasesTable extends MgmtWebPage {
     @SpringBean
     private PlanetSystemService planetSystemService;
-    private List<SimpleBase> simpleBases;
 
-    public BasesTable(String id, PlanetInfo planetInfo, List<SimpleBase> simpleBases) {
-        super(id);
-        this.simpleBases = simpleBases;
-        add(new Label("planetName", planetInfo.getName()));
-        ListView<SimpleBase> listView = new ListView<SimpleBase>("bases", new IModel<List<SimpleBase>>() {
+    public PlanetBasesTable() {
+        ListView<Map.Entry<PlanetInfo, List<SimpleBase>>> listView = new ListView<Map.Entry<PlanetInfo, List<SimpleBase>>>("planets", new IModel<List<Map.Entry<PlanetInfo, List<SimpleBase>>>>() {
+            private List<Map.Entry<PlanetInfo, List<SimpleBase>>> entries;
 
             @Override
-            public List<SimpleBase> getObject() {
-                return BasesTable.this.simpleBases;
+            public List<Map.Entry<PlanetInfo, List<SimpleBase>>> getObject() {
+                if (entries == null) {
+                    entries = planetSystemService.getAllSimpleBases();
+                }
+                return entries;
             }
 
             @Override
-            public void setObject(List<SimpleBase> baseInfos) {
+            public void setObject(List<Map.Entry<PlanetInfo, List<SimpleBase>>> entries) {
                 // Ignored
             }
 
             @Override
             public void detach() {
+                entries = null;
             }
         }) {
             @Override
-            protected void populateItem(final ListItem<SimpleBase> listItem) {
-                Link link = new Link("baseLink") {
-
-                    @Override
-                    public void onClick() {
-                        setResponsePage(new BaseEditor(listItem.getModelObject()));
-                    }
-                };
-                String baseName = planetSystemService.getServerPlanetServices(listItem.getModelObject()).getBaseService().getBaseName(listItem.getModelObject());
-                link.add(new Label("baseName", baseName + " (" + listItem.getModelObject().getBaseId() + ")"));
-                listItem.add(link);
+            protected void populateItem(ListItem<Map.Entry<PlanetInfo, List<SimpleBase>>> item) {
+                item.add(new BasesTable("planet", item.getModelObject().getKey(), item.getModelObject().getValue()));
             }
         };
         add(listView);

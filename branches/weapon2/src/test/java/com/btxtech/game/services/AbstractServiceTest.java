@@ -2334,6 +2334,14 @@ abstract public class AbstractServiceTest {
         createUser(userName, password, "fakeemail");
     }
 
+    protected void createUserInOwnSession(String userName, String password) {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser(userName, password, "fakeemail");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
     protected void loginUser(String userName) {
         loginUser(userName, "test");
     }
