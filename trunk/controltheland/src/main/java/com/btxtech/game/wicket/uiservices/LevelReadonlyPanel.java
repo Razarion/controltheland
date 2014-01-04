@@ -18,6 +18,7 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -29,12 +30,19 @@ public class LevelReadonlyPanel extends Panel {
     @SpringBean
     private UserGuidanceService userGuidanceService;
 
-    public LevelReadonlyPanel(final String id) {
-        super(id);
+    public LevelReadonlyPanel(String id) {
+        this(id, null);
+    }
+
+    public LevelReadonlyPanel(String id, IModel<Integer> model) {
+        super(id, model);
         add(new Label("levelName", new AbstractReadOnlyModel<String>() {
 
             @Override
             public String getObject() {
+                if(getDefaultModelObject() == null) {
+                    return "-";
+                }
                 DbLevel dbLevel = userGuidanceService.getDbLevel((Integer) getDefaultModelObject());
                 if (dbLevel != null) {
                     return dbLevel.getName();

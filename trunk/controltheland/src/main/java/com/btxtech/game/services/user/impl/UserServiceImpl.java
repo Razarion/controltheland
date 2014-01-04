@@ -85,6 +85,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -907,6 +908,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<SimpleUser> getAllSimpleUsersWithLevel(int levelId) {
+        List<SimpleUser> users = new ArrayList<>();
+        for (UserState userState : userStates) {
+            if (!userState.isRegistered()) {
+                continue;
+            }
+            if (userState.getDbLevelId() == levelId) {
+                users.add(loadUserFromDbInSession(userState.getUser()).createSimpleUser());
+            }
+        }
+        Collections.sort(users, new Comparator<SimpleUser>() {
+            @Override
+            public int compare(SimpleUser o1, SimpleUser o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        return users;
+    }
+
+    @Override
     public DetailedUser createDetailedUser(User user) {
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(user);
         return new DetailedUser(user.createSimpleUser(),
@@ -924,6 +945,4 @@ public class UserServiceImpl implements UserService {
         }
         return userAttentionPacket;
     }
-
-
 }
