@@ -25,6 +25,7 @@ import com.btxtech.game.wicket.pages.mgmt.tracking.NewUserTracking;
 import com.btxtech.game.wicket.pages.mgmt.tracking.SessionTable;
 import com.btxtech.game.wicket.pages.mgmt.tracking.UserTracking;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.TutorialTable;
+import com.btxtech.game.wicket.pages.mgmt.usermgmt.MultiUserLevelConverter;
 import com.btxtech.game.wicket.pages.mgmt.usermgmt.UserStateTable;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -139,7 +140,7 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("User Tracking", UserTracking.class));
         toolPages.add(new LinkAndName("New User Tracking", NewUserTracking.class));
         toolPages.add(new LinkAndName("New User Daily Tracking", NewUserDailyTracking.class));
-        toolPages.add(new LinkAndName("Bases", BasesTable.class));
+        toolPages.add(new LinkAndName("Bases", PlanetBasesTable.class));
         toolPages.add(new LinkAndName("Levels", LevelTable.class));
         toolPages.add(new LinkAndName("Planets", PlanetTable.class));
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
@@ -155,5 +156,7 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Send Email", SendEmailPage.class));
         toolPages.add(new LinkAndName("Send Server Restart", SendServerRebootMessage.class));
         toolPages.add(new LinkAndName("Add News Entry", AddNewsEntry.class));
+        toolPages.add(new LinkAndName("Multi User Level Converter", MultiUserLevelConverter.class));
+
     }
 }

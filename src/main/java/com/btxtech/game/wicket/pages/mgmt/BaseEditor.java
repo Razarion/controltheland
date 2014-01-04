@@ -252,7 +252,7 @@ public class BaseEditor extends MgmtWebPage {
                         public void onSubmit() {
                             planetSystemService.getServerPlanetServices(simpleBase).getItemService().killSyncItem(item.getModelObject(), null, true, false);
                             if (planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBase(simpleBase) == null) {
-                                setResponsePage(BasesTable.class);
+                                setResponsePage(PlanetBasesTable.class);
                             }
 
                         }
@@ -313,7 +313,7 @@ public class BaseEditor extends MgmtWebPage {
             public void onSubmit() {
                 planetSystemService.getServerPlanetServices(simpleBase).getItemService().killSyncItemIds(itemsToKill);
                 if (planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBase(simpleBase) == null) {
-                    setResponsePage(BasesTable.class);
+                    setResponsePage(PlanetBasesTable.class);
                 }
             }
         });

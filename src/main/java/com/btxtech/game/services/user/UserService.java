@@ -126,6 +126,8 @@ public interface UserService extends UserDetailsService {
 
     List<User> getUsersWithEmail(String usersAsString);
 
+    List<SimpleUser> getAllSimpleUsersWithLevel(int levelId);
+
     User loadUserFromDb(String name);
 
     DetailedUser createDetailedUser(User user);

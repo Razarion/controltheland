@@ -11,6 +11,7 @@ import com.btxtech.game.jsre.client.dialogs.starmap.StarMapInfo;
 import com.btxtech.game.jsre.client.dialogs.starmap.StarMapPlanetInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.SimpleEntry;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -395,12 +396,12 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     }
 
     @Override
-    public List<SimpleBase> getAllSimpleBases() {
-        List<SimpleBase> allBases = new ArrayList<>();
+    public List<Map.Entry<PlanetInfo, List<SimpleBase>>> getAllSimpleBases() {
+        List<Map.Entry<PlanetInfo, List<SimpleBase>>> entries = new ArrayList<>();
         for (Planet planet : planetImpls.values()) {
-            allBases.addAll(planet.getPlanetServices().getBaseService().getSimpleBases());
+            entries.add(new SimpleEntry<>(planet.getPlanetServices().getPlanetInfo(), planet.getPlanetServices().getBaseService().getSimpleBases()));
         }
-        return allBases;
+        return entries;
     }
 
     @Transactional
