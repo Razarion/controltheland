@@ -28,6 +28,7 @@ import com.btxtech.game.services.user.UserState;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -89,7 +90,7 @@ public interface PlanetSystemService {
 
     void afterRestore();
 
-    List<SimpleBase> getAllSimpleBases();
+    List<Map.Entry<PlanetInfo, List<SimpleBase>>> getAllSimpleBases();
 
     void saveTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int planetId);
 

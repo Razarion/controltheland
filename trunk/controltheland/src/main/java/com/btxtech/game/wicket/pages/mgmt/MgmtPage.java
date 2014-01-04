@@ -140,7 +140,7 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("User Tracking", UserTracking.class));
         toolPages.add(new LinkAndName("New User Tracking", NewUserTracking.class));
         toolPages.add(new LinkAndName("New User Daily Tracking", NewUserDailyTracking.class));
-        toolPages.add(new LinkAndName("Bases", BasesTable.class));
+        toolPages.add(new LinkAndName("Bases", PlanetBasesTable.class));
         toolPages.add(new LinkAndName("Levels", LevelTable.class));
         toolPages.add(new LinkAndName("Planets", PlanetTable.class));
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
