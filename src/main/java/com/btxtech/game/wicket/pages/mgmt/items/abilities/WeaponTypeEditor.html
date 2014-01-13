@@ -35,6 +35,32 @@
             <td valign="top">Projectile Detonation Clip Id</td>
             <td valign="top" wicket:id="projectileDetonationClip"></td>
         </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Disallowed item type ids [;]</td>
+            <td valign="top" wicket:id="disallowedItemTypes"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Factor for Item Types</td>
+            <td valign="top">
+                <table cellpadding="1" cellspacing="1" border="0">
+                    <tr>
+                        <th bgcolor="#dadada">Item Type</th>
+                        <th bgcolor="#dadada">Factor</th>
+                    </tr>
+                    <tr wicket:id="factors">
+                        <td wicket:id="dbBaseItemType"/>
+                        <td valign="center">
+                            <input wicket:id="factor" type="text" size="6">
+                        </td>
+                        <td>
+                            <input type="submit" value="Delete" wicket:id="delete"/>
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" value="Add" wicket:id="createFactor"/>
+            </td>
+        </tr>
+        disallowedItemTypes
     </table>
 </wicket:extend>
 </body>

@@ -97,7 +97,6 @@ public class TestSyncWeapon extends AbstractServiceTest {
         dbWeaponType.setRange(1000);
         dbWeaponType.setReloadTime(1);
         dbWeaponType.setDamage(1000);
-        dbWeaponType.setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
         tower.setDbWeaponType(dbWeaponType);
         serverItemTypeService.saveDbItemType(tower);
         // Make builder build the defense tower

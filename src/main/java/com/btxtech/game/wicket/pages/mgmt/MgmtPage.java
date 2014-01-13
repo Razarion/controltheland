@@ -135,7 +135,6 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Terrain Tile Editor", TerrainTileEditor.class));
         toolPages.add(new LinkAndName("Backup/Restore", BackupRestore.class));
         toolPages.add(new LinkAndName("Item Type Editpr", ItemTypeTable.class));
-        toolPages.add(new LinkAndName("Attack Matrix", AttackMatrix.class));
         toolPages.add(new LinkAndName("Session Tracking", SessionTable.class));
         toolPages.add(new LinkAndName("User Tracking", UserTracking.class));
         toolPages.add(new LinkAndName("New User Tracking", NewUserTracking.class));

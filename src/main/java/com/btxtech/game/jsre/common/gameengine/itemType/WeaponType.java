@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * User: beat
@@ -27,7 +28,8 @@ public class WeaponType implements Serializable {
     private int range;
     private int damage;
     private double reloadTime;
-    private Collection<Integer> allowedItemTypes;
+    private Collection<Integer> disallowedItemTypes;
+    private Map<Integer, Double> itemTypeFactors;
     // Pixel per second
     private Integer projectileSpeed;
     // dimension 1: muzzle nr, dimension 2: image nr
@@ -42,7 +44,7 @@ public class WeaponType implements Serializable {
     WeaponType() {
     }
 
-    public WeaponType(int range, Integer projectileSpeed, int damage, double reloadTime, Integer muzzleFlashClipId, Integer projectileClipId, Integer projectileDetonationClipId, Collection<Integer> allowedItemTypes, Index[][] muzzleFlashPositions) {
+    public WeaponType(int range, Integer projectileSpeed, int damage, double reloadTime, Integer muzzleFlashClipId, Integer projectileClipId, Integer projectileDetonationClipId, Collection<Integer> disallowedItemTypes, Map<Integer, Double> itemTypeFactors, Index[][] muzzleFlashPositions) {
         this.range = range;
         this.projectileSpeed = projectileSpeed;
         this.damage = damage;
@@ -50,7 +52,8 @@ public class WeaponType implements Serializable {
         this.muzzleFlashClipId = muzzleFlashClipId;
         this.projectileClipId = projectileClipId;
         this.projectileDetonationClipId = projectileDetonationClipId;
-        this.allowedItemTypes = allowedItemTypes;
+        this.disallowedItemTypes = disallowedItemTypes;
+        this.itemTypeFactors = itemTypeFactors;
         this.muzzleFlashPositions = muzzleFlashPositions;
     }
 
@@ -62,7 +65,8 @@ public class WeaponType implements Serializable {
         muzzleFlashClipId = weaponType.muzzleFlashClipId;
         projectileClipId = weaponType.projectileClipId;
         projectileDetonationClipId = weaponType.projectileDetonationClipId;
-        allowedItemTypes = weaponType.allowedItemTypes;
+        disallowedItemTypes = weaponType.disallowedItemTypes;
+        itemTypeFactors = weaponType.itemTypeFactors;
         muzzleFlashPositions = weaponType.muzzleFlashPositions;
     }
 
@@ -74,8 +78,13 @@ public class WeaponType implements Serializable {
         return projectileSpeed;
     }
 
-    public double getDamage() {
-        return damage;
+    public double getDamage(BaseItemType baseItemType) {
+        Double factor = itemTypeFactors.get(baseItemType.getId());
+        if (factor != null) {
+            return damage * factor;
+        } else {
+            return damage;
+        }
     }
 
     public double getReloadTime() {
@@ -94,8 +103,8 @@ public class WeaponType implements Serializable {
         return projectileDetonationClipId;
     }
 
-    public boolean isItemTypeAllowed(int itemTypeId) {
-        return allowedItemTypes.contains(itemTypeId);
+    public boolean isItemTypeDisallowed(int itemTypeId) {
+        return disallowedItemTypes.contains(itemTypeId);
     }
 
     public Index getMuzzleFlashPosition(int muzzleNr, int angelIndex) {

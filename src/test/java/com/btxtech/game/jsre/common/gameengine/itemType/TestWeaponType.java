@@ -5,6 +5,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Collections;
+
 /**
  * User: beat
  * Date: 11.12.2011
@@ -20,7 +22,7 @@ public class TestWeaponType {
             muzzleFlashPositions[0][i] = new Index(0, i);
         }
 
-        WeaponType weaponType = new WeaponType(0, null, 0, 0, null, null, null, null, muzzleFlashPositions);
+        WeaponType weaponType = new WeaponType(0, null, 0, 0, null, null, null, null, Collections.<Integer, Double>emptyMap(), muzzleFlashPositions);
 
         Assert.assertEquals(1, weaponType.getMuzzleFlashCount());
         Assert.assertEquals(new Index(0, 0), weaponType.getMuzzleFlashPosition(0, 0));

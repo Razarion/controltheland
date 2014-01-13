@@ -204,7 +204,7 @@ public class Group {
 
     public boolean atLeastOneItemTypeAllowed2Attack(SyncBaseItem syncBaseItem) {
         for (SyncBaseItem selectedSyncBaseItem : syncBaseItems) {
-            if (selectedSyncBaseItem.hasSyncWeapon() && selectedSyncBaseItem.getSyncWeapon().isItemTypeAllowed(syncBaseItem)) {
+            if (selectedSyncBaseItem.hasSyncWeapon() && !selectedSyncBaseItem.getSyncWeapon().isItemTypeDisallowed(syncBaseItem)) {
                 return true;
             }
         }

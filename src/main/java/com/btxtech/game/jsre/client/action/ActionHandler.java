@@ -267,7 +267,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         GroupCommandHelperItemType<SyncBaseItem> commandHelperItemType = new GroupCommandHelperItemType<SyncBaseItem>() {
             @Override
             protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBaseItem target) {
-                return syncBaseItem.hasSyncWeapon() && syncBaseItem.getSyncWeapon().isItemTypeAllowed(target) && syncBaseItem.isEnemy(target);
+                return syncBaseItem.hasSyncWeapon() && !syncBaseItem.getSyncWeapon().isItemTypeDisallowed(target) && syncBaseItem.isEnemy(target);
             }
 
             @Override

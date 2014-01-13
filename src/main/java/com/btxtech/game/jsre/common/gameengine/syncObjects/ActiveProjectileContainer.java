@@ -61,7 +61,7 @@ public class ActiveProjectileContainer {
     private void projectileDetonation(ActiveProjectileGroup projectileGroup) {
         syncBaseItem.fireItemChanged(SyncItemListener.Change.PROJECTILE_DETONATION, null);
         if (target != null && target.isAlive() && target.getSyncItemArea().hasPosition()) {
-            target.decreaseHealth(weaponType.getDamage(), syncBaseItem.getBase());
+            target.decreaseHealth(weaponType.getDamage(target.getBaseItemType()), syncBaseItem.getBase());
             try {
                 target.onAttacked(syncBaseItem);
             } catch (TargetHasNoPositionException e) {
