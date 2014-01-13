@@ -1350,21 +1350,23 @@ abstract public class AbstractServiceTest {
         return dbBaseItemType;
     }
 
+    // TODO needed?
     private void finishAttackBaseItemType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID);
         // DbWeaponType
-        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID), true);
-        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID), true);
-        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
-        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID), true);
+        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID), true);
+        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID), true);
+        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
+        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID), true);
 
         serverItemTypeService.saveDbItemType(dbBaseItemType);
         serverItemTypeService.activate();
     }
 
+    // TODO needed?
     private void finishConsumerAttackMovableType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID);
-        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
+        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
         serverItemTypeService.saveDbItemType(dbBaseItemType);
         serverItemTypeService.activate();
     }
@@ -1402,8 +1404,8 @@ abstract public class AbstractServiceTest {
         serverItemTypeService.saveDbItemType(dbBaseItemType);
         TEST_ATTACK_ITEM_ID_2 = dbBaseItemType.getId();
         // DbWeaponType
-        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID_2), true);
-        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID_2), true);
+        // TODO needed? serverItemTypeService.saveDbItemType(dbBaseItemType);
         serverItemTypeService.activate();
         return dbBaseItemType;
     }

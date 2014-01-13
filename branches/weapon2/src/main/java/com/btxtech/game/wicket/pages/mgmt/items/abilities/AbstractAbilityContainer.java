@@ -58,7 +58,7 @@ public abstract class AbstractAbilityContainer<T> extends Panel {
                 return getDefaultModelObject() != null;
             }
         };
-        abilityContainer.setDefaultModel(new CompoundPropertyModel(new PropertyModel(new AbstractReadOnlyModel<Object>() {
+        abilityContainer.setDefaultModel(new CompoundPropertyModel<>(new PropertyModel<>(new AbstractReadOnlyModel<Object>() {
             @Override
             public Object getObject() {
                 return AbstractAbilityContainer.this.getParent().getDefaultModel();
@@ -69,4 +69,7 @@ public abstract class AbstractAbilityContainer<T> extends Panel {
         add(abilityContainer);
     }
 
+    protected RuServiceHelper<DbBaseItemType> getRuServiceHelper() {
+        return ruServiceHelper;
+    }
 }

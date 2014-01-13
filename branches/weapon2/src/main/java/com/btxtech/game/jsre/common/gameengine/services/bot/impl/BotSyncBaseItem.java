@@ -67,7 +67,7 @@ public class BotSyncBaseItem {
     }
 
     public boolean isAbleToAttack(BaseItemType baseItemType) {
-        return syncBaseItem.hasSyncWeapon() && syncBaseItem.hasSyncMovable() && syncBaseItem.getSyncWeapon().getWeaponType().isItemTypeAllowed(baseItemType.getId());
+        return syncBaseItem.hasSyncWeapon() && syncBaseItem.hasSyncMovable() && !syncBaseItem.getSyncWeapon().getWeaponType().isItemTypeDisallowed(baseItemType.getId());
     }
 
     public boolean canMove() {
