@@ -42,7 +42,7 @@ public class DbWeaponTypeItemTypeFactor implements CrudChild<DbWeaponType> {
 
     @Override
     public void init(UserService userService) {
-        // Not used
+        factor = 1.0;
     }
 
     @Override

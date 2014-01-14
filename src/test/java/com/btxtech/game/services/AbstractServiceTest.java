@@ -1183,9 +1183,7 @@ abstract public class AbstractServiceTest {
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         createSimpleBuilding();
-        finishAttackBaseItemType();
         finishContainerBaseItemType();
-        finishConsumerAttackMovableType();
         finishWaterContainerType();
         createMoney();
         // Planet
@@ -1217,9 +1215,7 @@ abstract public class AbstractServiceTest {
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         createSimpleBuilding();
-        finishAttackBaseItemType();
         finishContainerBaseItemType();
-        finishConsumerAttackMovableType();
         finishWaterContainerType();
         createMoney();
         // Planet
@@ -1251,9 +1247,7 @@ abstract public class AbstractServiceTest {
         createHarborType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
-        finishAttackBaseItemType();
         finishContainerBaseItemType();
-        finishConsumerAttackMovableType();
         finishWaterContainerType();
         createAttackBaseItemType2();
         createMoney();
@@ -1350,27 +1344,6 @@ abstract public class AbstractServiceTest {
         return dbBaseItemType;
     }
 
-    // TODO needed?
-    private void finishAttackBaseItemType() {
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID);
-        // DbWeaponType
-        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID), true);
-        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID), true);
-        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
-        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID), true);
-
-        serverItemTypeService.saveDbItemType(dbBaseItemType);
-        serverItemTypeService.activate();
-    }
-
-    // TODO needed?
-    private void finishConsumerAttackMovableType() {
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID);
-        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
-        serverItemTypeService.saveDbItemType(dbBaseItemType);
-        serverItemTypeService.activate();
-    }
-
     private void finishWaterContainerType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_WATER_CONTAINER_ITEM_ID);
         Set<DbBaseItemType> ableToContain = new HashSet<>();
@@ -1403,9 +1376,6 @@ abstract public class AbstractServiceTest {
 
         serverItemTypeService.saveDbItemType(dbBaseItemType);
         TEST_ATTACK_ITEM_ID_2 = dbBaseItemType.getId();
-        // DbWeaponType
-        // TODO needed? dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID_2), true);
-        // TODO needed? serverItemTypeService.saveDbItemType(dbBaseItemType);
         serverItemTypeService.activate();
         return dbBaseItemType;
     }
