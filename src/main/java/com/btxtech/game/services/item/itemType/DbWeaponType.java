@@ -64,7 +64,7 @@ public class DbWeaponType implements CrudParent {
             joinColumns = @JoinColumn(name = "weaponItemTypeId"),
             inverseJoinColumns = @JoinColumn(name = "disallowedItemTypeId")
     )
-    private Set<DbBaseItemType> disallowedItemTypes;
+    private Collection<DbBaseItemType> disallowedItemTypes;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "weaponType")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Collection<DbWeaponTypeItemTypeFactor> factors = new ArrayList<>();
@@ -112,11 +112,11 @@ public class DbWeaponType implements CrudParent {
         this.reloadTime = reloadTime;
     }
 
-    public void setDisallowedItemTypes(Set<DbBaseItemType> disallowedItemTypes) {
+    public void setDisallowedItemTypes(Collection<DbBaseItemType> disallowedItemTypes) {
         this.disallowedItemTypes = disallowedItemTypes;
     }
 
-    public Set<DbBaseItemType> getDisallowedItemTypes() {
+    public Collection<DbBaseItemType> getDisallowedItemTypes() {
         return disallowedItemTypes;
     }
 
