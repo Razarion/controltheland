@@ -49,6 +49,7 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbWeaponType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbWeaponTypeMuzzle"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbWeaponTypeMuzzlePosition"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbWeaponTypeItemTypeFactor"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeImage"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbConsumerType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbGeneratorType"/>

@@ -196,7 +196,7 @@ public class SyncWeapon extends SyncBaseAbility {
             throw new IllegalArgumentException("Can not attack friendly target. Own: " + getSyncBaseItem() + " target: " + target);
         }
 
-        if (!isItemTypeAllowed(target)) {
+        if (isItemTypeDisallowed(target)) {
             throw new IllegalArgumentException(this + " Weapon not allowed to attack item type: " + target);
         }
 
@@ -208,8 +208,8 @@ public class SyncWeapon extends SyncBaseAbility {
         activeProjectileContainer.clear();
     }
 
-    public boolean isItemTypeAllowed(SyncBaseItem target) {
-        return weaponType.isItemTypeAllowed(target.getBaseItemType().getId());
+    public boolean isItemTypeDisallowed(SyncBaseItem target) {
+        return weaponType.isItemTypeDisallowed(target.getBaseItemType().getId());
     }
 
     public boolean isAttackAllowedWithoutMoving(SyncItem target) throws TargetHasNoPositionException {
@@ -217,7 +217,7 @@ public class SyncWeapon extends SyncBaseAbility {
             return false;
         }
         SyncBaseItem baseTarget = (SyncBaseItem) target;
-        return isItemTypeAllowed(baseTarget) && isInRange(baseTarget);
+        return !isItemTypeDisallowed(baseTarget) && isInRange(baseTarget);
 
     }
 
@@ -225,7 +225,7 @@ public class SyncWeapon extends SyncBaseAbility {
         return target instanceof SyncBaseItem
                 && getSyncItemArea().hasPosition()
                 && target.getSyncItemArea().hasPosition()
-                && isItemTypeAllowed((SyncBaseItem) target);
+                && !isItemTypeDisallowed((SyncBaseItem) target);
     }
 
     public boolean isInRange(SyncBaseItem target) throws TargetHasNoPositionException {
