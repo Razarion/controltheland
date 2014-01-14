@@ -25,7 +25,7 @@
           </option>
           <option name="runMavenInBackground" value="true" />
           <option name="skipTests" value="false" />
-          <option name="vmOptions" value="-Xmx300M -DnoGameEngine=false" />
+          <option name="vmOptions" value="-Xmx1000M -DnoGameEngine=false" />
         </MavenRunnerSettings>
       </option>
       <option name="myRunnerParameters">
