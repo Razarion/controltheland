@@ -51,7 +51,7 @@ public class WeaponTypeEditor extends AbstractAbilityContainer<DbWeaponType> {
 
             @Override
             protected DbWeaponType getParent() {
-                return ((DbBaseItemType) getDefaultModelObject()).getDbWeaponType();
+                return (DbWeaponType) getDefaultModelObject();
             }
 
             @Override
