@@ -15,13 +15,19 @@ package com.btxtech.game.services.item.itemType;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
-import com.btxtech.game.services.common.ContentProvider;
-import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
+import com.btxtech.game.services.bot.DbBotItemConfig;
+import com.btxtech.game.services.cms.layout.DbContentRow;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudListChildServiceHelper;
+import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.media.DbClip;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,10 +36,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -42,7 +51,7 @@ import java.util.Set;
  * Time: 15:09:34
  */
 @Entity(name = "ITEM_WEAPON_TYPE")
-public class DbWeaponType {
+public class DbWeaponType implements CrudParent {
     @Id
     @GeneratedValue
     private Integer id;
@@ -51,11 +60,14 @@ public class DbWeaponType {
     private int damage;
     private double reloadTime;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "ITEM_WEAPON_TYPE_ALLOWED_ITEM_TYPE",
+    @JoinTable(name = "ITEM_WEAPON_TYPE_DISALLOWED_ITEM_TYPE",
             joinColumns = @JoinColumn(name = "weaponItemTypeId"),
-            inverseJoinColumns = @JoinColumn(name = "allowedItemTypeId")
+            inverseJoinColumns = @JoinColumn(name = "disallowedItemTypeId")
     )
-    private Set<DbBaseItemType> allowedItemTypes;
+    private Collection<DbBaseItemType> disallowedItemTypes;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "weaponType")
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    private Collection<DbWeaponTypeItemTypeFactor> factors = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "weaponType", orphanRemoval = true)
     private Collection<DbWeaponTypeMuzzle> muzzles;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -65,6 +77,8 @@ public class DbWeaponType {
     private Integer projectileSpeed;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbClip projectileDetonationClip;
+    @Transient
+    private CrudChildServiceHelper<DbWeaponTypeItemTypeFactor> factorCrud;
 
     public int getRange() {
         return range;
@@ -98,8 +112,12 @@ public class DbWeaponType {
         this.reloadTime = reloadTime;
     }
 
-    public ContentProvider<DbBaseItemType> getAllowedItemTypeCrud() {
-        return new ReadonlyCollectionContentProvider<>(allowedItemTypes);
+    public void setDisallowedItemTypes(Collection<DbBaseItemType> disallowedItemTypes) {
+        this.disallowedItemTypes = disallowedItemTypes;
+    }
+
+    public Collection<DbBaseItemType> getDisallowedItemTypes() {
+        return disallowedItemTypes;
     }
 
     public DbClip getMuzzleFlashClip() {
@@ -155,8 +173,17 @@ public class DbWeaponType {
                 muzzleFlashClip != null ? muzzleFlashClip.getId() : null,
                 projectileClip != null ? projectileClip.getId() : null,
                 projectileDetonationClip != null ? projectileDetonationClip.getId() : null,
-                Utils.dbBaseItemTypesToInts(allowedItemTypes),
+                Utils.dbBaseItemTypesToInts(disallowedItemTypes),
+                generateItemTypeFactors(),
                 muzzleFlashPositions);
+    }
+
+    private Map<Integer, Double> generateItemTypeFactors() {
+        Map<Integer, Double> integerDoubleMap = new HashMap<>();
+        for (DbWeaponTypeItemTypeFactor factor : factors) {
+            integerDoubleMap.put(factor.getDbBaseItemType().getId(), factor.getFactor());
+        }
+        return integerDoubleMap;
     }
 
 
@@ -179,6 +206,13 @@ public class DbWeaponType {
         }
     }
 
+    public CrudChildServiceHelper<DbWeaponTypeItemTypeFactor> getFactorCrud() {
+        if(factorCrud == null) {
+            factorCrud = new CrudChildServiceHelper<>(factors, DbWeaponTypeItemTypeFactor.class, this);
+        }
+        return factorCrud;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -192,24 +226,5 @@ public class DbWeaponType {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : System.identityHashCode(this);
-    }
-
-    public Collection<DbBaseItemType> getAllowedItemTypes() {
-        if (allowedItemTypes == null) {
-            allowedItemTypes = new HashSet<>();
-        }
-        return allowedItemTypes;
-    }
-
-    public Boolean isItemTypeAllowed(DbBaseItemType dbBaseItemType) {
-        return getAllowedItemTypes().contains(dbBaseItemType);
-    }
-
-    public void setItemTypeAllowed(DbBaseItemType dbBaseItemType, boolean allowed) {
-        if (allowed) {
-            getAllowedItemTypes().add(dbBaseItemType);
-        } else {
-            getAllowedItemTypes().remove(dbBaseItemType);
-        }
     }
 }
