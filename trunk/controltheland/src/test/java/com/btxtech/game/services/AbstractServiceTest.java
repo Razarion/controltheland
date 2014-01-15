@@ -1368,6 +1368,7 @@ abstract public class AbstractServiceTest {
         dbWeaponType.setRange(100);
         dbWeaponType.setReloadTime(1);
         dbWeaponType.setDamage(1000);
+        dbWeaponType.setDisallowedItemTypes(Collections.singletonList(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID)));
         dbBaseItemType.setDbWeaponType(dbWeaponType);
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
