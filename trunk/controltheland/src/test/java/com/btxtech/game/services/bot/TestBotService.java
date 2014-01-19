@@ -361,7 +361,7 @@ public class TestBotService extends AbstractServiceTest {
         // Wait for bot to complete
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig1);
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig2);
-        // TODO failed: 15.01.2014
+        // TODO failed: 15.01.2014, 16.01.2014
         assertWholeItemCount(TEST_PLANET_1_ID, 8);
         Thread.sleep(2000);
     }
