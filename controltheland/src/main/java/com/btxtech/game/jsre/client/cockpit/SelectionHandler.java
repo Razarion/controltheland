@@ -87,10 +87,6 @@ public class SelectionHandler {
         return selectedGroup == null || selectedGroup.atLeastOneItemTypeAllowed2FinalizeBuild(tobeFinalized);
     }
 
-    public boolean atLeastOneAllowedToLaunch(Index position) {
-        return selectedGroup == null || selectedGroup.atLeastOneAllowedToLaunch(position);
-    }
-
     public void setTargetSelected(SyncItem target, MouseDownEvent event) {
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
             if (selectedGroup != null) {

@@ -67,7 +67,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                     }
 
                     if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.LAUNCH) {
-                        ActionHandler.getInstance().executeLaunchCommand(absoluteX, absoluteY);
+                        // TODO ActionHandler.getInstance().executeLaunchCommand(absoluteX, absoluteY);
                         CockpitMode.getInstance().setMode(null);
                         return;
                     }
@@ -148,7 +148,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                     int absoluteY = relative.getY() + terrainView.getViewOriginTop();
                     if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
                         if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.LAUNCH) {
-                            ActionHandler.getInstance().executeLaunchCommand(absoluteX, absoluteY);
+                            // TODO ActionHandler.getInstance().executeLaunchCommand(absoluteX, absoluteY);
                             CockpitMode.getInstance().setMode(null);
                             return;
                         }

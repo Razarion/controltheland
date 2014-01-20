@@ -73,7 +73,6 @@ public class DbGenericBaseItem extends GenericItem {
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xUnloadPos"), @Column(name = "yUnloadPos")})
     private Index unloadPos;
-    private Double launcherBuildup;
 
 
     /**
@@ -240,13 +239,5 @@ public class DbGenericBaseItem extends GenericItem {
 
     public void setTargetContainer(DbGenericBaseItem targetContainer) {
         this.targetContainer = targetContainer;
-    }
-
-    public double getLauncherBuildup() {
-        return launcherBuildup;
-    }
-
-    public void setLauncherBuildup(double launcherBuildup) {
-        this.launcherBuildup = launcherBuildup;
     }
 }

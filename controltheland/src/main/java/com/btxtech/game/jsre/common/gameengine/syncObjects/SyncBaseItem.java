@@ -29,7 +29,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LaunchCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
@@ -57,7 +56,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     private SyncSpecial syncSpecial;
     private SyncItemContainer syncItemContainer;
     private SyncHouse syncHouse;
-    private SyncLauncher syncLauncher;
     private double upgradeProgress;
     private boolean isUpgrading;
     private BaseItemType upgradingItemType;
@@ -95,13 +93,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
             isMoneyEarningOrConsuming = true;
         } else {
             syncFactory = null;
-        }
-
-        if (baseItemType.getLauncherType() != null) {
-            syncLauncher = new SyncLauncher(baseItemType.getLauncherType(), this);
-            isMoneyEarningOrConsuming = true;
-        } else {
-            syncLauncher = null;
         }
 
         if (baseItemType.getBuilderType() != null) {
@@ -213,9 +204,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         if (syncItemContainer != null) {
             syncItemContainer.synchronize(syncItemInfo);
         }
-        if (syncLauncher != null) {
-            syncLauncher.synchronize(syncItemInfo);
-        }
 
         super.synchronize(syncItemInfo);
     }
@@ -259,10 +247,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
             syncItemContainer.fillSyncItemInfo(syncItemInfo);
         }
 
-        if (syncLauncher != null) {
-            syncLauncher.fillSyncItemInfo(syncItemInfo);
-        }
-
         return syncItemInfo;
     }
 
@@ -273,8 +257,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
                 && !(syncWeapon != null && syncWeapon.isActive())
                 && !(syncFactory != null && syncFactory.isActive())
                 && !(syncBuilder != null && syncBuilder.isActive())
-                && !(syncHarvester != null && syncHarvester.isActive())
-                && !(syncLauncher != null && syncLauncher.isActive());
+                && !(syncHarvester != null && syncHarvester.isActive());
     }
 
     public boolean tick(double factor) throws ItemDoesNotExistException, NoSuchItemTypeException {
@@ -318,10 +301,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
             return syncItemContainer.tick(factor);
         }
 
-        if (syncLauncher != null && syncLauncher.isActive()) {
-            return syncLauncher.tick(factor);
-        }
-
         return syncMovable != null && syncMovable.isActive() && syncMovable.tick(factor);
     }
 
@@ -349,11 +328,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         if (syncItemContainer != null) {
             syncItemContainer.stop();
         }
-
-        if (syncLauncher != null) {
-            syncLauncher.stop();
-        }
-
     }
 
     public void executeCommand(BaseCommand baseCommand) throws ItemDoesNotExistException, InsufficientFundsException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException, WrongOperationSurfaceException {
@@ -407,11 +381,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
         if (baseCommand instanceof UnloadContainerCommand) {
             getSyncItemContainer().executeCommand((UnloadContainerCommand) baseCommand);
-            return;
-        }
-
-        if (baseCommand instanceof LaunchCommand) {
-            getSyncLauncher().executeCommand((LaunchCommand) baseCommand);
             return;
         }
 
@@ -537,17 +506,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
             throw new IllegalStateException(this + " has no SyncHouse");
         }
         return syncHouse;
-    }
-
-    public SyncLauncher getSyncLauncher() {
-        if (syncLauncher == null) {
-            throw new IllegalStateException(this + " has no SyncLauncher");
-        }
-        return syncLauncher;
-    }
-
-    public boolean hasSyncLauncher() {
-        return syncLauncher != null;
     }
 
     public boolean isEnemy(SyncBaseItem syncBaseItem) {

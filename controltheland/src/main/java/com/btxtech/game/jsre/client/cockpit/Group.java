@@ -112,15 +112,6 @@ public class Group {
         return false;
     }
 
-    public boolean canLaunch() {
-        for (SyncBaseItem syncBaseItem : syncBaseItems) {
-            if (syncBaseItem.hasSyncLauncher() && !syncBaseItem.getSyncLauncher().isActive()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean canFinalizeBuild() {
         for (SyncBaseItem syncBaseItem : syncBaseItems) {
             if (syncBaseItem.hasSyncBuilder()) {
@@ -219,23 +210,6 @@ public class Group {
         }
         return false;
     }
-
-    public boolean atLeastOneAllowedToLaunch(Index position) {
-        for (SyncBaseItem syncBaseItem : syncBaseItems) {
-            if (syncBaseItem.hasSyncLauncher()) {
-                try {
-                    int range = syncBaseItem.getSyncLauncher().getRange();
-                    if (syncBaseItem.getSyncItemArea().getPosition().getDistance(position) <= range) {
-                        return true;
-                    }
-                } catch (NoSuchItemTypeException e) {
-                    ClientExceptionHandler.handleException(e);
-                }
-            }
-        }
-        return false;
-    }
-
 
     public void keepOnlyOwnOfType(BaseItemType baseItemType) {
         for (Iterator<SyncBaseItem> iterator = syncBaseItems.iterator(); iterator.hasNext(); ) {

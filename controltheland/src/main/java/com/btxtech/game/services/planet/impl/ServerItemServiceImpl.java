@@ -31,7 +31,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
@@ -245,8 +244,6 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
                     if (!serverPlanetServices.getBaseService().isBot(syncBaseItem.getBase())) {
                         result.add(syncItem);
                     }
-                } else if (syncItem instanceof SyncProjectileItem) {
-                    result.add(syncItem);
                 }
             }
         }
@@ -263,7 +260,7 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
                     SyncBaseItem syncBaseItem = (SyncBaseItem) syncBaseObject;
                     syncBaseItem.addSyncItemListener(serverPlanetServices.getActionService());
                     syncBaseItem.addSyncItemListener(serverPlanetServices.getBaseService());
-                } else if (!(syncBaseObject instanceof SyncProjectileItem)) {
+                } else {
                     log.warn("ServerItemServiceImpl.restore() can not restore syncBaseObject: " + syncBaseObject);
                     continue;
                 }
@@ -315,15 +312,15 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
                 }
                 SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
 
-                if(!syncBaseItem.hasSyncWeapon()) {
+                if (!syncBaseItem.hasSyncWeapon()) {
                     return null;
                 }
 
-                if(!syncBaseItem.isIdle()) {
+                if (!syncBaseItem.isIdle()) {
                     return null;
                 }
 
-                if(simpleBases.contains(syncBaseItem.getBase())) {
+                if (simpleBases.contains(syncBaseItem.getBase())) {
                     idleAttackItems.add(syncBaseItem);
                 }
 

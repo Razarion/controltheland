@@ -40,7 +40,6 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbResourceItemType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbBoxItemType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility"/>
-        <mapping class="com.btxtech.game.services.item.itemType.DbProjectileItemType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbBaseItemType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbBuilderType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbFactoryType"/>
@@ -56,7 +55,6 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbSpecialType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemContainerType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbHouseType"/>
-        <mapping class="com.btxtech.game.services.item.itemType.DbLauncherType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeDemolitionClip"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeDemolitionStep"/>
         <mapping class="com.btxtech.game.services.utg.DbChatMessage"/>
@@ -95,7 +93,6 @@
         <!-- Backup -->
         <mapping class="com.btxtech.game.services.mgmt.impl.DbBackupEntry"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.DbGenericBaseItem"/>
-        <mapping class="com.btxtech.game.services.mgmt.impl.GenericProjectileItem"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.DbUserState"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.DbBase"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.DbStorablePacket"/>

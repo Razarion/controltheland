@@ -66,10 +66,6 @@ public interface DbBaseItemTypeI extends DbItemTypeI {
 
     void setUpgradeProgress(Integer upgradeProgress);
 
-    DbLauncherType getDbLauncherType();
-
-    void setDbLauncherType(DbLauncherType dbLauncherType);
-
     DbBoxItemType getDbBoxItemType();
 
     void setDbBoxItemType(DbBoxItemType dbBoxItemType);

@@ -33,7 +33,6 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
 
         form.add(new MovableTypeEditor("dbMovableType"));
         form.add(new WeaponTypeEditor("dbWeaponType"));
-        form.add(new LauncherTypeEditor("dbLauncherType"));
         form.add(new FactoryTypeEditor("dbFactoryType"));
         form.add(new HarvesterTypeEditor("dbHarvesterType"));
         form.add(new BuilderTypeEditor("dbBuilderType"));
