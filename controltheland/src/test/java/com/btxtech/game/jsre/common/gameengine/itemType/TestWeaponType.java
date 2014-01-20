@@ -22,7 +22,7 @@ public class TestWeaponType {
             muzzleFlashPositions[0][i] = new Index(0, i);
         }
 
-        WeaponType weaponType = new WeaponType(0, null, 0, 0, null, null, null, null, Collections.<Integer, Double>emptyMap(), muzzleFlashPositions);
+        WeaponType weaponType = new WeaponType(0, null, 0, null, 0, null, null, null, null, Collections.<Integer, Double>emptyMap(), muzzleFlashPositions);
 
         Assert.assertEquals(1, weaponType.getMuzzleFlashCount());
         Assert.assertEquals(new Index(0, 0), weaponType.getMuzzleFlashPosition(0, 0));
