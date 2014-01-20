@@ -93,8 +93,6 @@ public class ItemSelectionAndHoverRenderTask extends AbstractRenderTask {
             }
         } else if (syncBaseItem.isUpgrading()) {
             progress = (double) syncBaseItem.getFullUpgradeProgress() / syncBaseItem.getUpgradeProgress();
-        } else if (syncBaseItem.hasSyncLauncher()) {
-            progress = syncBaseItem.getSyncLauncher().getBuildup();
         }
         if (progress > 0.0) {
             context2d.setLineWidth(3);

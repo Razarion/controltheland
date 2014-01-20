@@ -31,7 +31,8 @@ import java.util.Collection;
 public class CockpitMode implements SelectionListener {
     public enum Mode {
         UNLOAD,
-        LAUNCH,
+        @Deprecated
+        LAUNCH, // TODO
         SELL
     }
 

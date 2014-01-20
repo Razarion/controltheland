@@ -26,7 +26,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LaunchCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
@@ -328,23 +327,6 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         path.setDestinationAngel(destinationAngel);
         try {
             executeCommand(picker, pickupBoxCommand);
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "", e);
-        }
-    }
-
-    public void launch(SyncBaseItem launcherItem, Index target) {
-        if (checkCommand(launcherItem)) {
-            return;
-        }
-
-        LaunchCommand launchCommand = new LaunchCommand();
-        launchCommand.setId(launcherItem.getId());
-        launchCommand.setTimeStamp();
-        launchCommand.setTarget(target);
-
-        try {
-            executeCommand(launcherItem, launchCommand);
         } catch (Exception e) {
             log.log(Level.SEVERE, "", e);
         }

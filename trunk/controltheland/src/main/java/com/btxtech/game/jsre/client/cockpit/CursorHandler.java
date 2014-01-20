@@ -70,7 +70,7 @@ public class CursorHandler {
         if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.UNLOAD) {
             setTerrainCursor(CursorType.UNLOAD, atLeastOnAllowedForUnload(position));
         } else if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.LAUNCH) {
-            setTerrainCursor(CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
+            // TODO setTerrainCursor(CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
         } else if (CockpitMode.getInstance().isMovePossible()) {
             Collection<SurfaceType> allowedSurfaceTypes = SelectionHandler.getInstance().getOwnSelectionSurfaceTypes();
             SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(position);
@@ -91,7 +91,7 @@ public class CursorHandler {
             }
             return;
         } else if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.LAUNCH) {
-            setTerrainCursor(CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
+            // TODO setTerrainCursor(CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
             return;
         }
 

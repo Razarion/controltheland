@@ -374,25 +374,6 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         }
     }
 
-    public void executeLaunchCommand(int absoluteX, int absoluteY) {
-        Group selection = SelectionHandler.getInstance().getOwnSelection();
-        if (selection == null) {
-            return;
-        }
-
-        if (selection.getCount() != 1) {
-            return;
-        }
-
-
-        if (!selection.canLaunch()) {
-            return;
-        }
-
-        launch(selection.getFirst(), new Index(absoluteX, absoluteY));
-        Connection.getInstance().sendCommandQueue();
-    }
-
     protected void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) throws ItemLimitExceededException, HouseSpaceExceededException, ItemDoesNotExistException, NoSuchItemTypeException, InsufficientFundsException {
         try {
             syncItem.executeCommand(baseCommand);

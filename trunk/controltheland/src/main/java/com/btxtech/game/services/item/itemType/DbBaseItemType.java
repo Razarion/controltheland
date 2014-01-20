@@ -22,7 +22,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.HarvesterType;
 import com.btxtech.game.jsre.common.gameengine.itemType.HouseType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemContainerType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.LauncherType;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.SpecialType;
 import com.btxtech.game.services.common.Utils;
@@ -74,8 +73,6 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     private DbItemContainerType dbItemContainerType;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbHouseType dbHouseType;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private DbLauncherType dbLauncherType;
     private Integer upgradeProgress;
     private Integer unlockCrystals;
 
@@ -284,16 +281,6 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     }
 
     @Override
-    public DbLauncherType getDbLauncherType() {
-        return dbLauncherType;
-    }
-
-    @Override
-    public void setDbLauncherType(DbLauncherType dbLauncherType) {
-        this.dbLauncherType = dbLauncherType;
-    }
-
-    @Override
     public void init(UserService userService) {
         super.init(userService);
         dropBoxPossibility = 0.0;
@@ -341,9 +328,6 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         }
         if (dbHouseType != null) {
             baseItemType.setHouseType(new HouseType(dbHouseType.getSpace()));
-        }
-        if (dbLauncherType != null) {
-            baseItemType.setLauncherType(new LauncherType(dbLauncherType.getDbProjectileItemType().getId(), dbLauncherType.getProgress()));
         }
         if (upgradable != null) {
             baseItemType.setUpgradeable(upgradable.getId());

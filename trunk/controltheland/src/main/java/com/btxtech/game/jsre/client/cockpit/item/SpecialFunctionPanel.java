@@ -76,7 +76,7 @@ public class SpecialFunctionPanel extends Composite {
 
         }
 
-        launchButton.setVisible(syncBaseItem.hasSyncLauncher());
+        launchButton.setVisible(false); // TODO
     }
 
     public static boolean hasSpecialFuntion(SyncBaseItem syncBaseItem) {
@@ -86,7 +86,7 @@ public class SpecialFunctionPanel extends Composite {
         if (syncBaseItem.isUpgradeable()) {
             return true;
         }
-        return syncBaseItem.hasSyncLauncher();
+        return false; // TODO syncBaseItem.hasSyncLauncher();
     }
 
     @UiHandler("unloadButton")

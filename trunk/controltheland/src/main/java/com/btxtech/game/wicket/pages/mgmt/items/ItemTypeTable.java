@@ -18,13 +18,11 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
@@ -68,8 +66,6 @@ public class ItemTypeTable extends MgmtWebPage {
                     setResponsePage(new ResourceItemTypeEditor((DbResourceItemType) dbItemType));
                 } else if (dbItemType instanceof DbBoxItemType) {
                     setResponsePage(new BoxItemTypeEditor((DbBoxItemType) dbItemType));
-                } else if (dbItemType instanceof DbProjectileItemType) {
-                    setResponsePage(new ProjectileItemTypeEditor((DbProjectileItemType) dbItemType));
                 }
             }
 
@@ -95,14 +91,6 @@ public class ItemTypeTable extends MgmtWebPage {
                     public void onSubmit() {
                         DbBoxItemType dbBoxItemType = (DbBoxItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
                         serverItemTypeService.saveDbItemType(dbBoxItemType);
-                        refresh();
-                    }
-                });
-                markupContainer.add(new Button("addProjectileItemType") {
-                    @Override
-                    public void onSubmit() {
-                        DbProjectileItemType dbProjectileItemType = (DbProjectileItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbProjectileItemType.class);
-                        serverItemTypeService.saveDbItemType(dbProjectileItemType);
                         refresh();
                     }
                 });

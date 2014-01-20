@@ -1,7 +1,6 @@
 package com.btxtech.game.services.item;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -14,11 +13,9 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * User: beat
@@ -35,8 +32,6 @@ public interface ServerItemTypeService extends ItemTypeService {
     Collection<DbItemType> getDbItemTypes();
 
     Collection<DbBaseItemType> getDbBaseItemTypes();
-
-    Collection<DbProjectileItemType> getDbProjectileItemTypes();
 
     Collection<DbBaseItemType> getWeaponDbBaseItemTypes();
 

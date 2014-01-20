@@ -29,7 +29,6 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.media.ClipService;
 import com.btxtech.game.services.user.SecurityRoles;
@@ -145,14 +144,6 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
     @SuppressWarnings("unchecked")
     public Collection<DbBaseItemType> getDbBaseItemTypes() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbBaseItemType.class);
-        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return criteria.list();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Collection<DbProjectileItemType> getDbProjectileItemTypes() {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbProjectileItemType.class);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }

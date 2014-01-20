@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.common.ServerGlobalServices;
@@ -192,10 +191,6 @@ public class GenericItemConverter {
                     Base base = getBase(userStates, dbBases, dBbase);
                     SyncBaseItem syncItem = addSyncBaseItem(base.getPlanet().getPlanetServices(), (DbGenericBaseItem) genericItem, base);
                     base.addItem(syncItem);
-                } else if (genericItem instanceof GenericProjectileItem) {
-                    DbBase dBbase = ((GenericProjectileItem) genericItem).getBase();
-                    Base base = getBase(userStates, dbBases, dBbase);
-                    addSyncItem(base.getPlanet().getPlanetServices(), (GenericProjectileItem) genericItem, base);
                 } else {
                     log.error("restoreBackup: unknown type: " + genericItem);
                 }
@@ -247,22 +242,9 @@ public class GenericItemConverter {
     private void addGenericItem(SyncItem item) {
         if (item instanceof SyncBaseItem) {
             addGenericBaseItem((SyncBaseItem) item);
-        } else if (item instanceof SyncProjectileItem) {
-            addGenericProjectileItem((SyncProjectileItem) item);
         } else {
             throw new IllegalArgumentException("Unknown SyncItem: " + item);
         }
-    }
-
-    private void addGenericProjectileItem(SyncProjectileItem item) {
-        if (!item.isAlive()) {
-            return;
-        }
-        GenericProjectileItem genericProjectileItem = new GenericProjectileItem(dbBackupEntry);
-        fillGenericItem(item, genericProjectileItem);
-        genericProjectileItem.setBase(getDbBase(item.getBase()));
-        genericProjectileItem.setTargetPosition(item.getTarget());
-        genericItems.put(item.getId(), genericProjectileItem);
     }
 
     private void addGenericBaseItem(SyncBaseItem item) {
@@ -305,9 +287,6 @@ public class GenericItemConverter {
         }
         if (item.hasSyncItemContainer()) {
             genericItem.setUnloadPos(item.getSyncItemContainer().getUnloadPos());
-        }
-        if (item.hasSyncLauncher()) {
-            genericItem.setLauncherBuildup(item.getSyncLauncher().getBuildup());
         }
         genericItems.put(item.getId(), genericItem);
 
@@ -428,17 +407,8 @@ public class GenericItemConverter {
         if (item.hasSyncItemContainer()) {
             item.getSyncItemContainer().setUnloadPos(genericItem.getUnloadPos());
         }
-        if (item.hasSyncLauncher()) {
-            item.getSyncLauncher().setBuildup(genericItem.getBuildup());
-        }
         syncBaseObject.put(genericItem.getItemId(), item);
         return item;
-    }
-
-    private void addSyncItem(ServerPlanetServices serverPlanetServices, GenericProjectileItem genericItem, Base base) throws NoSuchItemTypeException {
-        SyncProjectileItem item = (SyncProjectileItem) serverPlanetServices.getItemService().newSyncItem(genericItem.getItemId(), genericItem.getPosition(), genericItem.getDbItemTyp().getId(), base.getSimpleBase(), serverGlobalServices, serverPlanetServices);
-        item.setTarget(genericItem.getTargetPosition());
-        syncBaseObject.put(genericItem.getItemId(), item);
     }
 
     private void postProcessRestore(DbGenericBaseItem genericItem) {
