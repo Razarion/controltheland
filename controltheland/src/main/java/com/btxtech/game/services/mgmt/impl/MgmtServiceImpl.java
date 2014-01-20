@@ -17,6 +17,8 @@ import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ExtendedVelocityEngineUtils;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.PropertyService;
+import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.mgmt.ClientPerfmonDto;
 import com.btxtech.game.services.mgmt.DbServerDebugEntry;
@@ -55,6 +57,8 @@ import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
@@ -95,6 +99,8 @@ public class MgmtServiceImpl implements MgmtService {
     private UserService userService;
     @Autowired
     private RequestHelper requestHelper;
+    @Autowired
+    private PropertyService propertyService;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private MemoryUsageContainer heapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
     private MemoryUsageContainer noHeapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
@@ -327,6 +333,47 @@ public class MgmtServiceImpl implements MgmtService {
             sessionFactory.getCurrentSession().save(dbServerDebugEntry);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, "Can not save dbServerDebugEntry. Category: " + category + " message: " + message + " throwable: " + throwable);
+        }
+    }
+
+    @Override
+    public String getLogFileText(int numberOfLines) {
+        RandomAccessFile randomFile = null;
+        Map<Long, String> strmap = new HashMap<>();
+        try {
+            randomFile = new RandomAccessFile(propertyService.getStringProperty(PropertyServiceEnum.TOMCAT_LOG_FILE), "r");
+
+            long fileLength = randomFile.length();
+            long filePos = fileLength - 1;
+            for (long linesCovered = 1; linesCovered <= numberOfLines; filePos--) {
+                randomFile.seek(filePos);
+                if (randomFile.readByte() == 0xA)
+                    if (filePos != fileLength - 1) {
+                        strmap.put(linesCovered, randomFile.readLine());
+                        linesCovered++;
+                    }
+
+            }
+            long startPosition = numberOfLines;
+            StringBuilder stringBuilder = new StringBuilder();
+            while (startPosition != 0) {
+                if (strmap.containsKey(startPosition)) {
+                    stringBuilder.append(strmap.get(startPosition));
+                    stringBuilder.append('\n');
+                    startPosition--;
+                }
+            }
+            return stringBuilder.toString();
+        } catch (Exception e) {
+            return "Can not open logfile: " + e.getMessage();
+        } finally {
+            if (randomFile != null) {
+                try {
+                    randomFile.close();
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
         }
     }
 }

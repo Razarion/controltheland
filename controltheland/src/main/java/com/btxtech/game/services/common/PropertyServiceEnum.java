@@ -8,7 +8,8 @@ package com.btxtech.game.services.common;
 public enum PropertyServiceEnum {
     GUILD_CRYSTAL_COST("Crystal cost for creating a guild", Integer.class, null),
     FACEBOOK_OPTIONAL_AD_URL_KEY("Facebook optional ad key", String.class, null),
-    REGISTER_DIALOG_DELAY("Register dialog delay in milliseconds", Integer.class, 240000);
+    REGISTER_DIALOG_DELAY("Register dialog delay in milliseconds", Integer.class, 240000),
+    TOMCAT_LOG_FILE("Tomcat logfile", String.class, null);
 
     private String displayName;
     private Class type;

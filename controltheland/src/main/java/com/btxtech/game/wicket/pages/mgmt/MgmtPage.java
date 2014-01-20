@@ -156,6 +156,7 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Send Server Restart", SendServerRebootMessage.class));
         toolPages.add(new LinkAndName("Add News Entry", AddNewsEntry.class));
         toolPages.add(new LinkAndName("Multi User Level Converter", MultiUserLevelConverter.class));
+        toolPages.add(new LinkAndName("Log viewer", LogViewer.class));
 
     }
 }

@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.mgmt;
 
-import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.services.user.User;
 import org.apache.wicket.Page;
@@ -58,4 +57,6 @@ public interface MgmtService {
     void saveServerDebug(String category, HttpServletRequest request, Page cause, Throwable throwable);
 
     void saveServerDebug(String category, Throwable throwable);
+
+    String getLogFileText(int lines);
 }
