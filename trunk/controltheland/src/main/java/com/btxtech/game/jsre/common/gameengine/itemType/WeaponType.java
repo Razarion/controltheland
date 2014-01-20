@@ -27,6 +27,7 @@ import java.util.Map;
 public class WeaponType implements Serializable {
     private int range;
     private int damage;
+    private Integer detonationRadius;
     private double reloadTime;
     private Collection<Integer> disallowedItemTypes;
     private Map<Integer, Double> itemTypeFactors;
@@ -44,10 +45,11 @@ public class WeaponType implements Serializable {
     WeaponType() {
     }
 
-    public WeaponType(int range, Integer projectileSpeed, int damage, double reloadTime, Integer muzzleFlashClipId, Integer projectileClipId, Integer projectileDetonationClipId, Collection<Integer> disallowedItemTypes, Map<Integer, Double> itemTypeFactors, Index[][] muzzleFlashPositions) {
+    public WeaponType(int range, Integer projectileSpeed, int damage, Integer detonationRadius, double reloadTime, Integer muzzleFlashClipId, Integer projectileClipId, Integer projectileDetonationClipId, Collection<Integer> disallowedItemTypes, Map<Integer, Double> itemTypeFactors, Index[][] muzzleFlashPositions) {
         this.range = range;
         this.projectileSpeed = projectileSpeed;
         this.damage = damage;
+        this.detonationRadius = detonationRadius;
         this.reloadTime = reloadTime;
         this.muzzleFlashClipId = muzzleFlashClipId;
         this.projectileClipId = projectileClipId;
@@ -61,6 +63,7 @@ public class WeaponType implements Serializable {
         range = weaponType.range;
         projectileSpeed = weaponType.projectileSpeed;
         damage = weaponType.damage;
+        detonationRadius = weaponType.detonationRadius;
         reloadTime = weaponType.reloadTime;
         muzzleFlashClipId = weaponType.muzzleFlashClipId;
         projectileClipId = weaponType.projectileClipId;
@@ -85,6 +88,14 @@ public class WeaponType implements Serializable {
         } else {
             return damage;
         }
+    }
+
+    public boolean hasDetonationRadius() {
+        return detonationRadius != null;
+    }
+
+    public Integer getDetonationRadius() {
+        return detonationRadius;
     }
 
     public double getReloadTime() {

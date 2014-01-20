@@ -47,7 +47,7 @@ public class TestSyncWeaponProjectileNoSpring {
         attackBaseItemType.setBoundingBox(new BoundingBox(100, new double[]{0.0, MathHelper.QUARTER_RADIANT, MathHelper.HALF_RADIANT, MathHelper.THREE_QUARTER_RADIANT}));
         attackBaseItemType.setHealth(1000);
         Index[][] muzzlePositions = new Index[][]{{new Index(0, -10), new Index(-10, 0), new Index(0, 10), new Index(10, 0)}};
-        WeaponType weaponType = new WeaponType(300, 100, 10, 0.5, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions);
+        WeaponType weaponType = new WeaponType(300, 100, 10, null, 0.5, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions);
         attackBaseItemType.setWeaponType(weaponType);
         // Create planet services & items
         Id targetId = new Id(1, 0);
@@ -213,7 +213,7 @@ public class TestSyncWeaponProjectileNoSpring {
         attackBaseItemType.setBoundingBox(new BoundingBox(100, new double[]{0.0, MathHelper.QUARTER_RADIANT, MathHelper.HALF_RADIANT, MathHelper.THREE_QUARTER_RADIANT}));
         attackBaseItemType.setHealth(1000);
         Index[][] muzzlePositions = new Index[][]{{new Index(-5, -10), new Index(-10, -5), new Index(5, 10), new Index(10, -5)}, {new Index(5, -10), new Index(-10, 5), new Index(-5, 10), new Index(10, 5)}};
-        WeaponType weaponType = new WeaponType(300, 100, 10, 0.5, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions);
+        WeaponType weaponType = new WeaponType(300, 100, 10, null, 0.5, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions);
         attackBaseItemType.setWeaponType(weaponType);
         // Create planet services & items
         Id targetId = new Id(1, 0);
@@ -417,7 +417,7 @@ public class TestSyncWeaponProjectileNoSpring {
         attackBaseItemType.setBoundingBox(new BoundingBox(100, new double[]{0.0, MathHelper.QUARTER_RADIANT, MathHelper.HALF_RADIANT, MathHelper.THREE_QUARTER_RADIANT}));
         attackBaseItemType.setHealth(1000);
         Index[][] muzzlePositions = new Index[][]{{new Index(0, -10), new Index(-10, 0), new Index(0, 10), new Index(10, 0)}};
-        WeaponType weaponType = new WeaponType(300, null, 10, 0.5, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions);
+        WeaponType weaponType = new WeaponType(300, null, 10, null, 0.5, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions);
         attackBaseItemType.setWeaponType(weaponType);
         // Create planet services & items
         Id targetId = new Id(1, 0);
@@ -547,7 +547,7 @@ public class TestSyncWeaponProjectileNoSpring {
         attackBaseItemType.setBoundingBox(new BoundingBox(100, new double[]{0.0, MathHelper.QUARTER_RADIANT, MathHelper.HALF_RADIANT, MathHelper.THREE_QUARTER_RADIANT}));
         attackBaseItemType.setHealth(1000);
         Index[][] muzzlePositions = new Index[][]{{new Index(-5, -10), new Index(-10, -5), new Index(5, 10), new Index(10, -5)}, {new Index(5, -10), new Index(-10, 5), new Index(-5, 10), new Index(10, 5)}};
-        WeaponType weaponType = new WeaponType(300, null, 10, 0.5, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions);
+        WeaponType weaponType = new WeaponType(300, null, 10, null, 0.5, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions);
         attackBaseItemType.setWeaponType(weaponType);
         // Create planet services & items
         Id targetId = new Id(1, 0);
@@ -697,7 +697,7 @@ public class TestSyncWeaponProjectileNoSpring {
         attackBaseItemType.setBoundingBox(new BoundingBox(100, new double[]{0.0, MathHelper.QUARTER_RADIANT, MathHelper.HALF_RADIANT, MathHelper.THREE_QUARTER_RADIANT}));
         attackBaseItemType.setHealth(1000);
         Index[][] muzzlePositions = new Index[][]{{new Index(0, -10), new Index(-10, 0), new Index(0, 10), new Index(10, 0)}};
-        WeaponType weaponType = new WeaponType(300, 100, 10, 0.5, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions);
+        WeaponType weaponType = new WeaponType(300, 100, 10, null, 0.5, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions);
         attackBaseItemType.setWeaponType(weaponType);
         // Create planet services & items
         Id targetId = new Id(1, 0);

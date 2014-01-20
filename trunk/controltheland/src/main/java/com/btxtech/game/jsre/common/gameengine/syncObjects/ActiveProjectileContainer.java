@@ -60,17 +60,31 @@ public class ActiveProjectileContainer {
 
     private void projectileDetonation(ActiveProjectileGroup projectileGroup) {
         syncBaseItem.fireItemChanged(SyncItemListener.Change.PROJECTILE_DETONATION, null);
-        if (target != null && target.isAlive() && target.getSyncItemArea().hasPosition()) {
-            target.decreaseHealth(weaponType.getDamage(target.getBaseItemType()), syncBaseItem.getBase());
-            try {
-                target.onAttacked(syncBaseItem);
-            } catch (TargetHasNoPositionException e) {
-                // Ignore
+        if (target != null && target.getSyncItemArea().hasPosition()) {
+            if (weaponType.hasDetonationRadius()) {
+                Collection<SyncBaseItem> targetItems = syncBaseItem.getPlanetServices().getItemService().getBaseItemsInRadius(target.getSyncItemArea().getPosition(), weaponType.getDetonationRadius(), null, null);
+                for (SyncBaseItem baseItem : targetItems) {
+                    attackTarget(baseItem);
+                }
+            } else {
+                attackTarget(target);
             }
         }
+
         projectiles.remove(projectileGroup);
         if (projectiles.isEmpty()) {
             projectileTarget = null;
+        }
+    }
+
+    private void attackTarget(SyncBaseItem targetItem) {
+        if (targetItem.isAlive()) {
+            targetItem.decreaseHealth(weaponType.getDamage(targetItem.getBaseItemType()), syncBaseItem.getBase());
+            try {
+                targetItem.onAttacked(syncBaseItem);
+            } catch (TargetHasNoPositionException e) {
+                // Ignore
+            }
         }
     }
 

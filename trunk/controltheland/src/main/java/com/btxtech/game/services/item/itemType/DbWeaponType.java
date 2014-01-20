@@ -58,6 +58,7 @@ public class DbWeaponType implements CrudParent {
     @Column(name = "theRange")
     private int range;
     private int damage;
+    private Integer detonationRadius;
     private double reloadTime;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "ITEM_WEAPON_TYPE_DISALLOWED_ITEM_TYPE",
@@ -102,6 +103,14 @@ public class DbWeaponType implements CrudParent {
 
     public void setDamage(int damage) {
         this.damage = damage;
+    }
+
+    public Integer getDetonationRadius() {
+        return detonationRadius;
+    }
+
+    public void setDetonationRadius(Integer detonationRadius) {
+        this.detonationRadius = detonationRadius;
     }
 
     public double getReloadTime() {
@@ -169,6 +178,7 @@ public class DbWeaponType implements CrudParent {
         return new WeaponType(range,
                 projectileSpeed,
                 damage,
+                detonationRadius,
                 reloadTime,
                 muzzleFlashClip != null ? muzzleFlashClip.getId() : null,
                 projectileClip != null ? projectileClip.getId() : null,

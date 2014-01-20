@@ -36,6 +36,7 @@ public class WeaponTypeEditor extends AbstractAbilityContainer<DbWeaponType> {
     @Override
     protected void setupAbility(WebMarkupContainer abilityContainer) {
         abilityContainer.add(new TextField("damage"));
+        abilityContainer.add(new TextField("detonationRadius"));
         abilityContainer.add(new TextField("range"));
         abilityContainer.add(new TextField("reloadTime"));
         abilityContainer.add(new ClipPanel("muzzleFlashClip"));

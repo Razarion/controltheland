@@ -48,17 +48,17 @@ public class TestSyncWeaponNoSpring {
         attackBaseItemType1.setId(4);
         attackBaseItemType1.setBoundingBox(new BoundingBox(100, new double[]{0.0, MathHelper.QUARTER_RADIANT, MathHelper.HALF_RADIANT, MathHelper.THREE_QUARTER_RADIANT}));
         attackBaseItemType1.setHealth(1000);
-        attackBaseItemType1.setWeaponType(new WeaponType(300, null, 10, 1, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions));
+        attackBaseItemType1.setWeaponType(new WeaponType(300, null, 10, null, 1, null, null, null, Collections.<Integer>emptyList(), Collections.<Integer, Double>emptyMap(), muzzlePositions));
         BaseItemType attackBaseItemType2 = new BaseItemType();
         attackBaseItemType2.setId(5);
         attackBaseItemType2.setBoundingBox(new BoundingBox(100, new double[]{0.0, MathHelper.QUARTER_RADIANT, MathHelper.HALF_RADIANT, MathHelper.THREE_QUARTER_RADIANT}));
         attackBaseItemType2.setHealth(1000);
-        attackBaseItemType2.setWeaponType(new WeaponType(300, null, 10, 1, null, null, null, Arrays.asList(1), Collections.<Integer, Double>emptyMap(), muzzlePositions));
+        attackBaseItemType2.setWeaponType(new WeaponType(300, null, 10, null, 1, null, null, null, Arrays.asList(1), Collections.<Integer, Double>emptyMap(), muzzlePositions));
         BaseItemType attackBaseItemType3 = new BaseItemType();
         attackBaseItemType3.setId(6);
         attackBaseItemType3.setBoundingBox(new BoundingBox(100, new double[]{0.0, MathHelper.QUARTER_RADIANT, MathHelper.HALF_RADIANT, MathHelper.THREE_QUARTER_RADIANT}));
         attackBaseItemType3.setHealth(1000);
-        attackBaseItemType3.setWeaponType(new WeaponType(300, null, 10, 1, null, null, null, Arrays.asList(1, 2, 3), Collections.<Integer, Double>emptyMap(), muzzlePositions));
+        attackBaseItemType3.setWeaponType(new WeaponType(300, null, 10, null, 1, null, null, null, Arrays.asList(1, 2, 3), Collections.<Integer, Double>emptyMap(), muzzlePositions));
         // Create planet services & items
         Id target1Id = new Id(1, 0);
         Id attacker1Id = new Id(2, 0);
@@ -225,7 +225,7 @@ public class TestSyncWeaponNoSpring {
         itemTypeFactors.put(2, 2.0);
         itemTypeFactors.put(3, 3.0);
         Index[][] muzzlePositions = new Index[][]{{new Index(0, -10), new Index(-10, 0), new Index(0, 10), new Index(10, 0)}};
-        WeaponType weaponType = new WeaponType(300, null, 10, 1, null, null, null, Collections.<Integer>emptyList(), itemTypeFactors, muzzlePositions);
+        WeaponType weaponType = new WeaponType(300, null, 10, null, 1, null, null, null, Collections.<Integer>emptyList(), itemTypeFactors, muzzlePositions);
         attackBaseItemType.setWeaponType(weaponType);
         // Create planet services & items
         Id target1Id = new Id(1, 0);

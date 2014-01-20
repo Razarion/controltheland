@@ -45,6 +45,7 @@ public class TestDbWeaponType extends AbstractServiceTest {
         dbWeaponType.setRange(100);
         dbWeaponType.setReloadTime(1);
         dbWeaponType.setDamage(1000);
+        dbWeaponType.setDetonationRadius(171);
         DbWeaponTypeItemTypeFactor typeFactor = dbWeaponType.getFactorCrud().createDbChild();
         typeFactor.setDbBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_HOUSE_ID));
         typeFactor.setFactor(0.5);
@@ -95,6 +96,7 @@ public class TestDbWeaponType extends AbstractServiceTest {
         Assert.assertEquals(1500.0, attacker1.getWeaponType().getDamage(getBaseItemType(realGameInfo, TEST_ATTACK_ITEM_ID)));
         Assert.assertEquals(1000.0, attacker1.getWeaponType().getDamage(getBaseItemType(realGameInfo, TEST_CONTAINER_ITEM_ID)));
         Assert.assertEquals(1000.0, attacker1.getWeaponType().getDamage(getBaseItemType(realGameInfo, TEST_CONSUMER_TYPE_ID)));
+        Assert.assertEquals(171, (int)attacker1.getWeaponType().getDetonationRadius());
         Assert.assertNull(attacker1.getWeaponType().getProjectileSpeed());
         Assert.assertFalse(attacker1.getWeaponType().isItemTypeDisallowed(TEST_HOUSE_ID));
         Assert.assertFalse(attacker1.getWeaponType().isItemTypeDisallowed(TEST_ATTACK_ITEM_ID));
@@ -110,6 +112,7 @@ public class TestDbWeaponType extends AbstractServiceTest {
         Assert.assertEquals(1020.0, attacker2.getWeaponType().getDamage(getBaseItemType(realGameInfo, TEST_ATTACK_ITEM_ID)));
         Assert.assertEquals(1020.0, attacker2.getWeaponType().getDamage(getBaseItemType(realGameInfo, TEST_CONTAINER_ITEM_ID)));
         Assert.assertEquals(1020.0, attacker2.getWeaponType().getDamage(getBaseItemType(realGameInfo, TEST_CONSUMER_TYPE_ID)));
+        Assert.assertNull(attacker2.getWeaponType().getDetonationRadius());
         Assert.assertEquals(1, (int)attacker2.getWeaponType().getProjectileSpeed());
         Assert.assertFalse(attacker2.getWeaponType().isItemTypeDisallowed(TEST_HOUSE_ID));
         Assert.assertFalse(attacker2.getWeaponType().isItemTypeDisallowed(TEST_ATTACK_ITEM_ID));
