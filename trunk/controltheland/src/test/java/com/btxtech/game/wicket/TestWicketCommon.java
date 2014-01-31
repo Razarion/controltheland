@@ -25,6 +25,8 @@ import com.btxtech.game.wicket.pages.FacebookAppStart;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.protocol.http.mock.MockHttpServletResponse;
@@ -102,11 +104,15 @@ public class TestWicketCommon extends AbstractServiceTest {
     private GlobalInventoryService globalInventoryService;
     @Autowired
     private ServerItemTypeService serverItemTypeService;
+    @Autowired
+    private CmsUiService cmsUiService;
 
     @Test
     @DirtiesContext
     public void testMountings() throws Exception {
         configureMultiplePlanetsAndLevels();
+        // Do not rejoice too quickly Just... this is just a test secret.
+        setPrivateField(CmsUiServiceImpl.class, cmsUiService, "facebookAppSecret", "029a30fb9677d35c79c44d8a505d8fe1");
         // Setup admin user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
