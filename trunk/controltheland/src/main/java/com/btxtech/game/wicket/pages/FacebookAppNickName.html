@@ -19,11 +19,31 @@
 </head>
 
 <body>
-<div wicket:id="facebook"></div>
-<div wicket:id="feedback"></div>
 <div class="middle">
     <div class="middleRow">
         <div class="middleCenter">
+            <form wicket:id="nickNameForm" class="contentMLNn">
+                <table class="contentMLNn">
+                    <tr>
+                        <td class="label">
+                            <wicket:message key="chooseYourNickName">chooseYourNickName</wicket:message>
+                        </td>
+                    </tr>
+                    <tr class="errorTr">
+                        <td class="errorLabel" wicket:id="feedback"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" wicket:id="name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center;">
+                            <input type="submit" class="nicknameGoButton" wicket:id="goButton" wicket:message="value:go"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
             <form wicket:id="form" class="contentMLPadding">
                 <div wicket:id="content" class="contentML"></div>
             </form>

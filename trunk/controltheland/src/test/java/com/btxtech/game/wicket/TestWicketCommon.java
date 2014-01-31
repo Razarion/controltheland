@@ -20,6 +20,8 @@ import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.pages.FacebookAppNickName;
+import com.btxtech.game.wicket.pages.FacebookAppStart;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
@@ -126,6 +128,10 @@ public class TestWicketCommon extends AbstractServiceTest {
         facebookApp.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_START);
         facebookApp.setName("facebookApp");
         pageCrud.updateDbChild(facebookApp);
+        DbPage facebookNickname = pageCrud.createDbChild();
+        facebookNickname.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_NICKNAME);
+        facebookNickname.setName("facebookNickname");
+        pageCrud.updateDbChild(facebookNickname);
         cmsService.activateCms();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -139,6 +145,10 @@ public class TestWicketCommon extends AbstractServiceTest {
         getWicketTester().executeUrl("game_cms_invitation");
         getWicketTester().assertRenderedPage(Game.class);
         getWicketTester().executeUrl("game_cms_facebook_app");
+        getWicketTester().assertRenderedPage(FacebookAppStart.class);
+        getWicketTester().getRequest().getPostParameters().setParameterValue("signed_request", "v3-O8s1WrS9B2XnYXpRo61n2hKc9wboofRDHOxcF8XI.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImV4cGlyZXMiOjEzNDMxNTI4MDAsImlzc3VlZF9hdCI6MTM0MzE0NjY4Mywib2F1dGhfdG9rZW4iOiJBQUFFa3RlWVZ1WkNNQkFDS29mOGpkWDMxcnVTWkN3RXFuRnFWd3Z2NnBBNldNMTVaQ1V6bzlRNmliUXJiWGtRVkJOeEF0UDJmc2EzVzY3ZXJITW5EWkFvNlZHRzVPajg4U2FJMWZOYkVyYjhCeDBuOURRWkIyIiwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX0sInVzZXJfaWQiOiIxMDAwMDM2MzQwOTQxMzkifQ");
+        getWicketTester().executeUrl("game_cms_choose_nick_name");
+        getWicketTester().assertRenderedPage(FacebookAppNickName.class);
         try {
             getWicketTester().executeUrl("game_cms_facebook_auto_login");
             Assert.fail("WicketRuntimeException expected");

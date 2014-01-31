@@ -116,4 +116,6 @@ public interface CmsUiService {
     void renderCmsCssHead(IHeaderResponse response, int pageId);
 
     DbPage getFacebookAppPage();
+
+    DbPage getFacebookNickNamePage();
 }

@@ -14,6 +14,9 @@ public class FacebookSignedRequest implements Serializable {
     private String oauth_token; // camel notation does not work here
     private String user_id; // camel notation does not work here
     private String email;
+    private String firstName;
+    private String lastName;
+    private String link;
 
     public FacebookSignedRequest(String algorithm, long issuedAt, FacebookUser user, String oAuthToken, String userId) {
         this.algorithm = algorithm;
@@ -57,5 +60,29 @@ public class FacebookSignedRequest implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String secondName) {
+        this.lastName = secondName;
     }
 }

@@ -15,6 +15,7 @@ public class CmsUtil {
     public static final String MOUNT_GAME_CMS = "game_cms";
     public static final String MOUNT_GAME = "game_run";
     public static final String MOUNT_GAME_FACEBOOK_APP = "game_cms_facebook_app";
+    public static final String MOUNT_GAME_FACEBOOK_NICK_NAME = "game_cms_choose_nick_name";
     public static final String MOUNT_GAME_FACEBOOK_AUTO_LOGIN = "game_cms_facebook_auto_login";
     public static final String MOUNT_INVITATION_START = "game_cms_invitation";
     public static final String MOUNT_MANAGEMENT = "game_mgmt";
@@ -73,8 +74,7 @@ public class CmsUtil {
         NOT_FOUND,
         LEVEL_TASK_DONE,
         FACEBOOK_START,
-        @Deprecated
-        CHOOSE_NICKNAME,
+        FACEBOOK_NICKNAME,
         EMAIL_VERIFICATION,
         FORGOT_PASSWORD_REQUEST,
         FORGOT_PASSWORD_CHANGE,

@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.jsre.client.common.info.DetailedUser;
 import com.btxtech.game.jsre.client.common.info.SimpleUser;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
@@ -24,7 +23,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -36,9 +34,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.io.Serializable;
@@ -80,6 +75,7 @@ public class User implements UserDetails, Serializable, CrudParent {
     @Enumerated(EnumType.STRING)
     private SocialNet socialNet;
     private String socialNetUserId;
+    private String socialNetUserLink;
     private Date awaitingVerificationDate;
     private String verificationId;
     @Transient
@@ -112,6 +108,10 @@ public class User implements UserDetails, Serializable, CrudParent {
         return email;
     }
 
+    public String getSocialNetUserLink() {
+        return socialNetUserLink;
+    }
+
     public void registerUser(String name, String password, String email, DbInvitationInfo dbInvitationInfo) {
         this.name = name;
         this.password = password;
@@ -128,6 +128,7 @@ public class User implements UserDetails, Serializable, CrudParent {
         socialNet = SocialNet.FACEBOOK;
         socialNetUserId = facebookSignedRequest.getUserId();
         email = facebookSignedRequest.getEmail();
+        socialNetUserLink = facebookSignedRequest.getLink();
         registerDate = new Date();
         lastNews = registerDate;
     }

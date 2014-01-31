@@ -26,20 +26,65 @@ import java.util.Locale;
  * Date: 13.07.13
  * Time: 09:53
  */
+
 public class TestWicketFacebookApp extends AbstractServiceTest {
     private static final String OAUTH_DIALOG = "<div wicket:id=\"facebook\"><wicket:panel>\n" +
             "    <div id=\"fb-root\"></div>\n" +
             "    <script wicket:id=\"facebookJsSkd\" type=\"text/javascript\">window.fbAsyncInit = function () {\n" +
             "    FB.init({\n" +
-            "        appId: '195335357236873', // App ID\n" +
+            "        appId: '321838644575219', // App ID\n" +
             "        channelUrl: '//www.razarion.com/FacebookChannelFile.html', // Channel File\n" +
             "        status: true, // check login status\n" +
             "        cookie: true, // enable cookies to allow the server to access the session\n" +
             "        xfbml: true  // parse XFBML\n" +
             "    });\n" +
             "\n" +
-            "    FB.login(function (response1) {\n" +
-            "        window.location.href = '/game_run/taskId/1';\n" +
+            "\n" +
+            "    FB.login(function (loginResponse) {\n" +
+            "        if (loginResponse.authResponse) {\n" +
+            "            FB.api('/me', function (apiResponse) {\n" +
+            "                try {\n" +
+            "                    var form = document.createElement('form');\n" +
+            "                    form.setAttribute('method', 'post');\n" +
+            "                    form.setAttribute('action', '/game_cms_choose_nick_name');\n" +
+            "                    var signedRequestField = document.createElement('input');\n" +
+            "                    signedRequestField.setAttribute('type', 'hidden');\n" +
+            "                    signedRequestField.setAttribute('name', 'signed_request');\n" +
+            "                    signedRequestField.setAttribute(\"value\", loginResponse.authResponse.signedRequest);\n" +
+            "                    form.appendChild(signedRequestField);\n" +
+            "                    var linkField = document.createElement('input');\n" +
+            "                    linkField.setAttribute('type', 'hidden');\n" +
+            "                    linkField.setAttribute('name', 'link');\n" +
+            "                    linkField.setAttribute(\"value\", apiResponse.link);\n" +
+            "                    form.appendChild(linkField);\n" +
+            "                    var firstNameField = document.createElement('input');\n" +
+            "                    firstNameField.setAttribute('type', 'hidden');\n" +
+            "                    firstNameField.setAttribute('name', 'firstName');\n" +
+            "                    firstNameField.setAttribute(\"value\", apiResponse.first_name);\n" +
+            "                    form.appendChild(firstNameField);\n" +
+            "                    var lastNameField = document.createElement('input');\n" +
+            "                    lastNameField.setAttribute('type', 'hidden');\n" +
+            "                    lastNameField.setAttribute('name', 'lastName');\n" +
+            "                    lastNameField.setAttribute(\"value\", apiResponse.last_name);\n" +
+            "                    form.appendChild(lastNameField);\n" +
+            "                    var emailField = document.createElement('input');\n" +
+            "                    emailField.setAttribute('type', 'hidden');\n" +
+            "                    emailField.setAttribute('name', 'email');\n" +
+            "                    emailField.setAttribute(\"value\", apiResponse.email);\n" +
+            "                    form.appendChild(emailField);\n" +
+            "                    document.body.appendChild(form);\n" +
+            "                    form.submit();\n" +
+            "                } catch (e) {\n" +
+            "                    errorMessage = encodeURI('FacbookOAuthDialog.js exception:' + e);\n" +
+            "                    pathname = encodeURI(window.location.pathname);\n" +
+            "                    var img = document.createElement('img');\n" +
+            "                    img.src = '/spring/lsc?e=' + errorMessage + '&t=' + new Date().getTime() + '&p=' + pathname;\n" +
+            "                    document.body.appendChild(img);\n" +
+            "                }\n" +
+            "            });\n" +
+            "        } else {\n" +
+            "            window.location.href = '/game_cms_choose_nick_name?error=access_denied';\n" +
+            "        }\n" +
             "    }, {scope: 'email'});\n" +
             "};\n" +
             "\n" +
@@ -128,13 +173,24 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
         configureMultiplePlanetsAndLevels();
         // Do not rejoice too quickly... this is just a test secret.
         setPrivateField(CmsUiServiceImpl.class, cmsUiService, "facebookAppSecret", "029a30fb9677d35c79c44d8a505d8fe1");
+        // Prepare
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage facebookNickname = pageCrud.createDbChild();
+        facebookNickname.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_NICKNAME);
+        facebookNickname.setName("facebook nickname");
+        pageCrud.updateDbChild(facebookNickname);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
         // Login
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getWicketTester().getRequest().getPostParameters().setParameterValue("signed_request", "v3-O8s1WrS9B2XnYXpRo61n2hKc9wboofRDHOxcF8XI.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImV4cGlyZXMiOjEzNDMxNTI4MDAsImlzc3VlZF9hdCI6MTM0MzE0NjY4Mywib2F1dGhfdG9rZW4iOiJBQUFFa3RlWVZ1WkNNQkFDS29mOGpkWDMxcnVTWkN3RXFuRnFWd3Z2NnBBNldNMTVaQ1V6bzlRNmliUXJiWGtRVkJOeEF0UDJmc2EzVzY3ZXJITW5EWkFvNlZHRzVPajg4U2FJMWZOYkVyYjhCeDBuOURRWkIyIiwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX0sInVzZXJfaWQiOiIxMDAwMDM2MzQwOTQxMzkifQ");
         getWicketTester().getRequest().getPostParameters().setParameterValue("email", "fakeEmail"); // Prevent FB api call
         getWicketTester().startPage(FacebookAppStart.class);
-        getWicketTester().assertRenderedPage(Game.class);
+        getWicketTester().assertRenderedPage(FacebookAppNickName.class);
         Assert.assertNull(getUser());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -143,6 +199,7 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void emptySignedRequest() throws Exception {
+        // Must run with '-Dtestmode=true' due to 'wicket:xxx' namespace
         configureMultiplePlanetsAndLevels();
         // Prepare predefined facebook site
         beginHttpSession();
@@ -342,7 +399,7 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
         List<DbPageAccess> dbPageAccesses = loadAll(DbPageAccess.class);
         Assert.assertEquals(1, dbPageAccesses.size());
         Assert.assertEquals(FacebookAppStart.class.getName(), dbPageAccesses.get(0).getPage());
-        Assert.assertEquals("---User NOT Authorized by Facebook but logged in with different user Game--- Parameters: ", dbPageAccesses.get(0).getAdditional());
+        Assert.assertEquals("---User NOT Authorized by Facebook but logged in with different user--- Parameters: ", dbPageAccesses.get(0).getAdditional());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -407,6 +464,16 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
         configureMultiplePlanetsAndLevels();
         // Do not rejoice too quickly... this is just a test secret.
         setPrivateField(CmsUiServiceImpl.class, cmsUiService, "facebookAppSecret", "029a30fb9677d35c79c44d8a505d8fe1");
+        // Page
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage facebookApp = pageCrud.createDbChild();
+        facebookApp.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_NICKNAME);
+        pageCrud.updateDbChild(facebookApp);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
         // Login
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
