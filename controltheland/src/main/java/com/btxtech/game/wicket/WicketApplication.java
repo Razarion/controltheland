@@ -16,6 +16,7 @@ package com.btxtech.game.wicket;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.Utils;
+import com.btxtech.game.wicket.pages.FacebookAppNickName;
 import com.btxtech.game.wicket.pages.FacebookAppStart;
 import com.btxtech.game.wicket.pages.FacebookAutoLogin;
 import com.btxtech.game.wicket.pages.Game;
@@ -94,6 +95,7 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
         mountPage(CmsUtil.MOUNT_GAME, Game.class);
         mount(new MountedMapper("/" + CmsUtil.MOUNT_GAME, Game.class, new UrlPathPageParametersEncoder()));
         mountPage(CmsUtil.MOUNT_GAME_FACEBOOK_APP, FacebookAppStart.class);
+        mountPage(CmsUtil.MOUNT_GAME_FACEBOOK_NICK_NAME, FacebookAppNickName.class);
         mountPage(CmsUtil.MOUNT_GAME_FACEBOOK_AUTO_LOGIN, FacebookAutoLogin.class);
         mountPage(CmsUtil.MOUNT_INVITATION_START, InvitationStart.class);
         mountPage(CmsUtil.MOUNT_MANAGEMENT, MgmtPage.class);

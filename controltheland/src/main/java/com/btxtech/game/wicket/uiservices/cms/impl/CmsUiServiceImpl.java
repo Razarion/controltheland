@@ -1124,4 +1124,13 @@ public class CmsUiServiceImpl implements CmsUiService {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public DbPage getFacebookNickNamePage() {
+        try {
+            return cmsService.getPredefinedDbPage(CmsUtil.CmsPredefinedPage.FACEBOOK_NICKNAME);
+        } catch (CmsPredefinedPageDoesNotExistException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

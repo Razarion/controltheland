@@ -34,5 +34,6 @@
     <entry key="unknownErrorReceived">Unbekannter Fehler</entry>
     <entry key="NickNameError">${error}</entry>
     <entry key="chooseYourNickName">Spielername wählen </entry>
+    <entry key="go">Los!</entry>
     <entry key="facebookAlreadyLoggedIn">Du bist bereits als {0} eingeloggt. Bitte logge dich zuerst aus, bevor du dich via Facebook einloggst.</entry>
 </properties>

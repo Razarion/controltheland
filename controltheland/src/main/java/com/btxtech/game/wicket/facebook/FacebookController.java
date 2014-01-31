@@ -75,13 +75,7 @@ public class FacebookController extends Panel {
         parameters.put("FACEBOOK_APP_ID", cmsUiService.getFacebookAppId());
         parameters.put("CHANNEL_URL", "//www.razarion.com/FacebookChannelFile.html");
         parameters.put("FACEBOOK_AUTO_LOGIN", "/" + CmsUtil.MOUNT_GAME_FACEBOOK_AUTO_LOGIN);
-        if (type == Type.OAUTH_DIALOG) {
-            if (userGuidanceService.isStartRealGame()) {
-                parameters.put("GAME_PAGE_URL", CmsUtil.getUrl4Game(null));
-            } else {
-                parameters.put("GAME_PAGE_URL", CmsUtil.getUrl4Game(userGuidanceService.getDefaultLevelTaskId()));
-            }
-        }
+        parameters.put("OAUTH_SUCCESS_PAGE_URL", "/" + CmsUtil.MOUNT_GAME_FACEBOOK_NICK_NAME);
         add(new Label("facebookJsSkd", new Model<>(jsTemplate.asString(parameters))).setEscapeModelStrings(false));
 
     }

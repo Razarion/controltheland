@@ -261,4 +261,20 @@ public class FacebookUtils {
         var img = new Image();
         img.src = src;
     }-*/;
+
+    public static String createNickNameSuggestion(String firstName, String lastName) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (firstName != null) {
+            stringBuilder.append(firstName.substring(0, Math.min(3, firstName.length())));
+        }
+        if (lastName != null) {
+            stringBuilder.append(lastName.substring(0, Math.min(3, lastName.length())));
+        }
+        if (stringBuilder.toString().trim().isEmpty()) {
+            return "Gamer" + MathHelper.generateUuid(4);
+        } else {
+            stringBuilder.append(MathHelper.generateUuid(4));
+            return stringBuilder.toString().trim();
+        }
+    }
 }

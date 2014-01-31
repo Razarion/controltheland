@@ -151,7 +151,11 @@ public class MathHelper {
     }
 
     public static String generateUuid() {
-        char[] uuid = new char[16];
+        return generateUuid(16);
+    }
+
+    public static String generateUuid(int size) {
+        char[] uuid = new char[size];
         for (int i = 0; i < uuid.length; i++) {
             uuid[i] = CHARS[(int) (Math.random() * CHARS.length)];
         }
