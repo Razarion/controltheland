@@ -32,7 +32,7 @@ public class TestWicketFacebookApp extends AbstractServiceTest {
             "    <div id=\"fb-root\"></div>\n" +
             "    <script wicket:id=\"facebookJsSkd\" type=\"text/javascript\">window.fbAsyncInit = function () {\n" +
             "    FB.init({\n" +
-            "        appId: '321838644575219', // App ID\n" +
+            "        appId: '195335357236873', // App ID\n" +
             "        channelUrl: '//www.razarion.com/FacebookChannelFile.html', // Channel File\n" +
             "        status: true, // check login status\n" +
             "        cookie: true, // enable cookies to allow the server to access the session\n" +

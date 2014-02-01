@@ -1,6 +1,10 @@
 package com.btxtech.game.services.connection;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.page.DbPage;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
@@ -34,6 +38,8 @@ public class TestSession extends AbstractServiceTest {
     private InvitationService invitationService;
     @Autowired
     private CmsUiService cmsUiService;
+    @Autowired
+    private CmsService cmsService;
 
     @Test
     @DirtiesContext
@@ -166,6 +172,13 @@ public class TestSession extends AbstractServiceTest {
         createAndLoginUser("U3");
         invitationService.onFacebookInvite("fbrequid1111", Arrays.asList("llll", "aaaaa", "eeeee"));
         propertyService.createProperty(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY, "fbAd");
+        // nickname page
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage facebookNickname = pageCrud.createDbChild();
+        facebookNickname.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_NICKNAME);
+        facebookNickname.setName("facebook nickname");
+        pageCrud.updateDbChild(facebookNickname);
+        cmsService.activateCms();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Test

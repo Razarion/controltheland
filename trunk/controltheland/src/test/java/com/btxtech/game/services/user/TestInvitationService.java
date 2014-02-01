@@ -1,7 +1,11 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.client.dialogs.incentive.FriendInvitationBonus;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.page.DbPage;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.history.HistoryService;
@@ -79,6 +83,8 @@ public class TestInvitationService extends AbstractServiceTest {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private RegisterService registerService;
+    @Autowired
+    private CmsService cmsService;
 
     @Test
     @DirtiesContext
@@ -251,6 +257,13 @@ public class TestInvitationService extends AbstractServiceTest {
         createAndLoginUser("Host");
         invitationService.onFacebookInvite("fbrequid1111", Arrays.asList("llll", "aaaaa", "eeeee"));
         propertyService.createProperty(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY, "fbAd");
+        // nickname page
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage facebookNickname = pageCrud.createDbChild();
+        facebookNickname.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_NICKNAME);
+        facebookNickname.setName("facebook nickname");
+        pageCrud.updateDbChild(facebookNickname);
+        cmsService.activateCms();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Test
@@ -298,6 +311,13 @@ public class TestInvitationService extends AbstractServiceTest {
         setPrivateField(InvitationServiceImpl.class, invitationService, "historyService", historyServiceMock);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        // nickname page
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage facebookNickname = pageCrud.createDbChild();
+        facebookNickname.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_NICKNAME);
+        facebookNickname.setName("facebook nickname");
+        pageCrud.updateDbChild(facebookNickname);
+        cmsService.activateCms();
         propertyService.createProperty(PropertyServiceEnum.FACEBOOK_OPTIONAL_AD_URL_KEY, "fbAd");
         DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
         dbLevel.setFriendInvitationBonus(29);
