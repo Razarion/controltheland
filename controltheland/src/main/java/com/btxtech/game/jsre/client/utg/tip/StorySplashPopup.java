@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.client.utg.tip;
 
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.PopupPanel;
 
@@ -14,8 +14,10 @@ public class StorySplashPopup extends PopupPanel {
     private static final int REMOVE_TIMEOUT = 500;
     private StorySplashPanel storySplashPanel;
     private Timer removeTimer;
+    private AbstractSplashPopupInfo abstractSplashPopupInfo;
 
     public StorySplashPopup(AbstractSplashPopupInfo abstractSplashPopupInfo) {
+        this.abstractSplashPopupInfo = abstractSplashPopupInfo;
         setStyleName("storyPopup");
         storySplashPanel = new StorySplashPanel(abstractSplashPopupInfo);
         setWidget(storySplashPanel);
@@ -24,7 +26,7 @@ public class StorySplashPopup extends PopupPanel {
     }
 
     public void fadeOut() {
-        if(removeTimer != null) {
+        if (removeTimer != null) {
             return;
         }
         removeStyleName("raz-fade-in");
@@ -32,6 +34,9 @@ public class StorySplashPopup extends PopupPanel {
         removeTimer = new Timer() {
             @Override
             public void run() {
+                if (isShowing()) {
+                    ClientUserTracker.getInstance().onDialogDisappears(StorySplashPopup.this);
+                }
                 hide();
             }
         };
@@ -42,11 +47,15 @@ public class StorySplashPopup extends PopupPanel {
         stopRemoveTimer();
         removeStyleName("raz-fade-out");
         addStyleName("raz-fade-in");
+        boolean showing =  isShowing();
         center();
+        if (!showing) {
+            ClientUserTracker.getInstance().onDialogAppears(this, abstractSplashPopupInfo.getTitle());
+        }
     }
 
     private void stopRemoveTimer() {
-        if(removeTimer != null) {
+        if (removeTimer != null) {
             removeTimer.cancel();
             removeTimer = null;
         }
