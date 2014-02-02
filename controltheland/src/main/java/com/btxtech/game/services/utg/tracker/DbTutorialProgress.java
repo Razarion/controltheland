@@ -35,6 +35,7 @@ public class DbTutorialProgress implements Serializable {
     @Column(nullable = false)
     private Date niceTimeStamp;
     private long timeStamp;
+    private Integer levelTaskId;
     private String levelTaskName;
     @Index(name = "TRACKER_TUTORIAL_INDEX_START_UUID")
     private String startUuid;
@@ -43,6 +44,7 @@ public class DbTutorialProgress implements Serializable {
     private long duration;
     private String type;
     private String tutorialTaskName;
+    private Integer dbId;
 
     /**
      * Used by Hibernate
@@ -50,16 +52,18 @@ public class DbTutorialProgress implements Serializable {
     public DbTutorialProgress() {
     }
 
-    public DbTutorialProgress(String sessionId, String type, String startUuid, String levelTaskName, String tutorialTaskName, long duration, long clientTimeStamp) {
+    public DbTutorialProgress(String sessionId, String type, String startUuid, int levelTaskId, String levelTaskName, int dbId, String tutorialTaskName, long duration, long clientTimeStamp) {
         this.sessionId = sessionId;
         this.startUuid = startUuid;
         this.clientTimeStamp = clientTimeStamp;
         niceTimeStamp = new Date();
         timeStamp = niceTimeStamp.getTime();
         this.type = type;
+        this.levelTaskId = levelTaskId;
         this.levelTaskName = levelTaskName;
         this.tutorialTaskName = tutorialTaskName;
         this.duration = duration;
+        this.dbId = dbId;
     }
 
     public Date getNiceTimeStamp() {
@@ -96,6 +100,14 @@ public class DbTutorialProgress implements Serializable {
 
     public String getStartUuid() {
         return startUuid;
+    }
+
+    public Integer getDbId() {
+        return dbId;
+    }
+
+    public Integer getLevelTaskId() {
+        return levelTaskId;
     }
 
     @Override

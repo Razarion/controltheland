@@ -245,7 +245,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public GameFlow sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp) {
+    public GameFlow sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, int dbId, String name, long duration, long clientTimeStamp) {
         System.out.println("---sendTutorialProgress " + type);
 //        if (type == TutorialConfig.TYPE.TUTORIAL) {
 //            return new GameFlow(GameFlow.Type.SHOW_LEVEL_TASK_DONE_PAGE, null);

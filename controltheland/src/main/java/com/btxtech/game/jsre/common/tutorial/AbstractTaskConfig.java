@@ -40,6 +40,7 @@ public abstract class AbstractTaskConfig implements Serializable {
     private int money;
     private int maxMoney;
     private String name;
+    private int id;
     private Collection<BotConfig> botConfigs;
     private Collection<Integer> botIdsToStop;
     private Map<Integer, Integer> itemTypeLimitation;
@@ -61,6 +62,10 @@ public abstract class AbstractTaskConfig implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Collection<BotConfig> getBotConfigs() {
@@ -148,6 +153,10 @@ public abstract class AbstractTaskConfig implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setOwnItems(Collection<ItemTypeAndPosition> ownItems) {

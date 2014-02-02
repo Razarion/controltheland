@@ -46,7 +46,6 @@ import java.util.List;
  * Date: 17.07.2010
  * Time: 17:21:24
  */
-// TODO noob protection, if unit is send near bot
 public class Simulation implements ClientBase.OwnBaseDestroyedListener {
     private static final int PRAISE_DELAY = 3000;
     private static final Simulation SIMULATION = new Simulation();

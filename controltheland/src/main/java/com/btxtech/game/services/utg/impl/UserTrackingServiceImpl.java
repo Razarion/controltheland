@@ -714,10 +714,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void onTutorialProgressChanged(TutorialConfig.TYPE type, String startUuid, int taskId, String tutorialTaskName, long duration, long clientTimeStamp) {
+    public void onTutorialProgressChanged(TutorialConfig.TYPE type, String startUuid, int taskId, int dbId, String tutorialTaskName, long duration, long clientTimeStamp) {
         try {
             DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, taskId);
-            sessionFactory.getCurrentSession().save(new DbTutorialProgress(session.getSessionId(), type.name(), startUuid, dbLevelTask.getName(), tutorialTaskName, duration, clientTimeStamp));
+            sessionFactory.getCurrentSession().save(new DbTutorialProgress(session.getSessionId(), type.name(), startUuid, dbLevelTask.getId(), dbLevelTask.getName(), dbId, tutorialTaskName, duration, clientTimeStamp));
         } catch (Exception e) {
             ExceptionHandler.handleException(e, "onTutorialProgressChanged");
         }

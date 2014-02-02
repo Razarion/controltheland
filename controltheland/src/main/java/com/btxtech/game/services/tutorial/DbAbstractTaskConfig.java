@@ -288,6 +288,7 @@ abstract public class DbAbstractTaskConfig implements CrudParent, CrudChild<DbTu
         abstractTaskConfig.setMoney(money);
         abstractTaskConfig.setMaxMoney(maxMoney);
         abstractTaskConfig.setName(i18nTitle.getString(locale));
+        abstractTaskConfig.setId(id);
         abstractTaskConfig.setBotConfigs(convertTaskBots(serverItemTypeService));
         abstractTaskConfig.setBotIdsToStop(convertTaskBotIdsToStop());
         abstractTaskConfig.setRadarMode(radarMode);

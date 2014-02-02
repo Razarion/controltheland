@@ -100,7 +100,7 @@ public interface UserTrackingService {
 
     boolean isHtml5Support();
 
-    void onTutorialProgressChanged(TutorialConfig.TYPE type, String startUuid, int taskId, String tutorialTaskName, long duration, long clientTimeStamp);
+    void onTutorialProgressChanged(TutorialConfig.TYPE type, String startUuid, int taskId, int dbId, String tutorialTaskName, long duration, long clientTimeStamp);
 
     void onEventTrackingStart(EventTrackingStart eventTrackingStart);
 
