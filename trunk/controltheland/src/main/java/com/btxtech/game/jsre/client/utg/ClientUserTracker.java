@@ -94,15 +94,15 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     }
 
     public void onTutorialFailed(int levelTaskId, long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL_FAILED, levelTaskId, null, duration, clientTimeStamp, null);
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL_FAILED, levelTaskId, levelTaskId, null, duration, clientTimeStamp, null);
     }
 
     public void onTutorialFinished(int levelTaskId, long duration, long clientTimeStamp, ParametrisedRunnable<GameFlow> runnable) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, levelTaskId, null, duration, clientTimeStamp, runnable);
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, levelTaskId, levelTaskId, null, duration, clientTimeStamp, runnable);
     }
 
     public void onTaskFinished(int levelTaskId, AbstractTask abstractTask, long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, levelTaskId, abstractTask.getAbstractTaskConfig().getName(), duration, clientTimeStamp, null);
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, levelTaskId, abstractTask.getAbstractTaskConfig().getId(), abstractTask.getAbstractTaskConfig().getName(), duration, clientTimeStamp, null);
     }
 
     public void startEventTracking() {

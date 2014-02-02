@@ -93,7 +93,7 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.getDbLevel();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), 0, "", 0, 0);
         SimpleBase unregKillBase = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -102,7 +102,7 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U2");
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), 0, "", 0, 0);
         SimpleBase u2Base = createBase(new Index(2000, 2000));
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
         Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
@@ -119,7 +119,7 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U3");
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), 0, "", 0, 0);
         createBase(new Index(3000, 3000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -135,7 +135,7 @@ public class TestBackupService extends AbstractServiceTest {
         // Unregistered base, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), 0, "", 0, 0);
         // TODO failed on 23.08.2013
         createBase(new Index(4000, 4000));
         endHttpRequestAndOpenSessionInViewFilter();
@@ -252,7 +252,7 @@ public class TestBackupService extends AbstractServiceTest {
         // Unreg user online, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), 0, "", 0, 0);
         createBase(new Index(1000, 1000));
         backupService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -364,7 +364,7 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), 0, "", 0, 0);
         SimpleBase realUser = getOrCreateBase();
         Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
@@ -414,7 +414,7 @@ public class TestBackupService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), 0, "", 0, 0);
         SimpleBase realUser = getOrCreateBase();
         Id id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);

@@ -436,9 +436,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public GameFlow sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp) {
+    public GameFlow sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, int dbId, String name, long duration, long clientTimeStamp) {
         try {
-            userTrackingService.onTutorialProgressChanged(type, startUuid, levelTaskId, name, duration, clientTimeStamp);
+            userTrackingService.onTutorialProgressChanged(type, startUuid, levelTaskId, dbId, name, duration, clientTimeStamp);
             if (type == TutorialConfig.TYPE.TUTORIAL) {
                 return userGuidanceService.onTutorialFinished(levelTaskId);
             } else {

@@ -91,7 +91,7 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), 0, "", 0, 0);
         getMovableService().getRealGameInfo(START_UID_1, null);
         getMovableService().createBase(START_UID_1, new Index(1000, 1000));
 
@@ -118,7 +118,7 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), 0, "", 0, 0);
         getMovableService().getRealGameInfo(START_UID_1, null);
         SimpleBase target = getMovableService().createBase(START_UID_1, new Index(1000, 1000)).getBase();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -126,7 +126,7 @@ public class TestUserHistory extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), 0, "", 0, 0);
         SimpleBase actor = createBase(new Index(3000, 3000));
         sendBuildCommand(getFirstSynItemId(actor, TEST_START_BUILDER_ITEM_ID), new Index(3300, 3300), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();

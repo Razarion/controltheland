@@ -596,7 +596,7 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_4_3_SIMULATED_ID, "task1", 1, 1500);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_4_3_SIMULATED_ID, 1, "task1", 1, 1500);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -641,8 +641,8 @@ public class TestTracking extends AbstractServiceTest {
         dialogTrackings.add(new DialogTracking(uuid, null, null, null, null, null, "dialog3", false, 44, 1140));
 
         getMovableService().sendEventTrackerItems(eventTrackingItems, itemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_4_3_SIMULATED_ID, "task2", 1, 1550);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, uuid, TEST_LEVEL_TASK_4_3_SIMULATED_ID, "tutorial1", 1, 1550);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_4_3_SIMULATED_ID, 2, "task2", 1, 1550);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, uuid, TEST_LEVEL_TASK_4_3_SIMULATED_ID, 11, "tutorial1", 1, 1550);
         endHttpRequestAndOpenSessionInViewFilter();
     }
 
@@ -663,7 +663,7 @@ public class TestTracking extends AbstractServiceTest {
 
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID, "task3", 1, 3000);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID, 3, "task3", 1, 3000);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -712,8 +712,8 @@ public class TestTracking extends AbstractServiceTest {
         dialogTrackings.add(new DialogTracking(uuid, 130, 14, 15, 16, 49, "dialog14", true, 55, 2160));
 
         getMovableService().sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID, "task4", 1, 3100);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID, "tutorial2", 1, 3100);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID, 4, "task4", 1, 3100);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID, 12, "tutorial2", 1, 3100);
         endHttpRequestAndOpenSessionInViewFilter();
     }
 
@@ -779,10 +779,16 @@ public class TestTracking extends AbstractServiceTest {
         TutorialTrackingInfo tutorialTrackingInfo = userTrackingService.getTutorialTrackingInfo(lifecycleTrackingInfos.get(0));
         Assert.assertEquals(3, tutorialTrackingInfo.getDbTutorialProgresss().size());
         Assert.assertEquals("task1", tutorialTrackingInfo.getDbTutorialProgresss().get(0).getTutorialTaskName());
+        Assert.assertEquals(1, (int)tutorialTrackingInfo.getDbTutorialProgresss().get(0).getDbId());
         Assert.assertEquals("task2", tutorialTrackingInfo.getDbTutorialProgresss().get(1).getTutorialTaskName());
+        Assert.assertEquals(2, (int)tutorialTrackingInfo.getDbTutorialProgresss().get(1).getDbId());
         Assert.assertEquals("tutorial1", tutorialTrackingInfo.getDbTutorialProgresss().get(2).getTutorialTaskName());
+        Assert.assertEquals(11, (int)tutorialTrackingInfo.getDbTutorialProgresss().get(2).getDbId());
+        Assert.assertEquals((Integer)TEST_LEVEL_TASK_4_3_SIMULATED_ID, tutorialTrackingInfo.getDbTutorialProgresss().get(0).getLevelTaskId());
         Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(0).getLevelTaskName());
+        Assert.assertEquals((Integer)TEST_LEVEL_TASK_4_3_SIMULATED_ID, tutorialTrackingInfo.getDbTutorialProgresss().get(1).getLevelTaskId());
         Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(1).getLevelTaskName());
+        Assert.assertEquals((Integer)TEST_LEVEL_TASK_4_3_SIMULATED_ID, tutorialTrackingInfo.getDbTutorialProgresss().get(2).getLevelTaskId());
         Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(2).getLevelTaskName());
         Assert.assertEquals(101, tutorialTrackingInfo.getDbEventTrackingStart().getClientWidth());
         Assert.assertEquals(102, tutorialTrackingInfo.getDbEventTrackingStart().getClientHeight());

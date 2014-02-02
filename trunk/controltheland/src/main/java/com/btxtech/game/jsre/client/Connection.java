@@ -379,11 +379,12 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         commandQueue.clear();
     }
 
-    public void sendTutorialProgress(final TutorialConfig.TYPE type, final int levelTaskId, final String name, final long duration, final long clientTimeStamp, final ParametrisedRunnable<GameFlow> runnable) {
+    public void sendTutorialProgress(final TutorialConfig.TYPE type, final int levelTaskId, final int id, final String name, final long duration, final long clientTimeStamp, final ParametrisedRunnable<GameFlow> runnable) {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendTutorialProgress(type,
                     ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     levelTaskId,
+                    id,
                     name,
                     duration,
                     clientTimeStamp,
@@ -391,7 +392,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                         @Override
                         public void onFailure(Throwable caught) {
                             if (!handleDisconnection("sendTutorialProgress", caught)) {
-                                sendTutorialProgress(type, levelTaskId, name, duration, clientTimeStamp, runnable);
+                                sendTutorialProgress(type, levelTaskId, id, name, duration, clientTimeStamp, runnable);
                             }
                         }
 

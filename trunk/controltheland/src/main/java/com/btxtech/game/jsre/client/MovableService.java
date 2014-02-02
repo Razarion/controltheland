@@ -112,7 +112,7 @@ public interface MovableService extends RemoteService {
 
     void sendStartupTerminated(boolean successful, long totalTime, String startUuid, Integer levelTaskId);
 
-    GameFlow sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp);
+    GameFlow sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, int dbId, String name, long duration, long clientTimeStamp);
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart);
 
