@@ -81,6 +81,9 @@ public class DialogManager implements CloseHandler<PopupPanel> {
         dialog.addCloseHandler(this);
         activeDialog = dialog;
         activeDialog.setupDialog();
+        for (DialogListener dialogListener : dialogListeners) {
+            dialogListener.onDialogShown(dialog);
+        }
     }
 
     private void showStackedDialog(Dialog dialog) {
