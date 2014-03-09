@@ -10,7 +10,7 @@ public enum PayPalButton {
     B_2("T6UDKDH59Y43E", "QR8RUMJM2AFQ2", "CRYST_4000", 5.0, 4000),
     B_3("7LSHFG9LM88VL", "N2B23T28DUD8A", "CRYST_10000", 10.0, 10000),
     B_4("YLVYNLXBSJXGY", "8PCH73BN969N6", "CRYST_30000", 25.0, 30000),
-    B_5("YLVYNLXBSJXGY", "DCT6H5J9PBAP6", "CRYST_70000", 50.0, 70000); // TODO fix hostedButtonId
+    B_5("UQTCVE7P4AH46", "DCT6H5J9PBAP6", "CRYST_70000", 50.0, 70000);
     private String hostedButtonId;
     private String sandboxHostedButtonId;
     private String itemNumber;
