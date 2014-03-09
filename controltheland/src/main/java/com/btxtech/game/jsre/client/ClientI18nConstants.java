@@ -563,6 +563,8 @@ public interface ClientI18nConstants extends Messages {
 
     String menuBuyPaypal();
 
+    String menuBuyFacebook();
+
     String menuOverviewGetCrystals();
 
     String menuStarMap();
@@ -747,6 +749,8 @@ public interface ClientI18nConstants extends Messages {
 
     String buyCrystalsViaPayPal();
 
+    String buyCrystalsViaFacebook();
+
     String invitationFriendsAndGetCrystals();
 
     String collectBoxesAndGetCrystals();
@@ -754,19 +758,45 @@ public interface ClientI18nConstants extends Messages {
     // Buy crystals dialog
     String buyCrystalsPaypal();
 
-    String buyCrystalsPaypal1000();
+    String buyCrystalsPaypal1();
 
-    String buyCrystalsPaypal2200();
+    String buyCrystalsPaypal2();
 
-    String buyCrystalsPaypal4600();
+    String buyCrystalsPaypa3();
 
-    String buyCrystalsPaypal12500();
+    String buyCrystalsPaypal4();
+
+    String buyCrystalsPaypal5();
 
     String buyCrystalsPaypalOnlyRegistered();
 
     String buyCrystalsPaypalOnlyRegisteredVerified();
 
-    String buyCrystalsDialogTitle();
+    String buyCrystalsPaypalDialogTitle();
+
+    String buyCrystalsFacebookDialogTitle();
+
+    String buyCrystalsFacebook();
+
+    String buyCrystalsFacebook1();
+
+    String buyCrystalsFacebook2();
+
+    String buyCrystalsFacebook3();
+
+    String buyCrystalsFacebook4();
+
+    String buyCrystalsFacebook5();
+
+    String buyCrystalsFacebookButton(int crystals);
+
+    String buyCrystalsFacebookOnlyRegisteredVerified();
+
+    String buyCrystalsFacebookOnlyRegistered();
+
+    String tanksCrystalBoughtDialogTitle();
+
+    String tanksCrystalBoughtDialog(int delta, int value);
 
     // Star map
     String starMapDialogTitle();

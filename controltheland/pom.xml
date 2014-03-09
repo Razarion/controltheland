@@ -19,46 +19,69 @@
         </license>
     </licenses>
     <repositories>
-        <repository>
-            <id>people.apache.snapshots</id>
-            <url>http://repository.apache.org/content/groups/snapshots-group/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
+        <!--repository>
             <id>maven2-repository.dev.java.net</id>
             <name>Java.net Repository for Maven</name>
             <url>http://download.java.net/maven/2</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <id>gwt-maven</id>
-            <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo</url>
-        </repository>
-        <repository>
+        </repository-->
+        <!--repository>
             <id>JBoss</id>
             <name>JBoss Repsitory</name>
-            <layout>default</layout>
             <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
-        </repository>
-        <repository>
+        </repository-->
+        <!-- repository>
             <id>informagen</id>
             <name>informagen.</name>
             <layout>default</layout>
             <url>http://informagen.org/maven</url>
-        </repository>
+        </repository-->
         <repository>
             <id>mvnrepository</id>
             <name>mvnrepository</name>
-            <layout>default</layout>
-            <url>http://mvnrepository.com/artifact</url>
+            <url>http://repo1.maven.org/maven2/</url>
         </repository>
     </repositories>
     <dependencies>
+        <!-- jersey -->
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-moxy</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-spring3</artifactId>
+            <version>${jersey.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.hk2</groupId>
+                    <artifactId>hk2</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- dependency>
+            <groupId>org.glassfish.jersey.test-framework</groupId>
+            <artifactId>jersey-test-framework-core</artifactId>
+            <scope>test</scope>
+            <version>${jersey.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.hk2</groupId>
+                    <artifactId>hk2</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+            <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+            <scope>test</scope>
+            <version>${jersey.version}</version>
+        </dependency-->
         <dependency>
             <!-- charts4j -->
             <groupId>com.googlecode.charts4j</groupId>
@@ -343,6 +366,11 @@
         </testResources>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <version>2.6.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -359,7 +387,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>2.6.0</version>
                 <configuration>
                     <runTarget>http://localhost:8080</runTarget>
                     <noServer>true</noServer>
@@ -409,33 +437,21 @@
                     <systemProperties>
                         <testmode>true</testmode>
                     </systemProperties>
+                    <contextFile>${basedir}/context.xml</contextFile>
+                    <httpsPort>8443</httpsPort>
+                    <keystoreFile>C:\dev\tech\ssl/keystore</keystoreFile>
+                    <keystorePass>localhost</keystorePass>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>gwt-maven</id>
-            <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>apache.snapshots</id>
-            <name>Apache Snapshots</name>
-            <url>http://repository.apache.org/content/groups/snapshots-group/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
     <properties>
         <wicket.version>6.9.1</wicket.version>
-        <gwtVersion>2.5.1</gwtVersion>
+        <gwtVersion>2.6.0</gwtVersion>
         <hibernateVersion>4.0.0.Final</hibernateVersion>
         <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
         <aspectj>1.6.10</aspectj>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jersey.version>2.6</jersey.version>
     </properties>
 </project>

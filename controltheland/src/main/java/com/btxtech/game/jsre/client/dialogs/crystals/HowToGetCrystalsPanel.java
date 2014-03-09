@@ -21,7 +21,9 @@ public class HowToGetCrystalsPanel extends DialogUiBinderWrapper {
     @UiField
     Label balanceLabel;
     @UiField
-    Button buyButton;
+    Button buyPaypalButton;
+    @UiField
+    Button buyFacebookButton;
     @UiField
     Button buyInvite;
 
@@ -53,10 +55,16 @@ public class HowToGetCrystalsPanel extends DialogUiBinderWrapper {
         return title;
     }
 
-    @UiHandler("buyButton")
-    void onBuyButtonClick(ClickEvent event) {
+    @UiHandler("buyPaypalButton")
+    void onBuyPaypalButtonClick(ClickEvent event) {
         close();
         BuyCrystalsPaypalDialog.showDialog();
+    }
+
+    @UiHandler("buyFacebookButton")
+    void onBuyFacebookButtonClick(ClickEvent event) {
+        close();
+        BuyCrystalsFacebookDialog.showDialog();
     }
 
     @UiHandler("buyInvite")

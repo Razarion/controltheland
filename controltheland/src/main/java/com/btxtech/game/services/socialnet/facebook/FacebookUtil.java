@@ -22,6 +22,8 @@ import java.net.URISyntaxException;
  * Time: 15:57
  */
 public class FacebookUtil {
+    public static final String PAYMENT_STATE_COMPLETED = "completed";
+
     public static String makeUrlSafe(String input) {
         String correctedInput = input.replace('-', '+');
         correctedInput = correctedInput.replace('_', '/');

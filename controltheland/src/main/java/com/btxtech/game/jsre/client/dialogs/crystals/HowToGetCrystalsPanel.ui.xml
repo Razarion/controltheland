@@ -30,10 +30,18 @@
         <g:Grid cellPadding="5" cellSpacing="5" styleName="{style.howToTable}">
             <g:row>
                 <g:customCell>
-                    <g:Button text="{msg.buy}" ui:field="buyButton"/>
+                    <g:Button text="{msg.buy}" ui:field="buyPaypalButton"/>
                 </g:customCell>
                 <g:customCell>
                     <g:Label text="{msg.buyCrystalsViaPayPal}"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <g:Button text="{msg.buy}" ui:field="buyFacebookButton"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="{msg.buyCrystalsViaFacebook}"/>
                 </g:customCell>
             </g:row>
             <g:row>

@@ -20,7 +20,7 @@ package com.btxtech.game.jsre.client.common;
  */
 public class Constants {
     // System
-    public static final int INTERFACE_VERSION = 20;
+    public static final int INTERFACE_VERSION = 21;
 
     // Game
     public static final double ITEM_SELL_FACTOR = 0.5;
@@ -90,5 +90,11 @@ public class Constants {
     public static final String IMAGE_TYPE_KEY = "type";
     public static final String IMAGE_TYPE_VALUE_STAR_MAP = "star";
     public static final String IMAGE_ID = "id";
+
+    // Rest root
+    public static final String REST_ROOT = "/rest";
+
+    // Facebook payment
+    public static final String FACEBOOK_PAYMENT_CALLBACK = "/fbPaymentCallback";
 
 }

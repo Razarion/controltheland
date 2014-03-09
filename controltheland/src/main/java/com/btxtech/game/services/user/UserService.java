@@ -130,6 +130,8 @@ public interface UserService extends UserDetailsService {
 
     User loadUserFromDb(String name);
 
+    User loadFacebookUserFromDb(String facebookUserId);
+
     DetailedUser createDetailedUser(User user);
 
     UserAttentionPacket createUserAttentionPacket();

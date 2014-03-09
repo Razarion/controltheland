@@ -119,7 +119,7 @@ public class InvitationServiceImpl implements InvitationService {
                     message.setTo(emailAddress);
                     message.setFrom(MgmtServiceImpl.REPLY_EMAIL);
                     message.setSubject(serverI18nHelper.getString("invitationSubject", new Object[]{host}));
-                    Map<Object, Object> model = new HashMap<>();
+                    Map<String, Object> model = new HashMap<>();
                     model.put("title", serverI18nHelper.getString("invitationTitle"));
                     model.put("line1", serverI18nHelper.getString("invitationLine1", new Object[]{host}));
                     model.put("line2", serverI18nHelper.getString("invitationLine2", new Object[]{host}));

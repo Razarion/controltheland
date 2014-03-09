@@ -41,6 +41,7 @@ import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.packets.BaseLostPacket;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.CrystalPacket;
 import com.btxtech.game.jsre.common.packets.EnergyPacket;
 import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
 import com.btxtech.game.jsre.common.packets.LevelPacket;
@@ -945,6 +946,10 @@ abstract public class AbstractServiceTest {
                     && expectedStartPointInfo.getItemFreeRange() == receivedStartPointInfo.getItemFreeRange()
                     && ObjectUtils.equals(expectedStartPointInfo.getSuggestedPosition(), receivedStartPointInfo.getSuggestedPosition());
 
+        } else if (expectedPacket instanceof CrystalPacket) {
+            CrystalPacket expected = (CrystalPacket) expectedPacket;
+            CrystalPacket received = (CrystalPacket) receivedPacket;
+            return expected.getDelta() == received.getDelta() && expected.getValue() == received.getValue();
         } else {
             Assert.fail("Unknown packet: " + expectedPacket);
             return false;
@@ -2341,6 +2346,12 @@ abstract public class AbstractServiceTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected void loginFacebookUser(String userFacebookId) {
+        FacebookUser facebookUser = new FacebookUser("", "", new FacebookAge(20));
+        FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest("", 0, facebookUser, "", userFacebookId);
+        userService.loginFacebookUser(facebookSignedRequest);
     }
 
     protected void createUserInSession(String userName, Date registerDate) {

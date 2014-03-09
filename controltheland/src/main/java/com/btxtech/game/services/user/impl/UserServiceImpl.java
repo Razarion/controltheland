@@ -565,7 +565,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @SuppressWarnings("unchecked")
-    private User loadFacebookUserFromDb(String facebookUserId) {
+    @Override
+    public User loadFacebookUserFromDb(String facebookUserId) {
         // Get user from DB
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);

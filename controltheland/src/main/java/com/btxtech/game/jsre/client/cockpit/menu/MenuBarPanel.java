@@ -8,6 +8,7 @@ import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimpleGuild;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.StartNewBaseDialog;
+import com.btxtech.game.jsre.client.dialogs.crystals.BuyCrystalsFacebookDialog;
 import com.btxtech.game.jsre.client.dialogs.crystals.BuyCrystalsPaypalDialog;
 import com.btxtech.game.jsre.client.dialogs.crystals.HowToGetCrystalsPanel;
 import com.btxtech.game.jsre.client.dialogs.guild.CreateGuildDialog;
@@ -57,6 +58,8 @@ public class MenuBarPanel extends Composite {
     MenuItem inviteFriends;
     @UiField
     MenuItem buyPaypal;
+    @UiField
+    MenuItem buyFacebook;
     @UiField
     MenuItem overviewCrystals;
     @UiField
@@ -154,6 +157,12 @@ public class MenuBarPanel extends Composite {
             @Override
             public void execute() {
                 BuyCrystalsPaypalDialog.showDialog();
+            }
+        });
+        buyFacebook.setScheduledCommand(new Command() {
+            @Override
+            public void execute() {
+                BuyCrystalsFacebookDialog.showDialog();
             }
         });
         overviewCrystals.setScheduledCommand(new Command() {

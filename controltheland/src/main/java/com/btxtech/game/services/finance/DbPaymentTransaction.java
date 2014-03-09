@@ -1,8 +1,11 @@
 package com.btxtech.game.services.finance;
 
+import com.btxtech.game.jsre.client.dialogs.crystals.PaymentSource;
 import com.btxtech.game.services.user.User;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.Date;
@@ -12,26 +15,29 @@ import java.util.Date;
  * Date: 18.01.13
  * Time: 18:24
  */
-@Entity(name = "PAYPAL_TRANSACTION")
-public class DbPayPalTransaction {
+@Entity(name = "PAYMENT_TRANSACTION")
+public class DbPaymentTransaction {
     @Id
     @GeneratedValue
     private Integer id;
     private Date date;
-    private int user;
+    private int userId;
     private String itemNumber;
     private String txnId;
     private String payerEmail;
+    @Enumerated(EnumType.STRING)
+    private PaymentSource paymentSource;
 
     /**
      * Used by hibernate
      */
-    public DbPayPalTransaction() {
+    public DbPaymentTransaction() {
     }
 
-    public DbPayPalTransaction(User user, String itemNumber, String txnId, String payerEmail) {
+    public DbPaymentTransaction(User user, String itemNumber, String txnId, String payerEmail, PaymentSource paymentSource) {
+        this.paymentSource = paymentSource;
         date = new Date();
-        this.user = user.getId();
+        this.userId = user.getId();
         this.itemNumber = itemNumber;
         this.txnId = txnId;
         this.payerEmail = payerEmail;
@@ -45,8 +51,8 @@ public class DbPayPalTransaction {
         return date;
     }
 
-    public int getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
     public String getItemNumber() {
@@ -61,6 +67,10 @@ public class DbPayPalTransaction {
         return payerEmail;
     }
 
+    public PaymentSource getPaymentSource() {
+        return paymentSource;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -70,7 +80,7 @@ public class DbPayPalTransaction {
             return false;
         }
 
-        DbPayPalTransaction that = (DbPayPalTransaction) o;
+        DbPaymentTransaction that = (DbPaymentTransaction) o;
         return id != null && id.equals(that.id);
     }
 

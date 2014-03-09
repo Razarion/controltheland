@@ -25,7 +25,7 @@
           </option>
           <option name="runMavenInBackground" value="true" />
           <option name="skipTests" value="false" />
-          <option name="vmOptions" value="-Xmx1000M -DnoGameEngine=false" />
+          <option name="vmOptions" value="-XX:MaxPermSize=256m -Xmx1000m -Xms256m -DnoGameEngine=false -Djava.util.logging.config.file=C:\dev\projects\razarion\code\controltheland\src\main\resources\logging.properties" />
         </MavenRunnerSettings>
       </option>
       <option name="myRunnerParameters">

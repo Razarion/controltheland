@@ -6,10 +6,11 @@ package com.btxtech.game.jsre.common;
  * Time: 17:54
  */
 public enum PayPalButton {
-    B_1000("PE44JA3J2AZ2J", "UDY49SFNKAJJE", "CRYST_1000", 5.0, 1000),
-    B_2200("T6UDKDH59Y43E", "QR8RUMJM2AFQ2", "CRYST_2200", 10.0, 2200),
-    B_4600("7LSHFG9LM88VL", "8PCH73BN969N6", "CRYST_4600", 20.0, 4600),
-    B_12500("YLVYNLXBSJXGY", "N2B23T28DUD8A", "CRYST_12500", 50.0, 12500);
+    B_1("PE44JA3J2AZ2J", "UDY49SFNKAJJE", "CRYST_2000", 3.0, 2000),
+    B_2("T6UDKDH59Y43E", "QR8RUMJM2AFQ2", "CRYST_4000", 5.0, 4000),
+    B_3("7LSHFG9LM88VL", "N2B23T28DUD8A", "CRYST_10000", 10.0, 10000),
+    B_4("YLVYNLXBSJXGY", "8PCH73BN969N6", "CRYST_30000", 25.0, 30000),
+    B_5("YLVYNLXBSJXGY", "DCT6H5J9PBAP6", "CRYST_70000", 50.0, 70000); // TODO fix hostedButtonId
     private String hostedButtonId;
     private String sandboxHostedButtonId;
     private String itemNumber;

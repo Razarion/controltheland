@@ -593,8 +593,8 @@ public class TestHistoryService extends AbstractServiceTest {
         createAndLoginUser("U1");
         int userId = getUserState().getUser();
         String userIdString = Integer.toString(userId);
-        financeService.crystalsBought(userIdString, "CRYST_1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
-        financeService.crystalsBought(userIdString, "CRYST_2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBoughtViaPaypal(userIdString, "CRYST_1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBoughtViaPaypal(userIdString, "CRYST_2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

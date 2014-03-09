@@ -32,6 +32,7 @@
         <g:MenuItem text="{msg.menuGetCrystals}" title="{msg.menuTooltipGetCrystals}">
             <g:MenuBar vertical="true">
                 <g:MenuItem text="{msg.menuBuyPaypal}" ui:field="buyPaypal"/>
+                <g:MenuItem text="{msg.menuBuyFacebook}" ui:field="buyFacebook"/>
                 <g:MenuItem text="{msg.menuOverviewGetCrystals}" ui:field="overviewCrystals"/>
             </g:MenuBar>
         </g:MenuItem>
