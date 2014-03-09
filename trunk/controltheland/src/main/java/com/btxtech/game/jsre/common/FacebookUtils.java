@@ -25,6 +25,7 @@ import java.util.logging.Logger;
  * Time: 17:15
  */
 public class FacebookUtils {
+    public static final String GRAPH_URL = "https://graph.facebook.com";
     private static final String RAZARION_APP_URL = "https://apps.facebook.com/razarion/";
     private static Logger log = Logger.getLogger(FacebookUtils.class.getName());
     private static boolean isLoadedChecked = false;
@@ -37,6 +38,7 @@ public class FacebookUtils {
         $wnd.RazFacebookUtilFbCallCheckAppConnectionState = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackCheckAppConnectionState(ZLjava/lang/String;));
         $wnd.RazFacebookUtilFbCallbackGetEmail = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackReadEmail(Ljava/lang/String;));
         $wnd.RazFacebookUtilFbCallbackLogout = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallLogout());
+        $wnd.RazFacebookUtilFbCallbackPayDialog = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallPayDialog(Lcom/google/gwt/core/client/JavaScriptObject;));
     }-*/;
 
     public static void invite() {
@@ -277,4 +279,44 @@ public class FacebookUtils {
             return stringBuilder.toString().trim();
         }
     }
+
+    public static void showPayDialog(FacebookProducts product) {
+        try {
+            if (checkFbApiLoaded("showPayDialog")) {
+                nativeShowPayDialog(product.getProductUrl());
+            }
+        } catch (Exception e) {
+            ClientExceptionHandler.handleException("FacebookUtils.postToFeedLevelUp()", e);
+
+        }
+    }
+
+
+    private static native void nativeShowPayDialog(String product) /*-{
+        $wnd.FB.ui({
+                method: 'pay',
+                action: 'purchaseitem',
+                product: product
+                // quantity: 10                 // optional, defaults to 1
+                // request_id: 'YOUR_REQUEST_ID' // optional, must be unique for each payment
+            },
+            function (response) {
+                $wnd.RazFacebookUtilFbCallbackPayDialog(response);
+            }
+        );
+    }-*/;
+
+    public static void fbUiCallPayDialog(JavaScriptObject object) {
+        if (object != null) {
+            try {
+                JSONObject jsonObject = new JSONObject(object);
+                log.severe("FacebookUtils pay dialog: " + jsonObject.toString());
+            } catch (Exception e) {
+                ClientExceptionHandler.handleException("FacebookUtils pay dialog handle return value", e);
+            }
+        } else {
+            GwtCommon.logToBrowserConsole("object == null");
+        }
+    }
+
 }

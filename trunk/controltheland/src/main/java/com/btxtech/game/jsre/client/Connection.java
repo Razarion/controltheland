@@ -71,6 +71,7 @@ import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.packets.BaseLostPacket;
 import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.CrystalPacket;
 import com.btxtech.game.jsre.common.packets.EnergyPacket;
 import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
 import com.btxtech.game.jsre.common.packets.LevelPacket;
@@ -337,6 +338,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     MenuBarCockpit.getInstance().onUserAttentionPacket((UserAttentionPacket) packet);
                 } else if (packet instanceof StorablePacket) {
                     handleStorablePacket((StorablePacket) packet);
+                } else if (packet instanceof CrystalPacket) {
+                    CrystalPacket crystalPacket = (CrystalPacket) packet;
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.tanksCrystalBoughtDialogTitle(), ClientI18nHelper.CONSTANTS.tanksCrystalBoughtDialog(crystalPacket.getDelta(), crystalPacket.getValue())), DialogManager.Type.STACK_ABLE);
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }

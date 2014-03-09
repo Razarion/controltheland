@@ -1,5 +1,6 @@
 package com.btxtech.game.services.common;
 
+import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.mgmt.RequestHelper;
 import com.btxtech.game.services.user.UserService;
 import org.apache.commons.logging.Log;
@@ -15,6 +16,9 @@ public class ExceptionHandler {
     private static Log log = LogFactory.getLog(ExceptionHandler.class);
     private static ApplicationContext applicationContext;
 
+    /**
+     * Create a new com.btxtech.game.services.connection.Session if not available.
+     */
     public static void handleException(Throwable t, String message) {
         log.error("--------------------------------------------------------------------");
         UserService userService = null;

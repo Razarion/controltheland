@@ -1,5 +1,6 @@
 package com.btxtech.game.services.finance;
 
+import com.btxtech.game.jsre.client.dialogs.crystals.PaymentSource;
 import com.btxtech.game.services.user.UserDoesNotExitException;
 import com.btxtech.game.services.user.UserState;
 
@@ -11,5 +12,7 @@ import com.btxtech.game.services.user.UserState;
 public interface FinanceService {
     void crystalsBought(int crystalsBought, UserState userState);
 
-    void crystalsBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException, TransactionAlreadyProcessedException, WrongPaymentStatusException;
+    void crystalsBoughtViaPaypal(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException, TransactionAlreadyProcessedException, WrongPaymentStatusException;
+
+    void crystalsBoughtViaFacebook(FacebookPaymentUpdate facebookPaymentUpdate) throws WrongPaymentStatusException, UserDoesNotExitException, TransactionAlreadyProcessedException;
 }

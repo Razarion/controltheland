@@ -51,7 +51,7 @@ public class PayPalIpnHandlerController implements Controller {
             params = buildParamString(request, encoding);
             String res = sendVerification(url, params);
             if (res.equalsIgnoreCase("VERIFIED")) {
-                financeService.crystalsBought(request.getParameter("custom"),
+                financeService.crystalsBoughtViaPaypal(request.getParameter("custom"),
                         request.getParameter("item_number"),
                         request.getParameter("mc_gross"),
                         request.getParameter("mc_currency"),

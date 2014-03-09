@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  */
 public class BotItemContainer {
     private static final int KILL_ITERATION_MAXIMUM = 100;
-    private final HashMap<SyncBaseItem, BotSyncBaseItem> botItems = new HashMap<SyncBaseItem, BotSyncBaseItem>();
+    private final HashMap<SyncBaseItem, BotSyncBaseItem> botItems = new HashMap<>();
     private Need need;
     private Logger log = Logger.getLogger(BotItemContainer.class.getName());
     private PlanetServices planetServices;
@@ -91,7 +91,7 @@ public class BotItemContainer {
     }
 
     public Collection<BotSyncBaseItem> getAllIdleAttackers() {
-        Collection<BotSyncBaseItem> idleAttackers = new ArrayList<BotSyncBaseItem>();
+        Collection<BotSyncBaseItem> idleAttackers = new ArrayList<>();
         synchronized (botItems) {
             for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
                 if (botSyncBaseItem.isIdle()) {
@@ -133,13 +133,13 @@ public class BotItemContainer {
                     try {
                         planetServices.getItemService().killSyncItem(newItem, null, true, false);
                     } catch (Exception e) {
-                        log.log(Level.WARNING, "BotItemContainer.updateState() error destroing item: " + newItem + " on bot: " + botName, e);
+                        log.log(Level.WARNING, "BotItemContainer.updateState() error destroying item: " + newItem + " on bot: " + botName, e);
                     }
                 }
             }
         }
 
-        ArrayList<BotSyncBaseItem> remove = new ArrayList<BotSyncBaseItem>();
+        ArrayList<BotSyncBaseItem> remove = new ArrayList<>();
         synchronized (botItems) {
             for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
                 if (botSyncBaseItem.isAlive()) {
@@ -255,7 +255,7 @@ public class BotItemContainer {
     }
 
     private class CurrentBuildups {
-        private HashMap<Integer, BotItemConfig> builders = new HashMap<Integer, BotItemConfig>();
+        private HashMap<Integer, BotItemConfig> builders = new HashMap<>();
 
         public int getBuildupCount(BotItemConfig botItemConfig) {
             int count = 0;

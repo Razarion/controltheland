@@ -1140,7 +1140,7 @@ public class HistoryServiceImpl implements HistoryService {
             case BOT_ENRAGE_UP:
                 return "You have angered " + dbHistoryElement.getBotName() + ": " + dbHistoryElement.getBotInfo();
             case CRYSTALS_BOUGHT:
-                return "Bought " + dbHistoryElement.getDeltaCrystals() + " crystals via PayPal";
+                return "Bought " + dbHistoryElement.getDeltaCrystals() + " crystals";
             case UNLOCKED_ITEM:
                 return "Item unlocked " + dbHistoryElement.getItemTypeName();
             case UNLOCKED_QUEST:

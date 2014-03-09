@@ -88,7 +88,7 @@ public class TestConditionServiceCrystals extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        financeService.crystalsBought(userIdString, "CRYST_1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBoughtViaPaypal(userIdString, "CRYST_1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

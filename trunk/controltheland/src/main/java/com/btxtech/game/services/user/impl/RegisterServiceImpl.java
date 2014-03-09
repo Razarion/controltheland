@@ -233,7 +233,7 @@ public class RegisterServiceImpl implements RegisterService {
                     message.setTo(user.getEmail());
                     message.setFrom(MgmtServiceImpl.REPLY_EMAIL);
                     message.setSubject(serverI18nHelper.getString("emailSubject"));
-                    Map<Object, Object> model = new HashMap<>();
+                    Map<String, Object> model = new HashMap<>();
                     model.put("greeting", serverI18nHelper.getString("emailVeriGreeting", new Object[]{user.getUsername()}));
                     model.put("main", serverI18nHelper.getString("emailVeriMain"));
                     model.put("link", link);
@@ -258,7 +258,7 @@ public class RegisterServiceImpl implements RegisterService {
                     message.setTo(user.getEmail());
                     message.setFrom(MgmtServiceImpl.REPLY_EMAIL);
                     message.setSubject(serverI18nHelper.getString("emailForgotPasswordSubject"));
-                    Map<Object, Object> model = new HashMap<>();
+                    Map<String, Object> model = new HashMap<>();
                     model.put("greeting", serverI18nHelper.getString("emailVeriGreeting", new Object[]{user.getUsername()}));
                     model.put("main1", serverI18nHelper.getString("emailForgotPasswordSubjectMain1"));
                     model.put("main2", serverI18nHelper.getString("emailForgotPasswordSubjectMain2"));

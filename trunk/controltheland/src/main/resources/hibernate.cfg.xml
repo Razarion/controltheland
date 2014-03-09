@@ -164,7 +164,7 @@
         <mapping class="com.btxtech.game.services.common.db.DbI18nString"/>
         <mapping class="com.btxtech.game.services.common.db.DbProperty"/>
         <!-- Finance -->
-        <mapping class="com.btxtech.game.services.finance.DbPayPalTransaction"/>
+        <mapping class="com.btxtech.game.services.finance.DbPaymentTransaction"/>
         <!-- Guild -->
         <mapping class="com.btxtech.game.services.user.DbGuild"/>
         <mapping class="com.btxtech.game.services.user.DbGuildMember"/>
