@@ -36,7 +36,7 @@
           <option name="goals">
             <list>
               <option value="-e" />
-              <option value="org.codehaus.mojo:gwt-maven-plugin:2.5.1:clean" />
+              <option value="gwt:clean" />
               <option value="clean" />
               <option value="package" />
             </list>

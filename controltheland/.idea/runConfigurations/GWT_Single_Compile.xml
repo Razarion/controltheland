@@ -25,7 +25,7 @@
           </option>
           <option name="runMavenInBackground" value="true" />
           <option name="skipTests" value="false" />
-          <option name="vmOptions" value="-D_gwt.module=com.btxtech.game.jsre.Game -D_gwt.module=com.btxtech.game.jsre.Playback -D_gwt.module=com.btxtech.game.jsre.Pathfinding -D_gwt.module=com.btxtech.game.jsre.ItemTypeEditor -Dgwt.module=com.btxtech.game.jsre.MapEditor -D_gwt.module=com.btxtech.game.jsre.RegionEditor -D_gwt.module=com.btxtech.game.jsre.ImageSpriteMapEditor -D_gwt.style=DETAILED -D_gwt.draftCompile=true" />
+          <option name="vmOptions" value="-D_gwt.module=com.btxtech.game.jsre.Game -Dgwt.module=com.btxtech.game.jsre.Playback -D_gwt.module=com.btxtech.game.jsre.Pathfinding -D_gwt.module=com.btxtech.game.jsre.ItemTypeEditor -D_gwt.module=com.btxtech.game.jsre.MapEditor -D_gwt.module=com.btxtech.game.jsre.RegionEditor -D_gwt.module=com.btxtech.game.jsre.ImageSpriteMapEditor -D_gwt.style=DETAILED -D_gwt.draftCompile=true" />
         </MavenRunnerSettings>
       </option>
       <option name="myRunnerParameters">
@@ -35,7 +35,7 @@
           </option>
           <option name="goals">
             <list>
-              <option value="org.codehaus.mojo:gwt-maven-plugin:2.5.1:compile" />
+              <option value="gwt:compile" />
             </list>
           </option>
           <option name="profilesMap">

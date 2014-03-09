@@ -35,7 +35,7 @@
           </option>
           <option name="goals">
             <list>
-              <option value="org.codehaus.mojo:gwt-maven-plugin:2.5.1:debug" />
+              <option value="gwt:debug" />
             </list>
           </option>
           <option name="profilesMap">
