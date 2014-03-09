@@ -74,7 +74,7 @@ public class TestConditionServiceCrystals extends AbstractServiceTest {
 
         ServerConditionService serverConditionServiceMock = EasyMock.createStrictMock(ServerConditionService.class);
         serverConditionServiceMock.onCrystalsIncreased(createUserStateMatcher("U1"), EasyMock.eq(false), EasyMock.eq(100));
-        serverConditionServiceMock.onCrystalsIncreased(createUserStateMatcher("U1"), EasyMock.eq(false), EasyMock.eq(1000));
+        serverConditionServiceMock.onCrystalsIncreased(createUserStateMatcher("U1"), EasyMock.eq(false), EasyMock.eq(2000));
         EasyMock.replay(serverConditionServiceMock);
         setPrivateField(FinanceServiceImpl.class, financeService, "serverConditionService", serverConditionServiceMock);
 
@@ -88,7 +88,7 @@ public class TestConditionServiceCrystals extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        financeService.crystalsBoughtViaPaypal(userIdString, "CRYST_1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBoughtViaPaypal(userIdString, "CRYST_2000", "3", "EUR", "1", "payer email", "finance@razarion.com", "Completed", "1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

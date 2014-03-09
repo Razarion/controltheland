@@ -12,12 +12,15 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.rest.RestClient;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.bot.DbBotEnragementStateConfig;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
 import com.btxtech.game.services.finance.FinanceService;
+import com.btxtech.game.services.finance.TestFinanceService;
+import com.btxtech.game.services.finance.impl.FinanceServiceImpl;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryArtifactCount;
 import com.btxtech.game.services.inventory.DbInventoryItem;
@@ -585,7 +588,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testCrystalsBought() throws Exception {
+    public void testCrystalsBoughtPaypal() throws Exception {
         configureSimplePlanetNoResources();
 
         beginHttpSession();
@@ -593,8 +596,8 @@ public class TestHistoryService extends AbstractServiceTest {
         createAndLoginUser("U1");
         int userId = getUserState().getUser();
         String userIdString = Integer.toString(userId);
-        financeService.crystalsBoughtViaPaypal(userIdString, "CRYST_1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
-        financeService.crystalsBoughtViaPaypal(userIdString, "CRYST_2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBoughtViaPaypal(userIdString, "CRYST_2000", "3", "EUR", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.crystalsBoughtViaPaypal(userIdString, "CRYST_4000", "5", "EUR", "2", "payer email", "finance@razarion.com", "Completed", "1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -607,11 +610,53 @@ public class TestHistoryService extends AbstractServiceTest {
         }
         Assert.assertEquals(2, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
-        Assert.assertEquals("Bought 2200 crystals via PayPal", displayHistoryElements.get(0).getMessage());
-        Assert.assertEquals("Bought 1000 crystals via PayPal", displayHistoryElements.get(1).getMessage());
+        Assert.assertEquals("Bought 4000 crystals", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Bought 2000 crystals", displayHistoryElements.get(1).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void testCrystalsBoughtFacebook() throws Exception {
+        configureSimplePlanetNoResources();
+
+        // setup mock
+        RestClient restClientMock = EasyMock.createStrictMock(RestClient.class);
+        EasyMock.expect(restClientMock.getPaymentObject("1234")).andReturn(TestFinanceService.createFacebookPaymentObject("1234", "completed", "facebookUserId1", "http://www.razarion.com/fbproducts/CRYST_2000.html", 3.0, "EUR"));
+        EasyMock.expect(restClientMock.getPaymentObject("2234")).andReturn(TestFinanceService.createFacebookPaymentObject("2234", "completed", "facebookUserId1", "http://www.razarion.com/fbproducts/CRYST_4000.html", 5.0, "EUR"));
+        EasyMock.replay(restClientMock);
+        setPrivateField(FinanceServiceImpl.class, financeService, "restClient", restClientMock);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginFacebookUser("facebookUserId1", "nickname1");
+        Assert.assertEquals(0, getUserState().getCrystals());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Buy
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        financeService.crystalsBoughtViaFacebook(TestFinanceService.createFacebookPaymentUpdate("1234"));
+        financeService.crystalsBoughtViaFacebook(TestFinanceService.createFacebookPaymentUpdate("2234"));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify history
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("nickname1"), 0, 1000);
+        System.out.println("----- u1 Target-----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        Assert.assertEquals(2, displayHistoryElements.size());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+        Assert.assertEquals("Bought 4000 crystals", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Bought 2000 crystals", displayHistoryElements.get(1).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 
     @Test
     @DirtiesContext
@@ -780,40 +825,40 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals(0, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(10, historyElementInfo.getHistoryElements().size());
-        Assert.assertEquals("Bought 10 crystals via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
-        Assert.assertEquals("Bought 9 crystals via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
-        Assert.assertEquals("Bought 8 crystals via PayPal", historyElementInfo.getHistoryElements().get(2).getMessage());
-        Assert.assertEquals("Bought 7 crystals via PayPal", historyElementInfo.getHistoryElements().get(3).getMessage());
-        Assert.assertEquals("Bought 6 crystals via PayPal", historyElementInfo.getHistoryElements().get(4).getMessage());
-        Assert.assertEquals("Bought 5 crystals via PayPal", historyElementInfo.getHistoryElements().get(5).getMessage());
-        Assert.assertEquals("Bought 4 crystals via PayPal", historyElementInfo.getHistoryElements().get(6).getMessage());
-        Assert.assertEquals("Bought 3 crystals via PayPal", historyElementInfo.getHistoryElements().get(7).getMessage());
-        Assert.assertEquals("Bought 2 crystals via PayPal", historyElementInfo.getHistoryElements().get(8).getMessage());
-        Assert.assertEquals("Bought 1 crystals via PayPal", historyElementInfo.getHistoryElements().get(9).getMessage());
+        Assert.assertEquals("Bought 10 crystals", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought 9 crystals", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Bought 8 crystals", historyElementInfo.getHistoryElements().get(2).getMessage());
+        Assert.assertEquals("Bought 7 crystals", historyElementInfo.getHistoryElements().get(3).getMessage());
+        Assert.assertEquals("Bought 6 crystals", historyElementInfo.getHistoryElements().get(4).getMessage());
+        Assert.assertEquals("Bought 5 crystals", historyElementInfo.getHistoryElements().get(5).getMessage());
+        Assert.assertEquals("Bought 4 crystals", historyElementInfo.getHistoryElements().get(6).getMessage());
+        Assert.assertEquals("Bought 3 crystals", historyElementInfo.getHistoryElements().get(7).getMessage());
+        Assert.assertEquals("Bought 2 crystals", historyElementInfo.getHistoryElements().get(8).getMessage());
+        Assert.assertEquals("Bought 1 crystals", historyElementInfo.getHistoryElements().get(9).getMessage());
         // Verify 2
         historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(2, 5));
         Assert.assertEquals(2, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(5, historyElementInfo.getHistoryElements().size());
-        Assert.assertEquals("Bought 8 crystals via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
-        Assert.assertEquals("Bought 7 crystals via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
-        Assert.assertEquals("Bought 6 crystals via PayPal", historyElementInfo.getHistoryElements().get(2).getMessage());
-        Assert.assertEquals("Bought 5 crystals via PayPal", historyElementInfo.getHistoryElements().get(3).getMessage());
-        Assert.assertEquals("Bought 4 crystals via PayPal", historyElementInfo.getHistoryElements().get(4).getMessage());
+        Assert.assertEquals("Bought 8 crystals", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought 7 crystals", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Bought 6 crystals", historyElementInfo.getHistoryElements().get(2).getMessage());
+        Assert.assertEquals("Bought 5 crystals", historyElementInfo.getHistoryElements().get(3).getMessage());
+        Assert.assertEquals("Bought 4 crystals", historyElementInfo.getHistoryElements().get(4).getMessage());
         // Verify 3
         historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(8, 2));
         Assert.assertEquals(8, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(2, historyElementInfo.getHistoryElements().size());
-        Assert.assertEquals("Bought 2 crystals via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
-        Assert.assertEquals("Bought 1 crystals via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Bought 2 crystals", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought 1 crystals", historyElementInfo.getHistoryElements().get(1).getMessage());
         // Verify 4
         historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(8, 4));
         Assert.assertEquals(8, historyElementInfo.getStartRow());
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
         Assert.assertEquals(2, historyElementInfo.getHistoryElements().size());
-        Assert.assertEquals("Bought 2 crystals via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
-        Assert.assertEquals("Bought 1 crystals via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Bought 2 crystals", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought 1 crystals", historyElementInfo.getHistoryElements().get(1).getMessage());
         // Verify 5
         historyElementInfo = historyService.getHistoryElements(createUserHistoryFilter(10, 6));
         Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
