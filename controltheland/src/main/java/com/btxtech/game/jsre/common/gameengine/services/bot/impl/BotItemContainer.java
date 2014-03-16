@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -211,7 +212,13 @@ public class BotItemContainer {
                 botSyncBuilder.buildUnit(toBeBuilt);
             } else {
                 Index position = planetServices.getCollisionService().getFreeRandomPosition(toBeBuilt, getSafeRegion(botItemConfig.getRegion()), 0, false, true);
-                botSyncBuilder.buildBuilding(position, toBeBuilt);
+                try {
+                    botSyncBuilder.buildBuilding(position, toBeBuilt);
+                } catch (PathCanNotBeFoundException e) {
+                    log.warning("buildBuilding failed for bot: " + botName + " " + planetServices.getPlanetInfo().getPlanetLiteInfo() + " " + e.getMessage());
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "buildBuilding failed for bot: " + botName + " " + planetServices.getPlanetInfo().getPlanetLiteInfo(), e);
+                }
             }
             currentBuildups.startBuildup(botItemConfig, botSyncBuilder.getSyncBaseItem());
         }
