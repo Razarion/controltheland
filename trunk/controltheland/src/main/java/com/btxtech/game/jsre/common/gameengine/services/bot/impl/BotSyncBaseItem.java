@@ -78,12 +78,9 @@ public class BotSyncBaseItem {
         try {
             planetServices.getActionService().build(syncBaseItem, position, toBeBuilt);
             clearIdle();
-        } catch (PathCanNotBeFoundException e) {
-            setIdle();
-            log.warning("BotSyncBaseItem: " + e.getMessage());
         } catch (Exception e) {
             setIdle();
-            log.log(Level.SEVERE, "", e);
+            throw e;
         }
     }
 
