@@ -125,15 +125,15 @@ public interface MovableService extends RemoteService {
 
     void sellItem(String startUuid, Id id);
 
-    InventoryInfo getInventory(Integer filterPlanetId, boolean filterLevel);
+    InventoryInfo getInventory();
 
-    InventoryInfo assembleInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel);
+    InventoryInfo assembleInventoryItem(int inventoryItemId);
 
     void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced);
 
-    InventoryInfo buyInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel);
+    InventoryInfo buyInventoryItem(int inventoryItemId);
 
-    InventoryInfo buyInventoryArtifact(int inventoryArtifactId, Integer filterPlanetId, boolean filterLevel);
+    InventoryInfo buyInventoryArtifact(int inventoryArtifactId);
 
     QuestOverview loadQuestOverview();
 

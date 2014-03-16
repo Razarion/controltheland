@@ -58,7 +58,7 @@ public class MarketItem extends Composite implements HasText {
 
             @Override
             protected void onBuySilent(int crystalCost, int crystalBalance) {
-                Connection.getInstance().buyInventoryItem(inventoryItemId, inventoryDialog.getFilterPlanetId(), inventoryDialog.isFilterLevel(), inventoryDialog);
+                Connection.getInstance().buyInventoryItem(inventoryItemId, inventoryDialog);
             }
         };
     }

@@ -54,8 +54,6 @@ public class DbInventoryArtifact implements CrudChild {
     @Basic(fetch = FetchType.LAZY)
     private byte[] imageData;
     private Integer crystalCost;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbInventoryArtifact")
-    private Collection<DbBoxItemTypePossibility> dbBoxItemTypePossibilities;
 
     @Override
     public Integer getId() {
@@ -121,58 +119,6 @@ public class DbInventoryArtifact implements CrudChild {
 
     public void setCrystalCost(Integer crystalCost) {
         this.crystalCost = crystalCost;
-    }
-
-    public Collection<DbPlanet> getPlanets() {
-        Collection<DbPlanet> dbPlanets = new HashSet<>();
-        if (dbBoxItemTypePossibilities == null) {
-            return dbPlanets;
-        }
-        for (DbBoxItemTypePossibility dbBoxItemTypePossibility : dbBoxItemTypePossibilities) {
-            DbBoxItemType dbBoxItemType = dbBoxItemTypePossibility.getParent();
-            if (dbBoxItemType != null) {
-                Collection<DbBoxRegionCount> dbBoxRegionCounts = dbBoxItemType.getDbBoxRegionCounts();
-                if (dbBoxRegionCounts == null) {
-                    continue;
-                }
-                for (DbBoxRegionCount dbBoxRegionCount : dbBoxRegionCounts) {
-                    if (dbBoxRegionCount == null) {
-                        continue;
-                    }
-                    DbBoxRegion dbBoxRegion = dbBoxRegionCount.getParent();
-                    if (dbBoxRegion != null) {
-                        DbPlanet dbPlanet = dbBoxRegion.getParent();
-                        if (dbPlanet != null) {
-                            dbPlanets.add(dbPlanet);
-                        }
-                    }
-                }
-            }
-        }
-        return dbPlanets;
-    }
-
-    public Collection<DbBaseItemType> getBaseItemTypes() {
-        Collection<DbBaseItemType> dbBaseItemTypes = new HashSet<>();
-        if (dbBoxItemTypePossibilities == null) {
-            return dbBaseItemTypes;
-        }
-        for (DbBoxItemTypePossibility dbBoxItemTypePossibility : dbBoxItemTypePossibilities) {
-            DbBoxItemType dbBoxItemType = dbBoxItemTypePossibility.getParent();
-            if (dbBoxItemType != null) {
-                Collection<DbBaseItemType> baseItemTypes = dbBoxItemType.getDbBaseItemTypes();
-                if (baseItemTypes == null) {
-                    continue;
-                }
-                for (DbBaseItemType dbBaseItemType : baseItemTypes) {
-                    if (dbBaseItemType == null) {
-                        continue;
-                    }
-                    dbBaseItemTypes.add(dbBaseItemType);
-                }
-            }
-        }
-        return dbBaseItemTypes;
     }
 
     @Override

@@ -483,9 +483,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public InventoryInfo getInventory(Integer filterPlanetId, boolean filterLevel) {
+    public InventoryInfo getInventory() {
         try {
-            return globalInventoryService.getInventory(filterPlanetId, filterLevel);
+            return globalInventoryService.getInventory();
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;
@@ -493,10 +493,10 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public InventoryInfo assembleInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel) {
+    public InventoryInfo assembleInventoryItem(int inventoryItemId) {
         try {
             globalInventoryService.assembleInventoryItem(inventoryItemId);
-            return globalInventoryService.getInventory(filterPlanetId, filterLevel);
+            return globalInventoryService.getInventory();
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;
@@ -513,14 +513,14 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public InventoryInfo buyInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel) {
+    public InventoryInfo buyInventoryItem(int inventoryItemId) {
         try {
             globalInventoryService.buyInventoryItem(inventoryItemId);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }
         try {
-            return globalInventoryService.getInventory(filterPlanetId, filterLevel);
+            return globalInventoryService.getInventory();
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;
@@ -528,14 +528,14 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public InventoryInfo buyInventoryArtifact(int inventoryArtifactId, Integer filterPlanetId, boolean filterLevel) {
+    public InventoryInfo buyInventoryArtifact(int inventoryArtifactId) {
         try {
             globalInventoryService.buyInventoryArtifact(inventoryArtifactId);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }
         try {
-            return globalInventoryService.getInventory(filterPlanetId, filterLevel);
+            return globalInventoryService.getInventory();
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;

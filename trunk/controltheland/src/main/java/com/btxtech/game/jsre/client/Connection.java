@@ -126,7 +126,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     public static final Connection INSTANCE = new Connection();
     private GameInfo gameInfo;
     private Collection<SyncItemInfo> syncInfos;
-    private ArrayList<BaseCommand> commandQueue = new ArrayList<BaseCommand>();
+    private ArrayList<BaseCommand> commandQueue = new ArrayList<>();
     private static Logger log = Logger.getLogger(Connection.class.getName());
     private GameEngineMode gameEngineMode;
     private MovableServiceAsync movableServiceAsync = GWT.create(MovableService.class);
@@ -290,7 +290,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         if (packets == null) {
             return;
         }
-        Collection<SyncItemInfo> syncItemInfos = new ArrayList<SyncItemInfo>();
+        Collection<SyncItemInfo> syncItemInfos = new ArrayList<>();
         for (Packet packet : packets) {
             try {
                 if (packet instanceof BaseChangedPacket) {
@@ -333,7 +333,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 } else if (packet instanceof BaseLostPacket) {
                     StartPointMode.getInstance().onBaseLost((BaseLostPacket) packet);
                 } else if (packet instanceof UserPacket) {
-                    ClientUserService.getInstance().onUserPacket((UserPacket)packet);
+                    ClientUserService.getInstance().onUserPacket((UserPacket) packet);
                 } else if (packet instanceof UserAttentionPacket) {
                     MenuBarCockpit.getInstance().onUserAttentionPacket((UserAttentionPacket) packet);
                 } else if (packet instanceof StorablePacket) {
@@ -677,9 +677,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void loadInventory(Integer filterPlanetId, boolean filterLevel, final InventoryDialog inventoryDialog) {
+    public void loadInventory(final InventoryDialog inventoryDialog) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.getInventory(filterPlanetId, filterLevel, new AsyncCallback<InventoryInfo>() {
+            movableServiceAsync.getInventory(new AsyncCallback<InventoryInfo>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     handleDisconnection("loadInventory", caught);
@@ -693,9 +693,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void assembleInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel, final InventoryDialog inventoryDialog) {
+    public void assembleInventoryItem(int inventoryItemId, final InventoryDialog inventoryDialog) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.assembleInventoryItem(inventoryItemId, filterPlanetId, filterLevel, new AsyncCallback<InventoryInfo>() {
+            movableServiceAsync.assembleInventoryItem(inventoryItemId, new AsyncCallback<InventoryInfo>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     handleDisconnection("assembleInventoryItem", caught);
@@ -725,9 +725,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void buyInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel, final InventoryDialog inventoryDialog) {
+    public void buyInventoryItem(int inventoryItemId, final InventoryDialog inventoryDialog) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.buyInventoryItem(inventoryItemId, filterPlanetId, filterLevel, new AsyncCallback<InventoryInfo>() {
+            movableServiceAsync.buyInventoryItem(inventoryItemId, new AsyncCallback<InventoryInfo>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     handleDisconnection("buyInventoryItem", caught);
@@ -741,9 +741,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void buyInventoryArtifact(int inventoryArtifactId, Integer filterPlanetId, boolean filterLevel, final InventoryDialog inventoryDialog) {
+    public void buyInventoryArtifact(int inventoryArtifactId, final InventoryDialog inventoryDialog) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.buyInventoryArtifact(inventoryArtifactId, filterPlanetId, filterLevel, new AsyncCallback<InventoryInfo>() {
+            movableServiceAsync.buyInventoryArtifact(inventoryArtifactId, new AsyncCallback<InventoryInfo>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     handleDisconnection("buyInventoryArtifact", caught);
