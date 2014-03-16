@@ -49,6 +49,9 @@ import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.terrain.RegionService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelItemTypeLimitation;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.easymock.EasyMock;
@@ -85,6 +88,8 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     private ServerGlobalServices serverGlobalServices;
     @Autowired
     private RegionService regionService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
     private Log log = LogFactory.getLog(TestInventoryServiceImpl.class);
 
     @Test
@@ -872,7 +877,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        Base base = new Base(planetSystemService.getPlanet(TEST_PLANET_1_ID),1);
+        Base base = new Base(planetSystemService.getPlanet(TEST_PLANET_1_ID), 1);
         SimpleBase simpleBase = base.getSimpleBase();
         DbBoxItemType dbBoxItemType1 = new DbBoxItemType();
         setupDbItemTypeId(dbBoxItemType1, 1);
@@ -1190,7 +1195,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Verify new
-        InventoryInfo inventoryInfo = globalInventoryService.getInventory(null, false);
+        InventoryInfo inventoryInfo = globalInventoryService.getInventory(/*null, false*/);
         Assert.assertEquals(0, inventoryInfo.getCrystals());
         Assert.assertTrue(inventoryInfo.getOwnInventoryArtifacts().isEmpty());
         Assert.assertTrue(inventoryInfo.getOwnInventoryItems().isEmpty());
@@ -1201,7 +1206,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         userState.setCrystals(15);
         userState.addInventoryArtifact(dbInventoryArtifact1.getId());
         // Verify
-        inventoryInfo = globalInventoryService.getInventory(null, false);
+        inventoryInfo = globalInventoryService.getInventory(/*null, false*/);
         Assert.assertEquals(15, inventoryInfo.getCrystals());
         Assert.assertEquals(1, inventoryInfo.getOwnInventoryArtifacts().size());
         Assert.assertEquals(1, (int) inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
@@ -1213,7 +1218,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         userState.addInventoryArtifact(dbInventoryArtifact1.getId());
         userState.addInventoryArtifact(dbInventoryArtifact2.getId());
         // Verify
-        inventoryInfo = globalInventoryService.getInventory(null, false);
+        inventoryInfo = globalInventoryService.getInventory(/*null, false*/);
         Assert.assertEquals(15, inventoryInfo.getCrystals());
         Assert.assertEquals(2, inventoryInfo.getOwnInventoryArtifacts().size());
         Assert.assertEquals(2, (int) inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
@@ -1225,7 +1230,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         userState = userService.getUserState();
         userState.addInventoryItem(dbInventoryItem2.getId());
         // Verify
-        inventoryInfo = globalInventoryService.getInventory(null, false);
+        inventoryInfo = globalInventoryService.getInventory(/*null, false*/);
         Assert.assertEquals(15, inventoryInfo.getCrystals());
         Assert.assertEquals(2, inventoryInfo.getOwnInventoryArtifacts().size());
         Assert.assertEquals(2, (int) inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
@@ -1239,7 +1244,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         userState.addInventoryItem(dbInventoryItem2.getId());
         userState.addInventoryItem(dbInventoryItem1.getId());
         // Verify
-        inventoryInfo = globalInventoryService.getInventory(null, false);
+        inventoryInfo = globalInventoryService.getInventory(/*null, false*/);
         Assert.assertEquals(15, inventoryInfo.getCrystals());
         Assert.assertEquals(2, inventoryInfo.getOwnInventoryArtifacts().size());
         Assert.assertEquals(2, (int) inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
@@ -1255,11 +1260,18 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void getInventoryFilter() throws Exception {
-        configureSimplePlanetNoResources();
+    public void checkLevelFilter() throws Exception {
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        // TEST_ATTACK_ITEM_ID_2 in level 2
+        DbLevel dbLevel2 = userGuidanceService.getDbLevel(TEST_LEVEL_3_REAL_ID);
+        DbLevelItemTypeLimitation dbLevelItemTypeLimitation = dbLevel2.getItemTypeLimitationCrud().createDbChild();
+        dbLevelItemTypeLimitation.setDbBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID_2));
+        dbLevelItemTypeLimitation.setCount(10);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel2);
+        userGuidanceService.activateLevels();
         // Artifacts
         DbInventoryArtifact dbInventoryArtifact1 = globalInventoryService.getArtifactCrud().createDbChild();
         DbInventoryArtifact dbInventoryArtifact2 = globalInventoryService.getArtifactCrud().createDbChild();
@@ -1275,49 +1287,36 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         dbInventoryArtifactCount1.setDbInventoryArtifact(dbInventoryArtifact2);
         globalInventoryService.getItemCrud().updateDbChild(dbInventoryItem1);
         DbInventoryItem dbInventoryItem2 = globalInventoryService.getItemCrud().createDbChild();
+        dbInventoryItem2.setDbBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID_2)); // Not in level 1
         DbInventoryArtifactCount dbInventoryArtifactCount2 = dbInventoryItem2.getArtifactCountCrud().createDbChild();
         dbInventoryArtifactCount2.setCount(3);
         dbInventoryArtifactCount2.setDbInventoryArtifact(dbInventoryArtifact3);
         globalInventoryService.getItemCrud().updateDbChild(dbInventoryItem2);
-        // Create Box
-        DbBoxItemType dbBoxItemType1 = createDbBoxItemType1();
-        DbBoxItemTypePossibility dbBoxItemTypePossibility1 = dbBoxItemType1.getBoxPossibilityCrud().createDbChild();
-        dbBoxItemTypePossibility1.setDbInventoryArtifact(dbInventoryArtifact1);
-        dbBoxItemTypePossibility1.setPossibility(1.0);
-        DbBoxItemTypePossibility dbBoxItemTypePossibility2 = dbBoxItemType1.getBoxPossibilityCrud().createDbChild();
-        dbBoxItemTypePossibility2.setDbInventoryArtifact(dbInventoryArtifact2);
-        dbBoxItemTypePossibility2.setPossibility(1.0);
-        serverItemTypeService.saveDbItemType(dbBoxItemType1);
-        // Create Planet 1 with box region
-        DbPlanet dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
-        DbBoxRegion dbBoxRegion1 = dbPlanet1.getBoxRegionCrud().createDbChild();
-        dbBoxRegion1.setRegion(createDbRegion(new Rectangle(1, 2, 10, 20)));
-        DbBoxRegionCount dbBoxRegionCount1 = dbBoxRegion1.getBoxRegionCountCrud().createDbChild();
-        dbBoxRegionCount1.setDbBoxItemType(dbBoxItemType1);
-        dbBoxRegionCount1.setCount(10);
-        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
-        // Create Planet 2 with box region
-        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().createDbChild();
-        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        // Test level 1
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
         getOrCreateBase(); // Create Base
         // Verify new
-        InventoryInfo inventoryInfo = globalInventoryService.getInventory(null, false);
-        Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
-        Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
-        inventoryInfo = globalInventoryService.getInventory(null, true);
-        Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
-        Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
-        inventoryInfo = globalInventoryService.getInventory(dbPlanet1.getId(), true);
+        InventoryInfo inventoryInfo = globalInventoryService.getInventory();
         Assert.assertEquals(1, inventoryInfo.getAllInventoryItemInfos().size());
-        Assert.assertEquals(2, inventoryInfo.getAllInventoryArtifactInfos().size());
-        inventoryInfo = globalInventoryService.getInventory(dbPlanet2.getId(), true);
-        Assert.assertEquals(0, inventoryInfo.getAllInventoryItemInfos().size());
-        Assert.assertEquals(0, inventoryInfo.getAllInventoryArtifactInfos().size());
+        Assert.assertEquals(TEST_ATTACK_ITEM_ID, CommonJava.getFirst(inventoryInfo.getAllInventoryItemInfos()).getBaseItemTypeId());
+        Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Test level 1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
+        createBase(new Index(2000, 2000)); // Create Base
+        // Verify new
+        inventoryInfo = globalInventoryService.getInventory();
+        Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

@@ -36,10 +36,6 @@
     <g:VerticalPanel>
         <g:HorizontalPanel styleName="{style.crystalplate}"
                            width="100%">
-            <g:HorizontalPanel>
-                <g:HTML text="{msg.filter}&nbsp;" styleName="{style.text}"/>
-                <g:ListBox visibleItemCount="1" ui:field="filterListBox"/>
-            </g:HorizontalPanel>
             <g:Cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_RIGHT">
                 <g:Label styleName="{style.text}" ui:field="crystalLabel"/>
             </g:Cell>

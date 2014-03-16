@@ -270,12 +270,12 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public InventoryInfo getInventory(Integer filterPlanetId, boolean filterLevel) {
+    public InventoryInfo getInventory() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public InventoryInfo assembleInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel) {
+    public InventoryInfo assembleInventoryItem(int inventoryItemId) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -285,12 +285,12 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public InventoryInfo buyInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel) {
+    public InventoryInfo buyInventoryItem(int inventoryItemId) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public InventoryInfo buyInventoryArtifact(int inventoryArtifactId, Integer filterPlanetId, boolean filterLevel) {
+    public InventoryInfo buyInventoryArtifact(int inventoryArtifactId) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

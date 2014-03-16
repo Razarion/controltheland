@@ -18,7 +18,6 @@ import java.util.Map;
 
 public class WorkshopPlate extends Composite implements HasText {
     private static WorkshopPlateUiBinder uiBinder = GWT.create(WorkshopPlateUiBinder.class);
-    private static final int ARTIFACT_ROWS = 2;
     @UiField
     Image image;
     @UiField
@@ -69,6 +68,6 @@ public class WorkshopPlate extends Composite implements HasText {
 
     @UiHandler("assembleButton")
     void onButtonClick(ClickEvent event) {
-        Connection.getInstance().assembleInventoryItem(inventoryItemId, inventoryDialog.getFilterPlanetId(), inventoryDialog.isFilterLevel(), inventoryDialog);
+        Connection.getInstance().assembleInventoryItem(inventoryItemId, inventoryDialog);
     }
 }

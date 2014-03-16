@@ -171,19 +171,11 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
     }
 
     @Override
-    public InventoryInfo getInventory(Integer filterPlanetId, boolean filterLevel) {
+    public InventoryInfo getInventory() {
         InventoryInfo inventoryInfo = new InventoryInfo();
         UserState userState = userService.getUserState();
-        DbPlanet dbPlanet = null;
-        if (filterPlanetId != null) {
-            dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(filterPlanetId);
-        }
-        LevelScope levelScope = null;
-        if (filterLevel) {
-            levelScope = userGuidanceService.getLevelScope();
-        }
-        Map<Integer, InventoryArtifactInfo> allArtifacts = getAllInventoryArtifactInfoFromDb(dbPlanet);
-        Map<Integer, InventoryItemInfo> allItems = getAllInventoryItemsInfoFromDb(allArtifacts, dbPlanet, levelScope);
+        Map<Integer, InventoryArtifactInfo> allArtifacts = getAllInventoryArtifactInfoFromDb();
+        Map<Integer, InventoryItemInfo> allItems = getAllInventoryItemsInfoFromDb(allArtifacts, userGuidanceService.getLevelScope());
 
         // Set crystals
         inventoryInfo.setCrystals(userState.getCrystals());
@@ -246,28 +238,17 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
         }
     }
 
-    private Map<Integer, InventoryArtifactInfo> getAllInventoryArtifactInfoFromDb(DbPlanet planetFilter) {
+    private Map<Integer, InventoryArtifactInfo> getAllInventoryArtifactInfoFromDb() {
         Map<Integer, InventoryArtifactInfo> result = new HashMap<>();
         for (DbInventoryArtifact dbInventoryArtifact : artifactCrud.readDbChildren()) {
-            if (planetFilter != null && !dbInventoryArtifact.getPlanets().contains(planetFilter)) {
-                continue;
-            }
             result.put(dbInventoryArtifact.getId(), dbInventoryArtifact.generateInventoryArtifactInfo());
         }
         return result;
     }
 
-    private Map<Integer, InventoryItemInfo> getAllInventoryItemsInfoFromDb(Map<Integer, InventoryArtifactInfo> allArtifacts, DbPlanet planetFilter, LevelScope levelScope) {
+    private Map<Integer, InventoryItemInfo> getAllInventoryItemsInfoFromDb(Map<Integer, InventoryArtifactInfo> allArtifacts, LevelScope levelScope) {
         Map<Integer, InventoryItemInfo> result = new HashMap<>();
         for (DbInventoryItem dbInventoryItem : itemCrud.readDbChildren()) {
-            Collection<DbPlanet> planets = dbInventoryItem.getPlanets();
-            Collection<DbPlanet> planetsViaArtifact = dbInventoryItem.getPlanetsViaArtifact();
-            if (!planets.isEmpty() || !planetsViaArtifact.isEmpty()) {
-                if (planetFilter != null && !(planets.contains(planetFilter) || planetsViaArtifact.contains(planetFilter))) {
-                    continue;
-                }
-            }
-
             DbBaseItemType dbBaseItemType = dbInventoryItem.getDbBaseItemType();
             if (levelScope != null && dbBaseItemType != null && levelScope.getLimitation4ItemType(dbBaseItemType.getId()) == 0) {
                 continue;

@@ -424,10 +424,6 @@ public interface ClientI18nConstants extends Messages {
 
     String crystalAmount(int crystals);
 
-    String filterAll();
-
-    String filterCurrent();
-
     String cost(int crystalCost);
 
     String leaveBaseNextPlanet();

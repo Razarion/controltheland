@@ -33,7 +33,7 @@ public interface GlobalInventoryService {
 
     void buyInventoryArtifact(int inventoryArtifactId);
 
-    InventoryInfo getInventory(Integer filterPlanetId, boolean filterLevel);
+    InventoryInfo getInventory();
 
     void setupNewUserState(UserState userState);
 

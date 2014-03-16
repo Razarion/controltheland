@@ -10,8 +10,6 @@ import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.InventoryArtifactPanel;
 import com.btxtech.game.wicket.uiservices.InventoryImageResource;
 import com.btxtech.game.wicket.uiservices.InventoryItemPanel;
-import com.btxtech.game.wicket.uiservices.ItemTypesReadonlyPanel;
-import com.btxtech.game.wicket.uiservices.PlanetsReadonlyPanel;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -52,8 +50,6 @@ public class InventoryEditor extends MgmtWebPage {
                 dbInventoryArtifactItem.add(InventoryImageResource.createArtifactImage("image", dbInventoryArtifactItem.getModelObject()));
                 super.extendedPopulateItem(dbInventoryArtifactItem);
                 dbInventoryArtifactItem.add(new DropDownChoice<>("rareness", Arrays.asList(DbInventoryArtifact.Rareness.values())));
-                dbInventoryArtifactItem.add(new PlanetsReadonlyPanel("planets"));
-                dbInventoryArtifactItem.add(new ItemTypesReadonlyPanel("baseItemTypes"));
                 dbInventoryArtifactItem.add(new FileUploadField("upload", new IModel<List<FileUpload>>() {
 
                     @Override
@@ -95,10 +91,6 @@ public class InventoryEditor extends MgmtWebPage {
                 dbInventoryItemItem.add(InventoryImageResource.createItemImage("image", dbInventoryItemItem.getModelObject()));
                 super.extendedPopulateItem(dbInventoryItemItem);
                 dbInventoryItemItem.add(new Label("crystalCostViaArtifacts"));
-                dbInventoryItemItem.add(new PlanetsReadonlyPanel("planetsViaArtifact"));
-                dbInventoryItemItem.add(new ItemTypesReadonlyPanel("baseItemTypesViaArtifact"));
-                dbInventoryItemItem.add(new PlanetsReadonlyPanel("planets"));
-                dbInventoryItemItem.add(new ItemTypesReadonlyPanel("baseItemTypes"));
                 dbInventoryItemItem.add(new FileUploadField("upload", new IModel<List<FileUpload>>() {
 
                     @Override
