@@ -177,6 +177,7 @@ public class TestBotService extends AbstractServiceTest {
         createAndLoginUser("U1");
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
+        // TODO test failed: 17.03.2014
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         Id intruder = getFirstSynItemId(TEST_ATTACK_ITEM_ID);
