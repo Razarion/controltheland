@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
@@ -109,7 +110,13 @@ public class OnlineUserDetails extends MgmtWebPage {
                 } else if (planetSystemService.hasPlanet(item.getModelObject())) {
                     ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(item.getModelObject());
                     item.add(new BookmarkablePageLink<UserTracking>("userLink", UserTracking.class).setVisible(false));
-                    item.add(new Label("baseName", serverPlanetServices.getBaseService().getBaseName(serverPlanetServices.getBaseService().getBase(item.getModelObject()).getSimpleBase())));
+                    try {
+                        item.add(new Label("baseName", serverPlanetServices.getBaseService().getBaseName(serverPlanetServices.getBaseService().getBase(item.getModelObject()).getSimpleBase())));
+                    } catch (Exception e) {
+                        // TODO remove try if error found
+                        item.add(new Label("baseName", "???ERROR???"));
+                        ExceptionHandler.handleException(e);
+                    }
                 } else {
                     item.add(new BookmarkablePageLink<UserTracking>("userLink", UserTracking.class).setVisible(false));
                     item.add(new Label("baseName").setVisible(false));
