@@ -1,13 +1,14 @@
 package scenario.moving;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.services.collision.BlockingStateException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import gui.MovingGui;
-import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import scenario.Scenario;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -16,17 +17,11 @@ import java.util.List;
  */
 public class Random extends Scenario {
     public static final int RADIUS = 10;
-    public static final int SOFT_RADIUS = 70;
     private static final int ITEM_CREATION_DISTANCE = 20;
     private static final int SYNC_ITEM_COUNT = 50;
-    private CollisionService collisionService;
-
-    public Random(CollisionService collisionService) {
-        this.collisionService = collisionService;
-    }
 
     @Override
-    public void addItems(List<SyncItem> syncItems, CollisionService collisionService) {
+    public void addItems() {
     }
 
     @Override
@@ -34,26 +29,37 @@ public class Random extends Scenario {
     }
 
     @Override
-    public void tick(List<SyncItem> syncItemLists) {
- /*       synchronized (syncItemLists) {
-            int activeItems = 0;
-            for (Iterator<SyncItem> iterator = syncItemLists.iterator(); iterator.hasNext(); ) {
-                SyncItem syncItem = iterator.next();
-                if (syncItem.isMoving()) {
-                    activeItems++;
-                } else {
-                    iterator.remove();
-                }
+    public void start() throws NoBetterPathFoundException {
+
+    }
+
+    @Override
+    public void tick() {
+        int activeItems = 0;
+        Collection<SyncItem> deadItems = new ArrayList<SyncItem>();
+        for (SyncItem syncItem : getMovingModel().getSyncItems()) {
+            if (syncItem.getState() == SyncItem.MoveState.STOPPED) {
+                deadItems.add(syncItem);
+            } else {
+                activeItems++;
             }
-            while (activeItems < SYNC_ITEM_COUNT) {
-                SyncItem syncItem = new SyncItem(RADIUS, createRandomPosition(), "undefined");
-                if (!collisionService.isOverlapping(syncItem, syncItem.getDecimalPosition())) {
-                    syncItem.setTargetPosition(createRandomPosition());
-                    syncItemLists.add(syncItem);
+        }
+        for (SyncItem deadItem : deadItems) {
+            deleteSyncItem(deadItem);
+        }
+        while (activeItems < SYNC_ITEM_COUNT) {
+            try {
+                SyncItem syncItem = createSyncItem(RADIUS, createRandomPosition(), "undefined");
+                if (!getMovingModel().getCollisionService().isOverlapping(syncItem, syncItem.getDecimalPosition())) {
+                    getMovingModel().getCollisionService().findPath(syncItem, createRandomPosition());
                     activeItems++;
                 }
+            } catch (BlockingStateException e) {
+                // Ignore
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } */
+        }
     }
 
     private Index createRandomPosition() {

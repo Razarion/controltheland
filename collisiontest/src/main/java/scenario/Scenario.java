@@ -1,12 +1,10 @@
 package scenario;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-
-import java.util.List;
+import model.MovingModel;
 
 /**
  * User: beat
@@ -14,15 +12,17 @@ import java.util.List;
  * Time: 12:46
  */
 public abstract class Scenario {
+    private MovingModel movingModel;
 
-    protected abstract void addItems(List<SyncItem> syncItems, CollisionService collisionService) throws NoBetterPathFoundException;
+    abstract protected void addItems() throws NoBetterPathFoundException;
 
-    public abstract void tick(List<SyncItem> collisionService);
+    public abstract void tick();
 
     public abstract void stop();
 
-    public /*abstract*/ void start(List<SyncItem> syncItems, CollisionService collisionService) throws NoBetterPathFoundException {
+    public abstract void start() throws NoBetterPathFoundException;
 
+    public void setupTerrain(Terrain upTerrain) {
     }
 
     @Override
@@ -30,12 +30,13 @@ public abstract class Scenario {
         return getClass().getSimpleName();
     }
 
-    public void init(List<SyncItem> syncItems, CollisionService collisionService, Terrain terrain) {
+    public void init(MovingModel movingModel, Terrain terrain) {
+        this.movingModel = movingModel;
         terrain.init(getTileXCount(), getTileYCount());
         setupTerrain(terrain);
-        collisionService.init(terrain);
+        movingModel.getCollisionService().init(terrain);
         try {
-            addItems(syncItems, collisionService);
+            addItems();
         } catch (NoBetterPathFoundException e) {
             e.printStackTrace();
         }
@@ -49,13 +50,15 @@ public abstract class Scenario {
         return 50;
     }
 
-    public void setupTerrain(Terrain upTerrain) {
+    protected SyncItem createSyncItem(int radius, Index position, String debugName) {
+        return movingModel.createSyncItem(radius, position, debugName);
     }
 
-    protected SyncItem createSyncItem(CollisionService collisionService, List<SyncItem> syncItems, int radius, Index position, String debugName) {
-        SyncItem syncItem = new SyncItem(radius, position, debugName);
-        collisionService.addSyncItem(syncItem);
-        syncItems.add(syncItem);
-        return syncItem;
+    protected void deleteSyncItem(SyncItem syncItem) {
+        movingModel.deleteSyncItem(syncItem);
+    }
+
+    public MovingModel getMovingModel() {
+        return movingModel;
     }
 }

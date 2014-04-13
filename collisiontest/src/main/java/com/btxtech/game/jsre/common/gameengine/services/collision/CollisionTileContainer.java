@@ -60,7 +60,7 @@ public class CollisionTileContainer {
         // Check blocked
         for (Index coveringTile : coveringTiles) {
             if (isBlocked(coveringTile.getX(), coveringTile.getY())) {
-                throw new IllegalStateException("CollisionTile already blocked: " + coveringTile.getX() + ":" + coveringTile.getY());
+                throw new BlockingStateException("CollisionTile already blocked: " + coveringTile.getX() + ":" + coveringTile.getY());
             }
         }
         for (Index coveringTile : coveringTiles) {

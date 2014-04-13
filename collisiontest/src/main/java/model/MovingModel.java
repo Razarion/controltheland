@@ -1,5 +1,6 @@
 package model;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
@@ -48,8 +49,8 @@ public class MovingModel {
             syncItems.clear();
         }
         if (scenario != null) {
-            scenario.init(syncItems, collisionService, terrain);
-            scenario.start(syncItems, collisionService);
+            scenario.init(this, terrain);
+            scenario.start();
         }
     }
 
@@ -62,7 +63,7 @@ public class MovingModel {
     }
 
     public void setScenario(Scenario scenario) throws NoBetterPathFoundException {
-        if(this.scenario != null) {
+        if (this.scenario != null) {
             this.scenario.stop();
         }
         this.scenario = scenario;
@@ -91,6 +92,26 @@ public class MovingModel {
         return terrain;
     }
 
+    public SyncItem createSyncItem(int radius, Index position, String debugName) {
+        SyncItem syncItem = new SyncItem(radius, position, debugName);
+        collisionService.addSyncItem(syncItem);
+        synchronized (syncItems) {
+            syncItems.add(syncItem);
+        }
+        return syncItem;
+    }
+
+    public void deleteSyncItem(SyncItem syncItem) {
+        collisionService.removeSyncItem(syncItem);
+        synchronized (syncItems) {
+            syncItems.remove(syncItem);
+        }
+    }
+
+    public CollisionService getCollisionService() {
+        return collisionService;
+    }
+
     class ItemTimerTask extends TimerTask {
         public void run() {
             if (lastTick == 0) {
@@ -109,7 +130,9 @@ public class MovingModel {
         SyncItem debugSyncItem = null;
         try {
             if (scenario != null) {
-                scenario.tick(syncItems);
+                synchronized (syncItems) {
+                    scenario.tick();
+                }
             }
 
             synchronized (syncItems) {

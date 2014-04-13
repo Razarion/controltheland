@@ -76,6 +76,10 @@ public class CollisionService {
         setBlocked(syncItem);
     }
 
+    public void removeSyncItem(SyncItem syncItem) {
+        cleatBlocked(syncItem);
+    }
+
     public void cleatBlocked(SyncItem syncItem) {
         Collection<Index> blockingTiles = syncItem.getBlockingCollisionTiles();
         if (blockingTiles == null) {
