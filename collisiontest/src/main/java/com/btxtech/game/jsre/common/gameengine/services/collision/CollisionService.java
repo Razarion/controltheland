@@ -105,17 +105,20 @@ public class CollisionService {
 
         if (tileStart.equals(tileDestination)) {
             Path path = new Path(start, destination, Collections.<Index>emptyList());
-            syncItem.setTargetPosition(path);
+            syncItem.setTargetPosition(destination);
+            syncItem.setPath(path);
         } else {
             collisionTileContainer.clearBlocked(syncItem.getBlockingCollisionTiles());
             try {
                 AStar aStar = AStar.findTilePath(collisionTileContainer, tileStart, tileDestination, syncItem.getRadius());
                 if (aStar.isPathFound()) {
                     Path path = new Path(start, CollisionUtil.getAbsoluteIndexForCollisionTileIndex(aStar.getEndTile()), CollisionUtil.toAbsolutePath(aStar.getTilePath()));
-                    syncItem.setTargetPosition(path);
+                    syncItem.setTargetPosition(path.getAbsoluteDestination());
+                    syncItem.setPath(path);
                 } else {
                     Path path = new Path(start, CollisionUtil.getAbsoluteIndexForCollisionTileIndex(aStar.getBestFitTile()), CollisionUtil.toAbsolutePath(aStar.getTilePath()));
-                    syncItem.setTargetPosition(path);
+                    syncItem.setTargetPosition(destination);
+                    syncItem.setPath(path);
                 }
             } catch (BestPositionFoundException e) {
                 syncItem.stop();

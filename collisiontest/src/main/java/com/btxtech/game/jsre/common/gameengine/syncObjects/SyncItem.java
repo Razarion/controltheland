@@ -61,7 +61,11 @@ public class SyncItem {
         if (state != MoveState.STOPPED) {
             decimalPosition = path.moveToCurrentPosition(factor, SPEED, decimalPosition);
             if (path.isEmpty()) {
-                stop();
+                if (targetPosition.equals(getPosition())) {
+                    stop();
+                } else {
+                    setBlocked();
+                }
             } else {
                 state = MoveState.MOVING;
             }
@@ -103,10 +107,17 @@ public class SyncItem {
         return blockingCollisionTiles;
     }
 
-    public void setTargetPosition(Path pathToDestination) {
-        targetPosition = pathToDestination.getAbsoluteDestination();
-        this.path = pathToDestination;
+    public void setPath(Path path) {
+        this.path = path;
         state = MoveState.MOVING;
+    }
+
+    public void setTargetPosition(Index targetPosition) {
+        this.targetPosition = targetPosition;
+    }
+
+    public Index getTargetPosition() {
+        return targetPosition;
     }
 
     public void stop() {
@@ -117,10 +128,6 @@ public class SyncItem {
 
     public Path getPath() {
         return path;
-    }
-
-    public Index getTargetPosition() {
-        return targetPosition;
     }
 
     @Override
