@@ -39,21 +39,18 @@ public class MovingMain {
 
         List<Scenario> scenarios = new ArrayList<Scenario>();
 
-        scenarios.add(new MoveToPosition());
-        scenarios.add(new Factory());
+        scenarios.add(new MoveToOccupiedPosition());
         scenarios.add(new Bypass());
         scenarios.add(new Frontal());
+        scenarios.add(new MoveToPosition());
+        scenarios.add(new Factory());
+        scenarios.add(new Random());
         // TODO rework
         scenarios.add(new TerrainAndUnits());
         scenarios.add(new TerrainOnly());
-        scenarios.add(new Buildings());
-        scenarios.add(new MoveToOccupiedPosition());
-        scenarios.add(new Attack());
-        scenarios.add(new CrossNsWe());
-        scenarios.add(new Blocking());
-        scenarios.add(new BlockingBig());
-        scenarios.add(new Random(collisionService));
         movingGui.setScenarios(scenarios);
+        // TODO Attack (Build, Attack, Harvest)
+        // TODO Load unload container
 
         movingModel.init();
     }

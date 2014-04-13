@@ -2,8 +2,7 @@ package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionTileContainer;
-import com.btxtech.game.jsre.common.gameengine.services.collision.impl.FreePositionFinder;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

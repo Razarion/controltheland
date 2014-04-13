@@ -14,14 +14,14 @@ public class CollisionTile {
 
     public void setBlocked() {
         if(blocked) {
-            throw new IllegalStateException("CollisionTile already blocked");
+            throw new BlockingStateException("CollisionTile already blocked");
         }
         blocked = true;
     }
 
     public void clearBlocked() {
         if(!blocked) {
-            throw new IllegalStateException("CollisionTile is not blocked");
+            throw new BlockingStateException("CollisionTile is not blocked");
         }
         blocked = false;
     }

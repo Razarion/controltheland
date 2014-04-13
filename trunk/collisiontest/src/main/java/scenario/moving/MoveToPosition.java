@@ -1,7 +1,6 @@
 package scenario.moving;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import scenario.Scenario;
@@ -19,18 +18,18 @@ public class MoveToPosition extends Scenario {
     private List<SyncItem> mySyncItems = new ArrayList<SyncItem>();
 
     @Override
-    public void addItems(List<SyncItem> syncItems, CollisionService collisionService) {
+    public void addItems() {
         for (int y = 100; y < 500; y += 50) {
             for (int x = 100; x < 500; x += 50) {
-                mySyncItems.add(createSyncItem(collisionService, syncItems, RADIUS, new Index(x, y), "undefined"));
+                mySyncItems.add(createSyncItem(RADIUS, new Index(x, y), "undefined"));
             }
         }
     }
 
     @Override
-    public void start(List<SyncItem> syncItems, CollisionService collisionService) throws NoBetterPathFoundException {
+    public void start() throws NoBetterPathFoundException {
         for (SyncItem syncItem : mySyncItems) {
-            collisionService.findPath(syncItem, new Index(700,700));
+            getMovingModel().getCollisionService().findPath(syncItem, new Index(700, 700));
         }
     }
 
@@ -39,6 +38,6 @@ public class MoveToPosition extends Scenario {
     }
 
     @Override
-    public void tick(List<SyncItem> collisionService) {
+    public void tick() {
     }
 }

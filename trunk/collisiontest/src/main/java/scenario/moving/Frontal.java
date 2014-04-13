@@ -1,12 +1,9 @@
 package scenario.moving;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import scenario.Scenario;
-
-import java.util.List;
 
 /**
  * User: beat
@@ -19,15 +16,15 @@ public class Frontal extends Scenario {
     private SyncItem syncItem2;
 
     @Override
-    public void addItems(List<SyncItem> syncItems, CollisionService collisionService) {
-        syncItem1 = createSyncItem(collisionService, syncItems, RADIUS, new Index(100, 100), "SyncItem 1");
-        syncItem2 = createSyncItem(collisionService, syncItems, RADIUS, new Index(400, 100), "SyncItem 2");
+    public void addItems() {
+        syncItem1 = createSyncItem(RADIUS, new Index(100, 100), "SyncItem 1");
+        syncItem2 = createSyncItem(RADIUS, new Index(400, 100), "SyncItem 2");
     }
 
     @Override
-    public void start(List<SyncItem> syncItems, CollisionService collisionService) throws NoBetterPathFoundException {
-        collisionService.findPath(syncItem1, new Index(400, 100));
-        collisionService.findPath(syncItem2, new Index(100, 100));
+    public void start() throws NoBetterPathFoundException {
+        getMovingModel().getCollisionService().findPath(syncItem1, new Index(400, 100));
+        getMovingModel().getCollisionService().findPath(syncItem2, new Index(100, 100));
     }
 
     @Override
@@ -35,6 +32,6 @@ public class Frontal extends Scenario {
     }
 
     @Override
-    public void tick(List<SyncItem> collisionService) {
+    public void tick() {
     }
 }

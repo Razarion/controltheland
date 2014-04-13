@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
-import junit.framework.Assert;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionTileContainer;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
