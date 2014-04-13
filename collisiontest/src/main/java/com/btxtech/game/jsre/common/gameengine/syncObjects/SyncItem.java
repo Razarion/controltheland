@@ -61,9 +61,7 @@ public class SyncItem {
         if (state != MoveState.STOPPED) {
             decimalPosition = path.moveToCurrentPosition(factor, SPEED, decimalPosition);
             if (path.isEmpty()) {
-                path = null;
-                targetPosition = null;
-                state = MoveState.STOPPED;
+                stop();
             } else {
                 state = MoveState.MOVING;
             }

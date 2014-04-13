@@ -39,24 +39,19 @@ public class MovingMain {
 
         List<Scenario> scenarios = new ArrayList<Scenario>();
 
-        scenarios.add(new Bypass1());
+        scenarios.add(new MoveToPosition());
         scenarios.add(new Factory());
+        scenarios.add(new Bypass());
         scenarios.add(new Frontal());
-        scenarios.add(new Bypass2());
-        scenarios.add(new Bypass3());
         // TODO rework
         scenarios.add(new TerrainAndUnits());
         scenarios.add(new TerrainOnly());
         scenarios.add(new Buildings());
-        scenarios.add(new MoveToPositionVeryLite());
         scenarios.add(new MoveToOccupiedPosition());
-        scenarios.add(new MoveToPositionLite());
         scenarios.add(new Attack());
         scenarios.add(new CrossNsWe());
-        scenarios.add(new FactoryLite());
         scenarios.add(new Blocking());
         scenarios.add(new BlockingBig());
-        scenarios.add(new MoveToPosition());
         scenarios.add(new Random(collisionService));
         movingGui.setScenarios(scenarios);
 
