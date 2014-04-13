@@ -1,10 +1,9 @@
 package scenario.moving;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
+import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import scenario.Scenario;
 
 import java.util.List;
@@ -14,18 +13,18 @@ import java.util.List;
  * Date: 22.03.13
  * Time: 13:25
  */
-public class Bypass3 extends Scenario {
+public class Bypass extends Scenario {
     private SyncItem syncItem;
 
     @Override
     public void addItems(List<SyncItem> syncItems, CollisionService collisionService) {
-        createSyncItem(collisionService, syncItems, 50, new Index(150, 250), "Blocker");
-        syncItem = createSyncItem(collisionService, syncItems, 10, new Index(100, 200), "Mover");
+        createSyncItem(collisionService, syncItems, 50, new Index(200, 200), "Blocker");
+        syncItem = createSyncItem(collisionService, syncItems, 10, new Index(100, 180), "Mover");
     }
 
     @Override
     public void start(List<SyncItem> syncItems, CollisionService collisionService) throws NoBetterPathFoundException {
-        collisionService.findPath(syncItem, new Index(200,400));
+        collisionService.findPath(syncItem, new Index(300, 180));
     }
 
     @Override
