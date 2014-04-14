@@ -5,7 +5,6 @@ import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionServi
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import gui.MovingGui;
 import scenario.Scenario;
 
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ public class MovingModel {
     private long lastTick;
     final private List<SyncItem> syncItems = new ArrayList<SyncItem>();
     private CollisionService collisionService;
-    private MovingGui movingGui;
     private Scenario scenario;
     private Timer timer;
     private Terrain terrain;
@@ -52,10 +50,6 @@ public class MovingModel {
             scenario.init(this, terrain);
             scenario.start();
         }
-    }
-
-    public void setMovingGui(MovingGui movingGui) {
-        this.movingGui = movingGui;
     }
 
     public void setCollisionService(CollisionService collisionService) {
@@ -142,10 +136,6 @@ public class MovingModel {
                         collisionService.moveItem(syncItem, factor);
                     }
                 }
-            }
-
-            if (movingGui != null) {
-                movingGui.update();
             }
         } catch (Exception e) {
             System.out.println("tick failed: " + debugSyncItem);
