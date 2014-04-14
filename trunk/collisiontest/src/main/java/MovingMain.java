@@ -31,7 +31,6 @@ public class MovingMain {
         MovingGui movingGui = new MovingGui();
         MovingModel movingModel = new MovingModel();
         movingGui.setMovingModel(movingModel);
-        movingModel.setMovingGui(movingGui);
         CollisionService collisionService = new CollisionService();
         movingGui.setCollisionService(collisionService);
         movingModel.setCollisionService(collisionService);
@@ -39,10 +38,10 @@ public class MovingMain {
 
         List<Scenario> scenarios = new ArrayList<Scenario>();
 
+        scenarios.add(new MoveToPosition());
         scenarios.add(new MoveToOccupiedPosition());
         scenarios.add(new Bypass());
         scenarios.add(new Frontal());
-        scenarios.add(new MoveToPosition());
         scenarios.add(new Factory());
         scenarios.add(new Random());
         // TODO rework
@@ -53,5 +52,6 @@ public class MovingMain {
         // TODO Load unload container
 
         movingModel.init();
+        movingGui.start();
     }
 }

@@ -24,6 +24,7 @@ public class CollisionTileContainer {
                 collisionTiles[x][y] = new CollisionTile();
             }
         }
+        System.out.println("Collision tile container started. Tile count: " + (xTiles * yTiles));
     }
 
     public int getXTiles() {

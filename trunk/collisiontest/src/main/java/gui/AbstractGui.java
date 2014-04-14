@@ -1,13 +1,13 @@
 package gui;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainTile;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import model.MovingModel;
 import scenario.Scenario;
 
@@ -17,6 +17,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.text.SimpleDateFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * User: beat
@@ -24,6 +27,9 @@ import java.awt.event.MouseMotionListener;
  * Time: 15:07
  */
 public abstract class AbstractGui {
+    private static final int FRAMES_PER_SECOND = 25;
+    private static final long TIMER_DELAY = 1000 / FRAMES_PER_SECOND;
+    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS");
     private JPanel canvas;
     private JComboBox<Scenario> scenarioBox;
     private MovingModel movingModel;
@@ -35,10 +41,6 @@ public abstract class AbstractGui {
 
     public MovingModel getMovingModel() {
         return movingModel;
-    }
-
-    public CollisionService getCollisionService() {
-        return collisionService;
     }
 
     public void setCollisionService(CollisionService collisionService) {
@@ -93,6 +95,9 @@ public abstract class AbstractGui {
         final JLabel mouseLabel = new JLabel("Mouse Position:");
         menu.add(mouseLabel);
 
+        final JLabel updateLabel = new JLabel("---");
+        menu.add(updateLabel);
+
         addToMenuBar(menu);
 
         // Setup canvas
@@ -100,6 +105,7 @@ public abstract class AbstractGui {
             @Override
             public void paint(Graphics graphics) {
                 super.paint(graphics);
+                updateLabel.setText("Last Update: " + TIME_FORMAT.format(System.currentTimeMillis()));
                 drawTerrain(graphics);
                 drawCollision(graphics);
                 drawGridCollision(graphics);
@@ -173,17 +179,23 @@ public abstract class AbstractGui {
         }
     }
 
-    public void update() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (canvas != null) {
-                    canvas.repaint();
-                }
-            }
-        });
+    public void start() {
+        Timer timer = new Timer("GuiTimerTask", true);
+        timer.schedule(new GuiTimerTask(), 0, TIMER_DELAY);
     }
 
+    class GuiTimerTask extends TimerTask {
+        public void run() {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (canvas != null) {
+                        canvas.repaint();
+                    }
+                }
+            });
+        }
+    }
 
     private void drawGridTerrain(Graphics graphics) {
         graphics.setColor(Color.DARK_GRAY);
