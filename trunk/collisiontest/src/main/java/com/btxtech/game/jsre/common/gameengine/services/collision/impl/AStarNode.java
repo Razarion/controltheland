@@ -41,10 +41,6 @@ class AStarNode implements Comparable<AStarNode> {
         return tileIndex;
     }
 
-    public double getF() {
-        return f;
-    }
-
     public void setF(double f) {
         this.f = f;
     }
