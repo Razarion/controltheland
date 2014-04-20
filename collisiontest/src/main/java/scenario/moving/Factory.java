@@ -15,7 +15,7 @@ import java.util.TimerTask;
  * Time: 12:46
  */
 public class Factory extends Scenario {
-    public static final int TIMER_DELAY = 1000;
+    public static final int TIMER_DELAY = 2000;
 
     private Timer timer;
 

@@ -77,16 +77,14 @@ public class MovingGui extends AbstractGui {
     }
 
     private void drawOriginalPath(Graphics graphics) {
-        graphics.setColor(new Color(255, 100, 0, 100));
+    /*    graphics.setColor(new Color(255, 100, 0, 100));
         for (SyncItem syncItem : getMovingModel().getSyncItems()) {
             if (syncItem.getState() == SyncItem.MoveState.MOVING) {
-                Index previous = syncItem.getPosition();
-                for (Index next : syncItem.getPath().getNextWayPositions()) {
-                    graphics.drawLine(previous.getX(), previous.getY(), next.getX(), next.getY());
-                    previous = next;
-                }
+                Index position = syncItem.getPosition();
+                Index aim = syncItem.calculateMoveToTarget(0.5).getPosition();
+                graphics.drawLine(position.getX(), position.getY(), aim.getX(), aim.getY());
             }
-        }
+        }*/
     }
 
 }

@@ -1,6 +1,7 @@
 package gui;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
@@ -226,6 +227,9 @@ public abstract class AbstractGui {
                 case MOVING:
                     graphics.setColor(Color.BLUE);
                     break;
+                case TURNING:
+                    graphics.setColor(new Color(150, 150, 255));
+                    break;
                 case BLOCKED:
                     graphics.setColor(Color.RED);
                     break;
@@ -237,9 +241,23 @@ public abstract class AbstractGui {
                     syncItem.getDiameter(),
                     syncItem.getDiameter(),
                     0, 360);
-            graphics.drawString(Integer.toString(syncItem.getId()),
+          /*  graphics.drawString(Integer.toString(syncItem.getId()),
                     syncItem.getPosition().getX() - 5,
-                    syncItem.getPosition().getY() + 5);
+                    syncItem.getPosition().getY() + 5);*/
+            if (syncItem.getState() == SyncItem.MoveState.MOVING || syncItem.getState() == SyncItem.MoveState.TURNING) {
+                graphics.setColor(Color.RED);
+                Index targetAngelPosition = syncItem.getPosition().getPointFromAngelToNord(syncItem.getTargetAngel(), syncItem.getRadius() + 5);
+                graphics.drawLine(syncItem.getPosition().getX(),
+                        syncItem.getPosition().getY(),
+                        targetAngelPosition.getX(),
+                        targetAngelPosition.getY());
+                Index angelPosition = syncItem.getPosition().getPointFromAngelToNord(syncItem.getAngel(), syncItem.getRadius());
+                graphics.setColor(Color.BLUE);
+                graphics.drawLine(syncItem.getPosition().getX(),
+                        syncItem.getPosition().getY(),
+                        angelPosition.getX(),
+                        angelPosition.getY());
+            }
         }
     }
 
