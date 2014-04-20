@@ -50,7 +50,7 @@ public class Random extends Scenario {
         while (activeItems < SYNC_ITEM_COUNT) {
             try {
                 SyncItem syncItem = createSyncItem(RADIUS, createRandomPosition(), "undefined");
-                if (!getMovingModel().getCollisionService().isOverlapping(syncItem, syncItem.getDecimalPosition())) {
+                if (getMovingModel().getCollisionService().isOverlapping(syncItem, syncItem.getDecimalPosition(), 0) == null) {
                     getMovingModel().getCollisionService().findPath(syncItem, createRandomPosition());
                     activeItems++;
                 }

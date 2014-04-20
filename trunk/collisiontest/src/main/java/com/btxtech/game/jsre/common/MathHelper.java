@@ -12,6 +12,7 @@ public class MathHelper {
     public final static double QUARTER_RADIANT = Math.PI / 2.0;
     public final static double THREE_QUARTER_RADIANT = 3.0 * Math.PI / 2.0;
     public final static double EIGHTH_RADIANT = Math.PI / 4.0;
+    public final static double SIX_TEENTH_RADIANT = Math.PI / 8.0;
     public final static double NORTH = 0;
     public final static double NORTH_EAST = 1.75 * Math.PI;
     public final static double EAST = 1.5 * Math.PI;

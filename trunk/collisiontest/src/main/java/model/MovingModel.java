@@ -41,9 +41,6 @@ public class MovingModel {
 
     public void restart() throws NoBetterPathFoundException {
         synchronized (syncItems) {
-            for (SyncItem syncItem : syncItems) {
-                collisionService.cleatBlocked(syncItem);
-            }
             syncItems.clear();
         }
         if (scenario != null) {
@@ -88,7 +85,7 @@ public class MovingModel {
 
     public SyncItem createSyncItem(int radius, Index position, String debugName) {
         SyncItem syncItem = new SyncItem(radius, position, debugName);
-        collisionService.addSyncItem(syncItem);
+        // collisionService.addSyncItem(syncItem);
         synchronized (syncItems) {
             syncItems.add(syncItem);
         }
@@ -96,7 +93,7 @@ public class MovingModel {
     }
 
     public void deleteSyncItem(SyncItem syncItem) {
-        collisionService.removeSyncItem(syncItem);
+        // collisionService.removeSyncItem(syncItem);
         synchronized (syncItems) {
             syncItems.remove(syncItem);
         }

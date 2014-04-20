@@ -31,17 +31,17 @@ public class MovingMain {
         MovingGui movingGui = new MovingGui();
         MovingModel movingModel = new MovingModel();
         movingGui.setMovingModel(movingModel);
-        CollisionService collisionService = new CollisionService();
+        CollisionService collisionService = new CollisionService(movingModel);
         movingGui.setCollisionService(collisionService);
         movingModel.setCollisionService(collisionService);
         movingModel.setTerrain(terrain);
 
         List<Scenario> scenarios = new ArrayList<Scenario>();
 
+        scenarios.add(new Frontal());
         scenarios.add(new MoveToPosition());
         scenarios.add(new MoveToOccupiedPosition());
         scenarios.add(new Bypass());
-        scenarios.add(new Frontal());
         scenarios.add(new Factory());
         scenarios.add(new Random());
         // TODO rework

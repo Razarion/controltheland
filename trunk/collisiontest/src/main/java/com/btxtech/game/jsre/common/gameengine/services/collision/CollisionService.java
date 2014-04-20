@@ -3,14 +3,12 @@ package com.btxtech.game.jsre.common.gameengine.services.collision;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.collision.impl.AStar;
-import com.btxtech.game.jsre.common.gameengine.services.collision.impl.BestPositionFoundException;
-import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import model.MovingModel;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.PriorityQueue;
 
 /**
  * User: beat
@@ -18,7 +16,13 @@ import java.util.Collections;
  * Time: 02:00
  */
 public class CollisionService {
+    public static final double CRUSH_ZONE = 10;
+    private final MovingModel movingModel;
     private CollisionTileContainer collisionTileContainer;
+
+    public CollisionService(MovingModel movingModel) {
+        this.movingModel = movingModel;
+    }
 
     public void init(Terrain terrain) {
         int xTiles = (int) Math.ceil(terrain.getXCount() * Constants.TERRAIN_TILE_WIDTH / Constants.COLLISION_TILE_WIDTH);
@@ -28,109 +32,61 @@ public class CollisionService {
     }
 
     public void moveItem(SyncItem syncItem, double factor) {
-        if (syncItem.getState() == SyncItem.MoveState.BLOCKED) {
-            try {
-                findPath(syncItem, syncItem.getTargetPosition());
-            } catch (NoBetterPathFoundException e) {
-                syncItem.setBlocked();
-            }
-        } else {
-            DecimalPosition positionProposal = syncItem.calculateMoveToTarget(factor);
-            boolean overlapping = isOverlapping(syncItem, positionProposal);
-            if (overlapping) {
-                try {
-                    findPath(syncItem, syncItem.getTargetPosition());
-                } catch (NoBetterPathFoundException e) {
-                    syncItem.setBlocked();
+        DecimalPosition positionProposal = syncItem.calculateMoveToTarget(factor);
+        Overlapping overlapping = isOverlapping(syncItem, positionProposal, 0);
+        if (overlapping != null) {
+            double movingAngel = syncItem.getAngel();
+            double otherAngel = syncItem.getDecimalPosition().getAngleToNord(overlapping.getSyncItem().getDecimalPosition());
+            double crashAngelAbs = MathHelper.getAngel(movingAngel, otherAngel);
+
+            if (crashAngelAbs <= MathHelper.QUARTER_RADIANT) {
+                if (MathHelper.isCounterClock(movingAngel, otherAngel)) {
+                    syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() - MathHelper.ONE_RADIANT / 24.0));
+                } else {
+                    syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() + MathHelper.ONE_RADIANT / 24.0));
                 }
             } else {
-                cleatBlocked(syncItem);
-                try {
-                    syncItem.executeMoveToTarget(factor);
-                    if (!syncItem.getPosition().equals(positionProposal.getPosition())) {
-                        System.out.println("Error id=" + syncItem.getId() + ":" + syncItem.getPosition() + "---" + positionProposal.getPosition());
+                syncItem.setSpeed(SyncItem.SPEED);
+                syncItem.executeMoveToTarget(factor);
+            }
+        } else {
+            syncItem.setSpeed(SyncItem.SPEED);
+            syncItem.executeMoveToTarget(factor);
+            if (syncItem.getState() == SyncItem.MoveState.MOVING) {
+                if (isOverlapping(syncItem, syncItem.getDecimalPosition(), CRUSH_ZONE) == null) {
+                    double targetAngel = syncItem.getDecimalPosition().getAngleToNord(new DecimalPosition(syncItem.getTargetPosition()));
+                    if (!syncItem.angelReached(targetAngel)) {
+                        if (MathHelper.getAngel(syncItem.getAngel(), targetAngel) > MathHelper.ONE_RADIANT / 24.0) {
+                            if (MathHelper.isCounterClock(targetAngel, syncItem.getAngel())) {
+                                syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() - MathHelper.ONE_RADIANT / 24.0));
+                            } else {
+                                syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() + MathHelper.ONE_RADIANT / 24.0));
+                            }
+                        } else {
+                            syncItem.setTargetAngel(targetAngel);
+                        }
                     }
-                } finally {
-                    setBlocked(syncItem);
                 }
             }
         }
     }
 
-    public boolean isOverlapping(SyncItem syncItem, DecimalPosition positionProposal) {
-        Collection<Index> coveringTiles = CollisionUtil.getCoveringTilesAbsolute(positionProposal.getPosition(), syncItem.getRadius());
-        Collection<Index> ownBlockingTiles = syncItem.getBlockingCollisionTiles();
-        for (Index coveringTile : coveringTiles) {
-            if (ownBlockingTiles != null && ownBlockingTiles.contains(coveringTile)) {
+    public Overlapping isOverlapping(SyncItem syncItem, DecimalPosition positionProposal, double crushZone) {
+        PriorityQueue<Overlapping> overlappings = new PriorityQueue<Overlapping>();
+        for (SyncItem other : movingModel.getSyncItems()) {
+            if (syncItem.equals(other)) {
                 continue;
             }
-
-            if (collisionTileContainer.isBlocked(coveringTile.getX(), coveringTile.getY())) {
-                return true;
+            double distance = syncItem.getRadius() + other.getRadius() + crushZone - positionProposal.getDistance(other.getDecimalPosition());
+            if (distance >= 0) {
+                overlappings.add(new Overlapping(other, distance));
             }
         }
-        return false;
-    }
-
-    public void addSyncItem(SyncItem syncItem) {
-        setBlocked(syncItem);
-    }
-
-    public void removeSyncItem(SyncItem syncItem) {
-        cleatBlocked(syncItem);
-    }
-
-    public void cleatBlocked(SyncItem syncItem) {
-        Collection<Index> blockingTiles = syncItem.getBlockingCollisionTiles();
-        if (blockingTiles == null) {
-            return;
-        }
-        collisionTileContainer.clearBlocked(blockingTiles);
-        syncItem.setBlockingCollisionTiles(null);
-    }
-
-    public void setBlocked(SyncItem syncItem) {
-        Collection<Index> coveringTiles = CollisionUtil.getCoveringTilesAbsolute(syncItem.getPosition(), syncItem.getRadius());
-        collisionTileContainer.setBlocked(coveringTiles);
-        syncItem.setBlockingCollisionTiles(coveringTiles);
-    }
-
-    public void findPath(SyncItem syncItem, Index destination) throws NoBetterPathFoundException {
-        Index start = syncItem.getPosition();
-        if (destination == null) {
-            throw new NullPointerException("destination == null " + syncItem);
-        }
-        if (start.equals(destination)) {
-            return;
-        }
-
-        Index tileStart = CollisionUtil.getCollisionTileIndexForAbsPosition(start);
-        Index tileDestination = CollisionUtil.getCollisionTileIndexForAbsPosition(destination);
-
-        if (tileStart.equals(tileDestination)) {
-            Path path = new Path(start, destination, Collections.<Index>emptyList());
-            syncItem.setTargetPosition(destination);
-            syncItem.setPath(path);
+        if (overlappings.isEmpty()) {
+            return null;
         } else {
-            collisionTileContainer.clearBlocked(syncItem.getBlockingCollisionTiles());
-            try {
-                AStar aStar = AStar.findTilePath(collisionTileContainer, tileStart, tileDestination, syncItem.getRadius());
-                if (aStar.isPathFound()) {
-                    Path path = new Path(start, CollisionUtil.getAbsoluteIndexForCollisionTileIndex(aStar.getEndTile()), CollisionUtil.toAbsolutePath(aStar.getTilePath()));
-                    syncItem.setTargetPosition(path.getAbsoluteDestination());
-                    syncItem.setPath(path);
-                } else {
-                    Path path = new Path(start, CollisionUtil.getAbsoluteIndexForCollisionTileIndex(aStar.getBestFitTile()), CollisionUtil.toAbsolutePath(aStar.getTilePath()));
-                    syncItem.setTargetPosition(destination);
-                    syncItem.setPath(path);
-                }
-            } catch (BestPositionFoundException e) {
-                syncItem.stop();
-            } finally {
-                collisionTileContainer.setBlocked(syncItem.getBlockingCollisionTiles());
-            }
+            return overlappings.poll();
         }
-
     }
 
     public CollisionTileContainer getCollisionTileContainer() {
@@ -139,5 +95,45 @@ public class CollisionService {
 
     public boolean isBlockedAbsolute(int x, int y) {
         return collisionTileContainer.isBlocked(CollisionUtil.getCollisionTileIndexForAbsXPosition(x), CollisionUtil.getCollisionTileIndexForAbsYPosition(y));
+    }
+
+    public void findPath(SyncItem syncItem, Index targetPosition) {
+        syncItem.setTargetPosition(targetPosition);
+    }
+
+    private class Overlapping implements Comparable<Overlapping> {
+        private SyncItem syncItem;
+        private double crushZone;
+        private double distance;
+
+        private Overlapping(SyncItem syncItem, double distance) {
+            this.syncItem = syncItem;
+            this.distance = distance;
+            crushZone = distance - CRUSH_ZONE;
+            if (crushZone < 0) {
+                crushZone = 0;
+            }
+        }
+
+        private SyncItem getSyncItem() {
+            return syncItem;
+        }
+
+        @Override
+        public int compareTo(Overlapping o) {
+            return Double.compare(distance, o.distance);
+        }
+
+        public boolean isTight() {
+            return crushZone < CRUSH_ZONE / 3.0;
+        }
+
+        public boolean isWide() {
+            return crushZone > CRUSH_ZONE * 2.0 / 3.0;
+        }
+
+        public boolean isMiddle() {
+            return !isTight() && !isWide();
+        }
     }
 }

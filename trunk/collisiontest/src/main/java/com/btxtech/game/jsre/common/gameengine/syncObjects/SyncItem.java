@@ -2,9 +2,8 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
+import com.btxtech.game.jsre.common.MathHelper;
 
-import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -13,12 +12,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Time: 21:36
  */
 public class SyncItem {
-    private static final double SPEED = 40;
+    public static final double SPEED = 40;
+    private static final double PRECISION_ANGEL = MathHelper.gradToRad(1);
+    private static final double TURN_SPEED = MathHelper.gradToRad(360 / 5); // Grad per second
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
 
     public enum MoveState {
         MOVING,
         STOPPED,
+        TURNING,
         BLOCKED
     }
 
@@ -30,10 +32,11 @@ public class SyncItem {
     private int radius;
     // SyncItemArea
     private DecimalPosition decimalPosition;
+    private double angel = 0;
+    private double targetAngel;
+    private double speed;
     // Moving
     private Index targetPosition;
-    private Path path;
-    private Collection<Index> blockingCollisionTiles;
 
     public SyncItem(int radius, Index position, String debugName) {
         this.debugName = debugName;
@@ -46,31 +49,46 @@ public class SyncItem {
         return radius;
     }
 
+    private boolean targetAngelReached() {
+        return angelReached(targetAngel);
+    }
+
+    public boolean angelReached(double targetAngel) {
+        return MathHelper.getAngel(angel, targetAngel) <= PRECISION_ANGEL;
+    }
+
     /**
      * @param factor 1 if last call was exactly 1 second before
      */
     public DecimalPosition calculateMoveToTarget(double factor) {
-        if (state != MoveState.STOPPED) {
-            return path.calculatePosition(factor, SPEED, decimalPosition);
+        if (targetAngelReached()) {
+            return decimalPosition.getPointFromAngelToNord(angel, speed * factor);
         } else {
-            throw new IllegalStateException("Item is not moving: " + this);
+            return decimalPosition;
         }
     }
 
     public void executeMoveToTarget(double factor) {
-        if (state != MoveState.STOPPED) {
-            decimalPosition = path.moveToCurrentPosition(factor, SPEED, decimalPosition);
-            if (path.isEmpty()) {
-                if (targetPosition.equals(getPosition())) {
-                    stop();
-                } else {
-                    setBlocked();
-                }
-            } else {
-                state = MoveState.MOVING;
+        if (targetAngelReached()) {
+            decimalPosition = decimalPosition.getPointFromAngelToNord(angel, speed * factor);
+            state = MoveState.MOVING;
+            if (decimalPosition.getPosition().equals(targetPosition)) {
+                stop();
             }
-        } else {
-            throw new IllegalStateException("Item is not moving: " + this);
+        }else{
+            double factorAngel = TURN_SPEED * factor;
+            double actualDeltaAngel = MathHelper.getAngel(angel, targetAngel);
+            if (factorAngel >= actualDeltaAngel) {
+                // reached
+                angel = targetAngel;
+            } else {
+                if (MathHelper.isCounterClock(angel, targetAngel)) {
+                    angel = MathHelper.normaliseAngel(angel + factorAngel);
+                } else {
+                    angel = MathHelper.normaliseAngel(angel - factorAngel);
+                }
+            }
+            state = MoveState.TURNING;
         }
     }
 
@@ -90,44 +108,45 @@ public class SyncItem {
         return state;
     }
 
-    public void setBlocked() {
-        state = MoveState.BLOCKED;
-        path = null;
-    }
-
     public int getId() {
         return id;
     }
 
-    public void setBlockingCollisionTiles(Collection<Index> blockingCollisionTiles) {
-        this.blockingCollisionTiles = blockingCollisionTiles;
-    }
-
-    public Collection<Index> getBlockingCollisionTiles() {
-        return blockingCollisionTiles;
-    }
-
-    public void setPath(Path path) {
-        this.path = path;
-        state = MoveState.MOVING;
-    }
-
     public void setTargetPosition(Index targetPosition) {
         this.targetPosition = targetPosition;
+        targetAngel = decimalPosition.getAngleToNord(new DecimalPosition(targetPosition));
+        speed = SPEED;
+        state = MoveState.MOVING;
     }
 
     public Index getTargetPosition() {
         return targetPosition;
     }
 
-    public void stop() {
-        state = MoveState.STOPPED;
-        targetPosition = null;
-        path = null;
+    public double getAngel() {
+        return angel;
     }
 
-    public Path getPath() {
-        return path;
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public double getTargetAngel() {
+        return targetAngel;
+    }
+
+    public void setTargetAngel(double targetAngel) {
+        this.targetAngel = targetAngel;
+    }
+
+    public void stop() {
+        targetPosition = null;
+        speed = 0;
+        state = MoveState.STOPPED;
     }
 
     @Override

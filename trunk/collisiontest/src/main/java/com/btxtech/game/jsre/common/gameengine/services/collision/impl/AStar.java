@@ -28,11 +28,11 @@ public class AStar {
     private AStarNode bestFitNode;
 
     public static AStar findTilePath(CollisionTileContainer collisionTileContainer, Index startTile, Index endTile, int absoluteRadius) throws NoBetterPathFoundException, BestPositionFoundException {
-        Index freePosition = FreePositionFinder.findFreePosition(collisionTileContainer, endTile, 100, startTile, absoluteRadius);
-        if(freePosition.equals(startTile)) {
-           throw new BestPositionFoundException();
-        }
-        AStar aStar = new AStar(collisionTileContainer, startTile, freePosition, absoluteRadius);
+        // Index freePosition = FreePositionFinder.findFreePosition(collisionTileContainer, endTile, 100, startTile, absoluteRadius);
+        // if(freePosition.equals(startTile)) {
+        //   throw new BestPositionFoundException();
+        //}
+        AStar aStar = new AStar(collisionTileContainer, startTile, endTile, absoluteRadius);
         aStar.expandAllNodes();
         aStar.convertPath();
         return aStar;
