@@ -27,19 +27,20 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.mgmt.BaseEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.pages.mgmt.usermgmt.UserStateEditor;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.string.Strings;
 
@@ -95,6 +96,19 @@ public class UserTracking extends MgmtWebPage {
             }
         }));
         add(new Label("socialNet"));
+        ExternalLink socialNetUserLink = new ExternalLink("socialNetUserPage", new LoadableDetachableModel<String>() {
+            @Override
+            protected String load() {
+                User user = (User) UserTracking.this.getDefaultModelObject();
+                if (user != null) {
+                    return user.getSocialNetUserLink();
+                } else {
+                    return null;
+                }
+            }
+        });
+        socialNetUserLink.add(new Label("socialNetUserLink"));
+        add(socialNetUserLink);
         add(new Label("dbFacebookSource.fbSource"));
         add(new Label("dbFacebookSource.optionalAdValue"));
         add(new Label("dbFacebookSource.wholeString"));
