@@ -62,6 +62,7 @@ import com.btxtech.game.services.bot.DbBotEnragementStateConfig;
 import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.EntityManagerUtil;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.PropertyService;
 import com.btxtech.game.services.common.PropertyServiceEnum;
@@ -173,6 +174,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.subethamail.wiser.Wiser;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -329,6 +331,8 @@ abstract public class AbstractServiceTest {
     private PlatformTransactionManager transactionManager;
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
@@ -2442,11 +2446,13 @@ abstract public class AbstractServiceTest {
 
     private void beginOpenSessionInViewFilter() {
         HibernateUtil.openSession4InternalCall(sessionFactory);
+        EntityManagerUtil.createEntityManager4InternalCall(entityManagerFactory);
     }
 
     private void endOpenSessionInViewFilter() {
         sessionFactory.getCurrentSession().clear();
         HibernateUtil.closeSession4InternalCall(sessionFactory);
+        EntityManagerUtil.closeEntityManager4InternalCall(entityManagerFactory);
     }
 
     protected void beginHttpSession() {
