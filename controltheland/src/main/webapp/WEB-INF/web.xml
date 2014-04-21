@@ -230,6 +230,16 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- Spring entity manager -->
+    <filter>
+        <filter-name>openEntityManagerInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>openEntityManagerInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- Wicket -->
     <filter>
         <filter-name>wicket</filter-name>

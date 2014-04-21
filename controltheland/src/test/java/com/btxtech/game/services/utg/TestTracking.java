@@ -25,6 +25,7 @@ import com.btxtech.game.services.history.GameHistoryFrame;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.user.DbGuild;
+import com.btxtech.game.services.user.DbInvitationInfo;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
@@ -1302,6 +1303,39 @@ public class TestTracking extends AbstractServiceTest {
         users = userTrackingService.getNewUsers(newUserTrackingFilter);
         Assert.assertEquals(1, users.size());
         Assert.assertEquals("U9", users.get(0).getUsername());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testNewUserTrackingFriend() throws Exception {
+        configureSimplePlanetNoResources();
+        createUserInSession("U1", new Date(100000000000L));
+        createUserInSession("U2", new Date(200000000000L));
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        User u1 = userService.getUser("U1");
+        DbInvitationInfo dbInvitationInfo = new DbInvitationInfo();
+        dbInvitationInfo.setHost(u1);
+        dbInvitationInfo.setSource(DbInvitationInfo.Source.FACEBOOK);
+        User u2 = userService.getUser("U2");
+        setPrivateField(User.class, u2, "dbInvitationInfo", dbInvitationInfo);
+        userService.save(u2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // test 1
+        NewUserTrackingFilter newUserTrackingFilter = new NewUserTrackingFilter();
+        newUserTrackingFilter.setFromDate(new Date(200000000000L));
+        newUserTrackingFilter.setToDate(new Date(300000000000L));
+        List<User> users = userTrackingService.getNewUsers(newUserTrackingFilter);
+        Assert.assertEquals(1, users.size());
+        Assert.assertEquals("U2", users.get(0).getUsername());
+        Assert.assertEquals("U1", users.get(0).getDbInvitationInfo().getHost().getUsername());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
