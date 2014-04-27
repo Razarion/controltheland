@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
@@ -13,6 +14,7 @@ import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBuilder;
@@ -21,6 +23,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.TestGlobalServices;
 import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBuilderType;
+import com.btxtech.game.services.media.DbClip;
 import com.btxtech.game.services.planet.ServerItemService;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
@@ -30,7 +35,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -95,7 +102,7 @@ public class TestBuilder extends AbstractServiceTest {
         Assert.assertFalse(syncMovable.tick(1.0));
         // Set buildup
         SyncBuilder syncBuilder = syncBaseItem.getSyncBuilder();
-        syncBuilder.getBuilderType().changeTo(new BuilderType(11, 2, syncBuilder.getBuilderType().getAbleToBuild()));
+        syncBuilder.getBuilderType().changeTo(new BuilderType(11, 2, syncBuilder.getBuilderType().getAbleToBuild(), null));
 
 
         return syncBaseItem;
@@ -196,5 +203,113 @@ public class TestBuilder extends AbstractServiceTest {
         Assert.assertNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(1.0, buildupBaseItem.getBuildup(), 0.001);
         Assert.assertTrue(buildupBaseItem.isReady());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCrud() throws Exception {
+        configureSimplePlanet();
+        DbClip dbClip1 = createEmptyDbClip();
+        DbClip dbClip2 = createEmptyDbClip();
+        // Setup item
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 24);
+        dbBaseItemType.setTerrainType(TerrainType.LAND_COAST);
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_24));
+        dbBaseItemType.setHealth(10);
+        dbBaseItemType.setBuildup(10);
+        dbBaseItemType.setPrice(1);
+        dbBaseItemType.setXpOnKilling(1);
+        dbBaseItemType.setConsumingHouseSpace(1);
+        // DbBuilderType
+        DbBuilderType dbBuilderType = new DbBuilderType();
+        dbBuilderType.setProgress(1000);
+        dbBuilderType.setRange(100);
+        Set<DbBaseItemType> ableToBuild = new HashSet<>();
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HOUSE_ID));
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_TYPE_ID));
+        dbBuilderType.setAbleToBuild(ableToBuild);
+        dbBuilderType.setBuildupClip(readDbClipInSession(dbClip1.getId()));
+        dbBuilderType.setBuildupClipPositions(INDEX_24);
+        dbBaseItemType.setDbBuilderType(dbBuilderType);
+
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
+        int builderId = dbBaseItemType.getId();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        BaseItemType baseItemType = (BaseItemType) serverItemTypeService.getItemType(builderId);
+        BuilderType builderType = baseItemType.getBuilderType();
+        Assert.assertEquals(100, builderType.getRange());
+        Assert.assertEquals(1000, builderType.getProgress(), 0.0001);
+        Assert.assertTrue(builderType.isAbleToBuild(TEST_FACTORY_ITEM_ID));
+        Assert.assertTrue(builderType.isAbleToBuild(TEST_HOUSE_ID));
+        Assert.assertTrue(builderType.isAbleToBuild(TEST_CONSUMER_TYPE_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_GENERATOR_TYPE_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_HARBOR_TYPE_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_HARBOR_TYPE_ID));
+        Assert.assertEquals(3, builderType.getAbleToBuild().size());
+        Assert.assertEquals((int)dbClip1.getId(), builderType.getBuildupClip().getClipId());
+        Assert.assertArrayEquals(INDEX_24, builderType.getBuildupClip().getPositions());
+        // Change
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().readDbChild(dbBaseItemType.getId());
+        // DbBuilderType
+        dbBuilderType = dbBaseItemType.getDbBuilderType();
+        dbBuilderType.setProgress(1001);
+        dbBuilderType.setRange(102);
+        ableToBuild = new HashSet<>();
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        dbBuilderType.setAbleToBuild(ableToBuild);
+        dbBuilderType.setBuildupClip(readDbClipInSession(dbClip2.getId()));
+        dbBuilderType.setBuildupClipPositions(INDEX_05);
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        baseItemType = (BaseItemType) serverItemTypeService.getItemType(builderId);
+        builderType = baseItemType.getBuilderType();
+        Assert.assertEquals(102, builderType.getRange());
+        Assert.assertEquals(1001, builderType.getProgress(), 0.0001);
+        Assert.assertTrue(builderType.isAbleToBuild(TEST_FACTORY_ITEM_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_HOUSE_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_CONSUMER_TYPE_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_GENERATOR_TYPE_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_HARBOR_TYPE_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_HARBOR_TYPE_ID));
+        Assert.assertEquals(1, builderType.getAbleToBuild().size());
+        Assert.assertEquals((int)dbClip2.getId(), builderType.getBuildupClip().getClipId());
+        Assert.assertArrayEquals(INDEX_05, builderType.getBuildupClip().getPositions());
+        // Change no clip
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().readDbChild(dbBaseItemType.getId());
+        // DbBuilderType
+        dbBuilderType = dbBaseItemType.getDbBuilderType();
+        dbBuilderType.setBuildupClipPositions(new Index[0]);
+        dbBuilderType.setBuildupClip(null);
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        baseItemType = (BaseItemType) serverItemTypeService.getItemType(builderId);
+        builderType = baseItemType.getBuilderType();
+        Assert.assertEquals(102, builderType.getRange());
+        Assert.assertEquals(1001, builderType.getProgress(), 0.0001);
+        Assert.assertTrue(builderType.isAbleToBuild(TEST_FACTORY_ITEM_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_HOUSE_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_CONSUMER_TYPE_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_GENERATOR_TYPE_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_HARBOR_TYPE_ID));
+        Assert.assertFalse(builderType.isAbleToBuild(TEST_HARBOR_TYPE_ID));
+        Assert.assertEquals(1, builderType.getAbleToBuild().size());
+        Assert.assertNull(builderType.getBuildupClip());
     }
 }

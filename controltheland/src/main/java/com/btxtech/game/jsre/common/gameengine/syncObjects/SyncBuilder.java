@@ -54,6 +54,10 @@ public class SyncBuilder extends SyncBaseAbility {
         return toBeBuildPosition != null && toBeBuiltType != null;
     }
 
+    public boolean isBuilding() {
+        return isActive() && !getSyncBaseItem().getSyncMovable().isActive();
+    }
+
     public synchronized boolean tick(double factor) throws NoSuchItemTypeException {
         if (toBeBuildPosition == null || toBeBuiltType == null) {
             return false;

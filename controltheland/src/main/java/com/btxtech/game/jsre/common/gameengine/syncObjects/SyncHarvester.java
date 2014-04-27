@@ -49,6 +49,10 @@ public class SyncHarvester extends SyncBaseAbility {
         return target != null;
     }
 
+    public boolean isHarvesting() {
+        return isActive() && !getSyncBaseItem().getSyncMovable().isActive();
+    }
+
     public boolean tick(double factor) throws ItemDoesNotExistException {
         if (!getSyncBaseItem().isAlive()) {
             return false;
