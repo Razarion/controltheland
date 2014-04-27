@@ -14,11 +14,9 @@
 package com.btxtech.game.services.item.itemType;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ConsumerType;
 import com.btxtech.game.jsre.common.gameengine.itemType.FactoryType;
 import com.btxtech.game.jsre.common.gameengine.itemType.GeneratorType;
-import com.btxtech.game.jsre.common.gameengine.itemType.HarvesterType;
 import com.btxtech.game.jsre.common.gameengine.itemType.HouseType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemContainerType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -309,10 +307,10 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
             baseItemType.setFactoryType(new FactoryType(dbFactoryType.getProgress(), Utils.dbBaseItemTypesToInts(dbFactoryType.getAbleToBuild())));
         }
         if (dbHarvesterType != null) {
-            baseItemType.setHarvesterType(new HarvesterType(dbHarvesterType.getRange(), dbHarvesterType.getProgress()));
+            baseItemType.setHarvesterType(dbHarvesterType.createHarvesterType());
         }
         if (dbBuilderType != null) {
-            baseItemType.setBuilderType(new BuilderType(dbBuilderType.getRange(), dbBuilderType.getProgress(), Utils.dbBaseItemTypesToInts(dbBuilderType.getAbleToBuild())));
+            baseItemType.setBuilderType(dbBuilderType.createBuilderType());
         }
         if (dbConsumerType != null) {
             baseItemType.setConsumerType(new ConsumerType(dbConsumerType.getWattage()));

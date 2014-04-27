@@ -85,6 +85,8 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
+import com.btxtech.game.services.media.ClipService;
+import com.btxtech.game.services.media.DbClip;
 import com.btxtech.game.services.mgmt.BackupService;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.planet.Base;
@@ -217,6 +219,8 @@ abstract public class AbstractServiceTest {
     public static final double[] ANGELS_JEEP = {0, 0.331612557878923, 0.785398163397448, 1.08210413623648, 1.2915436464758, 1.43116998663535, 1.5707963267949, 1.71042266695444, 1.85004900711399, 2.07694180987325, 2.30383461263251, 2.7401669256311, 3.14159265358979, 3.59537825910832, 3.76991118430775, 4.1538836197465, 4.36332312998582, 4.5553093477052, 4.71238898038469, 4.81710873550435, 5.06145483078356, 5.32325421858271, 5.55014702134197, 5.846852994181};
     public static final double[] ANGELS_TANK = {0, 0.453785605518526, 0.872664625997165, 1.11701072127637, 1.30899693899575, 1.46607657167524, 1.5707963267949, 1.72787595947439, 1.91986217719376, 2.07694180987325, 2.39110107523223, 2.75762021815104, 3.14159265358979, 3.5081117965086, 3.94444410950718, 4.25860337486616, 4.4331363000656, 4.57276264022514, 4.71238898038469, 4.86946861306418, 5.02654824574367, 5.18362787842316, 5.44542726622231, 5.86430628670095};
     public static final double[] ANGELS_1 = {0};
+    public static final Index[] INDEX_24 = {new Index(0, 0), new Index(0, 1), new Index(1, 2), new Index(2, 3), new Index(3, 4), new Index(4, 5), new Index(0, 0), new Index(0, 1), new Index(1, 2), new Index(2, 3), new Index(3, 4), new Index(4, 5), new Index(0, 0), new Index(0, 1), new Index(1, 2), new Index(2, 3), new Index(3, 4), new Index(4, 5), new Index(5, 6), new Index(6, 7), new Index(7, 8), new Index(8, 9), new Index(9, 10), new Index(10, 11)};
+    public static final Index[] INDEX_05 = {new Index(5, 10), new Index(6, 11), new Index(7, 12), new Index(8, 13), new Index(9, 14)};
     protected static final String TEST_START_BUILDER_ITEM = "TestStartBuilderItem";
     protected static int TEST_START_BUILDER_ITEM_ID = -1;
     protected static final String TEST_FACTORY_ITEM = "TestFactoryItem";
@@ -349,6 +353,8 @@ abstract public class AbstractServiceTest {
     private PropertyService propertyService;
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private ClipService clipService;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
     private MockHttpSession mockHttpSession;
@@ -2436,6 +2442,21 @@ abstract public class AbstractServiceTest {
         Assert.assertEquals("itemCount", itemCount, backupSummary.getItemCount());
         Assert.assertEquals("baseCount", baseCount, backupSummary.getBaseCount());
         Assert.assertEquals("userStateCount", userStateCount, backupSummary.getUserStateCount());
+    }
+
+    // ------------------- DbClip helper --------------------
+    protected DbClip createEmptyDbClip() {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbClip dbClip1 = clipService.getClipLibraryCrud().createDbChild();
+        clipService.getClipLibraryCrud().updateDbChild(dbClip1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        return dbClip1;
+    }
+
+    protected DbClip readDbClipInSession(int id) {
+        return clipService.getClipLibraryCrud().readDbChild(id);
     }
 
     // ------------------- Session Config --------------------

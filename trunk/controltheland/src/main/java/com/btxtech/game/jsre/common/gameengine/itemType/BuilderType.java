@@ -25,6 +25,7 @@ public class BuilderType implements Serializable {
     private int range;
     private double progress;
     private Collection<Integer> ableToBuild;
+    private ItemClipPosition buildupClip;
 
     /**
      * Used by GWT
@@ -32,10 +33,11 @@ public class BuilderType implements Serializable {
     BuilderType() {
     }
 
-    public BuilderType(int range, double progress, Collection<Integer> ableToBuild) {
+    public BuilderType(int range, double progress, Collection<Integer> ableToBuild, ItemClipPosition buildupClip) {
         this.range = range;
         this.progress = progress;
         this.ableToBuild = ableToBuild;
+        this.buildupClip = buildupClip;
     }
 
     public int getRange() {
@@ -54,9 +56,14 @@ public class BuilderType implements Serializable {
         return ableToBuild;
     }
 
+    public ItemClipPosition getBuildupClip() {
+        return buildupClip;
+    }
+
     public void changeTo(BuilderType builderType) {
         range = builderType.range;
         progress = builderType.progress;
         ableToBuild = builderType.ableToBuild;
+        buildupClip = builderType.buildupClip;
     }
 }

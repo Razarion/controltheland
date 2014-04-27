@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.media.DbClip;
+import com.btxtech.game.services.media.DbClipUtil;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
@@ -20,6 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,11 +41,12 @@ public class DbItemTypeDemolitionClip implements CrudChild<DbItemTypeDemolitionS
     private DbItemTypeDemolitionStep dbItemTypeDemolitionStep;
     @ManyToOne
     private DbClip dbClip;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "ITEM_TYPE_DEMOLITION_CLIP_POSITION",
             joinColumns = @JoinColumn(name = "itemTypeDemolitionClipId"))
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xPos"), @Column(name = "yPos")})
+    @OrderColumn(name = "imageIndex")
     private List<Index> positions;
 
     @Override
@@ -85,13 +88,7 @@ public class DbItemTypeDemolitionClip implements CrudChild<DbItemTypeDemolitionS
     }
 
     public ItemClipPosition createItemClipPosition() {
-        if (dbClip == null) {
-            return null;
-        }
-        if (positions == null || positions.isEmpty()) {
-            return null;
-        }
-        return new ItemClipPosition(dbClip.getId(), positions.toArray(new Index[positions.size()]));
+        return DbClipUtil.createItemClipPosition(dbClip, positions);
     }
 
     public void setPositions(Index[] positions) {
