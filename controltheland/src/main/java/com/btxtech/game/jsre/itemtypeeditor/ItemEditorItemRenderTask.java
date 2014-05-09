@@ -60,7 +60,7 @@ public class ItemEditorItemRenderTask extends AbstractRenderTask {
                     throw new IllegalArgumentException("ItemTypeSpriteMap.getItemTypeImageOffset() unknown SyncObjectState: " + syncObjectState);
             }
 
-            if (ItemTypeEditorModel.getInstance().isImageOverridden(angelIndex, step, frame, syncObjectState)) {
+            if (ItemTypeEditorModel.getInstance().isProtagonist(syncItem) && ItemTypeEditorModel.getInstance().isImageOverridden(angelIndex, step, frame, syncObjectState)) {
                 ImageElement imageElement = ItemTypeEditorModel.getInstance().getImageElement(angelIndex, step, frame, syncObjectState);
                 context2d.drawImage(imageElement, relativeImagePosition.getX(), relativeImagePosition.getY());
             } else {

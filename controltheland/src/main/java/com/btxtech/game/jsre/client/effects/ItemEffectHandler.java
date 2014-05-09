@@ -1,10 +1,14 @@
 package com.btxtech.game.jsre.client.effects;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +22,8 @@ import java.util.Map;
  */
 public class ItemEffectHandler {
     private static ItemEffectHandler INSTANCE = new ItemEffectHandler();
-    private Map<SyncItem, Map<ItemClipPosition, ItemEffect>> cache = new HashMap<>();
+    private Map<SyncItem, Map<ItemClipPosition, ItemEffect>> oldCache;
+    private Map<SyncItem, Map<ItemClipPosition, ItemEffect>> newCache;
 
     public static ItemEffectHandler getInstance() {
         return INSTANCE;
@@ -31,21 +36,22 @@ public class ItemEffectHandler {
     }
 
     public Collection<ItemEffect> getClips(long timeStamp, Rectangle viewRect, Collection<SyncItem> itemsInView) {
+        newCache = new HashMap<>();
         Collection<ItemEffect> itemEffects = new ArrayList<>();
-        Map<SyncItem, Map<ItemClipPosition, ItemEffect>> tmpCache = new HashMap<>();
         for (SyncItem syncItem : itemsInView) {
             if (syncItem instanceof SyncBaseItem) {
                 SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                handleDemolition(syncBaseItem, timeStamp, viewRect, tmpCache, itemEffects);
-                handleHarvest(syncBaseItem, timeStamp, viewRect, tmpCache, itemEffects);
-                handleBuildup(syncBaseItem, timeStamp, viewRect, tmpCache, itemEffects);
+                handleDemolition(syncBaseItem, timeStamp, viewRect, itemEffects);
+                handleHarvest(syncBaseItem, timeStamp, viewRect, itemEffects);
+                handleBuildup(syncBaseItem, timeStamp, viewRect, itemEffects);
             }
         }
-        cache = tmpCache;
+        oldCache = newCache;
+        newCache = null;
         return itemEffects;
     }
 
-    private void handleDemolition(SyncBaseItem syncBaseItem, long timeStamp, Rectangle viewRect, Map<SyncItem, Map<ItemClipPosition, ItemEffect>> tmpCache, Collection<ItemEffect> itemEffects) {
+    private void handleDemolition(SyncBaseItem syncBaseItem, long timeStamp, Rectangle viewRect, Collection<ItemEffect> itemEffects) {
         if (syncBaseItem.isHealthy()) {
             return;
         }
@@ -54,11 +60,11 @@ public class ItemEffectHandler {
             return;
         }
         for (ItemClipPosition demolitionClip : demolitionClips) {
-            addItemEffect(syncBaseItem, demolitionClip, timeStamp, viewRect, tmpCache, itemEffects);
+            addItemEffect(syncBaseItem, demolitionClip, null, timeStamp, viewRect, itemEffects);
         }
     }
 
-    private void handleHarvest(SyncBaseItem syncBaseItem, long timeStamp, Rectangle viewRect, Map<SyncItem, Map<ItemClipPosition, ItemEffect>> tmpCache, Collection<ItemEffect> itemEffects) {
+    private void handleHarvest(SyncBaseItem syncBaseItem, long timeStamp, Rectangle viewRect, Collection<ItemEffect> itemEffects) {
         if (!syncBaseItem.hasSyncHarvester()) {
             return;
         }
@@ -69,10 +75,15 @@ public class ItemEffectHandler {
         if (harvesterClipPosition == null) {
             return;
         }
-        addItemEffect(syncBaseItem, harvesterClipPosition, timeStamp, viewRect, tmpCache, itemEffects);
+        try {
+            SyncResourceItem resource = (SyncResourceItem) ClientPlanetServices.getInstance().getItemService().getItem(syncBaseItem.getSyncHarvester().getTarget());
+            addItemEffect(syncBaseItem, harvesterClipPosition, resource.getSyncItemArea().getPosition(), timeStamp, viewRect, itemEffects);
+        } catch (ItemDoesNotExistException e) {
+            ClientExceptionHandler.handleExceptionOnlyOnce("ItemEffectHandler handleHarvest", e);
+        }
     }
 
-    private void handleBuildup(SyncBaseItem syncBaseItem, long timeStamp, Rectangle viewRect, Map<SyncItem, Map<ItemClipPosition, ItemEffect>> tmpCache, Collection<ItemEffect> itemEffects) {
+    private void handleBuildup(SyncBaseItem syncBaseItem, long timeStamp, Rectangle viewRect, Collection<ItemEffect> itemEffects) {
         if (!syncBaseItem.hasSyncBuilder()) {
             return;
         }
@@ -83,31 +94,43 @@ public class ItemEffectHandler {
         if (buildupClipPosition == null) {
             return;
         }
-        addItemEffect(syncBaseItem, buildupClipPosition, timeStamp, viewRect, tmpCache, itemEffects);
+        addItemEffect(syncBaseItem, buildupClipPosition, syncBaseItem.getSyncBuilder().getToBeBuildPosition(), timeStamp, viewRect, itemEffects);
     }
 
-    private void addItemEffect(SyncBaseItem syncBaseItem, ItemClipPosition demolitionClip, long timeStamp, Rectangle viewRect, Map<SyncItem, Map<ItemClipPosition, ItemEffect>> tmpCache, Collection<ItemEffect> itemEffects) {
-        Map<ItemClipPosition, ItemEffect> itemClipPositions = cache.get(syncBaseItem);
-        Map<ItemClipPosition, ItemEffect> tmpItemClipPositions = new HashMap<>();
-        tmpCache.put(syncBaseItem, tmpItemClipPositions);
+    private void addItemEffect(SyncBaseItem syncBaseItem, ItemClipPosition demolitionClip, Index target, long timeStamp, Rectangle viewRect, Collection<ItemEffect> itemEffects) {
         try {
-            ItemEffect itemEffect = null;
-            if (itemClipPositions != null) {
-                itemEffect = itemClipPositions.get(demolitionClip);
-            }
-            if (itemEffect == null) {
-                itemEffect = new ItemEffect(syncBaseItem, demolitionClip);
-            } else {
+            ItemEffect itemEffect = getFromOldCache(syncBaseItem, demolitionClip);
+            if (itemEffect != null) {
                 itemEffect.refresh(syncBaseItem);
+            } else {
+                itemEffect = new ItemEffect(syncBaseItem, demolitionClip, target);
             }
             itemEffect.prepareRender(timeStamp, viewRect);
             if (itemEffect.isInViewRect()) {
-                tmpItemClipPositions.put(demolitionClip, itemEffect);
                 itemEffects.add(itemEffect);
+                putToNewCache(syncBaseItem, demolitionClip, itemEffect);
             }
         } catch (Exception e) {
             ClientExceptionHandler.handleExceptionOnlyOnce("ItemEffectHandler.getClips()", e);
         }
+    }
+
+    private ItemEffect getFromOldCache(SyncBaseItem syncBaseItem, ItemClipPosition demolitionClip) {
+        Map<ItemClipPosition, ItemEffect> positions = oldCache.get(syncBaseItem);
+        if (positions == null) {
+            return null;
+        }
+        return positions.get(demolitionClip);
+    }
+
+
+    private void putToNewCache(SyncBaseItem syncBaseItem, ItemClipPosition demolitionClip, ItemEffect itemEffect) {
+        Map<ItemClipPosition, ItemEffect> itemEffects = newCache.get(syncBaseItem);
+        if (itemEffects == null) {
+            itemEffects = new HashMap<>();
+            newCache.put(syncBaseItem, itemEffects);
+        }
+        itemEffects.put(demolitionClip, itemEffect);
     }
 
 }

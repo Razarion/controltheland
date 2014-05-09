@@ -14,6 +14,7 @@
 package com.btxtech.game.services.item.impl;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -105,18 +106,50 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
     @Override
     @Transactional
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException {
+    public void saveItemTypeProperties(int itemTypeId,
+                                       BoundingBox boundingBox,
+                                       ItemTypeSpriteMap itemTypeSpriteMap,
+                                       WeaponType weaponType,
+                                       Collection<ItemTypeImageInfo> buildupImages,
+                                       Collection<ItemTypeImageInfo> runtimeImages,
+                                       Collection<ItemTypeImageInfo> demolitionImages,
+                                       ItemClipPosition harvesterItemClipPosition,
+                                       ItemClipPosition buildupItemClipPosition) throws NoSuchItemTypeException {
         DbItemType dbItemType = getDbItemType(itemTypeId);
         if (dbItemType == null) {
             throw new NoSuchItemTypeException(itemTypeId);
         }
         dbItemType.setBounding(boundingBox);
         dbItemType.setTypeSpriteMap(itemTypeSpriteMap, clipService);
-        if (dbItemType instanceof DbBaseItemType && ((DbBaseItemType) dbItemType).getDbWeaponType() != null) {
-            saveWeaponType(dbItemType, weaponType);
+        if (dbItemType instanceof DbBaseItemType) {
+            DbBaseItemType dbBaseItemType = (DbBaseItemType) dbItemType;
+            if (dbBaseItemType.getDbWeaponType() != null) {
+                saveWeaponType(dbItemType, weaponType);
+            }
+            if (dbBaseItemType.getDbHarvesterType() != null) {
+                if (harvesterItemClipPosition.isClipIdValid()) {
+                    dbBaseItemType.getDbHarvesterType().setHarvestClip(clipService.getClipLibraryCrud().readDbChild(harvesterItemClipPosition.getClipId()));
+                    dbBaseItemType.getDbHarvesterType().setHarvestClipPositions(harvesterItemClipPosition.getPositions());
+                } else {
+                    dbBaseItemType.getDbHarvesterType().setHarvestClip(null);
+                    dbBaseItemType.getDbHarvesterType().setHarvestClipPositions(null);
+                }
+            }
+            if (dbBaseItemType.getDbBuilderType() != null) {
+                if (buildupItemClipPosition.isClipIdValid()) {
+                    dbBaseItemType.getDbBuilderType().setBuildupClip(clipService.getClipLibraryCrud().readDbChild(buildupItemClipPosition.getClipId()));
+                    dbBaseItemType.getDbBuilderType().setBuildupClipPositions(buildupItemClipPosition.getPositions());
+                } else {
+                    dbBaseItemType.getDbBuilderType().setBuildupClip(null);
+                    dbBaseItemType.getDbBuilderType().setBuildupClipPositions(null);
+                }
+            }
         }
+
         dbItemType.saveImages(buildupImages, runtimeImages, demolitionImages);
+
         saveDbItemType(dbItemType);
+
     }
 
     private void saveWeaponType(DbItemType dbItemType, WeaponType weaponType) throws NoSuchItemTypeException {

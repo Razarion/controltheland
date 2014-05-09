@@ -77,7 +77,9 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList());
+                Collections.<ItemTypeImageInfo>emptyList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -115,7 +117,9 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList());
+                Collections.<ItemTypeImageInfo>emptyList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -137,7 +141,6 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
-
 
     @Test
     @DirtiesContext
@@ -171,7 +174,9 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList());
+                Collections.<ItemTypeImageInfo>emptyList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -249,7 +254,9 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList());
+                Collections.<ItemTypeImageInfo>emptyList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -280,7 +287,9 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList());
+                Collections.<ItemTypeImageInfo>emptyList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -330,7 +339,9 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList());
+                Collections.<ItemTypeImageInfo>emptyList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

@@ -37,6 +37,8 @@ public class ItemTypeEditorPanel extends Composite {
         configurationSelector.addItem("Runtime");
         configurationSelector.addItem("Demolition");
         configurationSelector.addItem("Muzzle Flash");
+        configurationSelector.addItem("Harvester");
+        configurationSelector.addItem("Buildup");
         configurationSelector.setSelectedIndex(0);
         configurationPanel.setWidget(new BoundingBoxPanel());
         simulationControlPanel.setWidget(new SimulationControlPanel());
@@ -73,6 +75,12 @@ public class ItemTypeEditorPanel extends Composite {
                 break;
             case 4:
                 configurationPanel.setWidget(new MuzzleFlashPanel());
+                break;
+            case 5:
+                configurationPanel.setWidget(new HarvestBeamPanel());
+                break;
+            case 6:
+                configurationPanel.setWidget(new BuildupBeamPanel());
                 break;
         }
         ItemTypeEditorModel.getInstance().fireUpdate();

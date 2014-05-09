@@ -88,7 +88,7 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
 
     public void loadBoundingBox(final int itemTypeId) {
         ItemTypeAccessAsync itemTypeAccess = GWT.create(ItemTypeAccess.class);
-        itemTypeAccess.getItemType(itemTypeId, new AsyncCallback<ItemType>() {
+  /*      itemTypeAccess.getItemType(itemTypeId, new AsyncCallback<ItemType>() {
             @Override
             public void onFailure(Throwable caught) {
                 log.log(Level.SEVERE, "createBoundingBox call failed", caught);
@@ -98,7 +98,7 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
             public void onSuccess(ItemType itemType) {
                 boundingBox = itemType.getBoundingBox();
             }
-        });
+        });   */
 
     }
 

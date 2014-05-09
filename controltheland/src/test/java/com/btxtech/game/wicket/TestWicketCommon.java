@@ -2,8 +2,10 @@ package com.btxtech.game.wicket;
 
 import com.btxtech.game.controllers.TestItemImageController;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -348,7 +350,9 @@ public class TestWicketCommon extends AbstractServiceTest {
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

@@ -13,9 +13,9 @@
 
 package com.btxtech.game.jsre.itemtypeeditor;
 
-import com.btxtech.game.jsre.client.common.info.ClipInfo;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -32,9 +32,17 @@ import java.util.Collection;
  */
 @RemoteServiceRelativePath("itemTypeAccess")
 public interface ItemTypeAccess extends RemoteService {
-    ItemType getItemType(int itemTypeId) throws NoSuchItemTypeException;
+    Collection<ItemType> getItemTypes();
 
-    void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException;
+    void saveItemTypeProperties(int itemTypeId,
+                                BoundingBox boundingBox,
+                                ItemTypeSpriteMap itemTypeSpriteMap,
+                                WeaponType weaponType,
+                                Collection<ItemTypeImageInfo> buildupImages,
+                                Collection<ItemTypeImageInfo> runtimeImages,
+                                Collection<ItemTypeImageInfo> demolitionImages,
+                                ItemClipPosition harvesterItemClipPosition,
+                                ItemClipPosition buildupItemClipPosition) throws NoSuchItemTypeException;
 
     GameInfo loadGameInfoLight();
 }
