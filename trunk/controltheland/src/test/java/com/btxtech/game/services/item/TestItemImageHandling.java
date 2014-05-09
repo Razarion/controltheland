@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.DemolitionStepSpriteMap;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -151,7 +152,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>singletonList(runtimeImageInf),
-                Collections.<ItemTypeImageInfo>emptyList());
+                Collections.<ItemTypeImageInfo>emptyList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -198,7 +201,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>singletonList(runtimeImageInf),
-                Collections.<ItemTypeImageInfo>emptyList());
+                Collections.<ItemTypeImageInfo>emptyList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -245,7 +250,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Collections.<ItemTypeImageInfo>singletonList(buildupImage),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList());
+                Collections.<ItemTypeImageInfo>emptyList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -293,7 +300,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Arrays.asList(demolition1, demolition2));
+                Arrays.asList(demolition1, demolition2),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -357,7 +366,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.asList(new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_1), new ItemTypeImageInfo(1, 0, 0, INLINE_IMAGE_2)),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -380,7 +391,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.asList(new ItemTypeImageInfo(2, 0, 0, INLINE_IMAGE_3), new ItemTypeImageInfo(3, 0, 0, INLINE_IMAGE_4)),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -405,7 +418,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -428,7 +443,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.asList(new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_3)),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -451,7 +468,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Arrays.asList(new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_4)),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -475,7 +494,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.asList(new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_1), new ItemTypeImageInfo(0, 0, 1, INLINE_IMAGE_2), new ItemTypeImageInfo(1, 0, 0, INLINE_IMAGE_3), new ItemTypeImageInfo(1, 0, 1, INLINE_IMAGE_4)));
+                Arrays.asList(new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_1), new ItemTypeImageInfo(0, 0, 1, INLINE_IMAGE_2), new ItemTypeImageInfo(1, 0, 0, INLINE_IMAGE_3), new ItemTypeImageInfo(1, 0, 1, INLINE_IMAGE_4)),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -503,7 +524,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -575,7 +598,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         serverItemTypeService.activate();
         int itemTypeId = dbBaseItemType.getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -641,7 +666,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         serverItemTypeService.activate();
         int itemTypeId = dbBaseItemType.getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -696,7 +723,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         serverItemTypeService.activate();
         int itemTypeId = dbBaseItemType.getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -733,7 +762,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         serverItemTypeService.activate();
         int itemTypeId = dbBaseItemType.getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -816,7 +847,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 weaponType,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -840,7 +873,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 weaponType,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -871,7 +906,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 weaponType,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -905,7 +942,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 weaponType,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -935,7 +974,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 weaponType,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(),
+                new ItemClipPosition(0, new Index[0]),
+                new ItemClipPosition(0, new Index[0]));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

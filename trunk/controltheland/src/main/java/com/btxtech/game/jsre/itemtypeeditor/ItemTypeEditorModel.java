@@ -24,7 +24,9 @@ import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.itemType.DemolitionStepSpriteMap;
+import com.btxtech.game.jsre.common.gameengine.itemType.HarvesterType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
@@ -41,6 +43,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.ImageElement;
@@ -60,6 +63,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ItemTypeEditorModel {
+    public static final int SURFACE_IMAGE_ID = 23;
     public static final SimpleBase MY_BASE = new SimpleBase(SimpleBase.ITEM_TYPE_EDITOR_MY, PlanetInfo.EDITOR_PLANET_ID.getPlanetId());
     public static final SimpleBase ENEMY_BASE = new SimpleBase(SimpleBase.ITEM_TYPE_EDITOR_ENEMY, PlanetInfo.EDITOR_PLANET_ID.getPlanetId());
     public static final int SIM_WIDTH = 700;
@@ -76,8 +80,8 @@ public class ItemTypeEditorModel {
     private static final ItemTypeEditorModel INSTANCE = new ItemTypeEditorModel();
     private BoundingBox boundingBox;
     private ItemTypeSpriteMap itemTypeSpriteMap;
-    private Collection<UpdateListener> updateListeners = new ArrayList<UpdateListener>();
-    private Collection<LoadedListener> loadedListeners = new ArrayList<LoadedListener>();
+    private Collection<UpdateListener> updateListeners = new ArrayList<>();
+    private Collection<LoadedListener> loadedListeners = new ArrayList<>();
     private ItemTypeImageInfo[][] runtimeImages;
     private ItemTypeImageInfo[][] buildupImages;
     private ItemTypeImageInfo[][][] demolitionImages;
@@ -92,8 +96,13 @@ public class ItemTypeEditorModel {
     private boolean moving;
     private Index moveDestination;
     private WeaponType weaponType;
-    private SyncBaseItem target;
+    private SyncBaseItem attackTarget;
+    private SyncResourceItem harvestTarget;
     private int currentDemolitionStep;
+    private ItemClipPosition harvesterItemClipPosition;
+    private ItemClipPosition buildupItemClipPosition;
+    private Collection<SurfaceImage> surfaceImages;
+    private SyncBaseItem buildupSyncBaseItem;
 
     public static ItemTypeEditorModel getInstance() {
         return INSTANCE;
@@ -156,7 +165,9 @@ public class ItemTypeEditorModel {
 
     private void updateAngelIndex() {
         ItemTypeEditorModel.getInstance().fireUpdate();
-        setTargetPosition();
+        setAttackTargetPosition();
+        harvest();
+        buildup();
         if (moving) {
             executeMoveCommand();
         }
@@ -410,7 +421,7 @@ public class ItemTypeEditorModel {
     }
 
     private void loadSpriteMap(final int itemTypeId) {
-        ImageLoader<Integer> itemTypeImageLoader = new ImageLoader<Integer>();
+        ImageLoader<Integer> itemTypeImageLoader = new ImageLoader<>();
         itemTypeImageLoader.addImageUrl(ImageHandler.getItemTypeSpriteMapUrl(itemTypeId), itemTypeId);
         itemTypeImageLoader.startLoading(new ImageLoader.Listener<Integer>() {
             @Override
@@ -424,8 +435,9 @@ public class ItemTypeEditorModel {
     public void saveItemType(final Button button) {
         button.setEnabled(false);
         ItemTypeAccessAsync itemTypeAccess = GWT.create(ItemTypeAccess.class);
-        itemTypeAccess.saveItemTypeProperties(itemTypeId, boundingBox, itemTypeSpriteMap, weaponType, generateBuildupImageCollection(),
-                generateRuntimeImageCollection(), generateDemolitionImageCollection(), new AsyncCallback<Void>() {
+        itemTypeAccess.saveItemTypeProperties(itemTypeId, boundingBox, itemTypeSpriteMap, weaponType,
+                generateBuildupImageCollection(), generateRuntimeImageCollection(), generateDemolitionImageCollection(),
+                harvesterItemClipPosition, buildupItemClipPosition, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
                 button.setEnabled(true);
@@ -441,7 +453,7 @@ public class ItemTypeEditorModel {
     }
 
     private Collection<ItemTypeImageInfo> generateBuildupImageCollection() {
-        Collection<ItemTypeImageInfo> buildupImages = new ArrayList<ItemTypeImageInfo>();
+        Collection<ItemTypeImageInfo> buildupImages = new ArrayList<>();
         for (ItemTypeImageInfo[] buildupImageArray : this.buildupImages) {
             for (ItemTypeImageInfo itemTypeImageInfo : buildupImageArray) {
                 if (itemTypeImageInfo != null) {
@@ -453,7 +465,7 @@ public class ItemTypeEditorModel {
     }
 
     private Collection<ItemTypeImageInfo> generateRuntimeImageCollection() {
-        Collection<ItemTypeImageInfo> runtimeImages = new ArrayList<ItemTypeImageInfo>();
+        Collection<ItemTypeImageInfo> runtimeImages = new ArrayList<>();
         for (ItemTypeImageInfo[] runtimeImageArray : this.runtimeImages) {
             for (ItemTypeImageInfo itemTypeImageInfo : runtimeImageArray) {
                 if (itemTypeImageInfo != null) {
@@ -465,7 +477,7 @@ public class ItemTypeEditorModel {
     }
 
     private Collection<ItemTypeImageInfo> generateDemolitionImageCollection() {
-        Collection<ItemTypeImageInfo> demolitionImages = new ArrayList<ItemTypeImageInfo>();
+        Collection<ItemTypeImageInfo> demolitionImages = new ArrayList<>();
         for (ItemTypeImageInfo[][] demolitionImageField : this.demolitionImages) {
             for (ItemTypeImageInfo[] demolitionImageArray : demolitionImageField) {
                 for (ItemTypeImageInfo itemTypeImageInfo : demolitionImageArray) {
@@ -478,11 +490,11 @@ public class ItemTypeEditorModel {
         return demolitionImages;
     }
 
-    public void loadItemType(int itemTypeId) {
+    public void loadItemType(final int itemTypeId) {
         this.itemTypeId = itemTypeId;
         loadSpriteMap(itemTypeId);
-        ItemTypeAccessAsync itemTypeAccess = GWT.create(ItemTypeAccess.class);
-        itemTypeAccess.getItemType(itemTypeId, new AsyncCallback<ItemType>() {
+        final ItemTypeAccessAsync itemTypeAccess = GWT.create(ItemTypeAccess.class);
+        itemTypeAccess.getItemTypes(new AsyncCallback<Collection<ItemType>>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -490,72 +502,110 @@ public class ItemTypeEditorModel {
             }
 
             @Override
-            public void onSuccess(ItemType itemType) {
-                ItemTypeEditorModel.this.itemType = itemType;
-                try {
-                    // /--- Init Model
-                    boundingBox = itemType.getBoundingBox();
-                    itemTypeSpriteMap = itemType.getItemTypeSpriteMap();
-                    currentDemolitionStep = 0;
-                    cutBuildupToCorrectLength();
-                    cutRuntimeToCorrectLength();
-                    cutDemolitionToCorrectLength();
-                    // /--- Setup Base
-                    ClientBase.getInstance().setBase(MY_BASE);
-                    Collection<BaseAttributes> allBaseAttributes = new ArrayList<BaseAttributes>();
-                    allBaseAttributes.add(new BaseAttributes(MY_BASE, "MyBase", false, null));
-                    allBaseAttributes.add(new BaseAttributes(ENEMY_BASE, "Enemy", false, null));
-                    ClientBase.getInstance().setAllBaseAttributes(allBaseAttributes);
-                    // /--- Setup div
-                    TerrainView.uglySuppressRadar = true;
-                    Connection.getInstance().init4ItemTypeEditor();
-                    PlanetInfo planetInfo = new PlanetInfo();
-                    planetInfo.setRadarMode(RadarMode.NONE);
-                    planetInfo.setPlanetIdAndName(PlanetInfo.EDITOR_PLANET_ID.getPlanetId(), null, null);
-                    ClientPlanetServices.getInstance().setPlanetInfo(planetInfo);
-                    ClientUserGuidanceService.getInstance().setLevel(new LevelScope(new PlanetLiteInfo(PlanetInfo.EDITOR_PLANET_ID.getPlanetId(), "", null), 0, 0, null, 0));
-                    // /--- Setup terrain
-                    ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
-                    if (itemType.getTerrainType() == null) {
-                        throw new IllegalArgumentException("ItemTypeEditorModel: No surface type specified");
+            public void onSuccess(final Collection<ItemType> itemTypes) {
+                itemTypeAccess.loadGameInfoLight(new AsyncCallback<GameInfo>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        log.log(Level.SEVERE, "itemTypeAccess.loadGameInfoLight call failed", caught);
                     }
-                    surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, null, null, "#00FF00"));
-                    ArrayList<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
-                    surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, SIM_WIDTH / 100, SIM_HEIGHT / 100), 23));
-                    TerrainView.getInstance().setupTerrain(new TerrainSettings(SIM_WIDTH / 100, SIM_HEIGHT / 100), new ArrayList<TerrainImagePosition>(),
-                            surfaceRects, surfaceImages, new ArrayList<TerrainImage>(), null);
-                    TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
-                    TerrainView.getInstance().getTerrainHandler().createTerrainTileField(Collections.<TerrainImagePosition>emptyList(), surfaceRects);
-                    Renderer.getInstance().overrideItemRenderTask(new ItemEditorItemRenderTask(TerrainView.getInstance().getContext2d()));
-                    // /--- Setup Item Container
-                    Collection<ItemType> itemTypes = new ArrayList<ItemType>();
-                    itemTypes.add(itemType);
-                    ItemTypeContainer.getInstance().setItemTypes(itemTypes);
-                    // Item
-                    createSyncItem();
-                    // Finish initialisation
-                    initialized = true;
-                    for (LoadedListener loadedListener : loadedListeners) {
-                        loadedListener.onModelLoaded();
-                    }
-                    fireUpdate();
 
-                } catch (Throwable t) {
-                    log.log(Level.SEVERE, "Can not start ItemTypeEditor", t);
+                    @Override
+                    public void onSuccess(GameInfo gameInfo) {
+                        surfaceImages = gameInfo.getSurfaceImages();
+                        ClientClipHandler.getInstance().inti(gameInfo);
+                        start(itemTypes, itemTypeId);
+                    }
+                });
+            }
+        });
+    }
+
+    private void start(Collection<ItemType> itemTypes, int itemTypeId) {
+        itemType = findItemType(itemTypeId, itemTypes);
+        try {
+            // /--- Init Model
+            boundingBox = itemType.getBoundingBox();
+            itemTypeSpriteMap = itemType.getItemTypeSpriteMap();
+            currentDemolitionStep = 0;
+            cutBuildupToCorrectLength();
+            cutRuntimeToCorrectLength();
+            cutDemolitionToCorrectLength();
+            if (itemType instanceof BaseItemType) {
+                BaseItemType baseItemType = (BaseItemType) itemType;
+                if (baseItemType.getHarvesterType() != null) {
+                    harvesterItemClipPosition = baseItemType.getHarvesterType().getHarvesterClip();
+                    if (harvesterItemClipPosition == null) {
+                        harvesterItemClipPosition = new ItemClipPosition(0, createPositionArray());
+                        HarvesterType harvesterType = new HarvesterType(baseItemType.getHarvesterType().getRange(), baseItemType.getHarvesterType().getProgress(), harvesterItemClipPosition);
+                        baseItemType.getHarvesterType().changeTo(harvesterType);
+                    }
+                }
+                if (baseItemType.getBuilderType() != null) {
+                    buildupItemClipPosition = baseItemType.getBuilderType().getBuildupClip();
+                    if (buildupItemClipPosition == null) {
+                        buildupItemClipPosition = new ItemClipPosition(0, createPositionArray());
+                        BuilderType builderType = new BuilderType(baseItemType.getBuilderType().getRange(), baseItemType.getBuilderType().getProgress(), baseItemType.getBuilderType().getAbleToBuild(), buildupItemClipPosition);
+                        baseItemType.getBuilderType().changeTo(builderType);
+                    }
                 }
             }
-        });
-        itemTypeAccess.loadGameInfoLight(new AsyncCallback<GameInfo>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                log.log(Level.SEVERE, "itemTypeAccess.loadGameInfoLight call failed", caught);
-            }
 
-            @Override
-            public void onSuccess(GameInfo gameInfo) {
-                ClientClipHandler.getInstance().inti(gameInfo);
+            // /--- Setup Base
+            ClientBase.getInstance().setBase(MY_BASE);
+            Collection<BaseAttributes> allBaseAttributes = new ArrayList<>();
+            allBaseAttributes.add(new BaseAttributes(MY_BASE, "MyBase", false, null));
+            allBaseAttributes.add(new BaseAttributes(ENEMY_BASE, "Enemy", false, null));
+            ClientBase.getInstance().setAllBaseAttributes(allBaseAttributes);
+            // /--- Setup div
+            TerrainView.uglySuppressRadar = true;
+            Connection.getInstance().init4ItemTypeEditor();
+            PlanetInfo planetInfo = new PlanetInfo();
+            planetInfo.setRadarMode(RadarMode.NONE);
+            planetInfo.setPlanetIdAndName(PlanetInfo.EDITOR_PLANET_ID.getPlanetId(), null, null);
+            ClientPlanetServices.getInstance().setPlanetInfo(planetInfo);
+            ClientUserGuidanceService.getInstance().setLevel(new LevelScope(new PlanetLiteInfo(PlanetInfo.EDITOR_PLANET_ID.getPlanetId(), "", null), 0, 0, null, 0));
+            // /--- Setup terrain
+            setupSurface(SURFACE_IMAGE_ID);
+            // /--- Renderer
+            Renderer.getInstance().overrideItemRenderTask(new ItemEditorItemRenderTask(TerrainView.getInstance().getContext2d()));
+            // /--- Setup Item Container
+            ItemTypeContainer.getInstance().setItemTypes(itemTypes);
+            // Item
+            createSyncItem();
+            // Finish initialisation
+            initialized = true;
+            for (LoadedListener loadedListener : loadedListeners) {
+                loadedListener.onModelLoaded();
             }
-        });
+            fireUpdate();
+
+        } catch (Throwable t) {
+            log.log(Level.SEVERE, "Can not start ItemTypeEditor", t);
+        }
+    }
+
+    public void setupSurface(int surfaceImageId) {
+        if (surfaceImages == null || itemType == null) {
+            return;
+        }
+        if (itemType.getTerrainType() == null) {
+            throw new IllegalArgumentException("ItemTypeEditorModel: No surface type specified");
+        }
+        ArrayList<SurfaceRect> surfaceRects = new ArrayList<>();
+        surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, SIM_WIDTH / 100, SIM_HEIGHT / 100), surfaceImageId));
+        TerrainView.getInstance().setupTerrain(new TerrainSettings(SIM_WIDTH / 100, SIM_HEIGHT / 100), new ArrayList<TerrainImagePosition>(),
+                surfaceRects, surfaceImages, new ArrayList<TerrainImage>(), null);
+        TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
+        TerrainView.getInstance().getTerrainHandler().createTerrainTileField(Collections.<TerrainImagePosition>emptyList(), surfaceRects);
+    }
+
+    private ItemType findItemType(int itemTypeId, Collection<ItemType> itemTypes) {
+        for (ItemType itemType : itemTypes) {
+            if (itemType.getId() == itemTypeId) {
+                return itemType;
+            }
+        }
+        throw new IllegalArgumentException("No such ItemType id received from server: " + itemTypeId);
     }
 
     private void createSyncItem() {
@@ -600,7 +650,7 @@ public class ItemTypeEditorModel {
     }
 
     public void executeMoveCommand() {
-        stopAttack();
+        stopAction();
         if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).hasSyncMovable()) {
             moving = true;
             syncItem.getSyncItemArea().setPosition(simulationMiddle);
@@ -617,6 +667,76 @@ public class ItemTypeEditorModel {
         }
     }
 
+    public void doAttack() {
+        stopAction();
+        if (weaponType != null) {
+            if (attackTarget == null || !attackTarget.isAlive()) {
+                try {
+                    attackTarget = (SyncBaseItem) ItemContainer.getInstance().createItemTypeEditorSyncObject(ENEMY_BASE, itemTypeId, new Index(250, 150));
+                    attackTarget.setHealth(1000000);
+                } catch (NoSuchItemTypeException e) {
+                    log.log(Level.SEVERE, "", e);
+                }
+            }
+            attackTarget.setHealth(1000000);
+            ((SyncBaseItem) syncItem).setHealth(1000000);
+            setAttackTargetPosition();
+            ActionHandler.getInstance().attack((SyncBaseItem) syncItem, attackTarget, syncItem.getSyncItemArea().getPosition(), 0, false);
+        }
+    }
+
+    public void doHarvest(Integer resourceItemTypeId) {
+        stopAction();
+        if (itemType instanceof BaseItemType && ((BaseItemType) itemType).getHarvesterType() != null) {
+            if (harvestTarget == null || !harvestTarget.isAlive()) {
+                try {
+                    harvestTarget = (SyncResourceItem) ItemContainer.getInstance().createItemTypeEditorSyncObject(null, resourceItemTypeId, new Index(250, 150));
+                } catch (NoSuchItemTypeException e) {
+                    log.log(Level.SEVERE, "", e);
+                }
+            }
+        }
+        harvest();
+    }
+
+    public void harvest() {
+        if (harvestTarget != null) {
+            setHarvestTargetPosition();
+            ActionHandler.getInstance().collect((SyncBaseItem) syncItem, harvestTarget, syncItem.getSyncItemArea().getPosition(), 0);
+        }
+    }
+
+
+    public void doBuildup(int buildupItemTypeId) {
+        stopAction();
+        if (itemType instanceof BaseItemType && ((BaseItemType) itemType).getBuilderType() != null) {
+            if (buildupSyncBaseItem == null || !buildupSyncBaseItem.isAlive()) {
+                try {
+                    ClientBase.getInstance().setAccountBalance(1000000);
+                    buildupSyncBaseItem = (SyncBaseItem) ItemContainer.getInstance().createItemTypeEditorSyncObject(MY_BASE, buildupItemTypeId, new Index(250, 150));
+                    buildupSyncBaseItem.setBuildup(0.0001);
+                } catch (NoSuchItemTypeException e) {
+                    log.log(Level.SEVERE, "", e);
+                }
+            }
+        }
+        buildup();
+    }
+
+    public void buildup() {
+        if (buildupSyncBaseItem != null) {
+            setBuildupTargetPosition();
+            ActionHandler.getInstance().finalizeBuild((SyncBaseItem) syncItem, buildupSyncBaseItem, syncItem.getSyncItemArea().getPosition(), 0);
+        }
+    }
+
+    private void stopAction() {
+        stopMove();
+        stopAttack();
+        stopHarvest();
+        stopBuildup();
+    }
+
     private void stopMove() {
         moving = false;
         if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).hasSyncMovable()) {
@@ -625,51 +745,66 @@ public class ItemTypeEditorModel {
         syncItem.getSyncItemArea().setPosition(simulationMiddle);
     }
 
-    public void doAttack() {
-        stopMove();
-        if (weaponType != null) {
-            if (target == null || !target.isAlive()) {
-                try {
-                    target = (SyncBaseItem) ItemContainer.getInstance().createItemTypeEditorSyncObject(ENEMY_BASE, itemTypeId, new Index(250, 150));
-                    target.setHealth(1000000);
-                } catch (NoSuchItemTypeException e) {
-                    log.log(Level.SEVERE, "", e);
-                }
-            }
-            target.setHealth(1000000);
-            ((SyncBaseItem) syncItem).setHealth(1000000);
-            setTargetPosition();
-            ActionHandler.getInstance().attack((SyncBaseItem) syncItem, target, syncItem.getSyncItemArea().getPosition(), 0, false);
-        }
-    }
-
     private void stopAttack() {
-        if (target != null && target.isAlive()) {
-            ItemContainer.getInstance().killSyncItem(target, null, true, false);
+        if (attackTarget != null && attackTarget.isAlive()) {
+            ItemContainer.getInstance().killSyncItem(attackTarget, null, true, false);
         }
+        attackTarget = null;
     }
 
-    private void setTargetPosition() {
-        if (target != null) {
+    private void stopHarvest() {
+        if (harvestTarget != null && harvestTarget.isAlive()) {
+            ItemContainer.getInstance().killSyncItem(harvestTarget, null, true, false);
+        }
+        harvestTarget = null;
+    }
+
+    private void stopBuildup() {
+        if (buildupSyncBaseItem != null) {
+            ItemContainer.getInstance().killSyncItem(buildupSyncBaseItem, null, true, false);
+        }
+        buildupSyncBaseItem = null;
+    }
+
+    private void setAttackTargetPosition() {
+        if (attackTarget != null) {
             double angel = boundingBox.angelIndexToAngel(currentAngelIndex);
             Index targetPos = syncItem.getSyncItemArea().getPosition()
                     .getPointFromAngelToNord(angel, (double) (weaponType.getRange() + 2 * boundingBox.getRadius()) * 0.75);
             targetPos = Index.createSaveIndex(targetPos);
-            target.getSyncItemArea().setPosition(targetPos);
+            attackTarget.getSyncItemArea().setPosition(targetPos);
+        }
+    }
+
+    private void setHarvestTargetPosition() {
+        if (harvestTarget != null) {
+            double angel = boundingBox.angelIndexToAngel(currentAngelIndex);
+            int range = ((BaseItemType) itemType).getHarvesterType().getRange();
+            Index targetPos = syncItem.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, range + boundingBox.getRadius() + harvestTarget.getSyncItemArea().getBoundingBox().getRadius());
+            targetPos = Index.createSaveIndex(targetPos);
+            harvestTarget.getSyncItemArea().setPosition(targetPos);
+        }
+    }
+
+    private void setBuildupTargetPosition() {
+        if (buildupSyncBaseItem != null) {
+            double angel = boundingBox.angelIndexToAngel(currentAngelIndex);
+            int range = ((BaseItemType) itemType).getBuilderType().getRange();
+            Index targetPos = syncItem.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, boundingBox.getRadius() + range + buildupSyncBaseItem.getSyncItemArea().getBoundingBox().getRadius());
+            targetPos = Index.createSaveIndex(targetPos);
+            buildupSyncBaseItem.getSyncItemArea().setPosition(targetPos);
         }
     }
 
     public void setBaseItemTypeBuildup(double buildup) {
-        stopAttack();
-        stopMove();
+        stopAction();
         if (syncItem instanceof SyncBaseItem) {
             ((SyncBaseItem) syncItem).setBuildup(buildup);
         }
     }
 
     public void setBaseItemTypeDemolition(double demolition) {
-        stopAttack();
-        stopMove();
+        stopAction();
         if (syncItem instanceof SyncBaseItem) {
             ((SyncBaseItem) syncItem).setHealth((double) ((SyncBaseItem) syncItem).getBaseItemType().getHealth() * demolition);
         }
@@ -763,7 +898,7 @@ public class ItemTypeEditorModel {
         Collection<ItemClipPosition> clips = getCurrentDemolitionClips();
         if (clips == null) {
             DemolitionStepSpriteMap[] demolitionStepSpriteMap = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionSteps();
-            clips = new ArrayList<ItemClipPosition>();
+            clips = new ArrayList<>();
             demolitionStepSpriteMap[currentDemolitionStep].setItemClipPositions(clips);
         }
         clips.add(new ItemClipPosition());
@@ -788,7 +923,7 @@ public class ItemTypeEditorModel {
     public ItemClipPosition getCurrentDemolitionItemClipPosition(int clipNumber) {
         Collection<ItemClipPosition> itemDemolitionClips = getCurrentDemolitionClips();
         if (itemDemolitionClips != null) {
-            return new ArrayList<ItemClipPosition>(itemDemolitionClips).get(clipNumber);
+            return new ArrayList<>(itemDemolitionClips).get(clipNumber);
         } else {
             return null;
         }
@@ -796,18 +931,7 @@ public class ItemTypeEditorModel {
 
     private Index[] getCurrentDemolitionClipPositions(ItemClipPosition currentItemClipPosition) {
         Index[] positions = currentItemClipPosition.getPositions();
-        if (positions == null) {
-            positions = new Index[boundingBox.getAngelCount()];
-            for (int i = 0; i < positions.length; i++) {
-                positions[i] = new Index(1, 1);
-            }
-            currentItemClipPosition.setPositions(positions);
-        } else if (positions.length != boundingBox.getAngelCount()) {
-            positions = new Index[boundingBox.getAngelCount()];
-            for (int i = 0; i < positions.length; i++) {
-                positions[i] = new Index(1, 1);
-            }
-        }
+        positions = checkAndFillPositions(currentItemClipPosition, positions);
         return positions;
     }
 
@@ -818,4 +942,71 @@ public class ItemTypeEditorModel {
     public Index getCurrentDemolitionClipPosition(ItemClipPosition currentItemClipPosition) {
         return getCurrentDemolitionClipPositions(currentItemClipPosition)[currentAngelIndex];
     }
+
+    public ItemClipPosition getHarvesterItemClipPosition() {
+        return harvesterItemClipPosition;
+    }
+
+    public Index getCurrentHarvestClipPosition() {
+        if (harvesterItemClipPosition == null) {
+            return null;
+        }
+        Index[] positions = harvesterItemClipPosition.getPositions();
+        positions = checkAndFillPositions(harvesterItemClipPosition, positions);
+        return positions[currentAngelIndex];
+    }
+
+    public void setCurrentHarvestClipPosition(Index position) {
+        if (harvesterItemClipPosition == null) {
+            return;
+        }
+        Index[] positions = harvesterItemClipPosition.getPositions();
+        positions = checkAndFillPositions(harvesterItemClipPosition, positions);
+        positions[currentAngelIndex] = position;
+    }
+
+    public ItemClipPosition getBuildupItemClipPosition() {
+        return buildupItemClipPosition;
+    }
+
+    public Index getCurrentBuildupClipPosition() {
+        if (buildupItemClipPosition == null) {
+            return null;
+        }
+        Index[] positions = buildupItemClipPosition.getPositions();
+        positions = checkAndFillPositions(buildupItemClipPosition, positions);
+        return positions[currentAngelIndex];
+    }
+
+    public void setCurrentBuildupClipPosition(Index position) {
+        if (buildupItemClipPosition == null) {
+            return;
+        }
+        Index[] positions = buildupItemClipPosition.getPositions();
+        positions = checkAndFillPositions(buildupItemClipPosition, positions);
+        positions[currentAngelIndex] = position;
+    }
+
+    private Index[] checkAndFillPositions(ItemClipPosition currentItemClipPosition, Index[] positions) {
+        if (positions == null) {
+            positions = createPositionArray();
+            currentItemClipPosition.setPositions(positions);
+        } else if (positions.length != boundingBox.getAngelCount()) {
+            positions = createPositionArray();
+        }
+        return positions;
+    }
+
+    private Index[] createPositionArray() {
+        Index[] positions = new Index[boundingBox.getAngelCount()];
+        for (int i = 0; i < positions.length; i++) {
+            positions[i] = new Index(1, 1);
+        }
+        return positions;
+    }
+
+    public boolean isProtagonist(SyncItem syncItem) {
+        return syncItem.equals(this.syncItem);
+    }
+
 }

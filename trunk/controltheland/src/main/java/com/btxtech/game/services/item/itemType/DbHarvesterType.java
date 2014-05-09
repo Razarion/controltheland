@@ -79,11 +79,13 @@ public class DbHarvesterType implements Serializable {
     }
 
     public void setHarvestClipPositions(Index[] positions) {
-        if(harvestClipPositions == null) {
+        if (harvestClipPositions == null) {
             harvestClipPositions = new ArrayList<>();
         }
         harvestClipPositions.clear();
-        Collections.addAll(harvestClipPositions, positions);
+        if (positions != null) {
+            Collections.addAll(harvestClipPositions, positions);
+        }
     }
 
     public HarvesterType createHarvesterType() {

@@ -3,7 +3,7 @@ package com.btxtech.game.jsre.itemtypeeditor;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.Element;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import java.util.logging.Level;

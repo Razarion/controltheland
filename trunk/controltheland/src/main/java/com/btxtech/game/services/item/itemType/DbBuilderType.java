@@ -109,7 +109,9 @@ public class DbBuilderType implements Serializable {
             buildupClipPositions = new ArrayList<>();
         }
         buildupClipPositions.clear();
-        Collections.addAll(buildupClipPositions, positions);
+        if (positions != null) {
+            Collections.addAll(buildupClipPositions, positions);
+        }
     }
 
     public BuilderType createBuilderType() {

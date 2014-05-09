@@ -35,6 +35,18 @@ public class SimulationControlPanel extends Composite implements ItemTypeEditorM
     Button demolitionPlusButton;
     @UiField
     Button demolitionMinusButton;
+    @UiField
+    IntegerBox resourceItemTypeIdField;
+    @UiField
+    Button harvestButton;
+    @UiField
+    Button surfaceButton;
+    @UiField
+    IntegerBox surfaceImageIdField;
+    @UiField
+    Button buildupButton;
+    @UiField
+    IntegerBox buildupItemTypeIdField;
 
     interface SimulationControlPanelUiBinder extends UiBinder<Widget, SimulationControlPanel> {
     }
@@ -95,6 +107,21 @@ public class SimulationControlPanel extends Composite implements ItemTypeEditorM
         setDemolition(demolitionField.getValue() - 1);
     }
 
+    @UiHandler("harvestButton")
+    void onHarvestButtonClick(ClickEvent event) {
+        ItemTypeEditorModel.getInstance().doHarvest(resourceItemTypeIdField.getValue());
+    }
+
+    @UiHandler("buildupButton")
+    void onBuildupButtonButton(ClickEvent event) {
+        ItemTypeEditorModel.getInstance().doBuildup(buildupItemTypeIdField.getValue());
+    }
+
+    @UiHandler("surfaceButton")
+    void onSurfaceButton(ClickEvent event) {
+        ItemTypeEditorModel.getInstance().setupSurface(surfaceImageIdField.getValue());
+    }
+
     private void setDemolition(int demolition) {
         if (demolition > 100) {
             demolition = 100;
@@ -108,12 +135,15 @@ public class SimulationControlPanel extends Composite implements ItemTypeEditorM
 
     @Override
     public void onModelLoaded() {
+        surfaceImageIdField.setValue(ItemTypeEditorModel.SURFACE_IMAGE_ID);
         if (ItemTypeEditorModel.getInstance().getSyncItem() instanceof SyncBaseItem) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) ItemTypeEditorModel.getInstance().getSyncItem();
             moveButton.setEnabled(syncBaseItem.hasSyncMovable());
             attackButton.setEnabled(syncBaseItem.hasSyncWeapon());
             buildupField.setValue((int) (syncBaseItem.getBuildup() * 100.0));
             demolitionField.setValue((int) (syncBaseItem.getNormalizedHealth() * 100.0));
+            resourceItemTypeIdField.setValue(5);
+            buildupItemTypeIdField.setValue(3);
         } else {
             moveButton.setEnabled(false);
             attackButton.setEnabled(false);
@@ -123,6 +153,8 @@ public class SimulationControlPanel extends Composite implements ItemTypeEditorM
             demolitionField.setEnabled(false);
             demolitionPlusButton.setEnabled(false);
             demolitionMinusButton.setEnabled(false);
+            resourceItemTypeIdField.setEnabled(false);
+            harvestButton.setEnabled(false);
         }
     }
 }

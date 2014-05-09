@@ -1,6 +1,7 @@
 package com.btxtech.game.services.item;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -61,5 +62,7 @@ public interface ServerItemTypeService extends ItemTypeService {
                                  WeaponType weaponType,
                                  Collection<ItemTypeImageInfo> buildupImages,
                                  Collection<ItemTypeImageInfo> runtimeImages,
-                                 Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException;
+                                 Collection<ItemTypeImageInfo> demolitionImages,
+                                 ItemClipPosition harvesterItemClipPosition,
+                                 ItemClipPosition buildupItemClipPosition) throws NoSuchItemTypeException;
 }

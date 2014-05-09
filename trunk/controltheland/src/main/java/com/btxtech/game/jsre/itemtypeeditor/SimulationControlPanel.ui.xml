@@ -16,6 +16,18 @@
             </g:customCell>
             <g:customCell styleName="{style.control}">
                 <g:HorizontalPanel>
+                    <g:Button ui:field="harvestButton" width="51px">Harvest</g:Button>
+                    <g:IntegerBox width="3em" ui:field="resourceItemTypeIdField"/>
+                </g:HorizontalPanel>
+            </g:customCell>
+            <g:customCell styleName="{style.control}">
+                <g:HorizontalPanel>
+                    <g:Button ui:field="buildupButton" width="51px">Build</g:Button>
+                    <g:IntegerBox width="3em" ui:field="buildupItemTypeIdField"/>
+                </g:HorizontalPanel>
+            </g:customCell>
+            <g:customCell styleName="{style.control}">
+                <g:HorizontalPanel>
                     <g:Cell verticalAlignment="ALIGN_MIDDLE">
                         <g:InlineLabel text="Buildup in % " horizontalAlignment="ALIGN_LEFT"/>
                     </g:Cell>
@@ -32,6 +44,12 @@
                     <g:IntegerBox width="62px" ui:field="demolitionField"/>
                     <g:Button text="+" ui:field="demolitionPlusButton"/>
                     <g:Button text="-" ui:field="demolitionMinusButton"/>
+                </g:HorizontalPanel>
+            </g:customCell>
+            <g:customCell styleName="{style.control}">
+                <g:HorizontalPanel>
+                    <g:Button ui:field="surfaceButton" width="51px">Surface</g:Button>
+                    <g:IntegerBox width="3em" ui:field="surfaceImageIdField"/>
                 </g:HorizontalPanel>
             </g:customCell>
         </g:row>

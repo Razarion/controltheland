@@ -44,4 +44,8 @@ public class ItemClipPosition implements Serializable {
     public void setPositions(Index[] positions) {
         this.positions = positions;
     }
+
+    public boolean isClipIdValid() {
+        return clipId != 0;
+    }
 }
