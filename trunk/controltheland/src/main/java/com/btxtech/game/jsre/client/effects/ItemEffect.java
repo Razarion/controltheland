@@ -18,7 +18,7 @@ public class ItemEffect extends ClipRendererModel {
     private ItemClipPosition demolitionClip;
     private double rotation = 0.0;
 
-    public ItemEffect(SyncBaseItem syncBaseItem, ItemClipPosition demolitionClip, Index target) throws NoSuchClipException, NoSuchImageSpriteMapInfoException {
+    public ItemEffect(long timeStamp, SyncBaseItem syncBaseItem, ItemClipPosition demolitionClip, Index target) throws NoSuchClipException, NoSuchImageSpriteMapInfoException {
         this.demolitionClip = demolitionClip;
         ClipInfo clipInfo = ClientClipHandler.getInstance().getItemClipPositionClipInfo(demolitionClip);
         Index absoluteMiddle = syncBaseItem.getSyncItemArea().getPosition().add(demolitionClip.getOffset(syncBaseItem));
@@ -27,7 +27,7 @@ public class ItemEffect extends ClipRendererModel {
             setMaxHeight(absoluteMiddle.getDistance(target));
             rotation = syncBaseItem.getSyncItemArea().getPosition().getAngleToNord(target);
         }
-        initAndPlaySound(clipInfo, absoluteMiddle, rotation, true);
+        initAndPlaySound(timeStamp, clipInfo, absoluteMiddle, rotation, true);
     }
 
     public void refresh(SyncBaseItem syncBaseItem) {

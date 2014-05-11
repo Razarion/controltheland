@@ -29,8 +29,8 @@ public class Explosion extends ClipRendererModel {
     private static final int REMOVE_ITEM = 3;
     private SyncItem syncItem;
 
-    public Explosion(SyncItem syncItem) throws NoSuchClipException, NoSuchImageSpriteMapInfoException {
-        initAndPlaySound(ClientClipHandler.getInstance().getClipInfo(syncItem.getItemType().getExplosionClipId()), syncItem.getSyncItemArea().getPosition(), 0.0, false);
+    public Explosion(long timeStamp, SyncItem syncItem) throws NoSuchClipException, NoSuchImageSpriteMapInfoException {
+        initAndPlaySound(timeStamp, ClientClipHandler.getInstance().getClipInfo(syncItem.getItemType().getExplosionClipId()), syncItem.getSyncItemArea().getPosition(), 0.0, false);
         setPreLoadedSpriteMapInfo(PreloadedImageSpriteMapInfo.Type.EXPLOSION);
         this.syncItem = syncItem;
     }

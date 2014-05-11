@@ -512,7 +512,7 @@ public class ItemTypeEditorModel {
                     @Override
                     public void onSuccess(GameInfo gameInfo) {
                         surfaceImages = gameInfo.getSurfaceImages();
-                        ClientClipHandler.getInstance().inti(gameInfo);
+                        ClientClipHandler.getInstance().init(gameInfo);
                         start(itemTypes, itemTypeId);
                     }
                 });

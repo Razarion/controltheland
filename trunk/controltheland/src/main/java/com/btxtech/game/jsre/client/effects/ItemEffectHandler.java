@@ -103,7 +103,7 @@ public class ItemEffectHandler {
             if (itemEffect != null) {
                 itemEffect.refresh(syncBaseItem);
             } else {
-                itemEffect = new ItemEffect(syncBaseItem, demolitionClip, target);
+                itemEffect = new ItemEffect(timeStamp, syncBaseItem, demolitionClip, target);
             }
             itemEffect.prepareRender(timeStamp, viewRect);
             if (itemEffect.isInViewRect()) {
@@ -116,6 +116,9 @@ public class ItemEffectHandler {
     }
 
     private ItemEffect getFromOldCache(SyncBaseItem syncBaseItem, ItemClipPosition demolitionClip) {
+        if (oldCache == null) {
+            return null;
+        }
         Map<ItemClipPosition, ItemEffect> positions = oldCache.get(syncBaseItem);
         if (positions == null) {
             return null;

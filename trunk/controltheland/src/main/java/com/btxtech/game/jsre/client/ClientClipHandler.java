@@ -1,9 +1,9 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
-import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.renderer.ImageSpriteMapContainer;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
@@ -19,9 +19,9 @@ import java.util.Map;
  */
 public class ClientClipHandler {
     private static final ClientClipHandler INSTANCE = new ClientClipHandler();
-    private Map<Integer, ClipInfo> clipCache = new HashMap<Integer, ClipInfo>();
-    private Map<Integer, ImageSpriteMapInfo> imageSpriteMapCache = new HashMap<Integer, ImageSpriteMapInfo>();
-    private Map<PreloadedImageSpriteMapInfo.Type, Integer> preloadedImageSpriteMapInfo = new HashMap<PreloadedImageSpriteMapInfo.Type, Integer>();
+    private Map<Integer, ClipInfo> clipCache = new HashMap<>();
+    private Map<Integer, ImageSpriteMapInfo> imageSpriteMapCache = new HashMap<>();
+    private Map<PreloadedImageSpriteMapInfo.Type, Integer> preloadedImageSpriteMapInfo = new HashMap<>();
 
     public static ClientClipHandler getInstance() {
         return INSTANCE;
@@ -93,7 +93,7 @@ public class ClientClipHandler {
 
     public ImageSpriteMapInfo getPreloadedImageSpriteMapInfo(PreloadedImageSpriteMapInfo.Type preloaded) throws NoSuchImageSpriteMapInfoException {
         Integer id = preloadedImageSpriteMapInfo.get(preloaded);
-        if(id == null) {
+        if (id == null) {
             throw new NoSuchImageSpriteMapInfoException(preloaded);
         }
         return getImageSpriteMapInfo(id);
@@ -110,7 +110,7 @@ public class ClientClipHandler {
         ImageSpriteMapContainer.getInstance().startLoad();
     }
 
-    public void inti(GameInfo gameInfo) {
+    public void init(GameInfo gameInfo) {
         for (ClipInfo clipInfo : gameInfo.getClipLibrary()) {
             clipCache.put(clipInfo.getClipId(), clipInfo);
         }

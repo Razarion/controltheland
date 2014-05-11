@@ -33,9 +33,9 @@ public class ClipRendererModel {
     private Integer maxHeight;
     private ImageSpriteMapInfo preLoadedSpriteMapInfo;
 
-    protected void initAndPlaySound(ClipInfo clipInfo, Index absoluteMiddle, double rotation, boolean loop) throws NoSuchImageSpriteMapInfoException {
+    protected void initAndPlaySound(long timeStamp, ClipInfo clipInfo, Index absoluteMiddle, double rotation, boolean loop) throws NoSuchImageSpriteMapInfoException {
         this.loop = loop;
-        startTime = System.currentTimeMillis();
+        startTime = timeStamp;
         imageSpriteMapInfo = ClientClipHandler.getInstance().getImageSpriteMapInfo(clipInfo.getSpriteMapId());
         setAbsoluteMiddle(absoluteMiddle, rotation);
         xOffset = imageSpriteMapInfo.getFrameWidth() / 2;
@@ -72,7 +72,7 @@ public class ClipRendererModel {
             if (loop) {
                 playing = true;
                 newFrame = 0;
-                startTime = System.currentTimeMillis();
+                startTime = timeStamp;
             } else {
                 return;
             }

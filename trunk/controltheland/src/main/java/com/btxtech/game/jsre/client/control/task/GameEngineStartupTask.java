@@ -43,7 +43,7 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
                 gameInfo.getTerrainImageBackground());
         gameInfo.freePositionAndRects();
         ItemTypeContainer.getInstance().setItemTypes(gameInfo.getItemTypes());
-        ClientClipHandler.getInstance().inti(gameInfo);
+        ClientClipHandler.getInstance().init(gameInfo);
     }
 
     protected void deltaSetupGameStructure(GameInfo gameInfo) {
@@ -57,6 +57,6 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
                 gameInfo.getTerrainImageBackground());
         gameInfo.freePositionAndRects();
         ItemTypeContainer.getInstance().addDeltaItemTypes(gameInfo.getItemTypes());
-        ClientClipHandler.getInstance().inti(gameInfo);
+        ClientClipHandler.getInstance().init(gameInfo);
     }
 }
