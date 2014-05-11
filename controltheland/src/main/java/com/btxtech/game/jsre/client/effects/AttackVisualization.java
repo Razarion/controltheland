@@ -48,10 +48,11 @@ public class AttackVisualization {
 
     public void onFiring(SyncBaseItem syncBaseItem, ActiveProjectileGroup projectileGroup) {
         try {
+            long timeStamp = System.currentTimeMillis();
             if (syncBaseItem.getSyncItemArea().contains(TerrainView.getInstance().getViewRect())) {
                 for (ActiveProjectile activeProjectile : projectileGroup.getProjectiles()) {
-                    muzzleFlashes.add(new MuzzleFlash(syncBaseItem, activeProjectile.getMuzzleNr()));
-                    projectileVisualizations.add(new ProjectileVisualization(syncBaseItem, activeProjectile));
+                    muzzleFlashes.add(new MuzzleFlash(timeStamp, syncBaseItem, activeProjectile.getMuzzleNr()));
+                    projectileVisualizations.add(new ProjectileVisualization(timeStamp, syncBaseItem, activeProjectile));
                 }
             }
         } catch (Exception e) {
@@ -62,7 +63,7 @@ public class AttackVisualization {
     public void onProjectileDetonation(SyncBaseItem attacker) {
         try {
             if (TerrainView.getInstance().getViewRect().contains(attacker.getSyncWeapon().getProjectileTarget())) {
-                detonations.add(new Detonation(attacker));
+                detonations.add(new Detonation(System.currentTimeMillis(), attacker));
             }
         } catch (Exception e) {
             ClientExceptionHandler.handleExceptionOnlyOnce(e);

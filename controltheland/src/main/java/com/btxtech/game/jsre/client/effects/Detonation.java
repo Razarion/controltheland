@@ -13,8 +13,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
  * Time: 14:52
  */
 public class Detonation extends ClipRendererModel {
-    public Detonation(SyncBaseItem attacker) throws NoSuchClipException, NoSuchImageSpriteMapInfoException {
-        initAndPlaySound(ClientClipHandler.getInstance().getProjectileDetonationClipInfo(attacker.getBaseItemType()),
+    public Detonation(long timeStamp, SyncBaseItem attacker) throws NoSuchClipException, NoSuchImageSpriteMapInfoException {
+        initAndPlaySound(timeStamp, ClientClipHandler.getInstance().getProjectileDetonationClipInfo(attacker.getBaseItemType()),
                 attacker.getSyncWeapon().getProjectileTarget(), 0.0, false);
         setPreLoadedSpriteMapInfo(PreloadedImageSpriteMapInfo.Type.DETONATION);
     }

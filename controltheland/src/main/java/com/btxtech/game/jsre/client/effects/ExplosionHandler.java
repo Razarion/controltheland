@@ -46,7 +46,7 @@ public class ExplosionHandler {
     public void onExplosion(SyncItem syncItem) {
         if (syncItem.getSyncItemArea().contains(TerrainView.getInstance().getViewRect())) {
             try {
-                explosions.add(new Explosion(syncItem));
+                explosions.add(new Explosion(System.currentTimeMillis(), syncItem));
             } catch (Exception e) {
                 log.log(Level.SEVERE, "ExplosionHandler.onExplosion", e);
             }

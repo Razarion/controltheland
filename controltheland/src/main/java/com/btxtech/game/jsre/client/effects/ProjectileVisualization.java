@@ -21,7 +21,7 @@ public class ProjectileVisualization extends ClipRendererModel {
     private ActiveProjectile activeProjectile;
     private boolean moving;
 
-    public ProjectileVisualization(SyncBaseItem syncBaseItem, ActiveProjectile activeProjectile) throws NoSuchClipException, NoSuchImageSpriteMapInfoException {
+    public ProjectileVisualization(long timeStamp, SyncBaseItem syncBaseItem, ActiveProjectile activeProjectile) throws NoSuchClipException, NoSuchImageSpriteMapInfoException {
         this.syncBaseItem = syncBaseItem;
         this.activeProjectile = activeProjectile;
         SyncWeapon syncWeapon = syncBaseItem.getSyncWeapon();
@@ -32,7 +32,7 @@ public class ProjectileVisualization extends ClipRendererModel {
             setNoYMiddle();
             setMaxHeight(absoluteMiddle.getDistance(syncWeapon.getProjectileTarget()));
         }
-        initAndPlaySound(clipInfo, absoluteMiddle, absoluteMiddle.getAngleToNord(syncWeapon.getProjectileTarget()), moving);
+        initAndPlaySound(timeStamp, clipInfo, absoluteMiddle, absoluteMiddle.getAngleToNord(syncWeapon.getProjectileTarget()), moving);
     }
 
     @Override
