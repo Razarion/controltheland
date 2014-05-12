@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  */
 public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, I> {
     private ConditionServiceListener<A, I> conditionServiceListener;
-    private Collection<TimeAware> timeAwareList = new ArrayList<TimeAware>();
+    private Collection<TimeAware> timeAwareList = new ArrayList<>();
     private Logger log = Logger.getLogger(ConditionServiceImpl.class.getName());
 
     protected abstract void saveAbstractConditionTrigger(AbstractConditionTrigger<A, I> abstractConditionTrigger);
@@ -264,7 +264,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     }
 
     protected void onTimer() {
-        Collection<AbstractConditionTrigger<A, I>> triggers = new ArrayList<AbstractConditionTrigger<A, I>>();
+        Collection<AbstractConditionTrigger<A, I>> triggers = new ArrayList<>();
         for (TimeAware timeAware : timeAwareList) {
             try {
                 timeAware.onTimer();
