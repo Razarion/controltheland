@@ -13,22 +13,14 @@
 
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.client.control.ColdSimulatedGameStartupTaskEnum;
+import com.btxtech.game.jsre.client.control.WarmSimulatedGameStartupTaskEnum;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.*;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
-import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
-import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.jsre.common.utg.tracking.*;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.NoBaseException;
@@ -39,39 +31,13 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.user.DbForgotPassword;
-import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbChatMessage;
-import com.btxtech.game.services.utg.DbLevel;
-import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.utg.LifecycleTrackingInfo;
-import com.btxtech.game.services.utg.NewUserDailyDto;
-import com.btxtech.game.services.utg.NewUserDailyTrackingFilter;
-import com.btxtech.game.services.utg.NewUserTrackingFilter;
-import com.btxtech.game.services.utg.RealGameTrackingInfo;
-import com.btxtech.game.services.utg.SessionDetailDto;
-import com.btxtech.game.services.utg.SessionOverviewDto;
-import com.btxtech.game.services.utg.TutorialTrackingInfo;
-import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.UserTrackingFilter;
-import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
-import com.btxtech.game.services.utg.tracker.DbDialogTracking;
-import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
-import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
-import com.btxtech.game.services.utg.tracker.DbPageAccess;
-import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
-import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
-import com.btxtech.game.services.utg.tracker.DbSessionDetail;
-import com.btxtech.game.services.utg.tracker.DbStartupTask;
-import com.btxtech.game.services.utg.tracker.DbStartupTerminated;
-import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
-import com.btxtech.game.services.utg.tracker.DbTutorialProgress;
-import com.btxtech.game.services.utg.tracker.DbUserCommand;
-import com.btxtech.game.services.utg.tracker.DbUserHistory;
-import com.btxtech.game.services.utg.tracker.DbWindowClosed;
+import com.btxtech.game.services.tutorial.DbAbstractTaskConfig;
+import com.btxtech.game.services.tutorial.DbTutorialConfig;
+import com.btxtech.game.services.tutorial.DbTutorialConfig_;
+import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.user.*;
+import com.btxtech.game.services.utg.*;
+import com.btxtech.game.services.utg.tracker.*;
 import com.btxtech.game.wicket.pages.Game;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
@@ -91,16 +57,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * User: beat
@@ -123,6 +80,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private PlanetSystemService planetSystemService;
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private TutorialService tutorialService;
 
     @Override
     @Transactional
@@ -382,13 +341,13 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         CriteriaQuery<User> userQuery = criteriaBuilder.createQuery(User.class);
         Root<User> from = userQuery.from(User.class);
         if (newUserTrackingFilter.getFromDate() != null && newUserTrackingFilter.getToDate() == null) {
-            userQuery.where(criteriaBuilder.greaterThanOrEqualTo(from.<Date>get("registerDate"), newUserTrackingFilter.getFromDate()));
+            userQuery.where(criteriaBuilder.greaterThanOrEqualTo(from.get(User_.registerDate), newUserTrackingFilter.getFromDate()));
         } else if (newUserTrackingFilter.getFromDate() == null && newUserTrackingFilter.getToDate() != null) {
-            userQuery.where(criteriaBuilder.lessThanOrEqualTo(from.<Date>get("registerDate"), newUserTrackingFilter.getToDate()));
-        } else if (newUserTrackingFilter.getFromDate() != null && newUserTrackingFilter.getToDate() != null) {
-            userQuery.where(criteriaBuilder.between(from.<Date>get("registerDate"), newUserTrackingFilter.getFromDate(), newUserTrackingFilter.getToDate()));
+            userQuery.where(criteriaBuilder.lessThanOrEqualTo(from.get(User_.registerDate), newUserTrackingFilter.getToDate()));
+        } else if (newUserTrackingFilter.getFromDate() != null) {
+            userQuery.where(criteriaBuilder.between(from.get(User_.registerDate), newUserTrackingFilter.getFromDate(), newUserTrackingFilter.getToDate()));
         }
-        userQuery.orderBy(criteriaBuilder.desc(from.<String>get("registerDate")));
+        userQuery.orderBy(criteriaBuilder.desc(from.get(User_.registerDate)));
         CriteriaQuery<User> userSelect = userQuery.select(from);
         TypedQuery<User> typedUserQuery = entityManager.createQuery(userSelect);
         return typedUserQuery.getResultList();
@@ -956,20 +915,93 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         // Query for total row count in invitations
         CriteriaQuery<User> userQuery = criteriaBuilder.createQuery(User.class);
         Root<User> from = userQuery.from(User.class);
-        Predicate predicate = criteriaBuilder.equal(from.<Boolean>get("accountNonLocked"), true);
+        Predicate predicate = criteriaBuilder.equal(from.get(User_.accountNonLocked), true);
         // criteriaBuilder.
         if (newUserDailyTrackingFilter.hasFromDate()) {
-            predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(from.<Date>get("registerDate"), newUserDailyTrackingFilter.getCorrectedFromDate()));
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(from.get(User_.registerDate), newUserDailyTrackingFilter.getCorrectedFromDate()));
         }
         if (newUserDailyTrackingFilter.hasToDate()) {
-            predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThan(from.<Date>get("registerDate"), newUserDailyTrackingFilter.getCorrectedExclusiveToDate()));
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThan(from.get(User_.registerDate), newUserDailyTrackingFilter.getCorrectedExclusiveToDate()));
         }
         if (newUserDailyTrackingFilter.hasFacebookAdId()) {
-            predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(from.<String>get("dbFacebookSource").<String>get("optionalAdValue"), newUserDailyTrackingFilter.getFacebookAdId()));
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(from.get(User_.dbFacebookSource).get(DbFacebookSource_.optionalAdValue), newUserDailyTrackingFilter.getFacebookAdId()));
         }
         userQuery.where(predicate);
-        userQuery.orderBy(criteriaBuilder.asc(from.<String>get("registerDate")));
+        userQuery.orderBy(criteriaBuilder.asc(from.get(User_.registerDate)));
         CriteriaQuery<User> userSelect = userQuery.select(from);
         return entityManager.createQuery(userSelect).getResultList();
+    }
+
+    @Override
+    public TutorialStatisticDto getTutorialStatistic(QuestTrackingFilter questTrackingFilter) {
+        // Distribute the history to the quests
+        DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(questTrackingFilter.getDbId());
+        List<TutorialStatisticDto.TutorialQuestEntry> tutorialQuestEntries = new ArrayList<>();
+        Integer last = null;
+        for (DbAbstractTaskConfig dbAbstractTaskConfig : dbTutorialConfig.getDbTaskConfigs()) {
+            int passed = getDoneCount4Tutorial(questTrackingFilter, dbAbstractTaskConfig.getId());
+            String percentage = null;
+            if (last != null) {
+                percentage = Integer.toString((int) ((double) passed / (double) last * 100.0)) + "%";
+            }
+            last = passed;
+            tutorialQuestEntries.add(new TutorialStatisticDto.TutorialQuestEntry(dbAbstractTaskConfig.getName(), passed, percentage));
+        }
+        return new TutorialStatisticDto(dbTutorialConfig.getName(), getSuccessfulTutorialStart(questTrackingFilter), tutorialQuestEntries);
+    }
+
+    private int getDoneCount4Tutorial(QuestTrackingFilter questTrackingFilter, int tutorialTaskId) {
+        // Get the History
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        // Query for total row count in invitations
+        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+        Root<DbTutorialProgress> from = countQuery.from(DbTutorialProgress.class);
+        Predicate predicate = criteriaBuilder.equal(from.get(DbTutorialProgress_.dbId), tutorialTaskId);
+        // criteriaBuilder.
+        if (questTrackingFilter.hasFromDate()) {
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(from.get(DbTutorialProgress_.timeStamp), questTrackingFilter.getFromDate().getTime()));
+        }
+        if (questTrackingFilter.hasToDate()) {
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThan(from.get(DbTutorialProgress_.timeStamp), questTrackingFilter.getToDate().getTime()));
+        }
+        countQuery.where(predicate);
+        CriteriaQuery<Long> userSelect = countQuery.select(criteriaBuilder.count(from));
+        return entityManager.createQuery(userSelect).getSingleResult().intValue();
+    }
+
+    private int getSuccessfulTutorialStart(QuestTrackingFilter questTrackingFilter) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        // Get the levelTaskId
+        CriteriaQuery<DbLevelTask> questQuery = criteriaBuilder.createQuery(DbLevelTask.class);
+        Root<DbLevelTask> fromQuest = questQuery.from(DbLevelTask.class);
+        questQuery.where(criteriaBuilder.equal(fromQuest.get(DbLevelTask_.dbTutorialConfig).get(DbTutorialConfig_.id), questTrackingFilter.getDbId()));
+        CriteriaQuery<DbLevelTask> questSelect = questQuery.select(fromQuest);
+        int successfulStartup = 0;
+        for (DbLevelTask dbLevelTask : entityManager.createQuery(questSelect).getResultList()) {
+            successfulStartup += getSuccessfulTutorialStartForQuest(questTrackingFilter, dbLevelTask.getId());
+        }
+        return successfulStartup;
+    }
+
+    private int getSuccessfulTutorialStartForQuest(QuestTrackingFilter questTrackingFilter, int questId) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        // Get the successful startups
+        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+        Root<DbStartupTask> from = countQuery.from(DbStartupTask.class);
+
+        Predicate predicate = from.get(DbStartupTask_.failureText).isNull();
+        predicate = criteriaBuilder.and(predicate, from.get(DbStartupTask_.task).in(ColdSimulatedGameStartupTaskEnum.RUN_SIMULATED_GAME.getStartupTaskEnumHtmlHelper().getNiceText(),
+                WarmSimulatedGameStartupTaskEnum.RUN_SIMULATED_GAME.getStartupTaskEnumHtmlHelper().getNiceText()));
+        predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(from.get(DbStartupTask_.levelTaskId), questId));
+        if (questTrackingFilter.hasFromDate()) {
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(from.get(DbStartupTask_.timeStamp), questTrackingFilter.getFromDate()));
+        }
+        if (questTrackingFilter.hasToDate()) {
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThan(from.get(DbStartupTask_.timeStamp), questTrackingFilter.getToDate()));
+        }
+        countQuery.where(predicate);
+
+        CriteriaQuery<Long> userSelect = countQuery.select(criteriaBuilder.count(from));
+        return entityManager.createQuery(userSelect).getSingleResult().intValue();
     }
 }

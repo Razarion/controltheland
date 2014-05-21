@@ -1,0 +1,79 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Tutorial Statistic</title>
+</head>
+<body>
+<h1>Tutorial Statistic</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="filterForm">
+    <table style="border: 2px dotted #000000; width: 400px; padding: 5px;">
+        <tr>
+            <td valign="top">From</td>
+            <td valign="top"><input type="text" wicket:id="fromDate" /></td>
+        </tr>
+        <tr>
+            <td valign="top">To</td>
+            <td valign="top"><input type="text" wicket:id="toDate" /></td>
+        </tr>
+        <tr>
+            <td valign="top">Tutorial Id</td>
+            <td valign="top"><input type="text" wicket:id="dbId" /></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <input wicket:id="search" type="submit" value="Search"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+
+<h2>Tutorial Tracking</h2>
+<table>
+    <tr>
+        <td valign="top" bgcolor="#dadada">Tutorial Name</td>
+        <td valign="top" wicket:id="tutorialName" />
+    </tr>
+    <tr>
+        <td valign="top" bgcolor="#dadada">Tutorial Started</td>
+        <td valign="top" wicket:id="tutorialStarted" />
+    </tr>
+    <tr>
+        <td valign="top" bgcolor="#dadada">Tutorial Tasks</td>
+        <td align="center">
+            <table border="0">
+                <tr>
+                    <th bgcolor="#dadada">Tutorial Quest</th>
+                    <th bgcolor="#dadada">Passed</th>
+                    <th bgcolor="#dadada"></th>
+                </tr>
+                <tr wicket:id="tutorialTasks">
+                    <td wicket:id="questName"/>
+                    <td align="right" wicket:id="passed"/>
+                    <td align="right" wicket:id="percentage"/>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+
+</body>
+</html>

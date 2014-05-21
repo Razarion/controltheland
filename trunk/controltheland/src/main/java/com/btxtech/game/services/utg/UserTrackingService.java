@@ -135,4 +135,6 @@ public interface UserTrackingService {
     int getLoginCount(User user);
 
     List<NewUserDailyDto> getNewUserDailyDto(NewUserDailyTrackingFilter newUserDailyTrackingFilter);
+
+    TutorialStatisticDto getTutorialStatistic(QuestTrackingFilter questTrackingFilter);
 }
