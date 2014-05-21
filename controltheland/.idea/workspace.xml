@@ -23,7 +23,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="aa425869-f3f3-412e-b776-9f3eeb27573b" name="Default" comment="Tutorial tracking added" />
-    <list id="cc58c16a-ab82-4255-b111-304c55a649e7" name="IDEA" comment="IDEA">
+    <list id="cc58c16a-ab82-4255-b111-304c55a649e7" name="IDEA" comment="IDEA 13">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations/Clean_Package.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Clean_Package.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations/Compile_War.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Compile_War.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations/GWT_Codeserver_Game.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations/GWT_Codeserver_Game.xml" />
@@ -34,7 +34,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations/GWT_Single_Compile.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations/GWT_Single_Compile.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations/Test_Single.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Test_Single.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations/Tomcat_run.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Tomcat_run.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controltheland.iml" afterPath="$PROJECT_DIR$/controltheland.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/controltheland_war_exploded.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/controltheland_war_exploded.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -3261,7 +3260,7 @@
       <changelist id="cc58c16a-ab82-4255-b111-304c55a649e7" name="IDEA" comment="" />
       <created>1297458484758</created>
       <updated>1298804785942</updated>
-      <workItem from="1400274530041" duration="33597000" />
+      <workItem from="1400274530041" duration="33642000" />
     </task>
     <task id="LOCAL-00018" summary="To IDEA 11.11 migrated">
       <created>1334237718168</created>
@@ -5535,7 +5534,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="33597000" />
+    <option name="totallyTimeSpent" value="33642000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -5623,7 +5622,6 @@
       <TodoPanelSettings />
     </option>
     <option name="CHECK_LOCALLY_CHANGED_CONFLICTS_IN_BACKGROUND" value="true" />
-    <MESSAGE value="Load tutorial tip added" />
     <MESSAGE value="Unload tutorial tip added" />
     <MESSAGE value="Random placer improved" />
     <MESSAGE value="Tutorial tips fixed" />
@@ -5648,7 +5646,8 @@
     <MESSAGE value="X-UA-Compatible added" />
     <MESSAGE value="Facebook payment added&#10;Paypal prices changed" />
     <MESSAGE value="Tutorial tracking added" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tutorial tracking added" />
+    <MESSAGE value="IDEA 13" />
+    <option name="LAST_COMMIT_MESSAGE" value="IDEA 13" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.537112" />
   </component>
   <component name="XDebuggerManager">
