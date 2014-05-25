@@ -1,12 +1,12 @@
 package com.btxtech.game.jsre.common;
 
 import com.btxtech.game.jsre.client.common.Index;
-//import com.google.gwt.i18n.shared.DateTimeFormat;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+//import com.google.gwt.i18n.shared.DateTimeFormat;
 
 /**
  * User: beat

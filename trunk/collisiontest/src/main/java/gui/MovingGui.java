@@ -4,9 +4,7 @@ package gui; /**
  * Time: 23:34
  */
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import scenario.Scenario;
 
 import javax.swing.*;

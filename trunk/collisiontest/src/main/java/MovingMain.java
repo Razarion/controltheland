@@ -4,11 +4,11 @@
  * Time: 23:34
  */
 
+import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
 import gui.MovingGui;
 import model.MovingModel;
-import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
-import scenario.*;
+import scenario.Scenario;
 import scenario.moving.*;
 
 import javax.swing.*;

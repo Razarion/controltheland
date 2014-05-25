@@ -1,7 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.collision.impl.AStar;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionTileContainer;
 import org.junit.Test;
 
