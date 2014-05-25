@@ -143,4 +143,16 @@ public class MovingModel {
     public List<SyncItem> getSyncItems() {
         return syncItems;
     }
+
+    public double calculateDensityOfItems(int radius) {
+        double wholeArea = Math.PI * Math.pow(radius, 2);
+        double itemArea = 0.0;
+        for (SyncItem syncItem : syncItems) {
+            if (syncItem.getState() == SyncItem.MoveState.STOPPED) {
+                itemArea += syncItem.calculateArea();
+            }
+        }
+        return itemArea / wholeArea;
+    }
+
 }
