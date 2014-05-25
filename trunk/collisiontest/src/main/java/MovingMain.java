@@ -38,8 +38,8 @@ public class MovingMain {
 
         List<Scenario> scenarios = new ArrayList<Scenario>();
 
-        scenarios.add(new Frontal());
         scenarios.add(new MoveToPosition());
+        scenarios.add(new Frontal());
         scenarios.add(new MoveToOccupiedPosition());
         scenarios.add(new Bypass());
         scenarios.add(new Factory());

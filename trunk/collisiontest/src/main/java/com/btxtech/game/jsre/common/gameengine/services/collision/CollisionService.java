@@ -35,19 +35,22 @@ public class CollisionService {
         DecimalPosition positionProposal = syncItem.calculateMoveToTarget(factor);
         Overlapping overlapping = isOverlapping(syncItem, positionProposal, 0);
         if (overlapping != null) {
-            double movingAngel = syncItem.getAngel();
-            double otherAngel = syncItem.getDecimalPosition().getAngleToNord(overlapping.getSyncItem().getDecimalPosition());
-            double crashAngelAbs = MathHelper.getAngel(movingAngel, otherAngel);
-
-            if (crashAngelAbs <= MathHelper.QUARTER_RADIANT) {
-                if (MathHelper.isCounterClock(movingAngel, otherAngel)) {
-                    syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() - MathHelper.ONE_RADIANT / 24.0));
+            if (isBetterPositionAvailable(syncItem, overlapping)) {
+                double movingAngel = syncItem.getAngel();
+                double otherAngel = syncItem.getDecimalPosition().getAngleToNord(overlapping.getSyncItem().getDecimalPosition());
+                double crashAngelAbs = MathHelper.getAngel(movingAngel, otherAngel);
+                if (crashAngelAbs <= MathHelper.QUARTER_RADIANT) {
+                    if (MathHelper.isCounterClock(movingAngel, otherAngel)) {
+                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() - MathHelper.ONE_RADIANT / 24.0));
+                    } else {
+                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() + MathHelper.ONE_RADIANT / 24.0));
+                    }
                 } else {
-                    syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() + MathHelper.ONE_RADIANT / 24.0));
+                    syncItem.setSpeed(SyncItem.SPEED);
+                    syncItem.executeMoveToTarget(factor);
                 }
             } else {
-                syncItem.setSpeed(SyncItem.SPEED);
-                syncItem.executeMoveToTarget(factor);
+                syncItem.stop();
             }
         } else {
             syncItem.setSpeed(SyncItem.SPEED);
@@ -68,6 +71,18 @@ public class CollisionService {
                     }
                 }
             }
+        }
+    }
+
+    private boolean isBetterPositionAvailable(SyncItem syncItem, Overlapping overlapping) {
+        if (overlapping.getSyncItem().getState() == SyncItem.MoveState.STOPPED) {
+            if (overlapping.getSyncItem().getPosition().getDistance(syncItem.getTargetPosition()) > overlapping.getSyncItem().getRadius()) {
+                return movingModel.calculateDensityOfItems(syncItem.getPosition().getDistance(syncItem.getTargetPosition())) < 0.25;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
         }
     }
 

@@ -75,7 +75,7 @@ public class SyncItem {
             if (decimalPosition.getPosition().equals(targetPosition)) {
                 stop();
             }
-        }else{
+        } else {
             double factorAngel = TURN_SPEED * factor;
             double actualDeltaAngel = MathHelper.getAngel(angel, targetAngel);
             if (factorAngel >= actualDeltaAngel) {
@@ -147,6 +147,10 @@ public class SyncItem {
         targetPosition = null;
         speed = 0;
         state = MoveState.STOPPED;
+    }
+
+    public double calculateArea() {
+        return Math.PI * Math.pow(radius, 2);
     }
 
     @Override
