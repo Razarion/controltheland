@@ -59,8 +59,6 @@ public class TestTracking extends AbstractServiceTest {
     private TutorialService tutorialService;
     private long time1;
     private long time2;
-    private long time3;
-    private long time4;
 
 
     @Test
@@ -1619,28 +1617,27 @@ public class TestTracking extends AbstractServiceTest {
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         // Setup access
-        time1 = System.currentTimeMillis();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask1.getId(), "unused", 1, 1500);
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask1.getId(), "unused", 1, 1500);
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask1.getId(), "unused", 1, 1500);
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask1.getId(), "unused", 1, 1500);
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask1.getId(), "unused", 1, 1500);
         getMovableService().sendStartupTask(new StartupTaskInfo(ColdSimulatedGameStartupTaskEnum.RUN_SIMULATED_GAME, 0, 0), "", dbLevelTask.getId());
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdSimulatedGameStartupTaskEnum.RUN_SIMULATED_GAME, 0, 0), "", dbLevelTask.getId());
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdSimulatedGameStartupTaskEnum.RUN_SIMULATED_GAME, 0, 0), "", dbLevelTask.getId());
+        Thread.sleep(50);
+        time1 = System.currentTimeMillis();
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask2.getId(), "unused", 1, 1500);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask2.getId(), "unused", 1, 1500);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask2.getId(), "unused", 1, 1500);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask2.getId(), "unused", 1, 1500);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask3.getId(), "unused", 1, 1500);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask3.getId(), "unused", 1, 1500);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask3.getId(), "unused", 1, 1500);
         getMovableService().sendStartupTask(new StartupTaskInfo(ColdSimulatedGameStartupTaskEnum.RUN_SIMULATED_GAME, 0, 0), "", dbLevelTask.getId());
         getMovableService().sendStartupTask(new StartupTaskInfo(ColdSimulatedGameStartupTaskEnum.RUN_SIMULATED_GAME, 0, 0), "", dbLevelTask.getId());
         Thread.sleep(50);
         time2 = System.currentTimeMillis();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask2.getId(), "unused", 1, 1500);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask2.getId(), "unused", 1, 1500);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask2.getId(), "unused", 1, 1500);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask2.getId(), "unused", 1, 1500);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask3.getId(), "unused", 1, 1500);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask3.getId(), "unused", 1, 1500);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask3.getId(), "unused", 1, 1500);
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdSimulatedGameStartupTaskEnum.RUN_SIMULATED_GAME, 0, 0), "", dbLevelTask.getId());
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdSimulatedGameStartupTaskEnum.RUN_SIMULATED_GAME, 0, 0), "", dbLevelTask.getId());
-        Thread.sleep(50);
-        time3 = System.currentTimeMillis();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask4.getId(), "unused", 1, 1500);
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask4.getId(), "unused", 1, 1500);
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask5.getId(), "unused", 1, 1500);
@@ -1649,7 +1646,6 @@ public class TestTracking extends AbstractServiceTest {
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, START_UID_1, dbLevelTask.getId(), tutTask7.getId(), "unused", 1, 1500);
         getMovableService().sendStartupTask(new StartupTaskInfo(ColdSimulatedGameStartupTaskEnum.RUN_SIMULATED_GAME, 0, 0), "", dbLevelTask.getId());
         Thread.sleep(50);
-        time4 = System.currentTimeMillis();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1708,7 +1704,7 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         QuestTrackingFilter questTrackingFilter = new QuestTrackingFilter();
         questTrackingFilter.setDbId(dbTutorialConfigId);
-        questTrackingFilter.setFromDate(new Date(time2));
+        questTrackingFilter.setFromDate(new Date(time1));
         TutorialStatisticDto tutorialStatisticDto = userTrackingService.getTutorialStatistic(questTrackingFilter);
         Assert.assertEquals(3, tutorialStatisticDto.getTutorialStarted());
         Assert.assertEquals(8, tutorialStatisticDto.getTutorialQuestEntries().size());
@@ -1743,7 +1739,7 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         QuestTrackingFilter questTrackingFilter = new QuestTrackingFilter();
         questTrackingFilter.setDbId(dbTutorialConfigId);
-        questTrackingFilter.setToDate(new Date(time3));
+        questTrackingFilter.setToDate(new Date(time2));
         TutorialStatisticDto tutorialStatisticDto = userTrackingService.getTutorialStatistic(questTrackingFilter);
         Assert.assertEquals(5, tutorialStatisticDto.getTutorialStarted());
         Assert.assertEquals(8, tutorialStatisticDto.getTutorialQuestEntries().size());
@@ -1778,8 +1774,8 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         QuestTrackingFilter questTrackingFilter = new QuestTrackingFilter();
         questTrackingFilter.setDbId(dbTutorialConfigId);
-        questTrackingFilter.setFromDate(new Date(time2));
-        questTrackingFilter.setToDate(new Date(time3));
+        questTrackingFilter.setFromDate(new Date(time1));
+        questTrackingFilter.setToDate(new Date(time2));
         TutorialStatisticDto tutorialStatisticDto = userTrackingService.getTutorialStatistic(questTrackingFilter);
         Assert.assertEquals(2, tutorialStatisticDto.getTutorialStarted());
         Assert.assertEquals(8, tutorialStatisticDto.getTutorialQuestEntries().size());
@@ -1800,6 +1796,169 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals(0, tutorialStatisticDto.getTutorialQuestEntries().get(6).getPassed());
         Assert.assertEquals("TutTask8", tutorialStatisticDto.getTutorialQuestEntries().get(7).getQuestName());
         Assert.assertEquals(0, tutorialStatisticDto.getTutorialQuestEntries().get(7).getPassed());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private int setupQuestStatistic() throws Exception {
+        // Prepare
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // setup tutorial
+        // setup level & level task
+        DbLevel dbLevel = userGuidanceService.getDbLevelCrud().createDbChild();
+        dbLevel.setXp(1000);
+        dbLevel.setNumber(1);
+        DbLevelTask dbLevelTask1 = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask1.setName("LevelTask1");
+        DbLevelTask dbLevelTask2 = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask2.setName("LevelTask2");
+        DbLevelTask dbLevelTask3 = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask3.setName("LevelTask3");
+        DbLevelTask dbLevelTask4 = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask4.setName("LevelTask4");
+        DbLevelTask dbLevelTask5 = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask5.setName("LevelTask5");
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
+        userGuidanceService.activateLevels();
+        // Setup access
+        // Crap
+        historyService.addLevelTaskActivated(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskActivated(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskActivated(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskActivated(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskDeactivated(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskDeactivated(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskDeactivated(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskDeactivated(getUserState(), dbLevelTask1);
+        historyService.addLevelPromotionEntry(getUserState(), dbLevel);
+        historyService.addLevelPromotionEntry(getUserState(), dbLevel);
+        historyService.addLevelPromotionEntry(getUserState(), dbLevel);
+        historyService.addLevelPromotionEntry(getUserState(), dbLevel);
+        // Normal
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask1);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask1);
+        Thread.sleep(50);
+        time1 = System.currentTimeMillis();
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask2);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask2);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask2);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask3);
+        Thread.sleep(50);
+        time2 = System.currentTimeMillis();
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask4);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask4);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask4);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask5);
+        historyService.addLevelTaskCompletedEntry(getUserState(), dbLevelTask5);
+        Thread.sleep(50);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        return dbLevel.getId();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testGetQuestStatistic() throws Exception {
+        int dbLevelConfigId = setupQuestStatistic();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        QuestTrackingFilter questTrackingFilter = new QuestTrackingFilter();
+        questTrackingFilter.setDbId(dbLevelConfigId);
+        QuestStatisticDto questStatistic = userTrackingService.getQuestStatistic(questTrackingFilter);
+        Assert.assertEquals(1, questStatistic.getLevelNumber());
+        Assert.assertEquals(5, questStatistic.getQuestEntries().size());
+
+        Assert.assertEquals("LevelTask1", questStatistic.getQuestEntries().get(0).getQuestName());
+        Assert.assertEquals(6, questStatistic.getQuestEntries().get(0).getPassed());
+        Assert.assertEquals("LevelTask2", questStatistic.getQuestEntries().get(1).getQuestName());
+        Assert.assertEquals(3, questStatistic.getQuestEntries().get(1).getPassed());
+        Assert.assertEquals("LevelTask3", questStatistic.getQuestEntries().get(2).getQuestName());
+        Assert.assertEquals(1, questStatistic.getQuestEntries().get(2).getPassed());
+        Assert.assertEquals("LevelTask4", questStatistic.getQuestEntries().get(3).getQuestName());
+        Assert.assertEquals(3, questStatistic.getQuestEntries().get(3).getPassed());
+        Assert.assertEquals("LevelTask5", questStatistic.getQuestEntries().get(4).getQuestName());
+        Assert.assertEquals(2, questStatistic.getQuestEntries().get(4).getPassed());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testGetQuestStatisticFrom() throws Exception {
+        int dbLevelConfigId = setupQuestStatistic();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        QuestTrackingFilter questTrackingFilter = new QuestTrackingFilter();
+        questTrackingFilter.setDbId(dbLevelConfigId);
+        questTrackingFilter.setFromDate(new Date(time1));
+        QuestStatisticDto questStatistic = userTrackingService.getQuestStatistic(questTrackingFilter);
+        Assert.assertEquals(1, questStatistic.getLevelNumber());
+        Assert.assertEquals(5, questStatistic.getQuestEntries().size());
+
+        Assert.assertEquals(0, questStatistic.getQuestEntries().get(0).getPassed());
+        Assert.assertEquals(3, questStatistic.getQuestEntries().get(1).getPassed());
+        Assert.assertEquals(1, questStatistic.getQuestEntries().get(2).getPassed());
+        Assert.assertEquals(3, questStatistic.getQuestEntries().get(3).getPassed());
+        Assert.assertEquals(2, questStatistic.getQuestEntries().get(4).getPassed());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testGetQuestStatisticTo() throws Exception {
+        int dbLevelConfigId = setupQuestStatistic();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        QuestTrackingFilter questTrackingFilter = new QuestTrackingFilter();
+        questTrackingFilter.setDbId(dbLevelConfigId);
+        questTrackingFilter.setToDate(new Date(time2));
+        QuestStatisticDto questStatistic = userTrackingService.getQuestStatistic(questTrackingFilter);
+        Assert.assertEquals(1, questStatistic.getLevelNumber());
+        Assert.assertEquals(5, questStatistic.getQuestEntries().size());
+
+        Assert.assertEquals(6, questStatistic.getQuestEntries().get(0).getPassed());
+        Assert.assertEquals(3, questStatistic.getQuestEntries().get(1).getPassed());
+        Assert.assertEquals(1, questStatistic.getQuestEntries().get(2).getPassed());
+        Assert.assertEquals(0, questStatistic.getQuestEntries().get(3).getPassed());
+        Assert.assertEquals(0, questStatistic.getQuestEntries().get(4).getPassed());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testGetQuestStatisticFromAndTo() throws Exception {
+        int dbLevelConfigId = setupQuestStatistic();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        QuestTrackingFilter questTrackingFilter = new QuestTrackingFilter();
+        questTrackingFilter.setDbId(dbLevelConfigId);
+        questTrackingFilter.setFromDate(new Date(time1));
+        questTrackingFilter.setToDate(new Date(time2));
+        QuestStatisticDto questStatistic = userTrackingService.getQuestStatistic(questTrackingFilter);
+        Assert.assertEquals(1, questStatistic.getLevelNumber());
+        Assert.assertEquals(5, questStatistic.getQuestEntries().size());
+
+        Assert.assertEquals(0, questStatistic.getQuestEntries().get(0).getPassed());
+        Assert.assertEquals(3, questStatistic.getQuestEntries().get(1).getPassed());
+        Assert.assertEquals(1, questStatistic.getQuestEntries().get(2).getPassed());
+        Assert.assertEquals(0, questStatistic.getQuestEntries().get(3).getPassed());
+        Assert.assertEquals(0, questStatistic.getQuestEntries().get(4).getPassed());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

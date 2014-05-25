@@ -137,4 +137,6 @@ public interface UserTrackingService {
     List<NewUserDailyDto> getNewUserDailyDto(NewUserDailyTrackingFilter newUserDailyTrackingFilter);
 
     TutorialStatisticDto getTutorialStatistic(QuestTrackingFilter questTrackingFilter);
+
+    QuestStatisticDto getQuestStatistic(QuestTrackingFilter questTrackingFilter);
 }

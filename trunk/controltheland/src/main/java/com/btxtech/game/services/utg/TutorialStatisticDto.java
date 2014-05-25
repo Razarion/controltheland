@@ -8,12 +8,12 @@ import java.util.List;
 public class TutorialStatisticDto {
     private String tutorialName;
     private int tutorialStarted;
-    private List<TutorialQuestEntry> TutorialQuestEntries;
+    private List<TutorialQuestEntry> tutorialQuestEntries;
 
     public TutorialStatisticDto(String tutorialName, int tutorialStarted, List<TutorialQuestEntry> tutorialQuestEntries) {
         this.tutorialName = tutorialName;
         this.tutorialStarted = tutorialStarted;
-        TutorialQuestEntries = tutorialQuestEntries;
+        this.tutorialQuestEntries = tutorialQuestEntries;
     }
 
     public String getTutorialName() {
@@ -25,7 +25,7 @@ public class TutorialStatisticDto {
     }
 
     public List<TutorialQuestEntry> getTutorialQuestEntries() {
-        return TutorialQuestEntries;
+        return tutorialQuestEntries;
     }
 
     public static class TutorialQuestEntry {
