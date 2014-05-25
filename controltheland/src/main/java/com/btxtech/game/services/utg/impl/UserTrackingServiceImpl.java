@@ -25,9 +25,7 @@ import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
-import com.btxtech.game.services.history.GameHistoryFilter;
-import com.btxtech.game.services.history.GameHistoryFrame;
-import com.btxtech.game.services.history.HistoryService;
+import com.btxtech.game.services.history.*;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -1001,6 +999,37 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         }
         countQuery.where(predicate);
 
+        CriteriaQuery<Long> userSelect = countQuery.select(criteriaBuilder.count(from));
+        return entityManager.createQuery(userSelect).getSingleResult().intValue();
+    }
+
+    @Override
+    public QuestStatisticDto getQuestStatistic(QuestTrackingFilter questTrackingFilter) {
+        DbLevel dbLevel = userGuidanceService.getDbLevel(questTrackingFilter.getDbId());
+        List<QuestStatisticDto.QuestEntry> questEntries = new ArrayList<>();
+        for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
+            int passed = getDoneCount4Quest(questTrackingFilter, dbLevelTask.getId());
+            questEntries.add(new QuestStatisticDto.QuestEntry(dbLevelTask.getName(), passed));
+        }
+        return new QuestStatisticDto(dbLevel.getNumber(), questEntries);
+    }
+
+    private int getDoneCount4Quest(QuestTrackingFilter questTrackingFilter, int levelId) {
+        // Get the History
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        // Query for total row count in invitations
+        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+        Root<DbHistoryElement> from = countQuery.from(DbHistoryElement.class);
+        Predicate predicate = criteriaBuilder.equal(from.get(DbHistoryElement_.levelTaskId), levelId);
+        predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(from.get(DbHistoryElement_.type), DbHistoryElement.Type.LEVEL_TASK_COMPLETED));
+        // criteriaBuilder.
+        if (questTrackingFilter.hasFromDate()) {
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(from.get(DbHistoryElement_.timeStamp), questTrackingFilter.getFromDate()));
+        }
+        if (questTrackingFilter.hasToDate()) {
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThan(from.get(DbHistoryElement_.timeStamp), questTrackingFilter.getToDate()));
+        }
+        countQuery.where(predicate);
         CriteriaQuery<Long> userSelect = countQuery.select(criteriaBuilder.count(from));
         return entityManager.createQuery(userSelect).getSingleResult().intValue();
     }
