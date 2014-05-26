@@ -21,7 +21,7 @@ public class SyncItem {
         MOVING,
         STOPPED,
         TURNING,
-        BLOCKED
+        //BLOCKED
     }
 
     // General

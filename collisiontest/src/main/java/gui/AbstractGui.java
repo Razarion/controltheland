@@ -228,11 +228,11 @@ public abstract class AbstractGui {
                     graphics.setColor(Color.BLUE);
                     break;
                 case TURNING:
-                    graphics.setColor(new Color(150, 150, 255));
+                    graphics.setColor(new Color(190, 150, 155));
                     break;
-                case BLOCKED:
-                    graphics.setColor(Color.RED);
-                    break;
+              //  case BLOCKED:
+              //      graphics.setColor(Color.RED);
+              //      break;
                 default:
                     throw new IllegalArgumentException("Unknown state: " + syncItem.getState());
             }
