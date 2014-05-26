@@ -17,6 +17,7 @@ import java.util.PriorityQueue;
  */
 public class CollisionService {
     public static final double CRUSH_ZONE = 10;
+    public static final double DENSITY_OF_ITEM = 0.5;
     private final MovingModel movingModel;
     private CollisionTileContainer collisionTileContainer;
 
@@ -56,18 +57,23 @@ public class CollisionService {
             syncItem.setSpeed(SyncItem.SPEED);
             syncItem.executeMoveToTarget(factor);
             if (syncItem.getState() == SyncItem.MoveState.MOVING) {
-                if (isOverlapping(syncItem, syncItem.getDecimalPosition(), CRUSH_ZONE) == null) {
-                    double targetAngel = syncItem.getDecimalPosition().getAngleToNord(new DecimalPosition(syncItem.getTargetPosition()));
-                    if (!syncItem.angelReached(targetAngel)) {
-                        if (MathHelper.getAngel(syncItem.getAngel(), targetAngel) > MathHelper.ONE_RADIANT / 24.0) {
-                            if (MathHelper.isCounterClock(targetAngel, syncItem.getAngel())) {
-                                syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() - MathHelper.ONE_RADIANT / 24.0));
-                            } else {
-                                syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() + MathHelper.ONE_RADIANT / 24.0));
-                            }
+                double targetAngel = syncItem.getDecimalPosition().getAngleToNord(new DecimalPosition(syncItem.getTargetPosition()));
+                Overlapping overlapping2 = isOverlapping(syncItem, syncItem.getDecimalPosition(), CRUSH_ZONE);
+                if (overlapping2 != null) {
+                    // TODO fix here
+ /*                   double movingAngel = syncItem.getAngel();
+                    double otherAngel = syncItem.getDecimalPosition().getAngleToNord(overlapping2.getSyncItem().getDecimalPosition());
+                    double crashAngelAbs = MathHelper.getAngel(movingAngel, otherAngel);
+                    if(crashAngelAbs <= MathHelper.QUARTER_RADIANT) {
+                        if (MathHelper.isCounterClock(movingAngel, otherAngel)) {
+                            syncItem.setTargetAngel(MathHelper.normaliseAngel(movingAngel - MathHelper.ONE_RADIANT / 24.0));
                         } else {
-                            syncItem.setTargetAngel(targetAngel);
+                            syncItem.setTargetAngel(MathHelper.normaliseAngel(movingAngel + MathHelper.ONE_RADIANT / 24.0));
                         }
+                    }*/
+                } else {
+                    if (!syncItem.angelReached(targetAngel)) {
+                        syncItem.setTargetAngel(targetAngel);
                     }
                 }
             }
@@ -77,7 +83,7 @@ public class CollisionService {
     private boolean isBetterPositionAvailable(SyncItem syncItem, Overlapping overlapping) {
         if (overlapping.getSyncItem().getState() == SyncItem.MoveState.STOPPED) {
             if (overlapping.getSyncItem().getPosition().getDistance(syncItem.getTargetPosition()) > overlapping.getSyncItem().getRadius()) {
-                return movingModel.calculateDensityOfItems(syncItem.getPosition().getDistance(syncItem.getTargetPosition())) < 0.25;
+                return movingModel.calculateDensityOfItems(syncItem.getPosition().getDistance(syncItem.getTargetPosition())) < DENSITY_OF_ITEM;
             } else {
                 return false;
             }
@@ -137,18 +143,6 @@ public class CollisionService {
         @Override
         public int compareTo(Overlapping o) {
             return Double.compare(distance, o.distance);
-        }
-
-        public boolean isTight() {
-            return crushZone < CRUSH_ZONE / 3.0;
-        }
-
-        public boolean isWide() {
-            return crushZone > CRUSH_ZONE * 2.0 / 3.0;
-        }
-
-        public boolean isMiddle() {
-            return !isTight() && !isWide();
         }
     }
 }
