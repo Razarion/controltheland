@@ -16,16 +16,30 @@ package com.btxtech.game.services.utg.impl;
 import com.btxtech.game.jsre.client.control.ColdSimulatedGameStartupTaskEnum;
 import com.btxtech.game.jsre.client.control.WarmSimulatedGameStartupTaskEnum;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.*;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.jsre.common.utg.tracking.*;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
-import com.btxtech.game.services.history.*;
+import com.btxtech.game.services.history.DbHistoryElement;
+import com.btxtech.game.services.history.DbHistoryElement_;
+import com.btxtech.game.services.history.GameHistoryFilter;
+import com.btxtech.game.services.history.GameHistoryFrame;
+import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -33,14 +47,53 @@ import com.btxtech.game.services.tutorial.DbAbstractTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig_;
 import com.btxtech.game.services.tutorial.TutorialService;
-import com.btxtech.game.services.user.*;
-import com.btxtech.game.services.utg.*;
-import com.btxtech.game.services.utg.tracker.*;
+import com.btxtech.game.services.user.DbForgotPassword;
+import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.user.User_;
+import com.btxtech.game.services.utg.DbChatMessage;
+import com.btxtech.game.services.utg.DbFacebookSource_;
+import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelTask;
+import com.btxtech.game.services.utg.DbLevelTask_;
+import com.btxtech.game.services.utg.LifecycleTrackingInfo;
+import com.btxtech.game.services.utg.NewUserDailyDto;
+import com.btxtech.game.services.utg.NewUserDailyTrackingFilter;
+import com.btxtech.game.services.utg.NewUserTrackingFilter;
+import com.btxtech.game.services.utg.QuestStatisticDto;
+import com.btxtech.game.services.utg.QuestTrackingFilter;
+import com.btxtech.game.services.utg.RealGameTrackingInfo;
+import com.btxtech.game.services.utg.SessionDetailDto;
+import com.btxtech.game.services.utg.SessionOverviewDto;
+import com.btxtech.game.services.utg.TutorialStatisticDto;
+import com.btxtech.game.services.utg.TutorialTrackingInfo;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.UserTrackingFilter;
+import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
+import com.btxtech.game.services.utg.tracker.DbDialogTracking;
+import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
+import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
+import com.btxtech.game.services.utg.tracker.DbPageAccess;
+import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
+import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
+import com.btxtech.game.services.utg.tracker.DbSessionDetail;
+import com.btxtech.game.services.utg.tracker.DbSessionDetail_;
+import com.btxtech.game.services.utg.tracker.DbStartupTask;
+import com.btxtech.game.services.utg.tracker.DbStartupTask_;
+import com.btxtech.game.services.utg.tracker.DbStartupTerminated;
+import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
+import com.btxtech.game.services.utg.tracker.DbTutorialProgress;
+import com.btxtech.game.services.utg.tracker.DbTutorialProgress_;
+import com.btxtech.game.services.utg.tracker.DbUserCommand;
+import com.btxtech.game.services.utg.tracker.DbUserHistory;
+import com.btxtech.game.services.utg.tracker.DbUserHistory_;
+import com.btxtech.game.services.utg.tracker.DbWindowClosed;
 import com.btxtech.game.wicket.pages.Game;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -55,7 +108,16 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -99,34 +161,33 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<SessionOverviewDto> getSessionOverviewDtos(UserTrackingFilter filter) {
         ArrayList<SessionOverviewDto> sessionOverviewDtos = new ArrayList<>();
 
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
         gregorianCalendar.add(GregorianCalendar.DAY_OF_YEAR, -filter.getDays());
 
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<DbSessionDetail> query = criteriaBuilder.createQuery(DbSessionDetail.class);
+        Root<DbSessionDetail> root = query.from(DbSessionDetail.class);
 
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbSessionDetail.class);
+        Predicate predicate = criteriaBuilder.greaterThan(root.get(DbSessionDetail_.timeStamp), gregorianCalendar.getTime());
         if (!filter.getJsEnabled().equals(UserTrackingFilter.BOTH)) {
-            criteria.add(Restrictions.eq("javaScriptDetected", filter.getJsEnabled().equals(UserTrackingFilter.ENABLED)));
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get(DbSessionDetail_.javaScriptDetected), filter.getJsEnabled().equals(UserTrackingFilter.ENABLED)));
         }
-        criteria.add(Restrictions.gt("timeStamp", gregorianCalendar.getTime()));
         if (filter.getSessionId() != null && !filter.getSessionId().trim().isEmpty()) {
-            criteria.add(Restrictions.eq("sessionId", filter.getSessionId()));
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get(DbSessionDetail_.sessionId), filter.getSessionId()));
         }
         if (filter.getCookieId() != null && !filter.getCookieId().trim().isEmpty()) {
-            criteria.add(Restrictions.eq("cookieId", filter.getCookieId()));
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get(DbSessionDetail_.cookieId), filter.getCookieId()));
         }
         if (filter.getOptionalFacebookAdValue() != null && !filter.getOptionalFacebookAdValue().trim().isEmpty()) {
-            criteria.add(Restrictions.like("dbFacebookSource.optionalAdValue", filter.getOptionalFacebookAdValue()));
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get(DbSessionDetail_.dbFacebookSource).get(DbFacebookSource_.optionalAdValue), filter.getOptionalFacebookAdValue()));
         }
 
-        criteria.addOrder(Order.desc("timeStamp"));
-        criteria.addOrder(Order.desc("id"));
-        List<DbSessionDetail> browserDetails = criteria.list();
-
-        for (DbSessionDetail browserDetail : browserDetails) {
+        query.where(predicate);
+        query.orderBy(criteriaBuilder.desc(root.get(DbSessionDetail_.timeStamp)), criteriaBuilder.desc(root.get(DbSessionDetail_.id)));
+        for (DbSessionDetail browserDetail : entityManager.createQuery(query.select(root)).getResultList()) {
             int hits = getPageHits(browserDetail.getSessionId());
             if (filter.getHits() != null && filter.getHits() > hits) {
                 continue;
@@ -153,25 +214,28 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<SessionOverviewDto> getSessionOverviewDtos(User user) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbUserHistory.class);
-        criteria.add(Restrictions.eq("user", user.getUsername()));
-        criteria.add(Restrictions.isNotNull("loggedIn"));
-        criteria.addOrder(Order.desc("loggedIn"));
-        criteria.setProjection(Projections.property("sessionId"));
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        List<String> userSessions = criteria.list();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<String> stringQuery = criteriaBuilder.createQuery(String.class);
+        Root<DbUserHistory> userHistoryRoot = stringQuery.from(DbUserHistory.class);
+        Predicate predicate = criteriaBuilder.equal(userHistoryRoot.get(DbUserHistory_.user), user.getUsername());
+        predicate = criteriaBuilder.and(predicate, userHistoryRoot.get(DbUserHistory_.loggedIn).isNotNull());
+        stringQuery.where(predicate);
+        //stringQuery.orderBy(criteriaBuilder.desc(userHistoryRoot.get(DbUserHistory_.loggedIn))); Does not work
+        stringQuery.distinct(true);
+        CriteriaQuery<String> userSelect = stringQuery.select(userHistoryRoot.get(DbUserHistory_.sessionId));
+        userSelect.groupBy((userHistoryRoot.get(DbUserHistory_.sessionId)));
+        List<String> userSessions = entityManager.createQuery(userSelect).getResultList();
         if (userSessions == null || userSessions.isEmpty()) {
             return null;
         }
-        criteria = sessionFactory.getCurrentSession().createCriteria(DbSessionDetail.class);
-        criteria.add(Restrictions.in("sessionId", userSessions));
-        criteria.addOrder(Order.desc("timeStamp"));
-        criteria.addOrder(Order.desc("id"));
-        List<DbSessionDetail> browserDetails = criteria.list();
+
+        CriteriaQuery<DbSessionDetail> sessionQuery = criteriaBuilder.createQuery(DbSessionDetail.class);
+        Root<DbSessionDetail> sessionRoot = sessionQuery.from(DbSessionDetail.class);
+        sessionQuery.where(sessionRoot.get(DbSessionDetail_.sessionId).in(userSessions));
+        sessionQuery.orderBy(criteriaBuilder.desc(sessionRoot.get(DbSessionDetail_.timeStamp)), criteriaBuilder.desc(sessionRoot.get(DbSessionDetail_.id)));
         ArrayList<SessionOverviewDto> sessionOverviewDtos = new ArrayList<>();
-        for (DbSessionDetail browserDetail : browserDetails) {
+        for (DbSessionDetail browserDetail : entityManager.createQuery(sessionQuery.select(sessionRoot)).getResultList()) {
             int hits = getPageHits(browserDetail.getSessionId());
             int startAttempts = getStartAttempts(browserDetail.getSessionId());
             int startSuccess = getStartSucceeded(browserDetail.getSessionId());
