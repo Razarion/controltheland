@@ -17,8 +17,10 @@ import java.util.logging.Logger;
 public class Perfmon {
     private static final Perfmon INSTANCE = new Perfmon();
     private static final int SENDING_DELAY_MINUTES = 3;
-    private Map<PerfmonEnum, Long> enterTimes = new HashMap<PerfmonEnum, Long>();
-    private Map<PerfmonEnum, Integer> workTimes = new HashMap<PerfmonEnum, Integer>();
+    private Map<PerfmonEnum, Long> enterTimes = new HashMap<>();
+    private Map<PerfmonEnum, Map<String, Long>> enterChildTimes = new HashMap<>();
+    private Map<PerfmonEnum, Integer> workTimes = new HashMap<>();
+    private Map<PerfmonEnum, Map<String, Integer>> workChildTimes = new HashMap<>();
     private Logger log = Logger.getLogger(Perfmon.class.getName());
     private long startTime;
 
@@ -35,7 +37,7 @@ public class Perfmon {
             @Override
             public void runPerfmon() {
                 try {
-                    Connection.getInstance().sendPerfmonData(workTimes, getTotalTime());
+                    Connection.getInstance().sendPerfmonData(workTimes, workChildTimes, getTotalTime());
                 } catch (Exception e) {
                     log.log(Level.SEVERE, "Perfmon: sendPerfmonData", e);
                 }
@@ -48,32 +50,77 @@ public class Perfmon {
         }
     }
 
-    public void onEntered(PerfmonEnum perfmonEnum) {
-        if (enterTimes.containsKey(perfmonEnum)) {
-            log.warning("Perfmon.onEntered(): onEntered has already been called for " + perfmonEnum);
+    public void onEntered(PerfmonEnum perfmonEnum, String childName) {
+        if (childName != null) {
+            Map<String, Long> childMap = enterChildTimes.get(perfmonEnum);
+            if (childMap == null) {
+                childMap = new HashMap<>();
+                enterChildTimes.put(perfmonEnum, childMap);
+            }
+            if (childMap.containsKey(childName)) {
+                log.warning("Perfmon.onEntered(): onEntered for child has already been called for " + perfmonEnum + "+" + childName);
+            }
+            childMap.put(childName, System.currentTimeMillis());
+        } else {
+            if (enterTimes.containsKey(perfmonEnum)) {
+                log.warning("Perfmon.onEntered(): onEntered has already been called for " + perfmonEnum);
+            }
+            enterTimes.put(perfmonEnum, System.currentTimeMillis());
         }
-        enterTimes.put(perfmonEnum, System.currentTimeMillis());
+    }
+
+    public void onEntered(PerfmonEnum perfmonEnum) {
+        onEntered(perfmonEnum, null);
+    }
+
+    public void onLeft(PerfmonEnum perfmonEnum, String childName) {
+        if (childName != null) {
+            Map<String, Long> childMap = enterChildTimes.get(perfmonEnum);
+            if (childMap == null) {
+                log.warning("Perfmon.onLeft(): onEntered for child 1 was not called before " + perfmonEnum + "+" + childName);
+                return;
+            }
+            Long startTime = childMap.remove(childName);
+            if (startTime == null) {
+                log.warning("Perfmon.onLeft(): onEntered  for child 2 was not called before " + perfmonEnum + "+" + childName);
+                return;
+            }
+            if (childMap.isEmpty()) {
+                enterChildTimes.remove(perfmonEnum);
+            }
+            Map<String, Integer> childWorkMap = workChildTimes.get(perfmonEnum);
+            if (childWorkMap == null) {
+                childWorkMap = new HashMap<>();
+                workChildTimes.put(perfmonEnum, childWorkMap);
+            }
+            Integer workTime = childWorkMap.get(childName);
+            if (workTime == null) {
+                workTime = 0;
+            }
+            childWorkMap.put(childName, workTime + (int) (System.currentTimeMillis() - startTime));
+        } else {
+            Long startTime = enterTimes.remove(perfmonEnum);
+            if (startTime == null) {
+                log.warning("Perfmon.onLeft(): onEntered was not called before " + perfmonEnum);
+                return;
+            }
+            Integer workTime = workTimes.get(perfmonEnum);
+            if (workTime == null) {
+                workTime = 0;
+            }
+            workTimes.put(perfmonEnum, workTime + (int) (System.currentTimeMillis() - startTime));
+        }
     }
 
     public void onLeft(PerfmonEnum perfmonEnum) {
-        Long startTime = enterTimes.remove(perfmonEnum);
-        if (startTime == null) {
-            log.warning("Perfmon.onLeft(): onEntered was not called before " + perfmonEnum);
-            return;
-        }
-        Integer workTime = workTimes.get(perfmonEnum);
-        if (workTime == null) {
-            workTime = 0;
-        }
-        workTimes.put(perfmonEnum, workTime + (int) (System.currentTimeMillis() - startTime));
+        onLeft(perfmonEnum, null);
     }
 
     public Map<PerfmonEnum, Integer> getSummary() {
-        return new HashMap<PerfmonEnum, Integer>(workTimes);
+        return new HashMap<>(workTimes);
     }
 
     public int getTotalTime() {
         return (int) (System.currentTimeMillis() - startTime);
     }
-
 }

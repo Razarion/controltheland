@@ -128,7 +128,7 @@ public interface MovableServiceAsync {
 
     void loadCurrentStatisticEntryInfos(AsyncCallback<Collection<CurrentStatisticEntryInfo>> async);
 
-    void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime, AsyncCallback<Void> async);
+    void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, Map<PerfmonEnum, Map<String, Integer>> workChildTimes, int totalTime, AsyncCallback<Void> async);
 
     void getCrystals(AsyncCallback<Integer> async);
 

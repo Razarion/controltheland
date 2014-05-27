@@ -141,7 +141,7 @@ public interface MovableService extends RemoteService {
 
     Collection<CurrentStatisticEntryInfo> loadCurrentStatisticEntryInfos();
 
-    void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime);
+    void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, Map<PerfmonEnum, Map<String, Integer>> workChildTimes, int totalTime);
 
     int getCrystals();
 
