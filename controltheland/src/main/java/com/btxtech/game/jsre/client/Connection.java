@@ -795,9 +795,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime) {
+    public void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, Map<PerfmonEnum, Map<String, Integer>> workChildTimes, int totalTime) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendPerfmonData(workTimes, totalTime, new VoidAsyncCallback("sendPerfmonData"));
+            movableServiceAsync.sendPerfmonData(workTimes, workChildTimes, totalTime, new VoidAsyncCallback("sendPerfmonData"));
         }
     }
 

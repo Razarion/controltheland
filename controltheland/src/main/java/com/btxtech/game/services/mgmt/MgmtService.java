@@ -46,7 +46,7 @@ public interface MgmtService {
 
     MemoryUsageHistory getNoHeapMemoryUsageHistory();
 
-    void saveClientPerfmonData(String sessionId, Map<PerfmonEnum, Integer> workTimes, int totalTime);
+    void saveClientPerfmonData(String sessionId, Map<PerfmonEnum, Integer> workTimes, Map<PerfmonEnum, Map<String, Integer>> workChildTimes, int totalTime);
 
     List<ClientPerfmonDto> getClientPerfmonData();
 

@@ -2,7 +2,6 @@ package com.btxtech.game.jsre.client.renderer;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.Game;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -24,14 +23,15 @@ import java.util.List;
  * Time: 22:51
  */
 public class Renderer {
+    private static final String ITEM_TASK = "Get items in view";
     private static final Renderer INSTANCE = new Renderer();
     private int frameCount = 0;
     private long nextFrameCountCalculation = 0;
     private int renderTime = 0;
     private AnimationScheduler.AnimationCallback gameAnimationCallback;
     private AnimationScheduler.AnimationCallback overlayAnimationCallback;
-    private List<AbstractRenderTask> overlayRenderTasks = new ArrayList<AbstractRenderTask>();
-    private List<AbstractRenderTask> gameRenderTasks = new ArrayList<AbstractRenderTask>();
+    private List<AbstractRenderTask> overlayRenderTasks = new ArrayList<>();
+    private List<AbstractRenderTask> gameRenderTasks = new ArrayList<>();
     private int itemRenderTaskIndex;
 
     // TODO native implementation for all browser available AnimationSchedulerImpl: (IE & Opera)
@@ -42,7 +42,7 @@ public class Renderer {
 
     private Renderer() {
         gameRenderTasks.add(new TerrainRenderTask(TerrainView.getInstance().getTerrainHandler(), TerrainView.getInstance().getContext2d()));
-        if(Game.isDebug()) {
+        if (Game.isDebug()) {
             gameRenderTasks.add(new DebugTerrainOverlayRenderTask(TerrainView.getInstance().getTerrainHandler(), TerrainView.getInstance().getContext2d()));
         }
         gameRenderTasks.add(new InGameTipBottomRenderTask(TerrainView.getInstance().getContext2d()));
@@ -145,12 +145,17 @@ public class Renderer {
         // Set canvas size due to chrome crash
         canvasElement.setWidth(viewRect.getWidth());
         canvasElement.setHeight(viewRect.getHeight());
+        Perfmon.getInstance().onEntered(PerfmonEnum.RENDERER, ITEM_TASK);
         Collection<SyncItem> itemsInView = ItemContainer.getInstance().getItemsInRectangleFastIncludingDead(viewRect); // TODO clips off items if the middle is no longer in the view rect
+        Perfmon.getInstance().onLeft(PerfmonEnum.RENDERER, ITEM_TASK);
         for (AbstractRenderTask renderTask : gameRenderTasks) {
             try {
+                Perfmon.getInstance().onEntered(PerfmonEnum.RENDERER, renderTask.getClass().getSimpleName());
                 renderTask.render(timeStamp, itemsInView, viewRect, tileViewRect);
             } catch (Exception e) {
                 ClientExceptionHandler.handleExceptionOnlyOnce("Renderer.doRender()", e);
+            } finally {
+                Perfmon.getInstance().onLeft(PerfmonEnum.RENDERER, renderTask.getClass().getSimpleName());
             }
         }
     }
@@ -160,9 +165,12 @@ public class Renderer {
         Rectangle tileViewRect = TerrainUtil.convertToTilePositionRoundUp(viewRect);
         for (AbstractRenderTask renderTask : overlayRenderTasks) {
             try {
+                Perfmon.getInstance().onEntered(PerfmonEnum.RENDERER_OVERLAY, renderTask.getClass().getSimpleName());
                 renderTask.render(timeStamp, null, viewRect, tileViewRect);
             } catch (Exception e) {
                 ClientExceptionHandler.handleExceptionOnlyOnce("Renderer.doOverlayRender()", e);
+            } finally {
+                Perfmon.getInstance().onLeft(PerfmonEnum.RENDERER_OVERLAY, renderTask.getClass().getSimpleName());
             }
         }
     }

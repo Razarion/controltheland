@@ -572,9 +572,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime) {
+    public void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, Map<PerfmonEnum, Map<String, Integer>> workChildTimes, int totalTime) {
         try {
-            mgmtService.saveClientPerfmonData(session.getSessionId(), workTimes, totalTime);
+            mgmtService.saveClientPerfmonData(session.getSessionId(), workTimes, workChildTimes, totalTime);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }

@@ -18,9 +18,9 @@ public class ClientPerfmonDto {
     private Collection<ClientPerfmonEntry> workTimes;
     private int totalTime;
 
-    public ClientPerfmonDto(String sessionId, Map<PerfmonEnum, Integer> workTimes, int totalTime) {
+    public ClientPerfmonDto(String sessionId, Map<PerfmonEnum, Integer> workTimes, Map<PerfmonEnum, Map<String, Integer>> workChildTimes, int totalTime) {
         this.sessionId = sessionId;
-        setWorkTimes(workTimes, totalTime);
+        setWorkTimes(workTimes, workChildTimes, totalTime);
     }
 
     public String getSessionId() {
@@ -31,11 +31,11 @@ public class ClientPerfmonDto {
         return workTimes;
     }
 
-    public void setWorkTimes(Map<PerfmonEnum, Integer> workTimes, int totalTime) {
+    public void setWorkTimes(Map<PerfmonEnum, Integer> workTimes, Map<PerfmonEnum, Map<String, Integer>> workChildTimes, int totalTime) {
         this.totalTime = totalTime;
         this.workTimes = new ArrayList<>();
         for (Map.Entry<PerfmonEnum, Integer> entry : workTimes.entrySet()) {
-            this.workTimes.add(new ClientPerfmonEntry(entry.getKey(), entry.getValue()));
+            this.workTimes.add(new ClientPerfmonEntry(entry.getKey(), entry.getValue(), workChildTimes.get(entry.getKey())));
         }
         lastActivated = new Date();
     }

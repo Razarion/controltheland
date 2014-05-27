@@ -36,6 +36,7 @@ public class ClientPerfmonTable extends MgmtWebPage {
             @Override
             protected void populateItem(ListItem<ClientPerfmonDto> listItem) {
                 listItem.add(new Label("lastActivated", simpleDateFormat.format(listItem.getModelObject().getLastActivated())));
+                listItem.add(new Label("time", DateUtil.formatDuration(listItem.getModelObject().getTotalTime())));
                 PageParameters pageParameters = new PageParameters();
                 pageParameters.add(ClientPerfmonDetail.SESSION_KEY, listItem.getModelObject().getSessionId());
                 BookmarkablePageLink<ClientPerfmonDetail> link = new BookmarkablePageLink<>("sessionIdLink", ClientPerfmonDetail.class, pageParameters);

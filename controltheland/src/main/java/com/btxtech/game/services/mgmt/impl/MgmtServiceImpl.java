@@ -241,12 +241,12 @@ public class MgmtServiceImpl implements MgmtService {
     }
 
     @Override
-    public void saveClientPerfmonData(String sessionId, Map<PerfmonEnum, Integer> workTimes, int totalTime) {
+    public void saveClientPerfmonData(String sessionId, Map<PerfmonEnum, Integer> workTimes, Map<PerfmonEnum, Map<String, Integer>> workChildTimes, int totalTime) {
         ClientPerfmonDto clientPerfmonDto = clientPerfmonEntries.get(sessionId);
         if (clientPerfmonDto != null) {
-            clientPerfmonDto.setWorkTimes(workTimes, totalTime);
+            clientPerfmonDto.setWorkTimes(workTimes, workChildTimes, totalTime);
         } else {
-            clientPerfmonDto = new ClientPerfmonDto(sessionId, workTimes, totalTime);
+            clientPerfmonDto = new ClientPerfmonDto(sessionId, workTimes, workChildTimes, totalTime);
             clientPerfmonEntries.put(sessionId, clientPerfmonDto);
         }
     }
