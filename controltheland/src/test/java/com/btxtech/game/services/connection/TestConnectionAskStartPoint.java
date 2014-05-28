@@ -172,6 +172,7 @@ public class TestConnectionAskStartPoint extends AbstractServiceTest {
         packets = getMovableService().getSyncInfo(START_UID_1, false);
         Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket) packets.get(0)).getType());
         Assert.assertEquals(simpleBase, ((BaseChangedPacket) packets.get(0)).getBaseAttributes().getSimpleBase());
+        // TODO failed on: 28.05.2014
         Assert.assertEquals(1000.0, ((AccountBalancePacket) packets.get(2)).getAccountBalance(), 0.001);
         Assert.assertEquals(new Index(1000, 1000), ((SyncItemInfo) packets.get(3)).getPosition());
         Assert.assertEquals(TEST_START_BUILDER_ITEM_ID, ((SyncItemInfo) packets.get(3)).getItemTypeId());
