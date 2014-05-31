@@ -14,6 +14,7 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
@@ -71,7 +72,11 @@ public class InventoryImageResource extends AbstractResource {
                         response.setWriteCallback(new WriteCallback() {
                             @Override
                             public void writeData(final Attributes attributes) {
-                                attributes.getResponse().write(dbInventoryArtifact.getImageData());
+                                try {
+                                    attributes.getResponse().write(dbInventoryArtifact.getImageData());
+                                } catch (Exception e) {
+                                    ExceptionHandler.handleException(e, "InventoryImageResource writeData INVENTORY_TYPE_ARTIFACT");
+                                }
                             }
                         });
                         return response;
@@ -86,7 +91,11 @@ public class InventoryImageResource extends AbstractResource {
                         response.setWriteCallback(new WriteCallback() {
                             @Override
                             public void writeData(final Attributes attributes) {
-                                attributes.getResponse().write(dbInventoryItem.getImageData());
+                                try {
+                                    attributes.getResponse().write(dbInventoryItem.getImageData());
+                                } catch (Exception e) {
+                                    ExceptionHandler.handleException(e, "InventoryImageResource writeData INVENTORY_TYPE_ITEM");
+                                }
                             }
                         });
                         return response;

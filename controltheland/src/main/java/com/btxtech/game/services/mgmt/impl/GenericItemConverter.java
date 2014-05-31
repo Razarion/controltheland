@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.StorablePacket;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
@@ -96,15 +97,26 @@ public class GenericItemConverter {
         fillHelperCache();
         dbBackupEntry.setTimeStamp(new Date());
 
-
         for (Planet planet : planetSystemService.getRunningPlanets()) {
-            Collection<SyncItem> syncItems = planet.getPlanetServices().getItemService().getItems4Backup();
-            for (SyncItem item : syncItems) {
-                addGenericItem(item);
-            }
-            // post process references
-            for (SyncItem item : syncItems) {
-                postProcessBackup(planet.getPlanetServices(), item);
+            try {
+                Collection<SyncItem> syncItems = planet.getPlanetServices().getItemService().getItems4Backup();
+                for (SyncItem item : syncItems) {
+                    try {
+                        addGenericItem(item);
+                    } catch (Exception e) {
+                        ExceptionHandler.handleException(e, "generateBackupEntry addGenericItem");
+                    }
+                }
+                // post process references
+                for (SyncItem item : syncItems) {
+                    try {
+                        postProcessBackup(planet.getPlanetServices(), item);
+                    } catch (Exception e) {
+                        ExceptionHandler.handleException(e, "generateBackupEntry postProcessBackup");
+                    }
+                }
+            } catch (Exception e) {
+                ExceptionHandler.handleException(e, "generateBackupEntry getRunningPlanets");
             }
         }
 
@@ -113,10 +125,10 @@ public class GenericItemConverter {
         // User state
         Set<DbUserState> dbUserStates = new HashSet<>();
         for (UserState userState : userService.getAllUserStates()) {
-            if (!userState.isRegistered()) {
-                continue;
-            }
             try {
+                if (!userState.isRegistered()) {
+                    continue;
+                }
                 DbUserState dbUserState = createDbUserState(userState);
                 userGuidanceService.createAndAddBackup(dbUserState, userState);
                 statisticsService.createAndAddBackup(dbUserState, userState);
