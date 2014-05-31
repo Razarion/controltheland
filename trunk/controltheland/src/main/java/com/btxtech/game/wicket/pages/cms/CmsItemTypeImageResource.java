@@ -13,6 +13,7 @@
 package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbItemType;
@@ -59,7 +60,11 @@ public class CmsItemTypeImageResource extends AbstractResource {
             response.setWriteCallback(new WriteCallback() {
                 @Override
                 public void writeData(final Attributes attributes) {
-                    attributes.getResponse().write(dbItemTypeImage.getData());
+                    try {
+                        attributes.getResponse().write(dbItemTypeImage.getData());
+                    } catch (Exception e) {
+                        ExceptionHandler.handleException(e, "CmsItemTypeImageResource writeData");
+                    }
                 }
             });
             return response;

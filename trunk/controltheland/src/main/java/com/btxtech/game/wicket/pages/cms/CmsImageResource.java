@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.cms;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsImage;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.mgmt.MgmtService;
 import org.apache.wicket.injection.Injector;
@@ -58,7 +59,11 @@ public class CmsImageResource extends AbstractResource {
             response.setWriteCallback(new WriteCallback() {
                 @Override
                 public void writeData(final Attributes attributes) {
-                    attributes.getResponse().write(dbCmsImage.getData());
+                    try {
+                        attributes.getResponse().write(dbCmsImage.getData());
+                    } catch (Exception e) {
+                        ExceptionHandler.handleException(e, "CmsImageResource writeData");
+                    }
                 }
             });
             return response;
