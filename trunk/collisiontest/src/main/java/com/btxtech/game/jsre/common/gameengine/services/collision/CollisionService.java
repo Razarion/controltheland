@@ -37,16 +37,16 @@ public class CollisionService {
         Overlapping overlapping = isOverlapping(syncItem, positionProposal, 0);
         if (overlapping != null) {
             if (isBetterPositionAvailable(syncItem, overlapping)) {
-                double movingAngel = syncItem.getAngel();
                 double otherAngel = syncItem.getDecimalPosition().getAngleToNord(overlapping.getSyncItem().getDecimalPosition());
-                double crashAngelAbs = MathHelper.getAngel(movingAngel, otherAngel);
+                double crashAngelAbs = MathHelper.getAngel(syncItem.getAngel(), otherAngel);
                 if (crashAngelAbs <= MathHelper.QUARTER_RADIANT) {
-                    if (MathHelper.isCounterClock(movingAngel, otherAngel)) {
-                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() - MathHelper.ONE_RADIANT / 24.0));
+                    if (MathHelper.isCounterClock(syncItem.getAngel(), otherAngel)) {
+                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() - SyncItem.TURN_SPEED * factor));
                     } else {
-                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() + MathHelper.ONE_RADIANT / 24.0));
+                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() + SyncItem.TURN_SPEED * factor));
                     }
                 } else {
+                    // TODO this never happens
                     syncItem.setSpeed(SyncItem.SPEED);
                     syncItem.executeMoveToTarget(factor);
                 }
@@ -56,24 +56,26 @@ public class CollisionService {
         } else {
             syncItem.setSpeed(SyncItem.SPEED);
             syncItem.executeMoveToTarget(factor);
-            if (syncItem.getState() == SyncItem.MoveState.MOVING) {
-                double targetAngel = syncItem.getDecimalPosition().getAngleToNord(new DecimalPosition(syncItem.getTargetPosition()));
-                Overlapping overlapping2 = isOverlapping(syncItem, syncItem.getDecimalPosition(), CRUSH_ZONE);
-                if (overlapping2 != null) {
-                    // TODO fix here
- /*                   double movingAngel = syncItem.getAngel();
-                    double otherAngel = syncItem.getDecimalPosition().getAngleToNord(overlapping2.getSyncItem().getDecimalPosition());
-                    double crashAngelAbs = MathHelper.getAngel(movingAngel, otherAngel);
-                    if(crashAngelAbs <= MathHelper.QUARTER_RADIANT) {
-                        if (MathHelper.isCounterClock(movingAngel, otherAngel)) {
-                            syncItem.setTargetAngel(MathHelper.normaliseAngel(movingAngel - MathHelper.ONE_RADIANT / 24.0));
-                        } else {
-                            syncItem.setTargetAngel(MathHelper.normaliseAngel(movingAngel + MathHelper.ONE_RADIANT / 24.0));
-                        }
-                    }*/
-                } else {
-                    if (!syncItem.angelReached(targetAngel)) {
-                        syncItem.setTargetAngel(targetAngel);
+            if (syncItem.getState() == SyncItem.MoveState.STOPPED) {
+                return;
+            }
+            double targetAngel = syncItem.getDecimalPosition().getAngleToNord(new DecimalPosition(syncItem.getTargetPosition()));
+            if (!syncItem.angelReached(targetAngel)) {
+                if (syncItem.getState() == SyncItem.MoveState.MOVING) {
+                    double angle;
+                    double turn = SyncItem.TURN_SPEED * factor;
+                    if (MathHelper.getAngel(syncItem.getAngel(), targetAngel) <= turn) {
+                        angle = targetAngel;
+                    } else if (MathHelper.isCounterClock(syncItem.getAngel(), targetAngel)) {
+                        angle = MathHelper.normaliseAngel(syncItem.getAngel() + turn);
+                    } else {
+                        angle = MathHelper.normaliseAngel(syncItem.getAngel() - turn);
+                    }
+                    DecimalPosition positionProposal2 = new DecimalPosition(syncItem.getPosition().getPointFromAngelToNord(angle, factor));
+                    Overlapping overlapping2 = isOverlapping(syncItem, positionProposal2, 0);
+                    System.out.println("overlapping2: " + overlapping2);
+                    if (overlapping2 == null) {
+                        syncItem.setTargetAngel(angle);
                     }
                 }
             }
