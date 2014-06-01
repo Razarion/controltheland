@@ -41,9 +41,9 @@ public class CollisionService {
                 double crashAngelAbs = MathHelper.getAngel(syncItem.getAngel(), otherAngel);
                 if (crashAngelAbs <= MathHelper.QUARTER_RADIANT) {
                     if (MathHelper.isCounterClock(syncItem.getAngel(), otherAngel)) {
-                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() - SyncItem.TURN_SPEED * factor));
+                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() - MathHelper.ONE_RADIANT / 24.0));
                     } else {
-                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() + SyncItem.TURN_SPEED * factor));
+                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() + MathHelper.ONE_RADIANT / 24.0));
                     }
                 } else {
                     // TODO this never happens
@@ -63,7 +63,7 @@ public class CollisionService {
             if (!syncItem.angelReached(targetAngel)) {
                 if (syncItem.getState() == SyncItem.MoveState.MOVING) {
                     double angle;
-                    double turn = SyncItem.TURN_SPEED * factor;
+                    double turn = MathHelper.ONE_RADIANT / 24.0;
                     if (MathHelper.getAngel(syncItem.getAngel(), targetAngel) <= turn) {
                         angle = targetAngel;
                     } else if (MathHelper.isCounterClock(syncItem.getAngel(), targetAngel)) {
@@ -71,9 +71,8 @@ public class CollisionService {
                     } else {
                         angle = MathHelper.normaliseAngel(syncItem.getAngel() - turn);
                     }
-                    DecimalPosition positionProposal2 = new DecimalPosition(syncItem.getPosition().getPointFromAngelToNord(angle, factor));
+                    DecimalPosition positionProposal2 = syncItem.getDecimalPosition().getPointFromAngelToNord(angle, 10 * factor * syncItem.getSpeed());
                     Overlapping overlapping2 = isOverlapping(syncItem, positionProposal2, 0);
-                    System.out.println("overlapping2: " + overlapping2);
                     if (overlapping2 == null) {
                         syncItem.setTargetAngel(angle);
                     }
