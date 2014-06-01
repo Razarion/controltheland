@@ -13,8 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.collision;
 
-import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ import java.util.List;
  */
 public class Path implements Serializable {
     private List<Index> nextWayPositions;
-    private Index lastWayPosition;
 
     /**
      * Used by GWT
@@ -36,75 +35,24 @@ public class Path implements Serializable {
     protected Path() {
     }
 
-    public Path(Index absoluteStart, Index absoluteDestination, List<Index> path) {
-        lastWayPosition = absoluteStart;
-        nextWayPositions = new ArrayList<Index>(path);
-        if (nextWayPositions.isEmpty() || (!nextWayPositions.get(nextWayPositions.size() - 1).equals(absoluteDestination))) {
-            nextWayPositions.add(absoluteDestination);
-        }
+    public Path(Index destination) {
+        nextWayPositions = new ArrayList<Index>(1);
+        nextWayPositions.add(destination.getCopy());
     }
 
-    public List<Index> getNextWayPositions() {
-        return nextWayPositions;
+    public Path(List<Index> path) {
+        nextWayPositions = new ArrayList<Index>(path);
+    }
+
+    public Index getNextWayPosition() {
+        return nextWayPositions.get(0);
     }
 
     public boolean isEmpty() {
         return nextWayPositions == null || nextWayPositions.isEmpty();
     }
 
-    public DecimalPosition calculatePosition(double factor, double speed, DecimalPosition currentPosition) {
-        return calculatePosition(factor, speed, 0, currentPosition, false);
-    }
-
-    public DecimalPosition moveToCurrentPosition(double factor, double speed, DecimalPosition currentPosition) {
-        return calculatePosition(factor, speed, 0, currentPosition, true);
-    }
-
-    private DecimalPosition calculatePosition(double factor, double speed, int nextWayPoint, DecimalPosition currentPosition, boolean removePoints) {
-        Index destination = nextWayPositions.get(nextWayPoint);
-
-        DecimalPosition newPosition = currentPosition.getPointWithDistance(speed * factor, destination, false);
-        if (newPosition.isSame(destination)) {
-            nextWayPoint++;
-            if (nextWayPositions.size() <= nextWayPoint) {
-                DecimalPosition decimalPosition = new DecimalPosition(nextWayPositions.get(nextWayPositions.size() - 1));
-                if (removePoints) {
-                    nextWayPositions.clear();
-                }
-                return decimalPosition;
-            }
-        }
-
-        double realDistance = newPosition.getDistance(currentPosition);
-        double relativeDistance = realDistance / speed;
-        if (factor - relativeDistance > DecimalPosition.FACTOR) {
-            if (removePoints) {
-                nextWayPoint--;
-                nextWayPositions.remove(0);
-            }
-            return calculatePosition(factor - relativeDistance, speed, nextWayPoint, newPosition, removePoints);
-        } else {
-            return newPosition;
-        }
-    }
-
-    public Index getAbsoluteDestination() {
-        return nextWayPositions.get(nextWayPositions.size() - 1);
-    }
-
-    @Override
-    public String toString() {
-        return "Path{" +
-                "lastWayPosition=" + lastWayPosition +
-                ", nextWayPositions=" + nextWayPositions +
-                '}';
-    }
-
-    private Index getNextWayPosition() {
-        if (isEmpty()) {
-            return null;
-        } else {
-            return nextWayPositions.get(0);
-        }
+    public void wayPointReached() {
+        nextWayPositions.remove(0);
     }
 }

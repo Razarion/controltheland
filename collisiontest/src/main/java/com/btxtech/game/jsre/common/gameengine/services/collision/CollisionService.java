@@ -17,7 +17,7 @@ import java.util.PriorityQueue;
  */
 public class CollisionService {
     public static final double CRUSH_ZONE = 10;
-    public static final double DENSITY_OF_ITEM = 0.5;
+    public static final double DENSITY_OF_ITEM = 0.25;
     private final MovingModel movingModel;
     private CollisionTileContainer collisionTileContainer;
 
@@ -51,7 +51,7 @@ public class CollisionService {
                     syncItem.executeMoveToTarget(factor);
                 }
             } else {
-                syncItem.stop();
+                syncItem.wayPointReached();
             }
         } else {
             syncItem.setSpeed(SyncItem.SPEED);
@@ -59,7 +59,7 @@ public class CollisionService {
             if (syncItem.getState() == SyncItem.MoveState.STOPPED) {
                 return;
             }
-            double targetAngel = syncItem.getDecimalPosition().getAngleToNord(new DecimalPosition(syncItem.getTargetPosition()));
+            double targetAngel = syncItem.getTargetAngel();
             if (!syncItem.angelReached(targetAngel)) {
                 if (syncItem.getState() == SyncItem.MoveState.MOVING) {
                     double angle;
@@ -82,15 +82,15 @@ public class CollisionService {
     }
 
     private boolean isBetterPositionAvailable(SyncItem syncItem, Overlapping overlapping) {
-        if (overlapping.getSyncItem().getState() == SyncItem.MoveState.STOPPED) {
+//        if (overlapping.getSyncItem().getState() == SyncItem.MoveState.STOPPED) {
             if (overlapping.getSyncItem().getPosition().getDistance(syncItem.getTargetPosition()) > overlapping.getSyncItem().getRadius()) {
                 return movingModel.calculateDensityOfItems(syncItem.getPosition().getDistance(syncItem.getTargetPosition())) < DENSITY_OF_ITEM;
             } else {
                 return false;
             }
-        } else {
-            return true;
-        }
+//        } else {
+//            return true;
+//        }
     }
 
     public Overlapping isOverlapping(SyncItem syncItem, DecimalPosition positionProposal, double crushZone) {
@@ -120,7 +120,7 @@ public class CollisionService {
     }
 
     public void findPath(SyncItem syncItem, Index targetPosition) {
-        syncItem.setTargetPosition(targetPosition);
+        syncItem.moveTo(targetPosition);
     }
 
     private class Overlapping implements Comparable<Overlapping> {
