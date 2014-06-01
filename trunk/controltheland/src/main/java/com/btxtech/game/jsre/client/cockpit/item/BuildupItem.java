@@ -97,7 +97,7 @@ public class BuildupItem extends Composite {
         discoverEnableState();
         buildupItemButtonContent = new BuildupItemButtonContent(itemType);
         button.getElement().appendChild(buildupItemButtonContent.getElement());
-        priceLabel.setText("$" + itemType.getPrice());
+        priceLabel.setText(Integer.toString(itemType.getPrice()));
         accomplishEnableState();
     }
 
