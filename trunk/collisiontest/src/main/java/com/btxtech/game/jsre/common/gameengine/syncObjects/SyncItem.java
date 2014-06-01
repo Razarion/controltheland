@@ -150,8 +150,8 @@ public class SyncItem {
         return aimAngel;
     }
 
-    public void setTargetAngel(double targetAngel) {
-        this.aimAngel = targetAngel;
+    public void setAimAngel(double aimAngel) {
+        this.aimAngel = aimAngel;
     }
 
     public double getTargetAngel() {
