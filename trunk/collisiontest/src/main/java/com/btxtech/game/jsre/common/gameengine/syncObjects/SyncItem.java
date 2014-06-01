@@ -3,7 +3,9 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -33,10 +35,10 @@ public class SyncItem {
     // SyncItemArea
     private DecimalPosition decimalPosition;
     private double angel = 0;
-    private double targetAngel;
     private double speed;
+    private double aimAngel;
     // Moving
-    private Index targetPosition;
+    private Path path;
 
     public SyncItem(int radius, Index position, String debugName) {
         this.debugName = debugName;
@@ -49,8 +51,8 @@ public class SyncItem {
         return radius;
     }
 
-    private boolean targetAngelReached() {
-        return angelReached(targetAngel);
+    private boolean aimAngelReached() {
+        return angelReached(aimAngel);
     }
 
     public boolean angelReached(double targetAngel) {
@@ -61,7 +63,7 @@ public class SyncItem {
      * @param factor 1 if last call was exactly 1 second before
      */
     public DecimalPosition calculateMoveToTarget(double factor) {
-        if (targetAngelReached()) {
+        if (aimAngelReached()) {
             return decimalPosition.getPointFromAngelToNord(angel, speed * factor);
         } else {
             return decimalPosition;
@@ -69,20 +71,20 @@ public class SyncItem {
     }
 
     public void executeMoveToTarget(double factor) {
-        if (targetAngelReached()) {
+        if (aimAngelReached()) {
             decimalPosition = decimalPosition.getPointFromAngelToNord(angel, speed * factor);
             state = MoveState.MOVING;
-            if (decimalPosition.getPosition().equals(targetPosition)) {
-                stop();
+            if (decimalPosition.getPosition().equals(path.getNextWayPosition())) {
+                wayPointReached();
             }
         } else {
             double factorAngel = TURN_SPEED * factor;
-            double actualDeltaAngel = MathHelper.getAngel(angel, targetAngel);
+            double actualDeltaAngel = MathHelper.getAngel(angel, aimAngel);
             if (factorAngel >= actualDeltaAngel) {
                 // reached
-                angel = targetAngel;
+                angel = aimAngel;
             } else {
-                if (MathHelper.isCounterClock(angel, targetAngel)) {
+                if (MathHelper.isCounterClock(angel, aimAngel)) {
                     angel = MathHelper.normaliseAngel(angel + factorAngel);
                 } else {
                     angel = MathHelper.normaliseAngel(angel - factorAngel);
@@ -112,15 +114,24 @@ public class SyncItem {
         return id;
     }
 
-    public void setTargetPosition(Index targetPosition) {
-        this.targetPosition = targetPosition;
-        targetAngel = decimalPosition.getAngleToNord(new DecimalPosition(targetPosition));
+    public void moveTo(Index destination) {
+        path = new Path(destination);
+        executeMove();
+    }
+
+    public void moveTo(List<Index> wayPoint) {
+        path = new Path(wayPoint);
+        executeMove();
+    }
+
+    private void executeMove() {
+        aimAngel = decimalPosition.getAngleToNord(new DecimalPosition(path.getNextWayPosition()));
         speed = SPEED;
         state = MoveState.MOVING;
     }
 
     public Index getTargetPosition() {
-        return targetPosition;
+        return path.getNextWayPosition();
     }
 
     public double getAngel() {
@@ -135,16 +146,27 @@ public class SyncItem {
         this.speed = speed;
     }
 
-    public double getTargetAngel() {
-        return targetAngel;
+    public double getAimAngel() {
+        return aimAngel;
     }
 
     public void setTargetAngel(double targetAngel) {
-        this.targetAngel = targetAngel;
+        this.aimAngel = targetAngel;
+    }
+
+    public double getTargetAngel() {
+        return decimalPosition.getAngleToNord(new DecimalPosition(path.getNextWayPosition()));
+    }
+
+    public void wayPointReached() {
+        path.wayPointReached();
+        if(path.isEmpty()) {
+            stop();
+        }
     }
 
     public void stop() {
-        targetPosition = null;
+        path = null;
         speed = 0;
         state = MoveState.STOPPED;
     }
@@ -155,6 +177,6 @@ public class SyncItem {
 
     @Override
     public String toString() {
-        return "SyncItem{id=" + id + " Position: " + decimalPosition + " debugName: " + debugName + " targetPosition: " + targetPosition + '}';
+        return "SyncItem{id=" + id + " Position: " + decimalPosition + " debugName: " + debugName;
     }
 }
