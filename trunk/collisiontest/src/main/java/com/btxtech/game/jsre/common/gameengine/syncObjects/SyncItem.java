@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SyncItem {
     public static final double SPEED = 40;
     private static final double PRECISION_ANGEL = MathHelper.gradToRad(1);
-    public static final double TURN_SPEED = MathHelper.gradToRad(120); // Grad per second
+    public static final double TURN_SPEED = MathHelper.gradToRad(180); // Grad per second
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
 
     public enum MoveState {
