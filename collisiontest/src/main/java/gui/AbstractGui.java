@@ -246,7 +246,7 @@ public abstract class AbstractGui {
                     syncItem.getPosition().getY() + 5);*/
             if (syncItem.getState() == SyncItem.MoveState.MOVING || syncItem.getState() == SyncItem.MoveState.TURNING) {
                 graphics.setColor(Color.RED);
-                Index targetAngelPosition = syncItem.getPosition().getPointFromAngelToNord(syncItem.getTargetAngel(), syncItem.getRadius() + 5);
+                Index targetAngelPosition = syncItem.getPosition().getPointFromAngelToNord(syncItem.getAimAngel(), syncItem.getRadius() + 5);
                 graphics.drawLine(syncItem.getPosition().getX(),
                         syncItem.getPosition().getY(),
                         targetAngelPosition.getX(),
