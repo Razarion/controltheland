@@ -32,18 +32,17 @@ public class MovingMain {
         MovingModel movingModel = new MovingModel();
         movingGui.setMovingModel(movingModel);
         CollisionService collisionService = new CollisionService(movingModel);
-        movingGui.setCollisionService(collisionService);
         movingModel.setCollisionService(collisionService);
         movingModel.setTerrain(terrain);
 
-        List<Scenario> scenarios = new ArrayList<Scenario>();
+        List<Scenario> scenarios = new ArrayList<>();
 
-        scenarios.add(new FollowPathMulti());
-        scenarios.add(new FollowPath());
+        scenarios.add(new Factory());
         scenarios.add(new Frontal());
         scenarios.add(new MoveToPosition());
+        scenarios.add(new FollowPathMulti());
+        scenarios.add(new FollowPath());
         scenarios.add(new MoveToOccupiedPosition());
-        scenarios.add(new Factory());
         scenarios.add(new Random());
         // TODO rework
         scenarios.add(new TerrainAndUnits());

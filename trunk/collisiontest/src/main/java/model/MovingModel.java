@@ -84,7 +84,7 @@ public class MovingModel {
     }
 
     public SyncItem createSyncItem(int radius, Index position, String debugName) {
-        SyncItem syncItem = new SyncItem(radius, position, debugName);
+        SyncItem syncItem = new SyncItem(radius, position);
         // collisionService.addSyncItem(syncItem);
         synchronized (syncItems) {
             syncItems.add(syncItem);
@@ -129,7 +129,7 @@ public class MovingModel {
             synchronized (syncItems) {
                 for (SyncItem syncItem : syncItems) {
                     debugSyncItem = syncItem;
-                    if (syncItem.getState() != SyncItem.MoveState.STOPPED) {
+                    if (syncItem.isMoving()) {
                         collisionService.moveItem(syncItem, factor);
                     }
                 }
@@ -144,13 +144,17 @@ public class MovingModel {
         return syncItems;
     }
 
-    public double calculateDensityOfItems(int radius) {
+    public double calculateDensityOfItems(Index middle, int radius) {
         double wholeArea = Math.PI * Math.pow(radius, 2);
         double itemArea = 0.0;
         for (SyncItem syncItem : syncItems) {
-            if (syncItem.getState() == SyncItem.MoveState.STOPPED) {
-                itemArea += syncItem.calculateArea();
+            if (syncItem.isMoving()) {
+                continue;
             }
+            if (middle.getDistance(syncItem.getPosition()) > radius) {
+                continue;
+            }
+            itemArea += syncItem.calculateArea();
         }
         return itemArea / wholeArea;
     }

@@ -38,17 +38,17 @@ public class Random extends Scenario {
         int activeItems = 0;
         Collection<SyncItem> deadItems = new ArrayList<SyncItem>();
         for (SyncItem syncItem : getMovingModel().getSyncItems()) {
-            if (syncItem.getState() == SyncItem.MoveState.STOPPED) {
+        /*    if (syncItem.getState() == SyncItem.MoveState.STOPPED) {
                 deadItems.add(syncItem);
             } else {
                 activeItems++;
-            }
+            }*/
         }
         for (SyncItem deadItem : deadItems) {
             deleteSyncItem(deadItem);
         }
         while (activeItems < SYNC_ITEM_COUNT) {
-            try {
+          /*  try {
                 SyncItem syncItem = createSyncItem(RADIUS, createRandomPosition(), "undefined");
                 if (getMovingModel().getCollisionService().isOverlapping(syncItem, syncItem.getDecimalPosition(), 0) == null) {
                     getMovingModel().getCollisionService().findPath(syncItem, createRandomPosition());
@@ -58,7 +58,7 @@ public class Random extends Scenario {
                 // Ignore
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 
