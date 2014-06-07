@@ -3,12 +3,11 @@ package com.btxtech.game.jsre.common.gameengine.services.collision;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Vector;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import model.MovingModel;
-
-import java.util.PriorityQueue;
 
 /**
  * User: beat
@@ -16,10 +15,8 @@ import java.util.PriorityQueue;
  * Time: 02:00
  */
 public class CollisionService {
-    public static final double CRUSH_ZONE = 10;
-    public static final double DENSITY_OF_ITEM = 0.25;
     private final MovingModel movingModel;
-    private CollisionTileContainer collisionTileContainer;
+    public static final double DENSITY_OF_ITEM = 0.2;
 
     public CollisionService(MovingModel movingModel) {
         this.movingModel = movingModel;
@@ -28,122 +25,105 @@ public class CollisionService {
     public void init(Terrain terrain) {
         int xTiles = (int) Math.ceil(terrain.getXCount() * Constants.TERRAIN_TILE_WIDTH / Constants.COLLISION_TILE_WIDTH);
         int yTiles = (int) Math.ceil(terrain.getYCount() * Constants.TERRAIN_TILE_HEIGHT / Constants.COLLISION_TILE_HEIGHT);
-
-        collisionTileContainer = new CollisionTileContainer(xTiles, yTiles);
     }
 
     public void moveItem(SyncItem syncItem, double factor) {
-        DecimalPosition positionProposal = syncItem.calculateMoveToTarget(factor);
-        Overlapping overlapping = isOverlapping(syncItem, positionProposal, 0);
-        if (overlapping != null) {
-            if (isBetterPositionAvailable(syncItem, overlapping)) {
-                double otherAngel = syncItem.getDecimalPosition().getAngleToNord(overlapping.getSyncItem().getDecimalPosition());
-                double crashAngelAbs = MathHelper.getAngel(syncItem.getAngel(), otherAngel);
-                if (crashAngelAbs <= MathHelper.QUARTER_RADIANT) {
-                    if (MathHelper.isCounterClock(syncItem.getAngel(), otherAngel)) {
-                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() - MathHelper.ONE_RADIANT / 24.0));
-                    } else {
-                        syncItem.setTargetAngel(MathHelper.normaliseAngel(syncItem.getAngel() + MathHelper.ONE_RADIANT / 24.0));
-                    }
-                } else {
-                    // TODO this never happens
-                    syncItem.setSpeed(SyncItem.SPEED);
-                    syncItem.executeMoveToTarget(factor);
-                }
-            } else {
-                syncItem.wayPointReached();
-            }
-        } else {
-            syncItem.setSpeed(SyncItem.SPEED);
-            syncItem.executeMoveToTarget(factor);
-            if (syncItem.getState() == SyncItem.MoveState.STOPPED) {
-                return;
-            }
-            double targetAngel = syncItem.getTargetAngel();
-            if (!syncItem.angelReached(targetAngel)) {
-                if (syncItem.getState() == SyncItem.MoveState.MOVING) {
-                    double angle;
-                    double turn = MathHelper.ONE_RADIANT / 24.0;
-                    if (MathHelper.getAngel(syncItem.getAngel(), targetAngel) <= turn) {
-                        angle = targetAngel;
-                    } else if (MathHelper.isCounterClock(syncItem.getAngel(), targetAngel)) {
-                        angle = MathHelper.normaliseAngel(syncItem.getAngel() + turn);
-                    } else {
-                        angle = MathHelper.normaliseAngel(syncItem.getAngel() - turn);
-                    }
-                    DecimalPosition positionProposal2 = syncItem.getDecimalPosition().getPointFromAngelToNord(angle, 10 * factor * syncItem.getSpeed());
-                    Overlapping overlapping2 = isOverlapping(syncItem, positionProposal2, 0);
-                    if (overlapping2 == null) {
-                        syncItem.setTargetAngel(angle);
-                    }
-                }
-            }
+        // DecimalPosition steering = syncItem.getSteering().add(doSeek(syncItem));
+        DecimalPosition steering = doSeek(syncItem);
+        steering = steering.add(collisionAvoidance(syncItem));
+
+        steering = truncate(steering, SyncItem.MAX_FORCE);
+        steering = steering.multiply(1.0 / SyncItem.MASS);
+        syncItem.setSteering(steering);
+
+
+        DecimalPosition velocity = syncItem.getVelocity().add(steering);
+        velocity = truncate(velocity, SyncItem.MAX_VELOCITY);
+        syncItem.setVelocity(velocity);
+
+        DecimalPosition position = syncItem.getDecimalPosition().add(velocity);
+        syncItem.setDecimalPosition(position);
+
+        if (!isBetterPositionAvailable(syncItem)) {
+            syncItem.stop();
         }
     }
 
-    private boolean isBetterPositionAvailable(SyncItem syncItem, Overlapping overlapping) {
-//        if (overlapping.getSyncItem().getState() == SyncItem.MoveState.STOPPED) {
-            if (overlapping.getSyncItem().getPosition().getDistance(syncItem.getTargetPosition()) > overlapping.getSyncItem().getRadius()) {
-                return movingModel.calculateDensityOfItems(syncItem.getPosition().getDistance(syncItem.getTargetPosition())) < DENSITY_OF_ITEM;
-            } else {
-                return false;
-            }
-//        } else {
-//            return true;
-//        }
+    private boolean isBetterPositionAvailable(SyncItem syncItem) {
+        return !syncItem.getPosition().equals(syncItem.getTargetPosition().getPosition())
+                && movingModel.calculateDensityOfItems(syncItem.getTargetPosition().getPosition(), syncItem.getPosition().getDistance(syncItem.getTargetPosition().getPosition())) < DENSITY_OF_ITEM;
     }
 
-    public Overlapping isOverlapping(SyncItem syncItem, DecimalPosition positionProposal, double crushZone) {
-        PriorityQueue<Overlapping> overlappings = new PriorityQueue<Overlapping>();
+
+    private DecimalPosition collisionAvoidance(SyncItem syncItem) {
+        DecimalPosition tv = syncItem.getVelocity();
+        tv = tv.normalize();
+        tv = tv.multiply(SyncItem.MAX_AVOID_AHEAD * syncItem.getVelocity().getLength() / SyncItem.MAX_VELOCITY);
+        DecimalPosition ahead = syncItem.getDecimalPosition().add(tv);
+
+        SyncItem mostThreatening = null;
         for (SyncItem other : movingModel.getSyncItems()) {
-            if (syncItem.equals(other)) {
+            if (other == syncItem) {
                 continue;
             }
-            double distance = syncItem.getRadius() + other.getRadius() + crushZone - positionProposal.getDistance(other.getDecimalPosition());
-            if (distance >= 0) {
-                overlappings.add(new Overlapping(other, distance));
+            boolean collision = lineIntersecsCircle(syncItem, other, ahead);
+
+            if (collision && (mostThreatening == null || syncItem.getDecimalPosition().getDistance(other.getDecimalPosition()) < syncItem.getDecimalPosition().getDistance(mostThreatening.getDecimalPosition()))) {
+                mostThreatening = other;
             }
         }
-        if (overlappings.isEmpty()) {
-            return null;
+
+        if (mostThreatening != null) {
+            DecimalPosition avoidance = ahead.sub(mostThreatening.getDecimalPosition());
+            avoidance = avoidance.normalize();
+            avoidance = avoidance.multiply(SyncItem.AVOID_FORCE);
+            double diff = MathHelper.negateAngel(avoidance.getAngleToNorth()) + MathHelper.negateAngel(syncItem.getVelocity().getAngleToNorth());
+            if (Math.abs(diff) < 0.1) {
+                avoidance = Vector.NULL_POSITION.rotateCounterClock(avoidance, 0.1);
+            }
+            return avoidance;
         } else {
-            return overlappings.poll();
+            return Vector.NULL_POSITION;
         }
     }
 
-    public CollisionTileContainer getCollisionTileContainer() {
-        return collisionTileContainer;
+    private boolean lineIntersecsCircle(SyncItem syncItem, SyncItem other, DecimalPosition ahead) {
+        DecimalPosition tv = syncItem.getVelocity();
+        tv = tv.normalize();
+        tv = tv.multiply(SyncItem.MAX_AVOID_AHEAD * 0.5 * syncItem.getVelocity().getLength() / SyncItem.MAX_VELOCITY);
+
+        DecimalPosition ahead2 = syncItem.getDecimalPosition().add(tv);
+        return other.getDecimalPosition().getDistance(ahead) <= syncItem.getRadius() + other.getRadius()
+                || other.getDecimalPosition().getDistance(ahead2) <= syncItem.getRadius() + other.getRadius()
+                || other.getDecimalPosition().getDistance(syncItem.getDecimalPosition()) <= syncItem.getRadius() + other.getRadius();
     }
 
-    public boolean isBlockedAbsolute(int x, int y) {
-        return collisionTileContainer.isBlocked(CollisionUtil.getCollisionTileIndexForAbsXPosition(x), CollisionUtil.getCollisionTileIndexForAbsYPosition(y));
+    private DecimalPosition truncate(DecimalPosition decimalPosition, double max) {
+        if (decimalPosition.isNull()) {
+            return decimalPosition;
+        }
+        double distance = max / decimalPosition.getLength();
+        distance = Math.min(1.0, distance);
+        return decimalPosition.multiply(distance);
     }
+
+    private DecimalPosition doSeek(SyncItem syncItem) {
+        DecimalPosition desired = syncItem.getTargetPosition().sub(syncItem.getDecimalPosition());
+        double distance = desired.getLength();
+        desired = desired.normalize();
+
+        if (distance <= SyncItem.SLOWING_DOWN_RADIUS) {
+            desired = desired.multiply(SyncItem.MAX_VELOCITY * distance / SyncItem.SLOWING_DOWN_RADIUS);
+        } else {
+            desired = desired.multiply(SyncItem.MAX_VELOCITY);
+        }
+
+        return desired;
+    }
+
 
     public void findPath(SyncItem syncItem, Index targetPosition) {
         syncItem.moveTo(targetPosition);
     }
 
-    private class Overlapping implements Comparable<Overlapping> {
-        private SyncItem syncItem;
-        private double crushZone;
-        private double distance;
-
-        private Overlapping(SyncItem syncItem, double distance) {
-            this.syncItem = syncItem;
-            this.distance = distance;
-            crushZone = distance - CRUSH_ZONE;
-            if (crushZone < 0) {
-                crushZone = 0;
-            }
-        }
-
-        private SyncItem getSyncItem() {
-            return syncItem;
-        }
-
-        @Override
-        public int compareTo(Overlapping o) {
-            return Double.compare(distance, o.distance);
-        }
-    }
 }

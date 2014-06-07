@@ -2,7 +2,6 @@ package gui;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
@@ -34,7 +33,6 @@ public abstract class AbstractGui {
     private JPanel canvas;
     private JComboBox<Scenario> scenarioBox;
     private MovingModel movingModel;
-    private CollisionService collisionService;
 
     public void setMovingModel(MovingModel movingModel) {
         this.movingModel = movingModel;
@@ -42,10 +40,6 @@ public abstract class AbstractGui {
 
     public MovingModel getMovingModel() {
         return movingModel;
-    }
-
-    public void setCollisionService(CollisionService collisionService) {
-        this.collisionService = collisionService;
     }
 
     public AbstractGui() {
@@ -108,7 +102,6 @@ public abstract class AbstractGui {
                 super.paint(graphics);
                 updateLabel.setText("Last Update: " + TIME_FORMAT.format(System.currentTimeMillis()));
                 drawTerrain(graphics);
-                drawCollision(graphics);
                 drawGridCollision(graphics);
                 drawGridTerrain(graphics);
                 try {
@@ -147,21 +140,6 @@ public abstract class AbstractGui {
 
         canvas.setBackground(Color.WHITE);
         pane.add(new JScrollPane(canvas), BorderLayout.CENTER);
-    }
-
-    private void drawCollision(Graphics graphics) {
-        if (collisionService.getCollisionTileContainer() == null) {
-            return;
-        }
-        for (int x = 0; x < graphics.getClipBounds().getWidth(); x += Constants.COLLISION_TILE_WIDTH) {
-            for (int y = 0; y < graphics.getClipBounds().getHeight(); y += Constants.COLLISION_TILE_HEIGHT) {
-                if (collisionService.isBlockedAbsolute(x, y)) {
-                    graphics.setColor(new Color(1.0f, 0.0f, 0.0f, 0.3f));
-                    graphics.fillRect(x, y, Constants.COLLISION_TILE_WIDTH, Constants.COLLISION_TILE_HEIGHT);
-                }
-            }
-        }
-
     }
 
     private void drawTerrain(Graphics graphics) {
@@ -220,44 +198,29 @@ public abstract class AbstractGui {
 
     protected void drawSyncItem(Graphics graphics, java.util.List<SyncItem> syncItems) {
         for (SyncItem syncItem : syncItems) {
-            switch (syncItem.getState()) {
-                case STOPPED:
-                    graphics.setColor(Color.GREEN);
-                    break;
-                case MOVING:
-                    graphics.setColor(Color.BLUE);
-                    break;
-                case TURNING:
-                    graphics.setColor(new Color(190, 150, 155));
-                    break;
-              //  case BLOCKED:
-              //      graphics.setColor(Color.RED);
-              //      break;
-                default:
-                    throw new IllegalArgumentException("Unknown state: " + syncItem.getState());
+            if (syncItem.isMoving()) {
+                graphics.setColor(Color.BLUE);
+            } else {
+                graphics.setColor(Color.GREEN);
             }
             graphics.drawArc(syncItem.getPosition().getX() - syncItem.getRadius(),
                     syncItem.getPosition().getY() - syncItem.getRadius(),
                     syncItem.getDiameter(),
                     syncItem.getDiameter(),
                     0, 360);
-          /*  graphics.drawString(Integer.toString(syncItem.getId()),
-                    syncItem.getPosition().getX() - 5,
-                    syncItem.getPosition().getY() + 5);*/
-            if (syncItem.getState() == SyncItem.MoveState.MOVING || syncItem.getState() == SyncItem.MoveState.TURNING) {
-                graphics.setColor(Color.RED);
-                Index targetAngelPosition = syncItem.getPosition().getPointFromAngelToNord(syncItem.getAimAngel(), syncItem.getRadius() + 5);
-                graphics.drawLine(syncItem.getPosition().getX(),
-                        syncItem.getPosition().getY(),
-                        targetAngelPosition.getX(),
-                        targetAngelPosition.getY());
-                Index angelPosition = syncItem.getPosition().getPointFromAngelToNord(syncItem.getAngel(), syncItem.getRadius());
-                graphics.setColor(Color.BLUE);
-                graphics.drawLine(syncItem.getPosition().getX(),
-                        syncItem.getPosition().getY(),
-                        angelPosition.getX(),
-                        angelPosition.getY());
-            }
+
+            Index velocity = syncItem.getVelocity().multiply(10).add(syncItem.getDecimalPosition()).getPosition();
+            graphics.setColor(Color.GREEN);
+            graphics.drawLine(syncItem.getPosition().getX(),
+                    syncItem.getPosition().getY(),
+                    velocity.getX(),
+                    velocity.getY());
+            Index steering = syncItem.getSteering().multiply(10).add(syncItem.getDecimalPosition()).getPosition();
+            graphics.setColor(Color.RED);
+            graphics.drawLine(syncItem.getPosition().getX(),
+                    syncItem.getPosition().getY(),
+                    steering.getX(),
+                    steering.getY());
         }
     }
 

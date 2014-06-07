@@ -151,8 +151,8 @@ public class DecimalPosition implements Serializable {
     public DecimalPosition rotateCounterClock(DecimalPosition center, double sinus, double cosines) {
         double normX = center.x - x;
         double normY = center.y - y;
-        double newX = (int) Math.round(-normX * cosines - normY * sinus);
-        double newY = (int) Math.round(-normY * cosines + normX * sinus);
+        double newX = -normX * cosines - normY * sinus;
+        double newY = -normY * cosines + normX * sinus;
         return new DecimalPosition(center.x + newX, center.y + newY);
     }
 
@@ -199,7 +199,7 @@ public class DecimalPosition implements Serializable {
     }
 
     public DecimalPosition divide(double m) {
-        if(m == 0.0) {
+        if (m == 0.0) {
             throw new ArithmeticException("Divided by 0");
         }
         return new DecimalPosition(x / m, y / m);
@@ -219,6 +219,11 @@ public class DecimalPosition implements Serializable {
         return Math.sqrt(sqrtC);
     }
 
+    public double getLength() {
+        double sqrtC = Math.pow(x, 2) + Math.pow( y, 2);
+        return Math.sqrt(sqrtC);
+    }
+
     public DecimalPosition getCopy() {
         return new DecimalPosition(x, y);
     }
@@ -233,6 +238,10 @@ public class DecimalPosition implements Serializable {
 
     public double getY() {
         return y;
+    }
+
+    public boolean isNull() {
+        return x == 0.0 && y == 0.0;
     }
 
     @Override
