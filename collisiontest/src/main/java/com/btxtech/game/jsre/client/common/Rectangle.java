@@ -147,7 +147,7 @@ public class Rectangle implements Serializable {
     /**
      * Returns true if the given circle overlaps this rectangle. If the circle just adjoins it returns false.
      *
-     * @param center center of cicle to check
+     * @param center center of circle to check
      * @return true if the position is inside the rectangle
      */
     public boolean adjoinsCircleExclusive(Index center, int radius) {
