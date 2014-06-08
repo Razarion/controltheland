@@ -209,18 +209,18 @@ public abstract class AbstractGui {
                     syncItem.getDiameter(),
                     0, 360);
 
-            Index velocity = syncItem.getVelocity().multiply(10).add(syncItem.getDecimalPosition()).getPosition();
+            Index angel = syncItem.getPosition().getPointFromAngelToNord(syncItem.getAngel(), syncItem.getRadius() + 10);
             graphics.setColor(Color.GREEN);
             graphics.drawLine(syncItem.getPosition().getX(),
                     syncItem.getPosition().getY(),
-                    velocity.getX(),
-                    velocity.getY());
-            Index steering = syncItem.getSteering().multiply(10).add(syncItem.getDecimalPosition()).getPosition();
+                    angel.getX(),
+                    angel.getY());
+       /*     Index steering = syncItem.getSteering().multiply(10).add(syncItem.getDecimalPosition()).getPosition();
             graphics.setColor(Color.RED);
             graphics.drawLine(syncItem.getPosition().getX(),
                     syncItem.getPosition().getY(),
                     steering.getX(),
-                    steering.getY());
+                    steering.getY());*/
         }
     }
 

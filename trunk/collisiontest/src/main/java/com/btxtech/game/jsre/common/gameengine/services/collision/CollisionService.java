@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.common.gameengine.services.collision;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.Vector;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
@@ -29,21 +30,33 @@ public class CollisionService {
 
     public void moveItem(SyncItem syncItem, double factor) {
         // DecimalPosition steering = syncItem.getSteering().add(doSeek(syncItem));
-        DecimalPosition steering = doSeek(syncItem);
-        steering = steering.add(collisionAvoidance(syncItem));
-
+        DecimalPosition steering = collisionAvoidance(syncItem);
+        steering = steering.add(doSeek(syncItem));
         steering = truncate(steering, SyncItem.MAX_FORCE);
         steering = steering.multiply(1.0 / SyncItem.MASS);
-        syncItem.setSteering(steering);
-
 
         DecimalPosition velocity = syncItem.getVelocity().add(steering);
         velocity = truncate(velocity, SyncItem.MAX_VELOCITY);
-        syncItem.setVelocity(velocity);
 
-        DecimalPosition position = syncItem.getDecimalPosition().add(velocity);
-        syncItem.setDecimalPosition(position);
+        double diff = MathHelper.negateAngel(syncItem.getAngel()) - MathHelper.negateAngel(velocity.getAngleToNorth());
+        if (Math.abs(diff) < 0.1) {
+            syncItem.setAngel(velocity.getAngleToNorth());
+            double speedDiff = Math.abs(syncItem.getSpeed() - velocity.getLength());
+            if (speedDiff < 0.01) {
 
+            } else if (syncItem.getSpeed() > velocity.getLength()) {
+                syncItem.setSpeed(syncItem.getSpeed() - 0.01);
+            } else {
+                syncItem.setSpeed(syncItem.getSpeed() + 0.01);
+            }
+            syncItem.executeMove();
+        } else {
+            if (MathHelper.isCounterClock(syncItem.getAngel(), velocity.getAngleToNorth())) {
+                syncItem.setAngel(MathHelper.normaliseAngel(syncItem.getAngel() + 0.1));
+            } else {
+                syncItem.setAngel(MathHelper.normaliseAngel(syncItem.getAngel() - 0.1));
+            }
+        }
         if (!isBetterPositionAvailable(syncItem)) {
             syncItem.stop();
         }
@@ -55,7 +68,7 @@ public class CollisionService {
     }
 
 
-    private DecimalPosition collisionAvoidance(SyncItem syncItem) {
+    private DecimalPosition collisionAvoidance_ORIG_1(SyncItem syncItem) {
         DecimalPosition tv = syncItem.getVelocity();
         tv = tv.normalize();
         tv = tv.multiply(SyncItem.MAX_AVOID_AHEAD * syncItem.getVelocity().getLength() / SyncItem.MAX_VELOCITY);
@@ -82,6 +95,88 @@ public class CollisionService {
                 avoidance = Vector.NULL_POSITION.rotateCounterClock(avoidance, 0.1);
             }
             return avoidance;
+        } else {
+            return Vector.NULL_POSITION;
+        }
+    }
+
+    private DecimalPosition collisionAvoidance_ORIG_2(SyncItem syncItem) {
+        // Find items ahead
+        double angel = syncItem.getAngel();
+        double minDistance = Double.MAX_VALUE;
+        SyncItem mostThreatening = null;
+        Rectangle rectangleAhead = new Rectangle(syncItem.getPosition().getX() - syncItem.getRadius(),
+                syncItem.getPosition().getY() - syncItem.getRadius() - (int) SyncItem.MAX_AVOID_AHEAD,
+                syncItem.getRadius() * 2,
+                (int) SyncItem.MAX_AVOID_AHEAD);
+
+        for (SyncItem other : movingModel.getSyncItems()) {
+            if (other == syncItem) {
+                continue;
+            }
+            double distance = syncItem.getDecimalPosition().getDistance(other.getDecimalPosition()) - syncItem.getRadius() - other.getRadius();
+            if (distance > SyncItem.MAX_AVOID_AHEAD) {
+                continue;
+            }
+            DecimalPosition rotatedOther = other.getDecimalPosition().rotateCounterClock(syncItem.getDecimalPosition(), -angel);
+            if (!rectangleAhead.adjoinsCircleExclusive(rotatedOther.getPosition(), syncItem.getRadius())) {
+                continue;
+            }
+            if (distance < minDistance) {
+                minDistance = distance;
+                mostThreatening = other;
+            }
+        }
+
+        if (mostThreatening != null) {
+            double force = (1.0 - minDistance / SyncItem.MAX_AVOID_AHEAD) * SyncItem.AVOID_FORCE;
+
+            if (MathHelper.isCounterClock(syncItem.getAngel(), syncItem.getDecimalPosition().getAngleToNord(mostThreatening.getDecimalPosition()))) {
+                return Vector.NULL_POSITION.getPointFromAngelToNord(syncItem.getAngel() - MathHelper.EIGHTH_RADIANT, force);
+            } else {
+                return Vector.NULL_POSITION.getPointFromAngelToNord(syncItem.getAngel() + MathHelper.EIGHTH_RADIANT, force);
+            }
+        } else {
+            return Vector.NULL_POSITION;
+        }
+    }
+
+    private DecimalPosition collisionAvoidance(SyncItem syncItem) {
+        // Find items ahead
+        double angel = MathHelper.negateAngel(syncItem.getAngel());
+        double minDistance = Double.MAX_VALUE;
+        SyncItem mostThreatening = null;
+        Rectangle rectangleAhead = new Rectangle(syncItem.getPosition().getX() - syncItem.getRadius(),
+                syncItem.getPosition().getY() - syncItem.getRadius() - (int) SyncItem.MAX_AVOID_AHEAD,
+                syncItem.getRadius() * 2,
+                (int) SyncItem.MAX_AVOID_AHEAD);
+
+        for (SyncItem other : movingModel.getSyncItems()) {
+            if (other == syncItem) {
+                continue;
+            }
+            double distance = syncItem.getDecimalPosition().getDistance(other.getDecimalPosition()) - syncItem.getRadius() - other.getRadius();
+            if (distance > SyncItem.MAX_AVOID_AHEAD) {
+                continue;
+            }
+            double angelToOther = syncItem.getDecimalPosition().getAngleToNord(other.getDecimalPosition());
+            if(Math.abs(angel - MathHelper.negateAngel(angelToOther)) > MathHelper.QUARTER_RADIANT) {
+                continue;
+            }
+            if (distance < minDistance) {
+                minDistance = distance;
+                mostThreatening = other;
+            }
+        }
+
+        if (mostThreatening != null) {
+            double force = (1.0 - minDistance / SyncItem.MAX_AVOID_AHEAD) * SyncItem.AVOID_FORCE;
+
+            if (MathHelper.isCounterClock(syncItem.getAngel(), syncItem.getDecimalPosition().getAngleToNord(mostThreatening.getDecimalPosition()))) {
+                return Vector.NULL_POSITION.getPointFromAngelToNord(syncItem.getAngel() - MathHelper.EIGHTH_RADIANT, force);
+            } else {
+                return Vector.NULL_POSITION.getPointFromAngelToNord(syncItem.getAngel() + MathHelper.EIGHTH_RADIANT, force);
+            }
         } else {
             return Vector.NULL_POSITION;
         }

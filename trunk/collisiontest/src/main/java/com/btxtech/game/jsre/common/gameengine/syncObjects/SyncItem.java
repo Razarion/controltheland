@@ -16,8 +16,8 @@ public class SyncItem {
     public static final double MAX_VELOCITY = 1;
     public static final double MAX_FORCE = 5.4;
     public static final double SLOWING_DOWN_RADIUS = 20;
-    public static final double MAX_AVOID_AHEAD = 10;
-    public static final double AVOID_FORCE = 1000;
+    public static final double MAX_AVOID_AHEAD = 50;
+    public static final double AVOID_FORCE = 20;
     public static final double MASS = 10;
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
 
@@ -28,8 +28,8 @@ public class SyncItem {
     // SyncItemArea
     private DecimalPosition decimalPosition;
     private DecimalPosition target;
-    private DecimalPosition velocity = Vector.NULL_POSITION;
-    private DecimalPosition steering = Vector.NULL_POSITION;
+    private double angel;
+    private double speed;
 
     public SyncItem(int radius, Index position) {
         this.radius = radius;
@@ -68,25 +68,25 @@ public class SyncItem {
         target = null;
     }
 
-    public DecimalPosition getVelocity() {
-        return velocity;
+    public double getAngel() {
+        return angel;
     }
 
-    public void setVelocity(DecimalPosition velocity) {
-        this.velocity = velocity;
+    public void setAngel(double angel) {
+        this.angel = angel;
     }
 
-    public DecimalPosition getSteering() {
-        return steering;
+    public double getSpeed() {
+        return speed;
     }
 
-    public void setSteering(DecimalPosition steering) {
-        this.steering = steering;
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
-    public void setDecimalPosition(DecimalPosition decimalPosition) {
-        this.decimalPosition = decimalPosition;
-    }
+    //public void setDecimalPosition(DecimalPosition decimalPosition) {
+    //    this.decimalPosition = decimalPosition;
+    //}
 
     public boolean isMoving() {
         return target != null;
@@ -103,5 +103,13 @@ public class SyncItem {
     @Override
     public String toString() {
         return "SyncItem{id=" + id + " Position: " + decimalPosition;
+    }
+
+    public DecimalPosition getVelocity() {
+        return Vector.NULL_POSITION.getPointFromAngelToNord(angel, speed);
+    }
+
+    public void executeMove() {
+        decimalPosition = decimalPosition.getPointFromAngelToNord(angel, speed);
     }
 }
