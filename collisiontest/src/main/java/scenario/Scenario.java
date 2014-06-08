@@ -35,6 +35,7 @@ public abstract class Scenario {
         terrain.init(getTileXCount(), getTileYCount());
         setupTerrain(terrain);
         movingModel.getCollisionService().init(terrain);
+        //movingModel.getForceField().init(terrain);
         try {
             addItems();
         } catch (NoBetterPathFoundException e) {

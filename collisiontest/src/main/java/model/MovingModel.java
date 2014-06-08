@@ -2,6 +2,7 @@ package model;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
+import com.btxtech.game.jsre.common.gameengine.services.collision.ForceField;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -17,10 +18,16 @@ public class MovingModel {
     private static final long TIMER_DELAY = 1000 / FRAMES_PER_SECOND;
     private long lastTick;
     final private List<SyncItem> syncItems = new ArrayList<SyncItem>();
+    // private SyncItem protagonist;
     private CollisionService collisionService;
     private Scenario scenario;
     private Timer timer;
     private Terrain terrain;
+    // private ForceField forceField = new ForceField();
+
+    public static interface SyncItemCallback {
+        void onSyncItem(SyncItem syncItem);
+    }
 
     public void init() {
         startTimer();
@@ -40,6 +47,7 @@ public class MovingModel {
     }
 
     public void restart() throws NoBetterPathFoundException {
+        //protagonist = null;
         synchronized (syncItems) {
             syncItems.clear();
         }
@@ -52,6 +60,10 @@ public class MovingModel {
     public void setCollisionService(CollisionService collisionService) {
         this.collisionService = collisionService;
     }
+
+    //public ForceField getForceField() {
+    //    return forceField;
+    //}
 
     public void setScenario(Scenario scenario) throws NoBetterPathFoundException {
         if (this.scenario != null) {
@@ -89,6 +101,9 @@ public class MovingModel {
         synchronized (syncItems) {
             syncItems.add(syncItem);
         }
+        //if (protagonist == null) {
+        //    protagonist = syncItem;
+        //}
         return syncItem;
     }
 
@@ -120,6 +135,10 @@ public class MovingModel {
     private void tick(double factor) {
         SyncItem debugSyncItem = null;
         try {
+            //if (protagonist != null && protagonist.isMoving()) {
+            //    forceField.calculateForce(protagonist, this);
+            //}
+
             if (scenario != null) {
                 synchronized (syncItems) {
                     scenario.tick();
@@ -130,7 +149,7 @@ public class MovingModel {
                 for (SyncItem syncItem : syncItems) {
                     debugSyncItem = syncItem;
                     if (syncItem.isMoving()) {
-                        collisionService.moveItem(syncItem, factor);
+                        collisionService.moveItem(terrain, this, syncItem, factor);
                     }
                 }
             }
@@ -140,23 +159,29 @@ public class MovingModel {
         }
     }
 
-    public List<SyncItem> getSyncItems() {
-        return syncItems;
-    }
-
     public double calculateDensityOfItems(Index middle, int radius) {
         double wholeArea = Math.PI * Math.pow(radius, 2);
         double itemArea = 0.0;
-        for (SyncItem syncItem : syncItems) {
-            if (syncItem.isMoving()) {
-                continue;
+        synchronized (syncItems) {
+            for (SyncItem syncItem : syncItems) {
+                if (syncItem.isMoving()) {
+                    continue;
+                }
+                if (middle.getDistance(syncItem.getPosition()) > radius) {
+                    continue;
+                }
+                itemArea += syncItem.calculateArea();
             }
-            if (middle.getDistance(syncItem.getPosition()) > radius) {
-                continue;
-            }
-            itemArea += syncItem.calculateArea();
         }
         return itemArea / wholeArea;
+    }
+
+    public void iterateOverSyncItems(SyncItemCallback syncItemCallback) {
+        synchronized (syncItems) {
+            for (SyncItem syncItem : syncItems) {
+                syncItemCallback.onSyncItem(syncItem);
+            }
+        }
     }
 
 }

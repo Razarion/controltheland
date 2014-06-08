@@ -20,6 +20,7 @@ public class SyncItem {
     public static final double AVOID_FORCE = 20;
     public static final double MASS = 10;
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
+    public static final double SPEED = 50;
 
     // General
     private int id;
@@ -47,6 +48,14 @@ public class SyncItem {
 
     public DecimalPosition getDecimalPosition() {
         return decimalPosition;
+    }
+
+    public void setDecimalPosition(DecimalPosition decimalPosition) {
+        this.decimalPosition = decimalPosition;
+    }
+
+    public void setTarget(DecimalPosition target) {
+        this.target = target;
     }
 
     public int getDiameter() {
