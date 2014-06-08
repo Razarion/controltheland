@@ -19,5 +19,6 @@ public class TestDecimalPosition {
         Assert.assertEquals(MathHelper.gradToRad(225), new DecimalPosition(2, 2).getAngleToNorth(), 0.0001);
         Assert.assertEquals(MathHelper.gradToRad(270), new DecimalPosition(2, 0).getAngleToNorth(), 0.0001);
         Assert.assertEquals(MathHelper.gradToRad(-45), new DecimalPosition(2, -2).getAngleToNorth(), 0.0001);
+        Assert.assertEquals(MathHelper.gradToRad(0), new DecimalPosition(0, 0).getAngleToNorth(), 0.0001);
     }
 }

@@ -61,6 +61,13 @@ public class DecimalPosition implements Serializable {
         return index;
     }
 
+    public Index getPositionFloor() {
+        if (index == null || index.getX() != (int) Math.round(x) || index.getY() != (int) Math.round(y)) {
+            index = new Index((int) x, (int) y);
+        }
+        return index;
+    }
+
     public DecimalPosition getPointWithDistance(double distance, Index directionTo, boolean allowOverrun) {
         double directionDistance = getDistance(directionTo);
         if (!allowOverrun && directionDistance <= distance) {
@@ -124,24 +131,25 @@ public class DecimalPosition implements Serializable {
     }
 
     public double getAngleToNorth() {
-        double gk = 0.0 - x;
-        double ak = 0.0 - y;
-        if (ak == 0.0) {
-            if (gk > 0.0) {
+        if (x == 0.0 && y == 0.0) {
+            return MathHelper.NORTH;
+        }
+        if (y == 0.0) {
+            if (x <= 0.0) {
                 return MathHelper.WEST;
             } else {
                 return MathHelper.EAST;
             }
         }
-        if (gk == 0.0) {
-            if (ak > 0.0) {
+        if (x == 0.0) {
+            if (y <= 0.0) {
                 return 0.0;
             } else {
                 return Math.PI;
             }
         }
-        double angle = Math.atan(gk / ak);
-        if (ak < 0.0) {
+        double angle = Math.atan(x / y);
+        if (y >= 0.0) {
             angle += Math.PI;
         }
         return angle;
@@ -220,7 +228,7 @@ public class DecimalPosition implements Serializable {
     }
 
     public double getLength() {
-        double sqrtC = Math.pow(x, 2) + Math.pow( y, 2);
+        double sqrtC = Math.pow(x, 2) + Math.pow(y, 2);
         return Math.sqrt(sqrtC);
     }
 

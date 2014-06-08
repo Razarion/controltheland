@@ -37,13 +37,13 @@ public class Random extends Scenario {
     public void tick() {
         int activeItems = 0;
         Collection<SyncItem> deadItems = new ArrayList<SyncItem>();
-        for (SyncItem syncItem : getMovingModel().getSyncItems()) {
-        /*    if (syncItem.getState() == SyncItem.MoveState.STOPPED) {
+    /*    for (SyncItem syncItem : getMovingModel().getSyncItems()) {
+            if (syncItem.getState() == SyncItem.MoveState.STOPPED) {
                 deadItems.add(syncItem);
             } else {
                 activeItems++;
-            }*/
-        }
+            }
+        }*/
         for (SyncItem deadItem : deadItems) {
             deleteSyncItem(deadItem);
         }

@@ -5,6 +5,8 @@ package gui; /**
  */
 
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import model.MovingModel;
 import scenario.Scenario;
 
 import javax.swing.*;
@@ -60,12 +62,15 @@ public class MovingGui extends AbstractGui {
     }
 
     @Override
-    protected void customDraw(Graphics graphics) {
+    protected void customDraw(final Graphics graphics) {
         if (getMovingModel() != null) {
-            synchronized (getMovingModel().getSyncItems()) {
-                drawSyncItem(graphics, getMovingModel().getSyncItems());
-                drawOriginalPath(graphics);
-            }
+            getMovingModel().iterateOverSyncItems(new MovingModel.SyncItemCallback() {
+                @Override
+                public void onSyncItem(SyncItem syncItem) {
+                    drawSyncItem(graphics, getMovingModel());
+                    drawOriginalPath(graphics);
+                }
+            });
         }
     }
 

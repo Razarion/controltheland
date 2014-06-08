@@ -2,6 +2,8 @@ package gui;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.gameengine.services.collision.ForceField;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
@@ -102,7 +104,7 @@ public abstract class AbstractGui {
                 super.paint(graphics);
                 updateLabel.setText("Last Update: " + TIME_FORMAT.format(System.currentTimeMillis()));
                 drawTerrain(graphics);
-                drawGridCollision(graphics);
+                drawForceField(graphics);
                 drawGridTerrain(graphics);
                 try {
                     customDraw(graphics);
@@ -194,34 +196,61 @@ public abstract class AbstractGui {
         for (int i = Constants.COLLISION_TILE_HEIGHT; i < graphics.getClipBounds().getHeight(); i += Constants.COLLISION_TILE_HEIGHT) {
             graphics.drawLine(0, i, (int) graphics.getClipBounds().getWidth(), i);
         }
+
     }
 
-    protected void drawSyncItem(Graphics graphics, java.util.List<SyncItem> syncItems) {
-        for (SyncItem syncItem : syncItems) {
-            if (syncItem.isMoving()) {
-                graphics.setColor(Color.BLUE);
-            } else {
-                graphics.setColor(Color.GREEN);
+    private void drawForceField(Graphics graphics) {
+        graphics.setColor(Color.LIGHT_GRAY);
+        for (int i = ForceField.FIELD_SIZE; i < graphics.getClipBounds().getWidth(); i += ForceField.FIELD_SIZE) {
+            graphics.drawLine(i, 0, i, (int) graphics.getClipBounds().getHeight());
+        }
+        for (int i = ForceField.FIELD_SIZE; i < graphics.getClipBounds().getHeight(); i += ForceField.FIELD_SIZE) {
+            graphics.drawLine(0, i, (int) graphics.getClipBounds().getWidth(), i);
+        }
+        /*ForceField forceField = movingModel.getForceField();
+        for (int x = 0; x < forceField.getXCount(); x++) {
+            for (int y = 0; y < forceField.getYCount(); y++) {
+                double angel = forceField.getAngel(x, y);
+                Index middle = new Index(x * ForceField.FIELD_SIZE + ForceField.FIELD_SIZE / 2, y * ForceField.FIELD_SIZE + ForceField.FIELD_SIZE / 2);
+                Index end = middle.getPointFromAngelToNord(angel, ForceField.FIELD_SIZE / 2);
+                graphics.setColor(Color.RED);
+                graphics.drawLine(middle.getX(), middle.getY(), end.getX(), end.getY());
+                Index arrow = end.getPointFromAngelToNord(angel + MathHelper.HALF_RADIANT, 2);
+                graphics.setColor(Color.BLACK);
+                graphics.drawLine(end.getX(), end.getY(), arrow.getX(), arrow.getY());
             }
-            graphics.drawArc(syncItem.getPosition().getX() - syncItem.getRadius(),
-                    syncItem.getPosition().getY() - syncItem.getRadius(),
-                    syncItem.getDiameter(),
-                    syncItem.getDiameter(),
-                    0, 360);
+        }*/
+    }
 
-            Index angel = syncItem.getPosition().getPointFromAngelToNord(syncItem.getAngel(), syncItem.getRadius() + 10);
-            graphics.setColor(Color.GREEN);
-            graphics.drawLine(syncItem.getPosition().getX(),
-                    syncItem.getPosition().getY(),
-                    angel.getX(),
-                    angel.getY());
+    protected void drawSyncItem(final Graphics graphics, MovingModel movingModel) {
+        movingModel.iterateOverSyncItems(new MovingModel.SyncItemCallback() {
+            @Override
+            public void onSyncItem(SyncItem syncItem) {
+                if (syncItem.isMoving()) {
+                    graphics.setColor(Color.BLUE);
+                } else {
+                    graphics.setColor(Color.GREEN);
+                }
+                graphics.drawArc(syncItem.getPosition().getX() - syncItem.getRadius(),
+                        syncItem.getPosition().getY() - syncItem.getRadius(),
+                        syncItem.getDiameter(),
+                        syncItem.getDiameter(),
+                        0, 360);
+
+                Index angel = syncItem.getPosition().getPointFromAngelToNord(syncItem.getAngel(), syncItem.getRadius() + 10);
+                graphics.setColor(Color.GREEN);
+                graphics.drawLine(syncItem.getPosition().getX(),
+                        syncItem.getPosition().getY(),
+                        angel.getX(),
+                        angel.getY());
        /*     Index steering = syncItem.getSteering().multiply(10).add(syncItem.getDecimalPosition()).getPosition();
             graphics.setColor(Color.RED);
             graphics.drawLine(syncItem.getPosition().getX(),
                     syncItem.getPosition().getY(),
                     steering.getX(),
                     steering.getY());*/
-        }
+            }
+        });
     }
 
 }
