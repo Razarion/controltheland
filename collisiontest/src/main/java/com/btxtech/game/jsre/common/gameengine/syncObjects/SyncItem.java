@@ -64,6 +64,7 @@ public class SyncItem {
 
     public void moveTo(Index destination) {
         target = new DecimalPosition(destination);
+        angel = decimalPosition.getAngleToNord(target);
     }
 
     public void moveTo(List<Index> wayPoint) {
@@ -114,11 +115,4 @@ public class SyncItem {
         return "SyncItem{id=" + id + " Position: " + decimalPosition;
     }
 
-    public DecimalPosition getVelocity() {
-        return Vector.NULL_POSITION.getPointFromAngelToNord(angel, speed);
-    }
-
-    public void executeMove() {
-        decimalPosition = decimalPosition.getPointFromAngelToNord(angel, speed);
-    }
 }
