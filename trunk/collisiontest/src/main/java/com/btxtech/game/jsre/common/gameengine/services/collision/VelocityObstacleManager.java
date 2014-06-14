@@ -25,21 +25,17 @@ public class VelocityObstacleManager {
         velocityObstacles.add(velocityObstacle);
     }
 
-    public boolean isEmpty() {
-        return velocityObstacles.isEmpty();
-    }
-
-    public double getBestAngel() {
-        Collection<Double> angels = getFreeAngels(protagonist.getAngel());
+    public Double getBestAngel() {
+        Collection<Double> angels = getFreeAngels(protagonist.getTargetAngel());
         if (angels.isEmpty()) {
-            throw new IllegalStateException("No free angels found");
+            return null;
         } else if (angels.size() == 1) {
             return CommonJava.getFirst(angels);
         } else {
             double smallestDistance = Double.MAX_VALUE;
-            double minAngel = protagonist.getAngel();
+            double minAngel = protagonist.getTargetAngel();
             for (Double angel : angels) {
-                double distance = MathHelper.getAngel(angel, protagonist.getAngel());
+                double distance = MathHelper.getAngel(angel, protagonist.getTargetAngel());
                 if (smallestDistance > distance) {
                     minAngel = angel;
                     smallestDistance = distance;
@@ -86,10 +82,6 @@ public class VelocityObstacleManager {
         }
         if(distance <= 0.0) {
             System.out.println("C*R*A*S*H"); // TODO
-            return;
-        }
-        double crashAngel = MathHelper.getAngel(protagonist.getDecimalPosition().getAngleToNord(other.getDecimalPosition()), protagonist.getAngel());
-        if (crashAngel > MathHelper.QUARTER_RADIANT) {
             return;
         }
         add(other);
