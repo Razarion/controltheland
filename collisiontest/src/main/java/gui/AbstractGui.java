@@ -249,6 +249,14 @@ public abstract class AbstractGui {
                     syncItem.getPosition().getY(),
                     steering.getX(),
                     steering.getY());*/
+                if (syncItem.isMoving()) {
+                    graphics.setColor(Color.BLUE);
+                } else {
+                    graphics.setColor(Color.GREEN);
+                }
+                graphics.drawString(Integer.toString(syncItem.getId()),
+                        syncItem.getPosition().getX() - 5,
+                        syncItem.getPosition().getY() + 5);
             }
         });
     }

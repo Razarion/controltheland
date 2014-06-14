@@ -13,8 +13,8 @@ import model.MovingModel;
  */
 public class CollisionService {
     private final MovingModel movingModel;
-    public static final double DENSITY_OF_ITEM = 0.2;
-    public static final double MAX_DISTANCE = 100;
+    public static final double DENSITY_OF_ITEM = 0.5;
+    public static final double MAX_DISTANCE = 20;
 
     public CollisionService(MovingModel movingModel) {
         this.movingModel = movingModel;
@@ -26,11 +26,6 @@ public class CollisionService {
     }
 
     public void moveItem(Terrain terrain, MovingModel movingModel, final SyncItem syncItem, double factor) {
-        // DecimalPosition steering = syncItem.getSteering().add(doSeek(syncItem));
-        //ForceField forceField = new ForceField();
-        //forceField.init(terrain);
-        //forceField.calculateForce(syncItem, movingModel);
-        //syncItem.setDecimalPosition(syncItem.getDecimalPosition().getPointFromAngelToNord(forceField.getAngel(syncItem), factor * SyncItem.SPEED));
         final VelocityObstacleManager velocityObstacleManager = new VelocityObstacleManager(syncItem);
         movingModel.iterateOverSyncItems(new MovingModel.SyncItemCallback() {
             @Override
@@ -39,13 +34,14 @@ public class CollisionService {
             }
         });
 
-        syncItem.setSpeed(SyncItem.SPEED);
-        if (velocityObstacleManager.isEmpty()) {
-            syncItem.setAngel(syncItem.getDecimalPosition().getAngleToNord(syncItem.getTargetPosition()));
-        } else {
-            syncItem.setAngel(velocityObstacleManager.getBestAngel());
+        Double bestAngel = velocityObstacleManager.getBestAngel();
+        if(bestAngel != null) {
+            syncItem.setSpeed(SyncItem.SPEED);
+            syncItem.approachAngel(bestAngel);
+        }else{
+            syncItem.setSpeed(0);
         }
-        syncItem.setDecimalPosition(syncItem.getDecimalPosition().getPointFromAngelToNord(syncItem.getAngel(), factor * SyncItem.SPEED));
+        syncItem.setDecimalPosition(syncItem.getDecimalPosition().getPointFromAngelToNord(syncItem.getAngel(), factor * syncItem.getSpeed()));
 
 
         if (!isBetterPositionAvailable(syncItem)) {

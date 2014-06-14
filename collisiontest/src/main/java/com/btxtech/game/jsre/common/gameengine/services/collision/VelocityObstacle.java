@@ -10,6 +10,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 public class VelocityObstacle {
     private double start;
     private double end;
+    private double deltaAngel;
 
     public VelocityObstacle(SyncItem protagonist, SyncItem other) {
         double distance = protagonist.getDecimalPosition().getDistance(other.getDecimalPosition());
@@ -18,6 +19,7 @@ public class VelocityObstacle {
         double otherAngel = MathHelper.negateAngel(protagonist.getDecimalPosition().getAngleToNord(other.getDecimalPosition()));
         start = MathHelper.normaliseAngel(otherAngel - angel);
         end = MathHelper.normaliseAngel(otherAngel + angel);
+        deltaAngel = 2.0 * angel;
     }
 
     public double getStartAngel() {
@@ -26,7 +28,7 @@ public class VelocityObstacle {
 
     public boolean isInside(double angel) {
         angel = MathHelper.normaliseAngel(angel);
-        return !MathHelper.compareWithPrecision(angel, start) && !MathHelper.compareWithPrecision(angel, end) && MathHelper.isInSection(angel, start, end - start);
+        return !MathHelper.compareWithPrecision(angel, start) && !MathHelper.compareWithPrecision(angel, end) && MathHelper.isInSection(angel, start, deltaAngel);
     }
 
     public double getEndAngel() {
