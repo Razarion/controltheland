@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Time: 21:36
  */
 public class SyncItem {
-    public static final double MAX_VELOCITY = 1;
+    public static final double MAX_TURN_SPEED = MathHelper.gradToRad(360 / 4);
     public static final double MAX_FORCE = 5.4;
     public static final double SLOWING_DOWN_RADIUS = 20;
     public static final double MAX_AVOID_AHEAD = 50;
@@ -31,6 +31,7 @@ public class SyncItem {
     private DecimalPosition decimalPosition;
     private DecimalPosition target;
     private double angel;
+    private double aimAngel;
     private double speed;
 
     public SyncItem(int radius, Index position) {
@@ -83,10 +84,6 @@ public class SyncItem {
         return angel;
     }
 
-    public void setAngel(double angel) {
-        this.angel = angel;
-    }
-
     public double getSpeed() {
         return speed;
     }
@@ -94,10 +91,6 @@ public class SyncItem {
     public void setSpeed(double speed) {
         this.speed = speed;
     }
-
-    //public void setDecimalPosition(DecimalPosition decimalPosition) {
-    //    this.decimalPosition = decimalPosition;
-    //}
 
     public boolean isMoving() {
         return target != null;
@@ -116,18 +109,25 @@ public class SyncItem {
         return "SyncItem{id=" + id + " Position: " + decimalPosition;
     }
 
-    public void approachAngel(double aimAngel) {
-        angel = aimAngel;
-        /*
-        if (MathHelper.getAngel(aimAngel, angel) < DELTA_ANGEL) {
-            angel = aimAngel;
-        } else {
-            if (MathHelper.isCounterClock(angel, aimAngel)) {
-                angel += DELTA_ANGEL;
+    public void setAimAngel(double aimAngel) {
+        this.aimAngel = aimAngel;
+    }
+
+    public void executeMove(double factor) {
+        double deltaAngel = MathHelper.getAngel(angel, aimAngel);
+        if (deltaAngel > 0.001) {
+            double moveAngel = factor * MAX_TURN_SPEED;
+            if (deltaAngel > moveAngel) {
+                if (MathHelper.isCounterClock(angel, aimAngel)) {
+                    angel += moveAngel;
+                } else {
+                    angel -= moveAngel;
+                }
             } else {
-                angel -= DELTA_ANGEL;
+                angel = aimAngel;
             }
+        } else {
+            decimalPosition = decimalPosition.getPointFromAngelToNord(angel, factor * speed);
         }
-        */
     }
 }

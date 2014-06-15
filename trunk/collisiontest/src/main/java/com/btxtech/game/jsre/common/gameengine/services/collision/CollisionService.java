@@ -14,7 +14,7 @@ import model.MovingModel;
 public class CollisionService {
     private final MovingModel movingModel;
     public static final double DENSITY_OF_ITEM = 0.5;
-    public static final double MAX_DISTANCE = 20;
+    public static final double MAX_DISTANCE = 100;
 
     public CollisionService(MovingModel movingModel) {
         this.movingModel = movingModel;
@@ -37,12 +37,11 @@ public class CollisionService {
         Double bestAngel = velocityObstacleManager.getBestAngel();
         if(bestAngel != null) {
             syncItem.setSpeed(SyncItem.SPEED);
-            syncItem.approachAngel(bestAngel);
+            syncItem.setAimAngel(bestAngel);
         }else{
             syncItem.setSpeed(0);
         }
-        syncItem.setDecimalPosition(syncItem.getDecimalPosition().getPointFromAngelToNord(syncItem.getAngel(), factor * syncItem.getSpeed()));
-
+        syncItem.executeMove(factor);
 
         if (!isBetterPositionAvailable(syncItem)) {
             syncItem.stop();
