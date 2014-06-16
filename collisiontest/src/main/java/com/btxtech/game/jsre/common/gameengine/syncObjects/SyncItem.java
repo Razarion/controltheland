@@ -13,6 +13,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Time: 21:36
  */
 public class SyncItem {
+    public enum Status {
+        STOPPED,
+        MOVING,
+        GAVE_UP
+    }
+
     public static final double MAX_TURN_SPEED = MathHelper.gradToRad(360 / 4);
     public static final double MAX_FORCE = 5.4;
     public static final double SLOWING_DOWN_RADIUS = 20;
@@ -22,6 +28,8 @@ public class SyncItem {
     public static final double DELTA_ANGEL = MathHelper.ONE_RADIANT / 24;
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
     public static final double SPEED = 50;
+    public static final double REMAINING_GIVE_UP_TIME = 20;
+    public static final double MAX_GIVE_UP_DISTANCE = 400;
 
     // General
     private int id;
@@ -33,6 +41,9 @@ public class SyncItem {
     private double angel;
     private double aimAngel;
     private double speed;
+    private Double remainingGiveUpTime;
+    private double minDistance;
+    private Status status = Status.STOPPED;
 
     public SyncItem(int radius, Index position) {
         this.radius = radius;
@@ -52,10 +63,6 @@ public class SyncItem {
         return decimalPosition;
     }
 
-    public void setDecimalPosition(DecimalPosition decimalPosition) {
-        this.decimalPosition = decimalPosition;
-    }
-
     public int getDiameter() {
         return radius * 2;
     }
@@ -63,6 +70,8 @@ public class SyncItem {
     public void moveTo(Index destination) {
         target = new DecimalPosition(destination);
         angel = getTargetAngel();
+        minDistance = decimalPosition.getDistance(destination);
+        status = Status.MOVING;
     }
 
     public void moveTo(List<Index> wayPoint) {
@@ -78,6 +87,7 @@ public class SyncItem {
 
     public void stop() {
         target = null;
+        status = Status.STOPPED;
     }
 
     public double getAngel() {
@@ -92,10 +102,6 @@ public class SyncItem {
         this.speed = speed;
     }
 
-    public boolean isMoving() {
-        return target != null;
-    }
-
     public double calculateArea() {
         return Math.PI * Math.pow(radius, 2);
     }
@@ -106,7 +112,7 @@ public class SyncItem {
 
     @Override
     public String toString() {
-        return "SyncItem{id=" + id + " Position: " + decimalPosition;
+        return "SyncItem{id=" + id + " Position: " + decimalPosition + " status: " + status;
     }
 
     public void setAimAngel(double aimAngel) {
@@ -129,5 +135,39 @@ public class SyncItem {
         } else {
             decimalPosition = decimalPosition.getPointFromAngelToNord(angel, factor * speed);
         }
+    }
+
+    public DecimalPosition calculateExecuteMove(double factor) {
+        double deltaAngel = MathHelper.getAngel(angel, aimAngel);
+        if (deltaAngel > 0.001) {
+            return decimalPosition;
+        } else {
+            return decimalPosition.getPointFromAngelToNord(angel, factor * speed);
+        }
+    }
+
+    public void handleGiveUpTimer(double factor) {
+        double distance = decimalPosition.getDistance(target);
+        if (distance > minDistance) {
+            if (remainingGiveUpTime == null) {
+                remainingGiveUpTime = REMAINING_GIVE_UP_TIME * Math.min(1.0, distance / MAX_GIVE_UP_DISTANCE);
+            } else {
+                remainingGiveUpTime -= factor;
+            }
+            if(remainingGiveUpTime < 0) {
+                status = Status.GAVE_UP;
+            }
+        } else {
+            remainingGiveUpTime = null;
+            minDistance = distance;
+        }
+    }
+
+    public boolean isMoving() {
+        return target != null;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 }

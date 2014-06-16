@@ -20,6 +20,22 @@ public class VelocityObstacleManager {
         this.protagonist = protagonist;
     }
 
+    public void inspect(SyncItem other) {
+        if (other == protagonist) {
+            return;
+        }
+        double distance = other.getDecimalPosition().getDistance(protagonist.getDecimalPosition()) - other.getRadius() - protagonist.getRadius();
+        if (distance > CollisionService.MAX_DISTANCE) {
+            return;
+        }
+        if(distance <= 0.0) {
+            System.out.println("C*R*A*S*H"); // TODO
+            return;
+        }
+        add(other);
+    }
+
+
     private void add(SyncItem other) {
         VelocityObstacle velocityObstacle = new VelocityObstacle(protagonist, other);
         velocityObstacles.add(velocityObstacle);
@@ -28,10 +44,13 @@ public class VelocityObstacleManager {
     public Double getBestAngel() {
         Collection<Double> angels = getFreeAngels(protagonist.getTargetAngel());
         if (angels.isEmpty()) {
+            // No way out
             return null;
         } else if (angels.size() == 1) {
+            // Way to target is free
             return CommonJava.getFirst(angels);
         } else {
+            // Blocking obstacle before target
             double smallestDistance = Double.MAX_VALUE;
             double minAngel = protagonist.getTargetAngel();
             for (Double angel : angels) {
@@ -65,25 +84,13 @@ public class VelocityObstacleManager {
 
     private boolean isAngelFree(double angel) {
         for (VelocityObstacle velocityObstacle : velocityObstacles) {
+            //if(velocityObstacle.isTarget()) {
+            //    continue;
+            //}
             if (velocityObstacle.isInside(angel)) {
                 return false;
             }
         }
         return true;
-    }
-
-    public void inspect(SyncItem other) {
-        if (other == protagonist) {
-            return;
-        }
-        double distance = other.getDecimalPosition().getDistance(protagonist.getDecimalPosition()) - other.getRadius() - protagonist.getRadius();
-        if (distance > CollisionService.MAX_DISTANCE) {
-            return;
-        }
-        if(distance <= 0.0) {
-            System.out.println("C*R*A*S*H"); // TODO
-            return;
-        }
-        add(other);
     }
 }
