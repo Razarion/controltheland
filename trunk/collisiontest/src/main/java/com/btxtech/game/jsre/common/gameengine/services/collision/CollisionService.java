@@ -1,10 +1,13 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import model.MovingModel;
+
+import javax.xml.ws.Holder;
 
 /**
  * User: beat
@@ -14,7 +17,7 @@ import model.MovingModel;
 public class CollisionService {
     private final MovingModel movingModel;
     public static final double DENSITY_OF_ITEM = 0.5;
-    public static final double MAX_DISTANCE = 100;
+    public static final double MAX_DISTANCE = 50;
 
     public CollisionService(MovingModel movingModel) {
         this.movingModel = movingModel;
@@ -26,6 +29,43 @@ public class CollisionService {
     }
 
     public void moveItem(Terrain terrain, MovingModel movingModel, final SyncItem syncItem, double factor) {
+        if (syncItem.getPosition().equals(syncItem.getTargetPosition().getPosition())) {
+            syncItem.stop();
+        } else {
+            if (syncItem.getStatus() == SyncItem.Status.GAVE_UP) {
+                moveItemGaveUp(movingModel, syncItem, factor);
+            } else {
+                moveItem(movingModel, syncItem, factor);
+            }
+        }
+
+    }
+
+    private void moveItemGaveUp(MovingModel movingModel, final SyncItem syncItem, double factor) {
+        syncItem.setSpeed(SyncItem.SPEED);
+        syncItem.setAimAngel(syncItem.getTargetAngel());
+        final DecimalPosition positionProposal = syncItem.calculateExecuteMove(factor);
+        final Holder<Boolean> crash = new Holder<>(false);
+        movingModel.iterateOverSyncItems(new MovingModel.SyncItemCallback() {
+            @Override
+            public void onSyncItem(SyncItem other) {
+                if (other == syncItem) {
+                    return;
+                }
+                if (positionProposal.getDistance(other.getDecimalPosition()) - syncItem.getRadius() - other.getRadius() < 0) {
+                    crash.value = true;
+                }
+            }
+        });
+
+        if (crash.value) {
+            syncItem.stop();
+        } else {
+            syncItem.executeMove(factor);
+        }
+    }
+
+    private void moveItem(MovingModel movingModel, SyncItem syncItem, double factor) {
         final VelocityObstacleManager velocityObstacleManager = new VelocityObstacleManager(syncItem);
         movingModel.iterateOverSyncItems(new MovingModel.SyncItemCallback() {
             @Override
@@ -35,17 +75,18 @@ public class CollisionService {
         });
 
         Double bestAngel = velocityObstacleManager.getBestAngel();
-        if(bestAngel != null) {
+        if (bestAngel != null) {
             syncItem.setSpeed(SyncItem.SPEED);
             syncItem.setAimAngel(bestAngel);
-        }else{
+        } else {
             syncItem.setSpeed(0);
         }
         syncItem.executeMove(factor);
+        syncItem.handleGiveUpTimer(factor);
 
-        if (!isBetterPositionAvailable(syncItem)) {
-            syncItem.stop();
-        }
+        // if (!isBetterPositionAvailable(syncItem)) {
+        //     syncItem.stop();
+        // }
     }
 
     private boolean isBetterPositionAvailable(SyncItem syncItem) {

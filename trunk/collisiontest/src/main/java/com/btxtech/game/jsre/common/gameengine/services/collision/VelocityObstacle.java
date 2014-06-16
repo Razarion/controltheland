@@ -11,6 +11,7 @@ public class VelocityObstacle {
     private double start;
     private double end;
     private double deltaAngel;
+    //private boolean isTarget;
 
     public VelocityObstacle(SyncItem protagonist, SyncItem other) {
         double distance = protagonist.getDecimalPosition().getDistance(other.getDecimalPosition());
@@ -20,6 +21,7 @@ public class VelocityObstacle {
         start = MathHelper.normaliseAngel(otherAngel - angel);
         end = MathHelper.normaliseAngel(otherAngel + angel);
         deltaAngel = 2.0 * angel;
+     //   isTarget = protagonist.getTargetPosition().getDistance(other.getDecimalPosition()) <= other.getRadius();
     }
 
     public double getStartAngel() {
@@ -34,4 +36,8 @@ public class VelocityObstacle {
     public double getEndAngel() {
         return end;
     }
+
+   // public boolean isTarget() {
+   //     return isTarget;
+  //  }
 }

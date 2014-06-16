@@ -226,11 +226,7 @@ public abstract class AbstractGui {
         movingModel.iterateOverSyncItems(new MovingModel.SyncItemCallback() {
             @Override
             public void onSyncItem(SyncItem syncItem) {
-                if (syncItem.isMoving()) {
-                    graphics.setColor(Color.BLUE);
-                } else {
-                    graphics.setColor(Color.GREEN);
-                }
+                graphics.setColor(getSyncItemColor(syncItem));
                 graphics.drawArc(syncItem.getPosition().getX() - syncItem.getRadius(),
                         syncItem.getPosition().getY() - syncItem.getRadius(),
                         syncItem.getDiameter(),
@@ -249,16 +245,25 @@ public abstract class AbstractGui {
                     syncItem.getPosition().getY(),
                     steering.getX(),
                     steering.getY());*/
-                if (syncItem.isMoving()) {
-                    graphics.setColor(Color.BLUE);
-                } else {
-                    graphics.setColor(Color.GREEN);
-                }
+                graphics.setColor(getSyncItemColor(syncItem));
                 graphics.drawString(Integer.toString(syncItem.getId()),
                         syncItem.getPosition().getX() - 5,
                         syncItem.getPosition().getY() + 5);
             }
         });
+    }
+
+    private Color getSyncItemColor(SyncItem syncItem) {
+        switch(syncItem.getStatus()) {
+            case STOPPED:
+                return Color.GREEN;
+            case MOVING:
+                return Color.BLUE;
+            case GAVE_UP:
+                return Color.RED;
+        }
+        System.out.println("Unknown state: " + syncItem);
+        return Color.GRAY;
     }
 
 }
