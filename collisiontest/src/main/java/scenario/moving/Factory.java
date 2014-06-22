@@ -31,7 +31,7 @@ public class Factory extends Scenario {
             @Override
             public void run() {
                 try {
-                    SyncItem syncItem = createSyncItem(10, new Index(100, 100), "undefined");
+                    SyncItem syncItem = createSyncItem(10, new Index(100, 100), "undefined", false);
                     getMovingModel().getCollisionService().findPath(syncItem, new Index(400, 400));
                 } catch (BlockingStateException e) {
                     // Ignore

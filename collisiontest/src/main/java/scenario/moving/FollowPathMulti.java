@@ -21,7 +21,7 @@ public class FollowPathMulti extends Scenario {
     public void addItems() {
         for (int y = 100; y < 500; y += 50) {
             for (int x = 100; x < 500; x += 50) {
-                mySyncItems.add(createSyncItem(RADIUS, new Index(x, y), "undefined"));
+                mySyncItems.add(createSyncItem(RADIUS, new Index(x, y), "undefined", false));
             }
         }
     }

@@ -18,7 +18,7 @@ public class FollowPath extends Scenario {
 
     @Override
     public void addItems() {
-        syncItem = createSyncItem(10, new Index(100, 180), "Mover");
+        syncItem = createSyncItem(10, new Index(100, 180), "Mover", false);
     }
 
     @Override

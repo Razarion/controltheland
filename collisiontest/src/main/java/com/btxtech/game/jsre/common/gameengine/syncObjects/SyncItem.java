@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Vector;
 import com.btxtech.game.jsre.common.MathHelper;
 
 import java.util.List;
@@ -13,12 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Time: 21:36
  */
 public class SyncItem {
-    public enum Status {
-        STOPPED,
-        MOVING,
-        GAVE_UP
-    }
-
     public static final double MAX_TURN_SPEED = MathHelper.gradToRad(360 / 4);
     public static final double MAX_FORCE = 5.4;
     public static final double SLOWING_DOWN_RADIUS = 20;
@@ -38,12 +33,8 @@ public class SyncItem {
     // SyncItemArea
     private DecimalPosition decimalPosition;
     private DecimalPosition target;
-    private double angel;
-    private double aimAngel;
     private double speed;
-    private Double remainingGiveUpTime;
-    private double minDistance;
-    private Status status = Status.STOPPED;
+    private double angel;
 
     public SyncItem(int radius, Index position) {
         this.radius = radius;
@@ -69,9 +60,6 @@ public class SyncItem {
 
     public void moveTo(Index destination) {
         target = new DecimalPosition(destination);
-        angel = getTargetAngel();
-        minDistance = decimalPosition.getDistance(destination);
-        status = Status.MOVING;
     }
 
     public void moveTo(List<Index> wayPoint) {
@@ -87,19 +75,6 @@ public class SyncItem {
 
     public void stop() {
         target = null;
-        status = Status.STOPPED;
-    }
-
-    public double getAngel() {
-        return angel;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
     }
 
     public double calculateArea() {
@@ -110,64 +85,29 @@ public class SyncItem {
         return id;
     }
 
-    @Override
-    public String toString() {
-        return "SyncItem{id=" + id + " Position: " + decimalPosition + " status: " + status;
-    }
-
-    public void setAimAngel(double aimAngel) {
-        this.aimAngel = aimAngel;
-    }
-
-    public void executeMove(double factor) {
-        double deltaAngel = MathHelper.getAngel(angel, aimAngel);
-        if (deltaAngel > 0.001) {
-            double moveAngel = factor * MAX_TURN_SPEED;
-            if (deltaAngel > moveAngel) {
-                if (MathHelper.isCounterClock(angel, aimAngel)) {
-                    angel += moveAngel;
-                } else {
-                    angel -= moveAngel;
-                }
-            } else {
-                angel = aimAngel;
-            }
-        } else {
-            decimalPosition = decimalPosition.getPointFromAngelToNord(angel, factor * speed);
-        }
-    }
-
-    public DecimalPosition calculateExecuteMove(double factor) {
-        double deltaAngel = MathHelper.getAngel(angel, aimAngel);
-        if (deltaAngel > 0.001) {
-            return decimalPosition;
-        } else {
-            return decimalPosition.getPointFromAngelToNord(angel, factor * speed);
-        }
-    }
-
-    public void handleGiveUpTimer(double factor) {
-        double distance = decimalPosition.getDistance(target);
-        if (distance > minDistance) {
-            if (remainingGiveUpTime == null) {
-                remainingGiveUpTime = REMAINING_GIVE_UP_TIME * Math.min(1.0, distance / MAX_GIVE_UP_DISTANCE);
-            } else {
-                remainingGiveUpTime -= factor;
-            }
-            if(remainingGiveUpTime < 0) {
-                status = Status.GAVE_UP;
-            }
-        } else {
-            remainingGiveUpTime = null;
-            minDistance = distance;
-        }
-    }
-
     public boolean isMoving() {
         return target != null;
     }
 
-    public Status getStatus() {
-        return status;
+    public DecimalPosition getVelocity(double factor) {
+        return DecimalPosition.NULL.getPointFromAngelToNord(angel, speed * factor);
+    }
+
+    public void setVelocity(DecimalPosition velocity, double factor) {
+        angel = DecimalPosition.NULL.getAngleToNord(velocity);
+        speed =  DecimalPosition.NULL.getDistance(velocity) / factor;
+    }
+
+    public DecimalPosition getPreferredVelocity(double factor) {
+        return DecimalPosition.NULL.getPointFromAngelToNord(getTargetAngel(), SPEED * factor);
+    }
+
+    public void executeMove(double factor) {
+        decimalPosition = decimalPosition.getPointFromAngelToNord(angel, speed * factor);
+    }
+
+    @Override
+    public String toString() {
+        return "SyncItem{id=" + id + " Position: " + decimalPosition;
     }
 }

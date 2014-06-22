@@ -17,8 +17,8 @@ public class Frontal extends Scenario {
 
     @Override
     public void addItems() {
-        syncItem1 = createSyncItem(RADIUS, new Index(100, 100), "SyncItem 1");
-        syncItem2 = createSyncItem(RADIUS, new Index(400, 100), "SyncItem 2");
+        syncItem1 = createSyncItem(RADIUS, new Index(100, 100), "SyncItem 1", true);
+        syncItem2 = createSyncItem(RADIUS, new Index(400, 100), "SyncItem 2", false);
     }
 
     @Override

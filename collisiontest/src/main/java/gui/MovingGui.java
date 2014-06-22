@@ -17,6 +17,11 @@ import java.awt.event.ActionListener;
 public class MovingGui extends AbstractGui {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
+    public static MovingGui instance;
+
+    public MovingGui() {
+        instance = this;
+    }
 
     @Override
     protected void addToMenuBar(JPanel menu) {
@@ -90,4 +95,7 @@ public class MovingGui extends AbstractGui {
         }*/
     }
 
+    public static MovingGui getInstance() {
+        return instance;
+    }
 }

@@ -16,8 +16,8 @@ public class MoveToOccupiedPosition extends Scenario {
 
     @Override
     public void addItems() {
-        createSyncItem(RADIUS, new Index(200, 200), "blocker");
-        syncItem = createSyncItem(RADIUS, new Index(100, 100), "mover");
+        createSyncItem(RADIUS, new Index(200, 200), "blocker", false);
+        syncItem = createSyncItem(RADIUS, new Index(100, 100), "mover", false);
     }
 
     @Override

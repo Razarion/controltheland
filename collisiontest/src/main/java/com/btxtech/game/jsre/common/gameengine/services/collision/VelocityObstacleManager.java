@@ -1,19 +1,19 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision;
 
-import com.btxtech.game.jsre.common.CommonJava;
-import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by beat
  * on 09.06.2014.
  */
 public class VelocityObstacleManager {
-    private List<VelocityObstacle> velocityObstacles = new ArrayList<>();
+    public static final double FORECAST_FACTOR = 2;
+    private Collection<VelocityObstacle> velocityObstacles = new ArrayList<>();
+    private Collection<VelocityObstacle> insideVelocityObstacles = new ArrayList<>();
     private SyncItem protagonist;
 
     public VelocityObstacleManager(SyncItem protagonist) {
@@ -28,69 +28,35 @@ public class VelocityObstacleManager {
         if (distance > CollisionService.MAX_DISTANCE) {
             return;
         }
-        if(distance <= 0.0) {
+        if (distance < 0.0) {
             System.out.println("C*R*A*S*H"); // TODO
             return;
         }
-        add(other);
+        velocityObstacles.add(new VelocityObstacle(protagonist, other));
     }
 
-
-    private void add(SyncItem other) {
-        VelocityObstacle velocityObstacle = new VelocityObstacle(protagonist, other);
-        velocityObstacles.add(velocityObstacle);
-    }
-
-    public Double getBestAngel() {
-        Collection<Double> angels = getFreeAngels(protagonist.getTargetAngel());
-        if (angels.isEmpty()) {
-            // No way out
-            return null;
-        } else if (angels.size() == 1) {
-            // Way to target is free
-            return CommonJava.getFirst(angels);
-        } else {
-            // Blocking obstacle before target
-            double smallestDistance = Double.MAX_VALUE;
-            double minAngel = protagonist.getTargetAngel();
-            for (Double angel : angels) {
-                double distance = MathHelper.getAngel(angel, protagonist.getTargetAngel());
-                if (smallestDistance > distance) {
-                    minAngel = angel;
-                    smallestDistance = distance;
-                }
-            }
-            return minAngel;
-        }
-    }
-
-    private Collection<Double> getFreeAngels(double angel) {
-        Collection<Double> freeAngels = new ArrayList<>();
-        if (isAngelFree(angel)) {
-            freeAngels.add(angel);
-            return freeAngels;
+    public DecimalPosition getOptimalVelocity() {
+        DecimalPosition preferredVelocity = protagonist.getPreferredVelocity(FORECAST_FACTOR);
+        if (velocityObstacles.isEmpty()) {
+            return preferredVelocity;
         }
         for (VelocityObstacle velocityObstacle : velocityObstacles) {
-            if (isAngelFree(velocityObstacle.getStartAngel())) {
-                freeAngels.add(velocityObstacle.getStartAngel());
-            }
-            if (isAngelFree(velocityObstacle.getEndAngel())) {
-                freeAngels.add(velocityObstacle.getEndAngel());
+            if (velocityObstacle.isInside(preferredVelocity)) {
+                insideVelocityObstacles.add(velocityObstacle);
             }
         }
-
-        return freeAngels;
+        return preferredVelocity;
     }
 
-    private boolean isAngelFree(double angel) {
-        for (VelocityObstacle velocityObstacle : velocityObstacles) {
-            //if(velocityObstacle.isTarget()) {
-            //    continue;
-            //}
-            if (velocityObstacle.isInside(angel)) {
-                return false;
-            }
-        }
-        return true;
+    public Collection<VelocityObstacle> getVelocityObstacles() {
+        return velocityObstacles;
+    }
+
+    public boolean isInside(VelocityObstacle velocityObstacle) {
+        return insideVelocityObstacles.contains(velocityObstacle);
+    }
+
+    public SyncItem getProtagonist() {
+        return protagonist;
     }
 }
