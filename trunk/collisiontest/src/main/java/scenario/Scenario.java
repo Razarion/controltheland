@@ -51,8 +51,8 @@ public abstract class Scenario {
         return 50;
     }
 
-    protected SyncItem createSyncItem(int radius, Index position, String debugName) {
-        return movingModel.createSyncItem(radius, position, debugName);
+    protected SyncItem createSyncItem(int radius, Index position, String debugName, boolean monitor) {
+        return movingModel.createSyncItem(radius, position, debugName, monitor);
     }
 
     protected void deleteSyncItem(SyncItem syncItem) {

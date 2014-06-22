@@ -23,6 +23,7 @@ import java.io.Serializable;
  * Time: 13:01:16
  */
 public class DecimalPosition implements Serializable {
+    public static final DecimalPosition NULL = new DecimalPosition(0, 0);
     public static final double FACTOR = 0.01;
     private double x;
     private double y;

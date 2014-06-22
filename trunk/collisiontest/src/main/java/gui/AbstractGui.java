@@ -2,7 +2,6 @@ package gui;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.services.collision.ForceField;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
@@ -18,6 +17,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.text.SimpleDateFormat;
 import java.util.Timer;
@@ -35,6 +35,7 @@ public abstract class AbstractGui {
     private JPanel canvas;
     private JComboBox<Scenario> scenarioBox;
     private MovingModel movingModel;
+    private VOMonitor voMonitor;
 
     public void setMovingModel(MovingModel movingModel) {
         this.movingModel = movingModel;
@@ -138,10 +139,50 @@ public abstract class AbstractGui {
             }
         });
         menu.add(scenarioBox);
+        // Item selection
+        canvas.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                SyncItem syncItem = getMovingModel().getItemAtPosition(new Index(e.getX(), e.getY()));
+                if(syncItem != null) {
+                    startMonitor(syncItem);
+                }
+            }
 
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
 
         canvas.setBackground(Color.WHITE);
         pane.add(new JScrollPane(canvas), BorderLayout.CENTER);
+    }
+
+    public void startMonitor(SyncItem syncItem) {
+        stopMonitor();
+        voMonitor = new VOMonitor(syncItem, getMovingModel().getCollisionService());
+    }
+
+    public void stopMonitor() {
+        if(voMonitor != null) {
+            voMonitor.close();
+        }
     }
 
     private void drawTerrain(Graphics graphics) {
@@ -233,18 +274,12 @@ public abstract class AbstractGui {
                         syncItem.getDiameter(),
                         0, 360);
 
-                Index angel = syncItem.getPosition().getPointFromAngelToNord(syncItem.getAngel(), syncItem.getRadius() + 10);
-                graphics.setColor(Color.GREEN);
-                graphics.drawLine(syncItem.getPosition().getX(),
-                        syncItem.getPosition().getY(),
-                        angel.getX(),
-                        angel.getY());
-       /*     Index steering = syncItem.getSteering().multiply(10).add(syncItem.getDecimalPosition()).getPosition();
-            graphics.setColor(Color.RED);
-            graphics.drawLine(syncItem.getPosition().getX(),
-                    syncItem.getPosition().getY(),
-                    steering.getX(),
-                    steering.getY());*/
+                //Index angel = syncItem.getPosition().getPointFromAngelToNord(syncItem.getAngel(), syncItem.getRadius() + 10);
+                //graphics.setColor(Color.GREEN);
+                //graphics.drawLine(syncItem.getPosition().getX(),
+                //        syncItem.getPosition().getY(),
+                //        angel.getX(),
+                //        angel.getY());
                 graphics.setColor(getSyncItemColor(syncItem));
                 graphics.drawString(Integer.toString(syncItem.getId()),
                         syncItem.getPosition().getX() - 5,
@@ -254,16 +289,11 @@ public abstract class AbstractGui {
     }
 
     private Color getSyncItemColor(SyncItem syncItem) {
-        switch(syncItem.getStatus()) {
-            case STOPPED:
-                return Color.GREEN;
-            case MOVING:
-                return Color.BLUE;
-            case GAVE_UP:
-                return Color.RED;
+        if (syncItem.isMoving()) {
+            return Color.BLUE;
+        } else {
+            return Color.GREEN;
         }
-        System.out.println("Unknown state: " + syncItem);
-        return Color.GRAY;
     }
 
 }

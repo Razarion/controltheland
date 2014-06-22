@@ -37,8 +37,8 @@ public class MovingMain {
 
         List<Scenario> scenarios = new ArrayList<>();
 
-        scenarios.add(new MoveToPosition());
         scenarios.add(new Blocking());
+        scenarios.add(new MoveToPosition());
         scenarios.add(new Frontal());
         scenarios.add(new Factory());
         scenarios.add(new FollowPathMulti());

@@ -2,10 +2,10 @@ package model;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
-import com.btxtech.game.jsre.common.gameengine.services.collision.ForceField;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.NoBetterPathFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.Terrain;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import gui.MovingGui;
 import scenario.Scenario;
 
 import java.util.ArrayList;
@@ -48,6 +48,7 @@ public class MovingModel {
 
     public void restart() throws NoBetterPathFoundException {
         //protagonist = null;
+        MovingGui.getInstance().stopMonitor();
         synchronized (syncItems) {
             syncItems.clear();
         }
@@ -95,7 +96,7 @@ public class MovingModel {
         return terrain;
     }
 
-    public SyncItem createSyncItem(int radius, Index position, String debugName) {
+    public SyncItem createSyncItem(int radius, Index position, String debugName, boolean monitor) {
         SyncItem syncItem = new SyncItem(radius, position);
         // collisionService.addSyncItem(syncItem);
         synchronized (syncItems) {
@@ -104,6 +105,9 @@ public class MovingModel {
         //if (protagonist == null) {
         //    protagonist = syncItem;
         //}
+        if (monitor) {
+            MovingGui.getInstance().startMonitor(syncItem);
+        }
         return syncItem;
     }
 
@@ -182,6 +186,18 @@ public class MovingModel {
                 syncItemCallback.onSyncItem(syncItem);
             }
         }
+    }
+
+
+    public SyncItem getItemAtPosition(final Index index) {
+        synchronized (syncItems) {
+            for (SyncItem syncItem : syncItems) {
+                if (syncItem.getDecimalPosition().getDistance(index) <= syncItem.getRadius()) {
+                    return syncItem;
+                }
+            }
+        }
+        return null;
     }
 
 }
