@@ -8,6 +8,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  * Created by beat
  * on 09.06.2014.
  */
+@Deprecated
 public class VelocityObstacle {
     private double start;
     private double end;
@@ -15,7 +16,7 @@ public class VelocityObstacle {
     private DecimalPosition apex;
 
     public VelocityObstacle(SyncItem protagonist, SyncItem other) {
-        apex = protagonist.getPreferredVelocity(VelocityObstacleManager.FORECAST_FACTOR).add(other.getVelocity(VelocityObstacleManager.FORECAST_FACTOR)).multiply(0.5);
+        apex = protagonist.getPreferredVelocity().add(other.getVelocity()).multiply(0.5);
         double distance = protagonist.getDecimalPosition().getDistance(other.getDecimalPosition());
         double radius = protagonist.getRadius() + other.getRadius();
         double angel = Math.asin(radius / distance);

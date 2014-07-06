@@ -253,6 +253,18 @@ public class DecimalPosition implements Serializable {
         return x == 0.0 && y == 0.0;
     }
 
+    public double determinant(DecimalPosition other) {
+        return x * other.y - y * other.x;
+    }
+
+    public double dotProduct(DecimalPosition other) {
+        return x * other.x + y + other.y;
+    }
+
+    public DecimalPosition negate() {
+        return new DecimalPosition(-x, -y);
+    }
+
     @Override
     public String toString() {
         return "x: " + x + " y: " + y;
