@@ -17,7 +17,7 @@ public class MovingModel {
     private static final int FRAMES_PER_SECOND = 60;
     private static final long TIMER_DELAY = 1000 / FRAMES_PER_SECOND;
     private long lastTick;
-    final private List<SyncItem> syncItems = new ArrayList<SyncItem>();
+    final private List<SyncItem> syncItems = new ArrayList<>();
     // private SyncItem protagonist;
     private CollisionService collisionService;
     private Scenario scenario;

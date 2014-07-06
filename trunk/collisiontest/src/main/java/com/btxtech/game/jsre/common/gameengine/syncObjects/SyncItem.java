@@ -2,7 +2,6 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Vector;
 import com.btxtech.game.jsre.common.MathHelper;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class SyncItem {
     public static final double MASS = 10;
     public static final double DELTA_ANGEL = MathHelper.ONE_RADIANT / 24;
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
-    public static final double SPEED = 50;
+    public static final double SPEED = 0.5;
     public static final double REMAINING_GIVE_UP_TIME = 20;
     public static final double MAX_GIVE_UP_DISTANCE = 400;
 
@@ -33,8 +32,8 @@ public class SyncItem {
     // SyncItemArea
     private DecimalPosition decimalPosition;
     private DecimalPosition target;
-    private double speed;
-    private double angel;
+    private DecimalPosition velocity = DecimalPosition.NULL;
+    private DecimalPosition preferredVelocity;
 
     public SyncItem(int radius, Index position) {
         this.radius = radius;
@@ -56,10 +55,6 @@ public class SyncItem {
 
     public int getDiameter() {
         return radius * 2;
-    }
-
-    public void moveTo(Index destination) {
-        target = new DecimalPosition(destination);
     }
 
     public void moveTo(List<Index> wayPoint) {
@@ -89,25 +84,32 @@ public class SyncItem {
         return target != null;
     }
 
-    public DecimalPosition getVelocity(double factor) {
-        return DecimalPosition.NULL.getPointFromAngelToNord(angel, speed * factor);
+    public void setTarget(Index target) {
+        this.target = new DecimalPosition(target);
     }
 
-    public void setVelocity(DecimalPosition velocity, double factor) {
-        angel = DecimalPosition.NULL.getAngleToNord(velocity);
-        speed =  DecimalPosition.NULL.getDistance(velocity) / factor;
+    public DecimalPosition getVelocity() {
+        return velocity;
     }
 
-    public DecimalPosition getPreferredVelocity(double factor) {
-        return DecimalPosition.NULL.getPointFromAngelToNord(getTargetAngel(), SPEED * factor);
+    public void setVelocity(DecimalPosition velocity) {
+        this.velocity = velocity;
     }
 
-    public void executeMove(double factor) {
-        decimalPosition = decimalPosition.getPointFromAngelToNord(angel, speed * factor);
+    public void executeMove() {
+        decimalPosition = decimalPosition.add(velocity);
+    }
+
+    public DecimalPosition getPreferredVelocity() {
+        return preferredVelocity;
+    }
+
+    public void setPreferredVelocity(DecimalPosition preferredVelocity) {
+        this.preferredVelocity = preferredVelocity;
     }
 
     @Override
     public String toString() {
-        return "SyncItem{id=" + id + " Position: " + decimalPosition;
+        return "SyncItem{id=" + id + " Position: " + decimalPosition + " Velocity: " + velocity;
     }
 }

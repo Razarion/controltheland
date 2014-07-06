@@ -15,7 +15,7 @@ import model.MovingModel;
 public class CollisionService {
     private final MovingModel movingModel;
     public static final double DENSITY_OF_ITEM = 0.5;
-    public static final double MAX_DISTANCE = 50;
+    public static final double MAX_DISTANCE = 500;
     private SyncItem captureSyncItem;
     private VelocityObstacleManager velocityObstacleManager;
 
@@ -38,8 +38,8 @@ public class CollisionService {
             }
         });
         DecimalPosition velocity = velocityObstacleManager.getOptimalVelocity();
-        syncItem.setVelocity(velocity, VelocityObstacleManager.FORECAST_FACTOR);
-        syncItem.executeMove(factor);
+        syncItem.setVelocity(velocity);
+        syncItem.executeMove();
         if (syncItem.equals(captureSyncItem)) {
             this.velocityObstacleManager = velocityObstacleManager;
         }
@@ -51,7 +51,7 @@ public class CollisionService {
     }
 
     public void findPath(SyncItem syncItem, Index targetPosition) {
-        syncItem.moveTo(targetPosition);
+        syncItem.setTarget(targetPosition);
     }
 
     public void captureSyncItem(SyncItem syncItem) {

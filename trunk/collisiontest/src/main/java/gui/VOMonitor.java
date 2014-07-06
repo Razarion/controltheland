@@ -1,8 +1,9 @@
 package gui;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CollisionService;
-import com.btxtech.game.jsre.common.gameengine.services.collision.VelocityObstacle;
+import com.btxtech.game.jsre.common.gameengine.services.collision.OrcaLine;
 import com.btxtech.game.jsre.common.gameengine.services.collision.VelocityObstacleManager;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
@@ -23,7 +24,7 @@ import java.util.TimerTask;
  */
 public class VOMonitor {
     private static final int FRAMES_PER_SECOND = 25;
-    private static double ZOOM = 3.0;
+    private static double ZOOM = 100.0;
     private static int LEG_LENGTH = (int) (200.0 * ZOOM);
     private static final long TIMER_DELAY = 1000 / FRAMES_PER_SECOND;
     private JFrame frame;
@@ -56,42 +57,31 @@ public class VOMonitor {
     private void render(Graphics graphics) {
         VelocityObstacleManager velocityObstacleManager = collisionService.getCaptured();
         Index middle = new Index((int) (graphics.getClipBounds().getWidth() / 2), (int) (graphics.getClipBounds().getHeight() / 2));
-        graphics.setColor(Color.BLUE);
 
-        graphics.drawArc(middle.getX() - 1,
-                middle.getY() - 1,
-                2,
-                2,
-                0, 360);
-
-        Index velocity = velocityObstacleManager.getProtagonist().getVelocity(VelocityObstacleManager.FORECAST_FACTOR).multiply(ZOOM).getPosition().add(middle);
-        graphics.drawLine(middle.getX(), middle.getY(), velocity.getX(), velocity.getY());
-
-        for (VelocityObstacle velocityObstacle : velocityObstacleManager.getVelocityObstacles()) {
-            if (velocityObstacleManager.isInside(velocityObstacle)) {
-                graphics.setColor(new Color(1.0f, 0.0f, 0.0f, 0.5f));
-            } else {
-                graphics.setColor(new Color(0.2f, 0.2f, 0.2f, 0.5f));
-            }
-
-            Index apex = velocityObstacle.getApex().multiply(ZOOM).getPosition().add(middle);
-
-            /*graphics.drawArc(apex.getX() - 1,
-                    apex.getY() - 1,
+        for (OrcaLine orcaLine : velocityObstacleManager.getOrcaLines()) {
+            Index direction = orcaLine.getDirection().multiply(ZOOM).getPosition().add(middle);
+            /*graphics.drawArc(direction.getX() - 1,
+                    direction.getY() - 1,
                     2,
                     2,
                     0, 360);*/
-            Index leg1 = apex.getPointFromAngelToNord(velocityObstacle.getStartAngel(), LEG_LENGTH);
-            //graphics.drawLine(apex.getX(), apex.getY(), leg1.getX(), leg1.getY());
-            Index leg2 = apex.getPointFromAngelToNord(velocityObstacle.getEndAngel(), LEG_LENGTH);
-            //graphics.drawLine(apex.getX(), apex.getY(), leg2.getX(), leg2.getY());
-            //graphics.drawLine(leg1.getX(), leg1.getY(), leg2.getX(), leg2.getY());
-
-            graphics.fillPolygon(new int[]{apex.getX(), leg1.getX(), leg2.getX()}, new int[]{apex.getY(), leg1.getY(), leg2.getY()}, 3);
-
+            Index point = orcaLine.getPoint().multiply(ZOOM).getPosition().add(middle);
+            /*graphics.drawArc(point.getX() - 1,
+                    point.getY() - 1,
+                    2,
+                    2,
+                    0, 360);*/
+            graphics.setColor(Color.RED);
+            graphics.drawLine(direction.getX(), direction.getY(), point.getX(), point.getY());
+            graphics.setColor(Color.GREEN);
+            Index lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
+            Index lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT);
+            graphics.drawLine(lp1.getX(), lp1.getY(), lp2.getX(), lp2.getY());
         }
-
-
+        graphics.setColor(Color.BLUE);
+        graphics.drawArc(middle.getX() - 1, middle.getY() - 1, 2, 2, 0, 360);
+        Index velocity = velocityObstacleManager.getProtagonist().getVelocity().multiply(ZOOM).getPosition().add(middle);
+        graphics.drawLine(middle.getX(), middle.getY(), velocity.getX(), velocity.getY());
     }
 
     public void close() {

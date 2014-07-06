@@ -113,7 +113,7 @@ public class MathHelper {
     }
 
     /**
-     * Returns the shortest angel from addItems to end.
+     * Returns the shortest angel from startAngel to endAngel.
      * The shortest angel is taken regardless if clock ore counter-clock wise
      *
      * @param startAngel addItems angel
