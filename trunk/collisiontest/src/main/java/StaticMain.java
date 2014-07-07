@@ -145,7 +145,7 @@ public class StaticMain {
             public void stateChanged(ChangeEvent e) {
                 try {
                     double newX = ((Number) ((JSpinner) e.getSource()).getValue()).doubleValue();
-                    protagonist.setVelocity(new DecimalPosition(newX, protagonist.getVelocity().getY()).normalize(SyncItem.SPEED));
+                    protagonist.setVelocity(new DecimalPosition(newX, protagonist.getVelocity().getY())/*.normalize(SyncItem.SPEED)*/);
                     updateModel();
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -160,7 +160,7 @@ public class StaticMain {
             public void stateChanged(ChangeEvent e) {
                 try {
                     double newY = ((Number) ((JSpinner) e.getSource()).getValue()).doubleValue();
-                    protagonist.setVelocity(new DecimalPosition(protagonist.getVelocity().getX(), newY).normalize(SyncItem.SPEED));
+                    protagonist.setVelocity(new DecimalPosition(protagonist.getVelocity().getX(), newY)/*.normalize(SyncItem.SPEED)*/);
                     updateModel();
                 } catch (Exception ex) {
                     ex.printStackTrace();

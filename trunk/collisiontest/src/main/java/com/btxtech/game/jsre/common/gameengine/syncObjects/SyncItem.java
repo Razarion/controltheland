@@ -22,6 +22,7 @@ public class SyncItem {
     public static final double DELTA_ANGEL = MathHelper.ONE_RADIANT / 24;
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
     public static final double SPEED = 0.5;
+    // public static final double SPEED = 30;
     public static final double REMAINING_GIVE_UP_TIME = 20;
     public static final double MAX_GIVE_UP_DISTANCE = 400;
 
