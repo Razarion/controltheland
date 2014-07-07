@@ -6,6 +6,8 @@ import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
+import javax.naming.OperationNotSupportedException;
+
 /**
  * Created by beat
  * on 22.06.2014.
@@ -81,11 +83,14 @@ public class OrcaLine {
             hasViolation = angelToRelativeVelocity < coneLegAngelAbs;
         }
         if (u.getMagnitude() == 0.0) {
-            point = protagonist.getVelocity().add(u.multiply(0.5));
+           // throw new UnsupportedOperationException();
+            /*
+            // TODO test this
+            point = protagonist.getVelocity().getCopy();
             if (onTruncation) {
-                direction = truncationMiddle.getPointWithDistance(truncationRadius + DIRECTION_LENGTH, u, true);
+                direction = truncationMiddle.getPointWithDistance(truncationRadius + DIRECTION_LENGTH, point, true);
             } else {
-                double angel = Math.atan(DIRECTION_LENGTH / u.getLength());
+                double angel = Math.abs(Math.atan(DIRECTION_LENGTH / point.getLength())) + Math.abs(MathHelper.normaliseAngel(coneLegAngel));
                 DecimalPosition conePoint = new DecimalPosition(coneLine.getPoint2());
                 double directionAngel;
                 if (conePoint.determinant(relativePosition) > 0) {
@@ -93,18 +98,35 @@ public class OrcaLine {
                 } else {
                     directionAngel = conePoint.getAngleToNorth() - angel;
                 }
-                direction = DecimalPosition.NULL.getPointFromAngelToNord(directionAngel, MathHelper.getPythagorasC(DIRECTION_LENGTH, u.getLength()));
-            }
+                direction = DecimalPosition.NULL.getPointFromAngelToNord(directionAngel, MathHelper.getPythagorasC(DIRECTION_LENGTH, point.getLength()));
+            }*/
+        } else if (!hasViolation) {
+          //  throw new UnsupportedOperationException();
+            //    direction = direction.rotateCounterClock(point, MathHelper.HALF_RADIANT);
+        /*   point = protagonist.getVelocity().getCopy();
+            if (onTruncation) {
+                direction = truncationMiddle.getPointWithDistance(truncationRadius + DIRECTION_LENGTH, point, true);
+            } else {
+                double angel = Math.abs(Math.atan(DIRECTION_LENGTH / point.getLength())) + Math.abs(MathHelper.normaliseAngel(coneLegAngel));
+                DecimalPosition conePoint = new DecimalPosition(coneLine.getPoint2());
+                double directionAngel;
+                if (conePoint.determinant(relativePosition) > 0) {
+                    directionAngel = conePoint.getAngleToNorth() + angel;
+                } else {
+                    directionAngel = conePoint.getAngleToNorth() - angel;
+                }
+                direction = DecimalPosition.NULL.getPointFromAngelToNord(directionAngel, MathHelper.getPythagorasC(DIRECTION_LENGTH, point.getLength()));
+            }*/
         } else {
             point = protagonist.getVelocity().add(u.multiply(0.5));
             direction = point.add(u.normalize(DIRECTION_LENGTH));
+            Index lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT).getPosition();
+            Index lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT).getPosition();
+            borderLine = new Line(lp1, lp2);
         }
-        if (!hasViolation) {
-            direction = direction.rotateCounterClock(point, MathHelper.HALF_RADIANT);
-        }
-        Index lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT).getPosition();
-        Index lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT).getPosition();
-        borderLine = new Line(lp1, lp2);
+        //if (!hasViolation) {
+        //    direction = direction.rotateCounterClock(point, MathHelper.HALF_RADIANT);
+        //}
     }
 
     public OrcaLine() {
@@ -174,13 +196,13 @@ public class OrcaLine {
             return preferredVelocity;
         }
 
-        if(!isViolated(preferredVelocity)) {
+        if (!isViolated(preferredVelocity)) {
             // No VO violation
             return preferredVelocity;
         }
 
         DecimalPosition originOnLine = borderLine.projectOnInfiniteLine(new DecimalPosition(0, 0));
-        if(preferredVelocity.getMagnitude() < originOnLine.getMagnitude()) {
+        if (preferredVelocity.getMagnitude() < originOnLine.getMagnitude()) {
             // ???
             return preferredVelocity;
         }
@@ -193,5 +215,9 @@ public class OrcaLine {
             double distanceOnLine = MathHelper.getPythagorasA(preferredVelocity.getMagnitude(), originOnLine.getMagnitude());
             return originOnLine.getPointWithDistance(distanceOnLine, preferredVelocityOnLine, true);
         }
+    }
+
+    public boolean isHasViolation() {
+        return hasViolation;
     }
 }

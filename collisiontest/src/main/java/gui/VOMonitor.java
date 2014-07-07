@@ -59,6 +59,9 @@ public class VOMonitor {
         Index middle = new Index((int) (graphics.getClipBounds().getWidth() / 2), (int) (graphics.getClipBounds().getHeight() / 2));
 
         for (OrcaLine orcaLine : velocityObstacleManager.getOrcaLines()) {
+            if(!orcaLine.isHasViolation()) {
+                continue;
+            }
             Index direction = orcaLine.getDirection().multiply(ZOOM).getPosition().add(middle);
             /*graphics.drawArc(direction.getX() - 1,
                     direction.getY() - 1,
