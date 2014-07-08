@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class VelocityObstacleManager {
     public static final double FORECAST_FACTOR = 120;
-    //public static final double FORECAST_FACTOR = 2;
+   // public static final double FORECAST_FACTOR = 2;
     private static final double AVO_EPSILON = 1.0e-6;
     private List<OrcaLine> orcaLines = new ArrayList<>();
     private SyncItem protagonist;
