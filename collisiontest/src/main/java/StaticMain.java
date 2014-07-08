@@ -1,6 +1,5 @@
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.services.collision.OrcaLine;
 import com.btxtech.game.jsre.common.gameengine.services.collision.VelocityObstacleManager;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -295,7 +294,7 @@ public class StaticMain {
 
         // Protagonist velocity
         Index protagonistVelocity = toCoordinate(velocityObstacleManager.getProtagonist().getVelocity().getPosition(), width, height);
-        graphics.setColor(Color.CYAN);
+        graphics.setColor(Color.GREEN);
         graphics.drawLine(zero.getX(), zero.getY(), protagonistVelocity.getX(), protagonistVelocity.getY());
 
         for (OrcaLine orcaLine : velocityObstacleManager.getOrcaLines()) {
@@ -320,7 +319,7 @@ public class StaticMain {
 
             // Cone leg
             if (orcaLine.getConeLine() != null) {
-                graphics.setColor(Color.ORANGE);
+                // graphics.setColor(Color.ORANGE);
                 Index end = toCoordinate(orcaLine.getConeLine().getPoint2(), width, height);
                 graphics.drawLine(zero.getX(), zero.getY(), end.getX(), end.getY());
             }
@@ -329,25 +328,35 @@ public class StaticMain {
             //graphics.setColor(Color.BLUE);
             //drawCross(graphics, toCoordinate(orcaLine.getDirection().getPosition()));
 
+            graphics.setColor(Color.GREEN);
+            Index projection = toCoordinate(orcaLine.getProjectionOnVelocityObstacle().getPosition(),  width, height);
+            drawCross(graphics, projection);
 
-            Index direction = toCoordinate(orcaLine.getDirection().getPosition(), width, height);
-            Index point = toCoordinate(orcaLine.getPoint().getPosition(), width, height);
-            graphics.setColor(Color.BLUE);
-            graphics.drawLine(direction.getX(), direction.getY(), point.getX(), point.getY());
-            Index lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
-            Index lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT);
-            graphics.setColor(Color.BLUE);
-            graphics.drawLine(lp1.getX(), lp1.getY(), lp2.getX(), lp2.getY());
+            graphics.setColor(Color.MAGENTA);
+            Index point = toCoordinate(orcaLine.getPoint().getPosition(),  width, height);
+            drawCross(graphics, point);
+            Index direction = toCoordinate(orcaLine.getDirection().getPosition(),  width, height);
+            graphics.drawLine(point.getX(), point.getY(), direction.getX(), direction.getY());
+
+
+            //Index direction = toCoordinate(orcaLine.getDirection().getPosition(), width, height);
+            //Index point = toCoordinate(orcaLine.getPoint().getPosition(), width, height);
+            //graphics.setColor(Color.BLUE);
+            //graphics.drawLine(direction.getX(), direction.getY(), point.getX(), point.getY());
+            //Index lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
+            //Index lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT);
+            //graphics.setColor(Color.BLUE);
+            //graphics.drawLine(lp1.getX(), lp1.getY(), lp2.getX(), lp2.getY());
         }
 
-        // Preferred velocity
-        graphics.setColor(Color.BLACK);
-        Index targetOrigin = toCoordinate(target.sub(protagonist.getDecimalPosition().getPosition()), width, height);
-        graphics.drawLine(zero.getX(), zero.getY(), targetOrigin.getX(), targetOrigin.getY());
-        // Optimized velocity
-        graphics.setColor(Color.MAGENTA);
-        Index optimizedVelocityOrigin = toCoordinate(optimizedVelocity.getPosition(), width, height);
-        graphics.drawLine(zero.getX(), zero.getY(), optimizedVelocityOrigin.getX(), optimizedVelocityOrigin.getY());
+//        // Preferred velocity
+//        graphics.setColor(Color.BLACK);
+//        Index targetOrigin = toCoordinate(target.sub(protagonist.getDecimalPosition().getPosition()), width, height);
+//        graphics.drawLine(zero.getX(), zero.getY(), targetOrigin.getX(), targetOrigin.getY());
+//        // Optimized velocity
+//        graphics.setColor(Color.MAGENTA);
+//        Index optimizedVelocityOrigin = toCoordinate(optimizedVelocity.getPosition(), width, height);
+//        graphics.drawLine(zero.getX(), zero.getY(), optimizedVelocityOrigin.getX(), optimizedVelocityOrigin.getY());
     }
 
     private void customDrawPlace(Graphics graphics, int width, int height) {
