@@ -37,11 +37,17 @@ public class CollisionService {
                 velocityObstacleManager.inspect(other);
             }
         });
-        DecimalPosition velocity = velocityObstacleManager.getOptimalVelocity();
-        syncItem.setVelocity(velocity);
-        syncItem.executeMove();
-        if (syncItem.equals(captureSyncItem)) {
-            this.velocityObstacleManager = velocityObstacleManager;
+        DecimalPosition velocity = null;
+        try {
+            velocity = velocityObstacleManager.getOptimalVelocity();
+            syncItem.setVelocity(velocity);
+            syncItem.executeMove();
+            if (syncItem.equals(captureSyncItem)) {
+                this.velocityObstacleManager = velocityObstacleManager;
+            }
+        } catch (NoPreferredVelocityFoundException e) {
+            System.out.println("No preferred velocity for: " + syncItem);
+            // e.printStackTrace();
         }
     }
 
