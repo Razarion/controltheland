@@ -8,8 +8,8 @@ import java.io.Serializable;
  * Time: 16:24:24
  */
 public class Line implements Serializable {
-    private Index point1;
-    private Index point2;
+    private DecimalPosition point1;
+    private DecimalPosition point2;
     private double m;
     private double c;
 
@@ -20,11 +20,11 @@ public class Line implements Serializable {
 
     }
 
-    public Line(Index start, double angel, int length) {
+    public Line(DecimalPosition start, double angel, int length) {
         this(start, start.getPointFromAngelToNord(angel, length));
     }
 
-    public Line(Index point1, Index point2) {
+    public Line(DecimalPosition point1, DecimalPosition point2) {
         if (point1.equals(point2)) {
             throw new IllegalArgumentException("Points are equals: " + point1);
         }
@@ -34,11 +34,11 @@ public class Line implements Serializable {
         c = this.point1.getY() - (m * (double) this.point1.getX());
     }
 
-    public Index getPoint1() {
+    public DecimalPosition getPoint1() {
         return point1;
     }
 
-    public Index getPoint2() {
+    public DecimalPosition getPoint2() {
         return point2;
     }
 
@@ -54,13 +54,13 @@ public class Line implements Serializable {
         return c;
     }
 
-    public double getShortestDistance(Index point) {
-        Index projection = projectOnInfiniteLine(point);
+ /*   public double getShortestDistance(DecimalPosition point) {
+        DecimalPosition projection = projectOnInfiniteLine(point);
 
-        int xMin = Math.min(point1.getX(), point2.getX());
-        int xMax = Math.max(point1.getX(), point2.getX());
-        int yMin = Math.min(point1.getY(), point2.getY());
-        int yMax = Math.max(point1.getY(), point2.getY());
+        double xMin = Math.min(point1.getX(), point2.getX());
+        double xMax = Math.max(point1.getX(), point2.getX());
+        double yMin = Math.min(point1.getY(), point2.getY());
+        double yMax = Math.max(point1.getY(), point2.getY());
 
         if (projection.getX() < xMin || projection.getY() < yMin || projection.getX() > xMax || projection.getY() > yMax) {
             return Math.min(point.getDistanceDouble(point1), point.getDistanceDouble(point2));
@@ -68,7 +68,7 @@ public class Line implements Serializable {
             return point.getDistanceDouble(projection);
         }
 
-    }
+    }*/
 
     public double getShortestDistance(DecimalPosition point) {
         DecimalPosition projection = projectOnInfiniteLine(point);
@@ -86,10 +86,10 @@ public class Line implements Serializable {
 
     }
 
-    public double getShortestDistanceOnInfiniteLine(Index point) {
+  /*  public double getShortestDistanceOnInfiniteLine(Index point) {
         Index projection = projectOnInfiniteLine(point);
         return point.getDistanceDouble(projection);
-    }
+    }*/
 
     /**
      * Project the given point on this line with infinite length
@@ -98,7 +98,7 @@ public class Line implements Serializable {
      * @param point point to project
      * @return projection
      */
-    public Index projectOnInfiniteLine(Index point) {
+   /* public Index projectOnInfiniteLine(Index point) {
         if (m == 0) {
             return new Index(point.getX(), point1.getY());
         } else if (Double.isInfinite(m)) {
@@ -111,7 +111,7 @@ public class Line implements Serializable {
         double x = (c2 - c) / (m - m2);
         double y = m2 * x + c2;
         return new Index((int) Math.round(x), (int) Math.round(y));
-    }
+    }*/
 
     /**
      * Project the given point on this line with infinite length
@@ -136,8 +136,8 @@ public class Line implements Serializable {
     }
 
 
-    public Index getNearestPointOnLine(Index point) {
-        Index projection = projectOnInfiniteLine(point);
+    public DecimalPosition getNearestPointOnLine(DecimalPosition point) {
+        DecimalPosition projection = projectOnInfiniteLine(point);
         if (isPointInLine(projection)) {
             return projection;
         }
@@ -149,8 +149,8 @@ public class Line implements Serializable {
     }
 
 
-    public boolean isPointInLine(Index point) {
-        return Rectangle.generateRectangleFromAnyPoints(point1, point2).contains2(point);
+    public boolean isPointInLine(DecimalPosition point) {
+        return Rectangle.generateRectangleFromAnyPoints(point1.getPosition(), point2.getPosition()).contains2(point.getPosition());
     }
 
     public double calculateX(double y) {
@@ -173,7 +173,7 @@ public class Line implements Serializable {
         }
     }
 
-    public Index getCrossInfinite(Line line) {
+    public DecimalPosition getCrossInfinite(Line line) {
         if (Double.compare(m, line.m) == 0
                 || (Double.compare(Math.abs(m), 0.0) == 0 && Double.compare(Math.abs(line.m), 0.0) == 0)
                 || (Double.isInfinite(m) && Double.isInfinite(line.m))) {
@@ -199,11 +199,11 @@ public class Line implements Serializable {
             y = calculateY(x);
         }
 
-        return new Index((int) Math.round(x), (int) Math.round(y));
+        return new DecimalPosition(x, y);
     }
 
-    public Index getCross(Line line) {
-        Index point = getCrossInfinite(line);
+  /*  public DecimalPosition getCross(Line line) {
+        DecimalPosition point = getCrossInfinite(line);
         if (point == null) {
             return null;
         }
@@ -215,16 +215,16 @@ public class Line implements Serializable {
             return null;
         }
         return point;
-    }
+    }*/
 
     /**
      * Returns the end-point of this line (counter)clockwise relative to the given reference
      *
-     * @param reference    reference point
-     * @param counterClock direction
+     * @ param reference    reference point
+     * @ param counterClock direction
      * @return next point
      */
-    public Index getEndPoint(Index reference, boolean counterClock) {
+/*    public Index getEndPoint(Index reference, boolean counterClock) {
         double angel = -reference.getAngleToNord(point1);
         Index point1Rot = point1.rotateCounterClock(reference, angel);
         Index point2Rot = point2.rotateCounterClock(reference, angel);
@@ -241,9 +241,9 @@ public class Line implements Serializable {
                 return point2;
             }
         }
-    }
+    }*/
 
-    public int getLength() {
+    public double getLength() {
         return point1.getDistance(point2);
     }
 

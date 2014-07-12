@@ -249,21 +249,21 @@ public class Rectangle implements Serializable {
         return !Double.isNaN(yEast) && start.getY() <= yEast && yEast < endExclusive.getY() && y2 <= yEast && yEast <= y2 && x2 > start.getX() && x1 < endExclusive.getX();
     }
 
-    public List<Index> getCrossPointsExclusive(Line line) {
-        List<Index> crossPoints = new ArrayList<Index>();
-        Index crossPoint = getLineW().getCross(line);
+    public Collection<DecimalPosition> getCrossPointsInfiniteLine(Line line) {
+        List<DecimalPosition> crossPoints = new ArrayList<>();
+        DecimalPosition crossPoint = getLineW().getCrossInfinite(line);
         if (crossPoint != null) {
             crossPoints.add(crossPoint);
         }
-        crossPoint = getLineSExclusive().getCross(line);
+        crossPoint = getLineS().getCrossInfinite(line);
         if (crossPoint != null && !crossPoints.contains(crossPoint)) {
             crossPoints.add(crossPoint);
         }
-        crossPoint = getLineEExclusive().getCross(line);
+        crossPoint = getLineE().getCrossInfinite(line);
         if (crossPoint != null && !crossPoints.contains(crossPoint)) {
             crossPoints.add(crossPoint);
         }
-        crossPoint = getLineN().getCross(line);
+        crossPoint = getLineN().getCrossInfinite(line);
         if (crossPoint != null && !crossPoints.contains(crossPoint)) {
             crossPoints.add(crossPoint);
         }
@@ -277,11 +277,11 @@ public class Rectangle implements Serializable {
     /**
      * Returns the shortest distance to the line, end is inclusive
      *
-     * @param point1 line point 1
-     * @param point2 line point 2
-     * @return the shortest distance
+     * @ param point1 line point 1
+     * @ param point2 line point 2
+     * @ return the shortest distance
      */
-    public double getShortestDistanceToLine(Index point1, Index point2) {
+ /*   public double getShortestDistanceToLine(Index point1, Index point2) {
         if (doesLineCut(point1, point2)) {
             return 0;
         }
@@ -296,7 +296,7 @@ public class Rectangle implements Serializable {
         double d6 = getNearestPointInclusive(point2).getDistanceDouble(point2);
 
         return Math.min(Math.min(Math.min(d1, d2), Math.min(d3, d4)), Math.min(d5, d6));
-    }
+    }*/
 
 
     public Rectangle copy() {
@@ -548,43 +548,43 @@ public class Rectangle implements Serializable {
     }
 
     public Line getLineW() {
-        return new Line(getCornerNW(), getCornerSW());
+        return new Line(new DecimalPosition(getCornerNW()), new DecimalPosition(getCornerSW()));
     }
 
     public Line getLineS() {
-        return new Line(getCornerSW(), getCornerSE());
+        return new Line(new DecimalPosition(getCornerSW()), new DecimalPosition(getCornerSE()));
     }
 
     public Line getLineSExclusive() {
-        return new Line(getCornerSW().sub(0, 1), getCornerSE().sub(1, 1));
+        return new Line(new DecimalPosition(getCornerSW().sub(0, 1)), new DecimalPosition(getCornerSE().sub(1, 1)));
     }
 
     public Line getLineE() {
-        return new Line(getCornerSE(), getCornerNE());
+        return new Line(new DecimalPosition(getCornerSE()), new DecimalPosition(getCornerNE()));
     }
 
     public Line getLineEExclusive() {
-        return new Line(getCornerSE().sub(1, 1), getCornerNE().sub(1, 0));
+        return new Line(new DecimalPosition(getCornerSE().sub(1, 1)), new DecimalPosition(getCornerNE().sub(1, 0)));
     }
 
     public Line getLineN() {
-        return new Line(getCornerNE(), getCornerNW());
+        return new Line(new DecimalPosition(getCornerNE()), new DecimalPosition(getCornerNW()));
     }
 
     public int getArea() {
         return getWidth() * getHeight();
     }
 
-    public Collection<Line> getLines() {
+ /*   public Collection<Line> getLines() {
         Collection<Line> lines = new ArrayList<Line>();
         lines.add(new Line(getCornerNW(), getCornerSW()));
         lines.add(new Line(getCornerSW(), getCornerSE()));
         lines.add(new Line(getCornerSE(), getCornerNE()));
         lines.add(new Line(getCornerNE(), getCornerNW()));
         return lines;
-    }
+    }*/
 
-    public Line getNearestLine(Index point) {
+ /*   public Line getNearestLine(Index point) {
         double bestDistance = Double.MAX_VALUE;
         Line bestLine = null;
         for (Line line : getLines()) {
@@ -595,7 +595,7 @@ public class Rectangle implements Serializable {
             }
         }
         return bestLine;
-    }
+    }*/
 
     public static Rectangle generateRectangleFromAnyPoints(Index point1, Index point2) {
         Index start = point1.getSmallestPoint(point2);

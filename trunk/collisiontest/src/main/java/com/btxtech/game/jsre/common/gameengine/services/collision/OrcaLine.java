@@ -65,7 +65,7 @@ public class OrcaLine {
 
             if (relativePosition.determinant(truncationCenter2RelativeVelocity) > 0.0) {
                 // Project on left leg
-                coneLine = new Line(new Index(0, 0), baseAngel - coneLegAngel, 200);
+                coneLine = new Line(new DecimalPosition(0, 0), baseAngel - coneLegAngel, 200);
                 //   direction = new DecimalPosition(relativePosition.getX() * leg + relativePosition.getY() * combinedRadius,
                 //           relativePosition.getX() * combinedRadius + relativePosition.getY() * leg).multiply(1.0 / distSq);
                 projectionOnVelocityObstacle = coneLine.projectOnInfiniteLine(relativeVelocity);
@@ -73,7 +73,7 @@ public class OrcaLine {
                 direction = DecimalPosition.NULL.getPointFromAngelToNord(baseAngel - coneLegAngel - angel, MathHelper.getPythagorasC(DIRECTION_LENGTH, projectionOnVelocityObstacle.getLength()));
             } else {
                 // Project on right leg
-                coneLine = new Line(new Index(0, 0), baseAngel + coneLegAngel, 200);
+                coneLine = new Line(new DecimalPosition(0, 0), baseAngel + coneLegAngel, 200);
                 projectionOnVelocityObstacle = coneLine.projectOnInfiniteLine(relativeVelocity);
                 double angel = Math.atan(DIRECTION_LENGTH / projectionOnVelocityObstacle.getLength());
                 direction = DecimalPosition.NULL.getPointFromAngelToNord(baseAngel + coneLegAngel + angel, MathHelper.getPythagorasC(DIRECTION_LENGTH, projectionOnVelocityObstacle.getLength()));
@@ -127,14 +127,17 @@ public class OrcaLine {
         } else {
             point = protagonist.getVelocity().add(u.multiply(0.5));
             //direction = point.add(u.normalize(DIRECTION_LENGTH));
-            Index lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT).getPosition();
-            Index lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT).getPosition();
+            DecimalPosition lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
+            DecimalPosition lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT);
             borderLine = new Line(lp1, lp2);
         }
 
         u = projectionOnVelocityObstacle.sub(relativeVelocity).multiply(0.5);
         point = protagonist.getVelocity().add(u);
         direction = direction.sub(projectionOnVelocityObstacle).add(point);
+        DecimalPosition lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
+        DecimalPosition lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT);
+        borderLine = new Line(lp1, lp2);
         //if (!hasViolation) {
         //    direction = direction.rotateCounterClock(point, MathHelper.HALF_RADIANT);
         //}
@@ -192,13 +195,13 @@ public class OrcaLine {
         return coneLine;
     }
 
-    private boolean isViolated(DecimalPosition preferredVelocity) {
+    public boolean isViolated(DecimalPosition preferredVelocity) {
         // DecimalPosition relativeDirection = direction.sub(point);
         // DecimalPosition relativePreferredVelocity = preferredVelocity.sub(point);
         double angelRelativeDirection = point.getAngleToNord(direction);
         double angelRelativePreferredVelocity = point.getAngleToNord(preferredVelocity);
         //return relativeDirection.dotProduct(relativePreferredVelocity) >= 0;
-        return MathHelper.getAngel(angelRelativeDirection, angelRelativePreferredVelocity) > MathHelper.QUARTER_RADIANT;
+        return MathHelper.getAngel(angelRelativeDirection, angelRelativePreferredVelocity) - 0.001 > MathHelper.QUARTER_RADIANT;
     }
 
     public DecimalPosition nearestVelocity(DecimalPosition preferredVelocity) {
@@ -234,5 +237,29 @@ public class OrcaLine {
 
     public DecimalPosition getProjectionOnVelocityObstacle() {
         return projectionOnVelocityObstacle;
+    }
+
+    public DecimalPosition getPointOnLine(DecimalPosition preferredVelocity, boolean b) {
+        DecimalPosition projectionOnLine = borderLine.projectOnInfiniteLine(DecimalPosition.NULL);
+        if(preferredVelocity.getMagnitude() < projectionOnLine.getMagnitude()) {
+            return null;
+        }
+
+        double deltaAngel = Math.acos(projectionOnLine.getMagnitude() / preferredVelocity.getMagnitude());
+        double angel = projectionOnLine.getAngleToNorth();
+        if (b) {
+            angel += deltaAngel;
+        } else {
+            angel -= deltaAngel;
+        }
+        return DecimalPosition.NULL.getPointFromAngelToNord(angel, preferredVelocity.getMagnitude());
+    }
+
+    public DecimalPosition getCrossPoint(OrcaLine orcaLine) {
+        return borderLine.getCrossInfinite(orcaLine.borderLine);
+    }
+
+    public Line getBorderLine() {
+        return borderLine;
     }
 }
