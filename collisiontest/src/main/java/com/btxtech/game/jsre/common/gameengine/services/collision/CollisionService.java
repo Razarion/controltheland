@@ -45,6 +45,9 @@ public class CollisionService {
             if (syncItem.equals(captureSyncItem)) {
                 this.velocityObstacleManager = velocityObstacleManager;
             }
+            if(syncItem.positionReached()) {
+                syncItem.setTarget(null);
+            }
         } catch (NoPreferredVelocityFoundException e) {
             System.out.println("No preferred velocity for: " + syncItem);
             syncItem.setVelocity(DecimalPosition.NULL);

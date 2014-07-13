@@ -86,7 +86,11 @@ public class SyncItem {
     }
 
     public void setTarget(Index target) {
-        this.target = new DecimalPosition(target);
+        if (target != null) {
+            this.target = new DecimalPosition(target);
+        } else {
+            this.target = null;
+        }
     }
 
     public DecimalPosition getVelocity() {
@@ -99,6 +103,10 @@ public class SyncItem {
 
     public void executeMove() {
         decimalPosition = decimalPosition.add(velocity);
+    }
+
+    public boolean positionReached() {
+        return decimalPosition.getDistance(target) < 2.0;
     }
 
     public DecimalPosition getPreferredVelocity() {
