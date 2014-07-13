@@ -35,7 +35,7 @@ public class VelocityObstacleManager {
             return;
         }
         if (distance < 0.0) {
-            System.out.println("C*R*A*S*H"); // TODO
+            System.out.println("C*R*A*S*H " + protagonist.getId() + " with: " + other.getId() + " distance: " + distance); // TODO
             return;
         }
         orcaLines.add(new OrcaLine(protagonist, other));
@@ -114,14 +114,14 @@ public class VelocityObstacleManager {
                 if (isViolated(cross)) {
                     continue;
                 }
-                if(cross.getLength() > preferredVelocity.getLength()) {
+                if (cross.getLength() > preferredVelocity.getLength()) {
                     continue;
                 }
                 corners.add(cross);
             }
         }
 
-        if(corners.isEmpty()) {
+        if (corners.isEmpty()) {
             throw new NoPreferredVelocityFoundException();
         }
 

@@ -15,7 +15,7 @@ import model.MovingModel;
 public class CollisionService {
     private final MovingModel movingModel;
     public static final double DENSITY_OF_ITEM = 0.5;
-    public static final double MAX_DISTANCE = 500;
+    public static final double MAX_DISTANCE = 100;
     private SyncItem captureSyncItem;
     private VelocityObstacleManager velocityObstacleManager;
 
@@ -47,6 +47,7 @@ public class CollisionService {
             }
         } catch (NoPreferredVelocityFoundException e) {
             System.out.println("No preferred velocity for: " + syncItem);
+            syncItem.setVelocity(DecimalPosition.NULL);
             // e.printStackTrace();
         }
     }
