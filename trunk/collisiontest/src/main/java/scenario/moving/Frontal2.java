@@ -24,27 +24,27 @@ public class Frontal2 extends Scenario {
     @Override
     public void addItems() {
         syncItem1 = createSyncItem(RADIUS, new Index(100, 100), "SyncItem 1", false);
-        syncItem2 = createSyncItem(RADIUS, new Index(100, 150), "SyncItem 2", true);
-        syncItem3 = createSyncItem(RADIUS, new Index(150, 100), "SyncItem 3", false);
-        syncItem4 = createSyncItem(RADIUS, new Index(150, 150), "SyncItem 4", false);
+        syncItem2 = createSyncItem(RADIUS, new Index(100, 120), "SyncItem 2", true);
+        syncItem3 = createSyncItem(RADIUS, new Index(120, 100), "SyncItem 3", false);
+        syncItem4 = createSyncItem(RADIUS, new Index(120, 120), "SyncItem 4", false);
         //
         syncItem5 = createSyncItem(RADIUS, new Index(400, 100), "SyncItem 1", false);
-        syncItem6 = createSyncItem(RADIUS, new Index(400, 150), "SyncItem 2", false);
-        syncItem7 = createSyncItem(RADIUS, new Index(450, 100), "SyncItem 3", false);
-        syncItem8 = createSyncItem(RADIUS, new Index(450, 150), "SyncItem 4", false);
+        syncItem6 = createSyncItem(RADIUS, new Index(400, 120), "SyncItem 2", false);
+        syncItem7 = createSyncItem(RADIUS, new Index(420, 100), "SyncItem 3", false);
+        syncItem8 = createSyncItem(RADIUS, new Index(420, 120), "SyncItem 4", false);
     }
 
     @Override
     public void start() throws NoBetterPathFoundException {
         getMovingModel().getCollisionService().findPath(syncItem1, new Index(400, 100));
-        getMovingModel().getCollisionService().findPath(syncItem2, new Index(400, 150));
-        getMovingModel().getCollisionService().findPath(syncItem3, new Index(450, 100));
-        getMovingModel().getCollisionService().findPath(syncItem4, new Index(450, 150));
+        getMovingModel().getCollisionService().findPath(syncItem2, new Index(400, 120));
+        getMovingModel().getCollisionService().findPath(syncItem3, new Index(420, 100));
+        getMovingModel().getCollisionService().findPath(syncItem4, new Index(420, 120));
         //
         getMovingModel().getCollisionService().findPath(syncItem5, new Index(100, 100));
-        getMovingModel().getCollisionService().findPath(syncItem6, new Index(100, 150));
-        getMovingModel().getCollisionService().findPath(syncItem7, new Index(150, 100));
-        getMovingModel().getCollisionService().findPath(syncItem8, new Index(150, 150));
+        getMovingModel().getCollisionService().findPath(syncItem6, new Index(100, 120));
+        getMovingModel().getCollisionService().findPath(syncItem7, new Index(120, 100));
+        getMovingModel().getCollisionService().findPath(syncItem8, new Index(120, 120));
     }
 
     @Override
