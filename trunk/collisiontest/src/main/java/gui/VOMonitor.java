@@ -24,7 +24,7 @@ import java.util.TimerTask;
  */
 public class VOMonitor {
     private static final int FRAMES_PER_SECOND = 25;
-    private static double ZOOM = 100.0;
+    private static double ZOOM = 300.0;
     private static int LEG_LENGTH = (int) (200.0 * ZOOM);
     private static final long TIMER_DELAY = 1000 / FRAMES_PER_SECOND;
     private JFrame frame;
@@ -59,9 +59,9 @@ public class VOMonitor {
         Index middle = new Index((int) (graphics.getClipBounds().getWidth() / 2), (int) (graphics.getClipBounds().getHeight() / 2));
 
         for (OrcaLine orcaLine : velocityObstacleManager.getOrcaLines()) {
-            if(!orcaLine.isHasViolation()) {
-                continue;
-            }
+            //if(!orcaLine.isHasViolation()) {
+            //    continue;
+            //}
             Index direction = orcaLine.getDirection().multiply(ZOOM).getPosition().add(middle);
             /*graphics.drawArc(direction.getX() - 1,
                     direction.getY() - 1,
@@ -74,12 +74,18 @@ public class VOMonitor {
                     2,
                     2,
                     0, 360);*/
-            graphics.setColor(Color.RED);
-            graphics.drawLine(direction.getX(), direction.getY(), point.getX(), point.getY());
-            graphics.setColor(Color.GREEN);
+            //graphics.setColor(Color.RED);
+            //graphics.drawLine(direction.getX(), direction.getY(), point.getX(), point.getY());
+            //graphics.setColor(Color.GREEN);
             Index lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
             Index lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT);
-            graphics.drawLine(lp1.getX(), lp1.getY(), lp2.getX(), lp2.getY());
+            Index lp3 = point.rotateCounterClock(lp1, -MathHelper.QUARTER_RADIANT);
+            Index lp4 = point.rotateCounterClock(lp2, -MathHelper.THREE_QUARTER_RADIANT);
+            //graphics.drawLine(lp1.getX(), lp1.getY(), lp2.getX(), lp2.getY());
+            int[] xPoints = {lp1.getX(),lp2.getX(),lp4.getX(),lp3.getX()};
+            int[] yPoints = {lp1.getY(),lp2.getY(),lp4.getY(),lp3.getY()};
+            graphics.setColor(new Color(0f,0f,0f,0.5f));
+            graphics.fillPolygon(xPoints, yPoints,xPoints.length);
         }
         graphics.setColor(Color.BLUE);
         graphics.drawArc(middle.getX() - 1, middle.getY() - 1, 2, 2, 0, 360);
