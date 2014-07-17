@@ -34,11 +34,7 @@ public class VelocityObstacleManager {
         if (distance > CollisionService.MAX_DISTANCE) {
             return;
         }
-        if (distance < 0.0) {
-            System.out.println("C*R*A*S*H " + protagonist.getId() + " with: " + other.getId() + " distance: " + distance); // TODO
-            return;
-        }
-        orcaLines.add(new OrcaLine(protagonist, other));
+        orcaLines.add(new OrcaLine(protagonist, other, distance));
     }
 
 
