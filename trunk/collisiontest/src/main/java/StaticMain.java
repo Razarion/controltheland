@@ -1,6 +1,5 @@
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.services.collision.NoPreferredVelocityFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.collision.OrcaLine;
@@ -79,15 +78,15 @@ public class StaticMain {
     private void setupModel() {
         protagonist = new SyncItem(10, new Index(0, 0));
         protagonist.setVelocity(new DecimalPosition(-30, -31).normalize(SyncItem.SPEED));
-        SyncItem syncItem = new SyncItem(10, new Index(-80, -60));
+        SyncItem syncItem = new SyncItem(10, new Index(-20, 0));
         syncItem.setVelocity(new DecimalPosition(30, 30).normalize(SyncItem.SPEED));
         syncItems.add(syncItem);
-        syncItem = new SyncItem(10, new Index(-20, -90));
-        syncItem.setVelocity(new DecimalPosition(0, 40).normalize(SyncItem.SPEED));
-        syncItems.add(syncItem);
-        syncItem = new SyncItem(10, new Index(30, -50));
-        syncItem.setVelocity(new DecimalPosition(0, 40).normalize(SyncItem.SPEED));
-        syncItems.add(syncItem);
+        // syncItem = new SyncItem(10, new Index(-20, -90));
+        // syncItem.setVelocity(new DecimalPosition(0, 40).normalize(SyncItem.SPEED));
+        // syncItems.add(syncItem);
+        //syncItem = new SyncItem(10, new Index(30, -50));
+        //syncItem.setVelocity(new DecimalPosition(0, 40).normalize(SyncItem.SPEED));
+        //syncItems.add(syncItem);
         target = new Index(-100, -100);
 
         updateModel();
@@ -349,9 +348,9 @@ public class StaticMain {
 //            Index projection = toCoordinate(orcaLine.getProjectionOnVelocityObstacle(),  width, height);
 //            drawCross(graphics, projection);
 
-            Index point = toCoordinate(orcaLine.getPoint(),  width, height);
-           // drawCross(graphics, point);
-            Index direction = toCoordinate(orcaLine.getDirection(),  width, height);
+            Index point = toCoordinate(orcaLine.getPoint(), width, height);
+            // drawCross(graphics, point);
+            Index direction = toCoordinate(orcaLine.getDirection(), width, height);
             //graphics.setColor(Color.YELLOW);
             //graphics.drawLine(point.getX(), point.getY(), direction.getX(), direction.getY());
             Index lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
@@ -360,15 +359,15 @@ public class StaticMain {
             Index lp4 = point.rotateCounterClock(lp2, -MathHelper.THREE_QUARTER_RADIANT);
             //Index oppositeDir = orcaLine.getPoint().getPosition().sub(orcaLine.getDirection().getPosition());
             //Index lp3 = lp1.add(oppositeDir);
-           // Index lp4 = lp2.add(oppositeDir);
+            // Index lp4 = lp2.add(oppositeDir);
 
             //graphics.setColor(Color.MAGENTA);
             ///graphics.drawLine(lp1.getX(), lp1.getY(), lp2.getX(), lp2.getY());
 
-            int[] xPoints = {lp1.getX(),lp2.getX(),lp4.getX(),lp3.getX()};
-            int[] yPoints = {lp1.getY(),lp2.getY(),lp4.getY(),lp3.getY()};
-            graphics.setColor(new Color(0f,0f,0f,0.5f));
-            graphics.fillPolygon(xPoints, yPoints,xPoints.length);
+            int[] xPoints = {lp1.getX(), lp2.getX(), lp4.getX(), lp3.getX()};
+            int[] yPoints = {lp1.getY(), lp2.getY(), lp4.getY(), lp3.getY()};
+            graphics.setColor(new Color(0f, 0f, 0f, 0.5f));
+            graphics.fillPolygon(xPoints, yPoints, xPoints.length);
 
 
             //Index direction = toCoordinate(orcaLine.getDirection().getPosition(), width, height);
@@ -387,7 +386,7 @@ public class StaticMain {
         graphics.drawLine(zero.getX(), zero.getY(), targetOrigin.getX(), targetOrigin.getY());
         // Optimized velocity
         graphics.setColor(Color.BLUE);
-        if(optimizedVelocity != null) {
+        if (optimizedVelocity != null) {
             Index optimizedVelocityOrigin = toCoordinate(optimizedVelocity, width, height);
             graphics.drawLine(zero.getX(), zero.getY(), optimizedVelocityOrigin.getX(), optimizedVelocityOrigin.getY());
         }
@@ -405,7 +404,7 @@ public class StaticMain {
         graphics.drawLine(protagonistPosition.getX(), protagonistPosition.getY(), target.getX(), target.getY());
         // Optimized velocity
         graphics.setColor(Color.MAGENTA);
-        if(optimizedVelocity != null) {
+        if (optimizedVelocity != null) {
             Index optimizedVelocityOrigin = toCoordinate(optimizedVelocity.add(protagonist.getDecimalPosition()), width, height);
             graphics.drawLine(protagonistPosition.getX(), protagonistPosition.getY(), optimizedVelocityOrigin.getX(), optimizedVelocityOrigin.getY());
         }
@@ -421,7 +420,7 @@ public class StaticMain {
     }
 
     private Index toCoordinate(DecimalPosition index, int width, int height) {
-        return new Index((int)index.getX() + width / 2, height / 2 - (int)index.getY());
+        return new Index((int) index.getX() + width / 2, height / 2 - (int) index.getY());
     }
 
     public static void main(String[] args) {
@@ -429,8 +428,12 @@ public class StaticMain {
     }
 
     private void repaint() {
-        velocityCanvas.repaint();
-        placeCanvas.repaint();
+        if (velocityCanvas != null) {
+            velocityCanvas.repaint();
+        }
+        if (placeCanvas != null) {
+            placeCanvas.repaint();
+        }
         //xSpinner.setValue(protagonist.getVelocity().getX());
         //ySpinner.setValue(protagonist.getVelocity().getY());
     }

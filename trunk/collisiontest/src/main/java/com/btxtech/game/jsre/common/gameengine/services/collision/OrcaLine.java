@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import model.MovingModel;
 
 /**
  * Created by beat
@@ -27,70 +28,74 @@ public class OrcaLine {
     private double coneLegAngel;
     private DecimalPosition projectionOnVelocityObstacle;
 
-    public OrcaLine(SyncItem protagonist, SyncItem other) {
+    public OrcaLine(SyncItem protagonist, SyncItem other, double distance) {
         relativePosition = other.getDecimalPosition().sub(protagonist.getDecimalPosition());
         relativeVelocity = protagonist.getVelocity().sub(other.getVelocity());
-        truncationMiddle = relativePosition.divide(VelocityObstacleManager.FORECAST_FACTOR);
-        DecimalPosition truncationCenter2RelativeVelocity = relativeVelocity.sub(truncationMiddle);
         double distSq = Math.pow(relativePosition.getLength(), 2);
         combinedRadius = protagonist.getRadius() + other.getRadius();
-        truncationRadius = combinedRadius / VelocityObstacleManager.FORECAST_FACTOR;
         double combinedRadiusSq = Math.pow(combinedRadius, 2);
         // Vector from cutoff center to relative velocity.
-        double wLengthSq = Math.pow(truncationCenter2RelativeVelocity.getLength(), 2);
         coneLegAngel = MathHelper.negateAngel(Math.asin(combinedRadius / relativePosition.getLength()));
         double baseAngel = MathHelper.negateAngel(relativePosition.getAngleToNorth());
         double truncationCenter2LegAngel = MathHelper.negateAngel(MathHelper.QUARTER_RADIANT - coneLegAngel);
-        double truncationCenter2RelativeVelocityAngel = MathHelper.negateAngel(truncationMiddle.getAngleToNord(relativeVelocity) + MathHelper.HALF_RADIANT - baseAngel);
 
-        double dotProduct1 = truncationCenter2RelativeVelocity.dotProduct(relativePosition);
-        // Projection on truncated circle
-        // onTruncation = dotProduct1 < 0.0 && Math.pow(dotProduct1, 2) > combinedRadiusSq * wLengthSq;
-        onTruncation = Math.abs(truncationCenter2RelativeVelocityAngel) < Math.abs(truncationCenter2LegAngel);
 
-        //if (dotProduct1 < 0.0 && Math.pow(dotProduct1, 2) > combinedRadiusSq * wLengthSq) {
-        if (onTruncation) {
-            // Project on cut-off circle
-            double wLength = truncationCenter2RelativeVelocity.getMagnitude();
-            //DecimalPosition unitW = truncationCenter2RelativeVelocity.normalize();
-            hasViolation = wLength < truncationRadius;
-            //direction = new DecimalPosition(unitW.getY(), -unitW.getX()); // Rotate -90 degree
-            // u = unitW.multiply(truncationRadius - wLength);
-            u = truncationCenter2RelativeVelocity.normalize(truncationRadius - wLength);
-            projectionOnVelocityObstacle = truncationMiddle.getPointWithDistance(truncationRadius, relativeVelocity, true);
-            direction = truncationMiddle.getPointWithDistance(truncationRadius + DIRECTION_LENGTH, relativeVelocity, true);
-        } else {
-            //Project on legs
-            double leg = Math.sqrt(distSq - combinedRadiusSq);
+        if(distance >= 0) {
+            truncationMiddle = relativePosition.divide(VelocityObstacleManager.FORECAST_FACTOR);
+            DecimalPosition truncationCenter2RelativeVelocity = relativeVelocity.sub(truncationMiddle);
+            double wLengthSq = Math.pow(truncationCenter2RelativeVelocity.getLength(), 2);
+            truncationRadius = combinedRadius / VelocityObstacleManager.FORECAST_FACTOR;
+            double truncationCenter2RelativeVelocityAngel = MathHelper.negateAngel(truncationMiddle.getAngleToNord(relativeVelocity) + MathHelper.HALF_RADIANT - baseAngel);
 
-            if (relativePosition.determinant(truncationCenter2RelativeVelocity) > 0.0) {
-                // Project on left leg
-                coneLine = new Line(new DecimalPosition(0, 0), baseAngel - coneLegAngel, 200);
-                //   direction = new DecimalPosition(relativePosition.getX() * leg + relativePosition.getY() * combinedRadius,
-                //           relativePosition.getX() * combinedRadius + relativePosition.getY() * leg).multiply(1.0 / distSq);
-                projectionOnVelocityObstacle = coneLine.projectOnInfiniteLine(relativeVelocity);
-                double angel = Math.atan(DIRECTION_LENGTH / projectionOnVelocityObstacle.getLength());
-                direction = DecimalPosition.NULL.getPointFromAngelToNord(baseAngel - coneLegAngel - angel, MathHelper.getPythagorasC(DIRECTION_LENGTH, projectionOnVelocityObstacle.getLength()));
+
+            double dotProduct1 = truncationCenter2RelativeVelocity.dotProduct(relativePosition);
+            // Projection on truncated circle
+            // onTruncation = dotProduct1 < 0.0 && Math.pow(dotProduct1, 2) > combinedRadiusSq * wLengthSq;
+            onTruncation = Math.abs(truncationCenter2RelativeVelocityAngel) < Math.abs(truncationCenter2LegAngel);
+
+            //if (dotProduct1 < 0.0 && Math.pow(dotProduct1, 2) > combinedRadiusSq * wLengthSq) {
+            if (onTruncation) {
+                // Project on cut-off circle
+                double wLength = truncationCenter2RelativeVelocity.getMagnitude();
+                //DecimalPosition unitW = truncationCenter2RelativeVelocity.normalize();
+                hasViolation = wLength < truncationRadius;
+                //direction = new DecimalPosition(unitW.getY(), -unitW.getX()); // Rotate -90 degree
+                // u = unitW.multiply(truncationRadius - wLength);
+                u = truncationCenter2RelativeVelocity.normalize(truncationRadius - wLength);
+                projectionOnVelocityObstacle = truncationMiddle.getPointWithDistance(truncationRadius, relativeVelocity, true);
+                direction = truncationMiddle.getPointWithDistance(truncationRadius + DIRECTION_LENGTH, relativeVelocity, true);
             } else {
-                // Project on right leg
-                coneLine = new Line(new DecimalPosition(0, 0), baseAngel + coneLegAngel, 200);
-                projectionOnVelocityObstacle = coneLine.projectOnInfiniteLine(relativeVelocity);
-                double angel = Math.atan(DIRECTION_LENGTH / projectionOnVelocityObstacle.getLength());
-                direction = DecimalPosition.NULL.getPointFromAngelToNord(baseAngel + coneLegAngel + angel, MathHelper.getPythagorasC(DIRECTION_LENGTH, projectionOnVelocityObstacle.getLength()));
-                //  direction = new DecimalPosition(relativePosition.getX() * leg - relativePosition.getY() * combinedRadius,
-                //          -relativePosition.getX() * combinedRadius + relativePosition.getY() * leg).negate().multiply(1.0 / distSq);
-            }
+                //Project on legs
+                double leg = Math.sqrt(distSq - combinedRadiusSq);
 
-            // double dotProduct2 = relativeVelocity.dotProduct(direction);
-            // u = direction.multiply(dotProduct2).sub(relativeVelocity);
-            DecimalPosition projection = coneLine.projectOnInfiniteLine(relativeVelocity);
-            u = projection.sub(relativeVelocity);
-            double angelToRelativeVelocity = MathHelper.getAngel(baseAngel, relativeVelocity.getAngleToNorth());
-            double coneLegAngelAbs = Math.abs(MathHelper.normaliseAngel(coneLegAngel));
-            hasViolation = angelToRelativeVelocity < coneLegAngelAbs;
-        }
-        if (u.getMagnitude() == 0.0) {
-            // throw new UnsupportedOperationException();
+                if (relativePosition.determinant(truncationCenter2RelativeVelocity) > 0.0) {
+                    // Project on left leg
+                    coneLine = new Line(new DecimalPosition(0, 0), baseAngel - coneLegAngel, 200);
+                    //   direction = new DecimalPosition(relativePosition.getX() * leg + relativePosition.getY() * combinedRadius,
+                    //           relativePosition.getX() * combinedRadius + relativePosition.getY() * leg).multiply(1.0 / distSq);
+                    projectionOnVelocityObstacle = coneLine.projectOnInfiniteLine(relativeVelocity);
+                    double angel = Math.atan(DIRECTION_LENGTH / projectionOnVelocityObstacle.getLength());
+                    direction = DecimalPosition.NULL.getPointFromAngelToNord(baseAngel - coneLegAngel - angel, MathHelper.getPythagorasC(DIRECTION_LENGTH, projectionOnVelocityObstacle.getLength()));
+                } else {
+                    // Project on right leg
+                    coneLine = new Line(new DecimalPosition(0, 0), baseAngel + coneLegAngel, 200);
+                    projectionOnVelocityObstacle = coneLine.projectOnInfiniteLine(relativeVelocity);
+                    double angel = Math.atan(DIRECTION_LENGTH / projectionOnVelocityObstacle.getLength());
+                    direction = DecimalPosition.NULL.getPointFromAngelToNord(baseAngel + coneLegAngel + angel, MathHelper.getPythagorasC(DIRECTION_LENGTH, projectionOnVelocityObstacle.getLength()));
+                    //  direction = new DecimalPosition(relativePosition.getX() * leg - relativePosition.getY() * combinedRadius,
+                    //          -relativePosition.getX() * combinedRadius + relativePosition.getY() * leg).negate().multiply(1.0 / distSq);
+                }
+
+                // double dotProduct2 = relativeVelocity.dotProduct(direction);
+                // u = direction.multiply(dotProduct2).sub(relativeVelocity);
+                DecimalPosition projection = coneLine.projectOnInfiniteLine(relativeVelocity);
+                u = projection.sub(relativeVelocity);
+                double angelToRelativeVelocity = MathHelper.getAngel(baseAngel, relativeVelocity.getAngleToNorth());
+                double coneLegAngelAbs = Math.abs(MathHelper.normaliseAngel(coneLegAngel));
+                hasViolation = angelToRelativeVelocity < coneLegAngelAbs;
+            }
+            if (u.getMagnitude() == 0.0) {
+                // throw new UnsupportedOperationException();
             /*
             // TODO test this
             point = protagonist.getVelocity().getCopy();
@@ -107,9 +112,9 @@ public class OrcaLine {
                 }
                 direction = DecimalPosition.NULL.getPointFromAngelToNord(directionAngel, MathHelper.getPythagorasC(DIRECTION_LENGTH, point.getLength()));
             }*/
-        } else if (!hasViolation) {
-            //  throw new UnsupportedOperationException();
-            //    direction = direction.rotateCounterClock(point, MathHelper.HALF_RADIANT);
+            } else if (!hasViolation) {
+                //  throw new UnsupportedOperationException();
+                //    direction = direction.rotateCounterClock(point, MathHelper.HALF_RADIANT);
         /*   point = protagonist.getVelocity().getCopy();
             if (onTruncation) {
                 direction = truncationMiddle.getPointWithDistance(truncationRadius + DIRECTION_LENGTH, point, true);
@@ -124,17 +129,43 @@ public class OrcaLine {
                 }
                 direction = DecimalPosition.NULL.getPointFromAngelToNord(directionAngel, MathHelper.getPythagorasC(DIRECTION_LENGTH, point.getLength()));
             }*/
+            } else {
+                //direction = point.add(u.normalize(DIRECTION_LENGTH));
+                //DecimalPosition lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
+                //DecimalPosition lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT);
+                //borderLine = new Line(lp1, lp2);
+            }
+
+            //direction = direction.sub(projectionOnVelocityObstacle).add(point);
+            //point = protagonist.getVelocity().add(u.multiply(0.5));
+            //u = projectionOnVelocityObstacle.sub(relativeVelocity).multiply(0.5);
         } else {
-            point = protagonist.getVelocity().add(u.multiply(0.5));
-            //direction = point.add(u.normalize(DIRECTION_LENGTH));
-            DecimalPosition lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
-            DecimalPosition lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT);
-            borderLine = new Line(lp1, lp2);
+            // Is colliding
+            // Project on cut-off circle
+            truncationMiddle = relativePosition.divide(MovingModel.TIMER_DELAY);
+            DecimalPosition truncationCenter2RelativeVelocity = relativeVelocity.sub(truncationMiddle);
+            //DecimalPosition unitW = truncationCenter2RelativeVelocity.normalize();
+            //direction = new DecimalPosition(unitW.getY(), -unitW.getX()); // Rotate -90 degree
+            // u = unitW.multiply(truncationRadius - wLength);
+            truncationRadius = combinedRadius / MovingModel.TIMER_DELAY;
+            u = truncationCenter2RelativeVelocity.normalize(truncationRadius - truncationCenter2RelativeVelocity.getMagnitude());
+            projectionOnVelocityObstacle = truncationMiddle.getPointWithDistance(truncationRadius, relativeVelocity, true);
+            direction = truncationMiddle.getPointWithDistance(truncationRadius + DIRECTION_LENGTH, relativeVelocity, true);
+///
+
+
+
+//	        // Vector from cutoff center to relative velocity
+//            DecimalPosition w = relativeVelocity.sub(relativePosition.divide(MovingModel.TIMER_DELAY));
+//
+//            DecimalPosition unitW = w.normalize();
+//
+//            direction = new DecimalPosition(unitW.getY(), -unitW.getX());
+//            u = unitW.multiply(combinedRadius / MovingModel.TIMER_DELAY - w.getMagnitude()).multiply(0.5);
+//            point = protagonist.getVelocity().add(u);
         }
 
-        u = projectionOnVelocityObstacle.sub(relativeVelocity).multiply(0.5);
-        point = protagonist.getVelocity().add(u);
-        direction = direction.sub(projectionOnVelocityObstacle).add(point);
+        point = protagonist.getVelocity().add(u.multiply(0.5));
         DecimalPosition lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
         DecimalPosition lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT);
         borderLine = new Line(lp1, lp2);

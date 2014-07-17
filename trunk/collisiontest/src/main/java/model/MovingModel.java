@@ -15,7 +15,8 @@ import java.util.TimerTask;
 
 public class MovingModel {
     private static final int FRAMES_PER_SECOND = 60;
-    private static final long TIMER_DELAY = 1000 / FRAMES_PER_SECOND;
+    public static final long TIMER_DELAY_MILLIS = 1000 / FRAMES_PER_SECOND;
+    public static final double TIMER_DELAY = (double)TIMER_DELAY_MILLIS / 1000.0;
     private long lastTick;
     final private List<SyncItem> syncItems = new ArrayList<>();
     // private SyncItem protagonist;
@@ -36,7 +37,7 @@ public class MovingModel {
     private void startTimer() {
         stopTimer();
         timer = new Timer("ItemTimerTask", true);
-        timer.schedule(new ItemTimerTask(), 0, TIMER_DELAY);
+        timer.schedule(new ItemTimerTask(), 0, TIMER_DELAY_MILLIS);
     }
 
     private void stopTimer() {
