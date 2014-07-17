@@ -16,7 +16,7 @@ import java.util.List;
  * on 09.06.2014.
  */
 public class VelocityObstacleManager {
-    public static final double FORECAST_FACTOR = 120;
+    public static final double FORECAST_FACTOR = 30;
     // public static final double FORECAST_FACTOR = 2;
     private static final double AVO_EPSILON = 1.0e-6;
     private List<OrcaLine> orcaLines = new ArrayList<>();
