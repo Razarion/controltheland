@@ -151,6 +151,37 @@ public class StaticMain {
 
             }
         };
+        JSpinner xPosSpinner = new JSpinner();
+        xPosSpinner.setValue(protagonist.getDecimalPosition().getX());
+        menu.add(xPosSpinner);
+        xPosSpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                try {
+                    double newX = ((Number) ((JSpinner) e.getSource()).getValue()).doubleValue();
+                    protagonist.setDecimalPosition(new DecimalPosition(newX, protagonist.getDecimalPosition().getY()));
+                    updateModel();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        JSpinner yPosSpinner = new JSpinner();
+        yPosSpinner.setValue(protagonist.getDecimalPosition().getY());
+        menu.add(yPosSpinner);
+        yPosSpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                try {
+                    double newY = ((Number) ((JSpinner) e.getSource()).getValue()).doubleValue();
+                    protagonist.setDecimalPosition(new DecimalPosition(protagonist.getDecimalPosition().getX(), newY));
+                    updateModel();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
 
         xSpinner = new JSpinner();
         xSpinner.setValue(protagonist.getVelocity().getX());

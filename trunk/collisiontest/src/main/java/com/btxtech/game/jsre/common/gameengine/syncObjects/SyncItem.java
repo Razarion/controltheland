@@ -109,6 +109,10 @@ public class SyncItem {
         return decimalPosition.getDistance(target) < 2.0;
     }
 
+    public void setDecimalPosition(DecimalPosition decimalPosition) {
+        this.decimalPosition = decimalPosition;
+    }
+
     public DecimalPosition getPreferredVelocity() {
         return preferredVelocity;
     }

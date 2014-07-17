@@ -94,6 +94,7 @@ public class OrcaLine {
                 double coneLegAngelAbs = Math.abs(MathHelper.normaliseAngel(coneLegAngel));
                 hasViolation = angelToRelativeVelocity < coneLegAngelAbs;
             }
+            point = protagonist.getVelocity().add(u.multiply(0.5));
             if (u.getMagnitude() == 0.0) {
                 // throw new UnsupportedOperationException();
             /*
@@ -151,6 +152,12 @@ public class OrcaLine {
             u = truncationCenter2RelativeVelocity.normalize(truncationRadius - truncationCenter2RelativeVelocity.getMagnitude());
             projectionOnVelocityObstacle = truncationMiddle.getPointWithDistance(truncationRadius, relativeVelocity, true);
             direction = truncationMiddle.getPointWithDistance(truncationRadius + DIRECTION_LENGTH, relativeVelocity, true);
+
+            point = protagonist.getVelocity().add(u.multiply(0.5));
+            if(point.getMagnitude() + 0.1 > SyncItem.SPEED) {
+                point = point.normalize(SyncItem.SPEED - 0.1);
+            }
+
 ///
 
 
@@ -165,7 +172,6 @@ public class OrcaLine {
 //            point = protagonist.getVelocity().add(u);
         }
 
-        point = protagonist.getVelocity().add(u.multiply(0.5));
         DecimalPosition lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
         DecimalPosition lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT);
         borderLine = new Line(lp1, lp2);
