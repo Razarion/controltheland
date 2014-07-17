@@ -15,7 +15,7 @@ import model.MovingModel;
 public class CollisionService {
     private final MovingModel movingModel;
     public static final double DENSITY_OF_ITEM = 0.5;
-    public static final double MAX_DISTANCE = 100;
+    public static final double MAX_DISTANCE = 20;
     private SyncItem captureSyncItem;
     private VelocityObstacleManager velocityObstacleManager;
 
