@@ -31,20 +31,20 @@ public class CollisionService {
     public void moveItem(Terrain terrain, MovingModel movingModel, final SyncItem syncItem, double factor) {
         // System.out.println("syncItem: " + syncItem);
         final VelocityObstacleManager velocityObstacleManager = new VelocityObstacleManager(syncItem);
+        if (syncItem.equals(captureSyncItem)) {
+            this.velocityObstacleManager = velocityObstacleManager;
+        }
         movingModel.iterateOverSyncItems(new MovingModel.SyncItemCallback() {
             @Override
             public void onSyncItem(SyncItem other) {
                 velocityObstacleManager.inspect(other);
             }
         });
-        DecimalPosition velocity = null;
+        DecimalPosition velocity;
         try {
             velocity = velocityObstacleManager.getOptimalVelocity();
             syncItem.setVelocity(velocity);
             syncItem.executeMove();
-            if (syncItem.equals(captureSyncItem)) {
-                this.velocityObstacleManager = velocityObstacleManager;
-            }
             if(syncItem.positionReached()) {
                 syncItem.setTarget(null);
             }

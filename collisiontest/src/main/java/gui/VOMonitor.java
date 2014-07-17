@@ -24,7 +24,7 @@ import java.util.TimerTask;
  */
 public class VOMonitor {
     private static final int FRAMES_PER_SECOND = 25;
-    private static double ZOOM = 300.0;
+    private static double ZOOM = 1;
     private static int LEG_LENGTH = (int) (200.0 * ZOOM);
     private static final long TIMER_DELAY = 1000 / FRAMES_PER_SECOND;
     private JFrame frame;
