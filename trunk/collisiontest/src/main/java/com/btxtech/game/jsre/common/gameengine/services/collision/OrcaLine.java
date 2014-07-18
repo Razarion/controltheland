@@ -48,8 +48,13 @@ public class OrcaLine {
                 // Project on cut-off circle
                 double wLength = truncationCenter2RelativeVelocity.getMagnitude();
                 u = truncationCenter2RelativeVelocity.normalize(truncationRadius - wLength);
-                projectionOnVelocityObstacle = truncationMiddle.getPointWithDistance(truncationRadius, relativeVelocity, true);
-                direction = truncationMiddle.getPointWithDistance(truncationRadius + DIRECTION_LENGTH, relativeVelocity, true);
+                if(truncationMiddle.getDistance(relativeVelocity) < 0.01) {
+                    projectionOnVelocityObstacle = DecimalPosition.NULL.getPointWithDistance(truncationMiddle.getMagnitude() - truncationRadius,truncationMiddle, true);
+                    direction = DecimalPosition.NULL.getPointWithDistance(truncationMiddle.getMagnitude() - truncationRadius - DIRECTION_LENGTH,truncationMiddle, true);
+                }else{
+                    projectionOnVelocityObstacle = truncationMiddle.getPointWithDistance(truncationRadius, relativeVelocity, true);
+                    direction = truncationMiddle.getPointWithDistance(truncationRadius + DIRECTION_LENGTH, relativeVelocity, true);
+                }
             } else {
                 //Project on legs
                 if (relativePosition.determinant(truncationCenter2RelativeVelocity) > 0.0) {

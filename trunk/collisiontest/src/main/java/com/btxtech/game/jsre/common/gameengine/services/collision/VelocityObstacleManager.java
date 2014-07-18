@@ -15,7 +15,7 @@ import java.util.List;
  * on 09.06.2014.
  */
 public class VelocityObstacleManager {
-    public static final double FORECAST_FACTOR = 30;
+    public static final double FORECAST_FACTOR = 120;
     // public static final double FORECAST_FACTOR = 2;
     private List<OrcaLine> orcaLines = new ArrayList<>();
     private SyncItem protagonist;
@@ -34,8 +34,6 @@ public class VelocityObstacleManager {
         }
         OrcaLine orcaLine = new OrcaLine(protagonist, other, distance);
         orcaLines.add(orcaLine);
-        System.out.println("Other: " + other);
-        System.out.println("OrcaLine: " + orcaLine);
     }
 
 
