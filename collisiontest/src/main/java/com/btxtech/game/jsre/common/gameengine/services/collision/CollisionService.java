@@ -28,7 +28,7 @@ public class CollisionService {
         int yTiles = (int) Math.ceil(terrain.getYCount() * Constants.TERRAIN_TILE_HEIGHT / Constants.COLLISION_TILE_HEIGHT);
     }
 
-    public void moveItem(Terrain terrain, MovingModel movingModel, final SyncItem syncItem, double factor) {
+    public void calculateVelocity(Terrain terrain, MovingModel movingModel, final SyncItem syncItem, double factor) {
         // System.out.println("syncItem: " + syncItem);
         final VelocityObstacleManager velocityObstacleManager = new VelocityObstacleManager(syncItem);
         if (syncItem.equals(captureSyncItem)) {
@@ -43,14 +43,13 @@ public class CollisionService {
         DecimalPosition velocity;
         try {
             velocity = velocityObstacleManager.getOptimalVelocity();
-            syncItem.setVelocity(velocity);
-            syncItem.executeMove();
+            syncItem.setOptimizedVelocity(velocity);
             if(syncItem.positionReached()) {
                 syncItem.setTarget(null);
             }
         } catch (NoPreferredVelocityFoundException e) {
             System.out.println("No preferred velocity for: " + syncItem);
-            syncItem.setVelocity(DecimalPosition.NULL);
+            syncItem.setOptimizedVelocity(DecimalPosition.NULL);
             // e.printStackTrace();
         }
     }

@@ -154,9 +154,15 @@ public class MovingModel {
                 for (SyncItem syncItem : syncItems) {
                     debugSyncItem = syncItem;
                     if (syncItem.isMoving()) {
-                        collisionService.moveItem(terrain, this, syncItem, factor);
+                        collisionService.calculateVelocity(terrain, this, syncItem, factor);
                     }
                 }
+                for (SyncItem syncItem : syncItems) {
+                    if (syncItem.isMoving()) {
+                        syncItem.executeMove();
+                    }
+                }
+
             }
         } catch (Exception e) {
             System.out.println("tick failed: " + debugSyncItem);

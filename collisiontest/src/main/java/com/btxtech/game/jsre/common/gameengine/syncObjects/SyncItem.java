@@ -34,7 +34,7 @@ public class SyncItem {
     private DecimalPosition decimalPosition;
     private DecimalPosition target;
     private DecimalPosition velocity = DecimalPosition.NULL;
-    private DecimalPosition preferredVelocity;
+    private DecimalPosition optimizedVelocity;
 
     public SyncItem(int radius, Index position) {
         this.radius = radius;
@@ -102,6 +102,10 @@ public class SyncItem {
     }
 
     public void executeMove() {
+        if(optimizedVelocity == null) {
+            return;
+        }
+        velocity = optimizedVelocity;
         decimalPosition = decimalPosition.add(velocity);
     }
 
@@ -113,12 +117,12 @@ public class SyncItem {
         this.decimalPosition = decimalPosition;
     }
 
-    public DecimalPosition getPreferredVelocity() {
-        return preferredVelocity;
+    public DecimalPosition getOptimizedVelocity() {
+        return optimizedVelocity;
     }
 
-    public void setPreferredVelocity(DecimalPosition preferredVelocity) {
-        this.preferredVelocity = preferredVelocity;
+    public void setOptimizedVelocity(DecimalPosition optimizedVelocity) {
+        this.optimizedVelocity = optimizedVelocity;
     }
 
     @Override
