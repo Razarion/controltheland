@@ -15,7 +15,7 @@ import model.MovingModel;
 public class CollisionService {
     private final MovingModel movingModel;
     public static final double DENSITY_OF_ITEM = 0.5;
-    public static final double MAX_DISTANCE = 20;
+    public static final double MAX_DISTANCE = 100;
     private SyncItem captureSyncItem;
     private VelocityObstacleManager velocityObstacleManager;
 
@@ -30,7 +30,6 @@ public class CollisionService {
 
     public void calculateVelocity(Terrain terrain, MovingModel movingModel, final SyncItem syncItem, double factor) {
         // System.out.println("syncItem: " + syncItem);
-        System.out.println("--------- calculateVelocity -------- for: " + syncItem);
         final VelocityObstacleManager velocityObstacleManager = new VelocityObstacleManager(syncItem);
         if (syncItem.equals(captureSyncItem)) {
             this.velocityObstacleManager = velocityObstacleManager;
@@ -43,7 +42,6 @@ public class CollisionService {
         });
         try {
             DecimalPosition optimizedVelocity = velocityObstacleManager.getOptimalVelocity();
-            System.out.println("OptimizedVelocity: " + optimizedVelocity);
             syncItem.setOptimizedVelocity(optimizedVelocity);
             if(syncItem.positionReached()) {
                 syncItem.setTarget(null);

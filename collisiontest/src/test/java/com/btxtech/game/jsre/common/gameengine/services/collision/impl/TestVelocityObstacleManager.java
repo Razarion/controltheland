@@ -1,7 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
 import com.btxtech.game.jsre.client.common.DecimalPosition;
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.collision.NoPreferredVelocityFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.collision.VelocityObstacleManager;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -23,9 +22,8 @@ public class TestVelocityObstacleManager {
         VelocityObstacleManager velocityObstacleManager = new VelocityObstacleManager(protagonistMock);
         velocityObstacleManager.inspect(otherMock);
         DecimalPosition optimizedVelocity = velocityObstacleManager.getOptimalVelocity();
-        System.out.println("optimalVelocity: " + optimizedVelocity);
-        new VelocityManagerVisualizer(velocityObstacleManager, optimizedVelocity);
-//        assertDecimalPosition(new DecimalPosition(233.07530821713456, 101.79156113367335), optimizedVelocity);
+        // new VelocityManagerVisualizer(velocityObstacleManager, optimizedVelocity);
+        assertDecimalPosition(new DecimalPosition(0.43428, 0.2477818), optimizedVelocity);
     }
 
     private void assertDecimalPosition(DecimalPosition expected, DecimalPosition actual) {
