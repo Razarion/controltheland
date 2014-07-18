@@ -30,6 +30,7 @@ public class CollisionService {
 
     public void calculateVelocity(Terrain terrain, MovingModel movingModel, final SyncItem syncItem, double factor) {
         // System.out.println("syncItem: " + syncItem);
+        System.out.println("--------- calculateVelocity -------- for: " + syncItem);
         final VelocityObstacleManager velocityObstacleManager = new VelocityObstacleManager(syncItem);
         if (syncItem.equals(captureSyncItem)) {
             this.velocityObstacleManager = velocityObstacleManager;
@@ -40,10 +41,10 @@ public class CollisionService {
                 velocityObstacleManager.inspect(other);
             }
         });
-        DecimalPosition velocity;
         try {
-            velocity = velocityObstacleManager.getOptimalVelocity();
-            syncItem.setOptimizedVelocity(velocity);
+            DecimalPosition optimizedVelocity = velocityObstacleManager.getOptimalVelocity();
+            System.out.println("OptimizedVelocity: " + optimizedVelocity);
+            syncItem.setOptimizedVelocity(optimizedVelocity);
             if(syncItem.positionReached()) {
                 syncItem.setTarget(null);
             }

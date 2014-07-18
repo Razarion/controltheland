@@ -37,10 +37,10 @@ public class MovingMain {
 
         List<Scenario> scenarios = new ArrayList<>();
 
+        scenarios.add(new Frontal());
         scenarios.add(new MoveToPosition());
         scenarios.add(new Static());
         scenarios.add(new Factory());
-        scenarios.add(new Frontal());
         scenarios.add(new Frontal2());
         scenarios.add(new Blocking());
         scenarios.add(new Factory());
