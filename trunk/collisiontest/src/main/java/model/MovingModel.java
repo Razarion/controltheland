@@ -162,7 +162,6 @@ public class MovingModel {
                         syncItem.executeMove();
                     }
                 }
-
             }
         } catch (Exception e) {
             System.out.println("tick failed: " + debugSyncItem);

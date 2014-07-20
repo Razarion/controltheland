@@ -24,8 +24,10 @@ public class OrcaLine {
     private Line coneLine;
     private Line borderLine;
     private DecimalPosition projectionOnVelocityObstacle;
+    private SyncItem other;
 
     public OrcaLine(SyncItem protagonist, SyncItem other, double distance) {
+        this.other = other;
         relativePosition = other.getDecimalPosition().sub(protagonist.getDecimalPosition());
         relativeVelocity = protagonist.getVelocity().sub(other.getVelocity());
         combinedRadius = protagonist.getRadius() + other.getRadius();
@@ -174,5 +176,9 @@ public class OrcaLine {
 
     public Line getBorderLine() {
         return borderLine;
+    }
+
+    public SyncItem getOther() {
+        return other;
     }
 }

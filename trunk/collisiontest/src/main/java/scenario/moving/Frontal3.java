@@ -28,11 +28,11 @@ public class Frontal3 extends Scenario {
             }
         }
 
-        for (int x = 0; x < 5; x++) {
+  /*      for (int x = 0; x < 5; x++) {
             for (int y = 0; y < 5; y++) {
                 right2Left.add(createSyncItem(RADIUS, new DecimalPosition(400 + x * 2.5 * RADIUS, 100 + y * 2.5 * RADIUS).getPosition(), "SyncItem 1", false));
             }
-        }
+        }*/
     }
 
     @Override

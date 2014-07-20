@@ -68,10 +68,6 @@ public class VelocityObstacleManager {
         List<DecimalPosition> pointOnLines = new ArrayList<>();
 
         for (OrcaLine orcaLine : orcaLines) {
-            if (!orcaLine.isViolated(preferredVelocity)) {
-                continue;
-            }
-
             DecimalPosition point = orcaLine.getPointOnLine(preferredVelocity, true);
             if (point != null && !isViolated(point)) {
                 pointOnLines.add(point);
