@@ -17,7 +17,7 @@ public class CollisionService {
     public static final double DENSITY_OF_ITEM = 0.5;
     public static final double MAX_DISTANCE = 100;
     private SyncItem captureSyncItem;
-    private VelocityObstacleManager velocityObstacleManager;
+    private VelocityObstacleManager captured;
 
     public CollisionService(MovingModel movingModel) {
         this.movingModel = movingModel;
@@ -26,13 +26,14 @@ public class CollisionService {
     public void init(Terrain terrain) {
         int xTiles = (int) Math.ceil(terrain.getXCount() * Constants.TERRAIN_TILE_WIDTH / Constants.COLLISION_TILE_WIDTH);
         int yTiles = (int) Math.ceil(terrain.getYCount() * Constants.TERRAIN_TILE_HEIGHT / Constants.COLLISION_TILE_HEIGHT);
+        captured = null;
     }
 
     public void calculateVelocity(Terrain terrain, MovingModel movingModel, final SyncItem syncItem, double factor) {
         // System.out.println("syncItem: " + syncItem);
         final VelocityObstacleManager velocityObstacleManager = new VelocityObstacleManager(syncItem);
         if (syncItem.equals(captureSyncItem)) {
-            this.velocityObstacleManager = velocityObstacleManager;
+            this.captured = velocityObstacleManager;
         }
         movingModel.iterateOverSyncItems(new MovingModel.SyncItemCallback() {
             @Override
@@ -75,7 +76,7 @@ public class CollisionService {
     }
 
     public VelocityObstacleManager getCaptured() {
-        return velocityObstacleManager;
+        return captured;
     }
 
 }

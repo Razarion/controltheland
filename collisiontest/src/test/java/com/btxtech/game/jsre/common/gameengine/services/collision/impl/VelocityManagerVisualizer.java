@@ -10,8 +10,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -29,11 +32,21 @@ public class VelocityManagerVisualizer {
     private static int INIT_WIDTH = 800;
     private static int INIT_HEIGHT = 800;
     private static final int GRID_SIZE = 20;
-    private static double ZOOM = 100;
+    private static double ZOOM = 500;
     private int velocityWidth = INIT_WIDTH;
     private int velocityHeight = INIT_HEIGHT;
     private VelocityObstacleManager velocityObstacleManager;
     private DecimalPosition optimizedVelocity;
+    private double zoom = ZOOM;
+
+    public static void startAndWaitForClose(VelocityObstacleManager velocityObstacleManager, DecimalPosition optimizedVelocity) {
+        new VelocityManagerVisualizer(velocityObstacleManager, optimizedVelocity);
+        try {
+            Thread.sleep(Long.MAX_VALUE);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     public VelocityManagerVisualizer(VelocityObstacleManager velocityObstacleManager, DecimalPosition optimizedVelocity) {
         this.velocityObstacleManager = velocityObstacleManager;
@@ -49,11 +62,6 @@ public class VelocityManagerVisualizer {
                 velocityFrame.setVisible(true);
             }
         });
-        try {
-            Thread.sleep(Long.MAX_VALUE);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private void addComponentsToVelocityPane(Container pane) {
@@ -70,8 +78,12 @@ public class VelocityManagerVisualizer {
         final JLabel mouseLabel = new JLabel("Mouse Position:");
         menu.add(mouseLabel);
 
+        // Zoom spinner
+        JSpinner zoomSpinner = new JSpinner();
+        zoomSpinner.setValue(zoom);
+        menu.add(zoomSpinner);
         // Setup canvas
-        JPanel velocityCanvas = new JPanel() {
+        final JPanel velocityCanvas = new JPanel() {
             @Override
             public void paint(Graphics graphics) {
                 velocityWidth = (int) graphics.getClipBounds().getWidth();
@@ -94,8 +106,19 @@ public class VelocityManagerVisualizer {
             @Override
             public void mouseMoved(MouseEvent e) {
                 try {
-                    DecimalPosition mouse = new DecimalPosition(e.getX() - velocityWidth / 2, e.getY() - velocityHeight / 2).divide(ZOOM);
+                    DecimalPosition mouse = new DecimalPosition(e.getX() - velocityWidth / 2, e.getY() - velocityHeight / 2).divide(zoom);
                     mouseLabel.setText("Mouse Position: " + mouse.getX() + ":" + mouse.getY());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        zoomSpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                try {
+                    zoom = ((Number) ((JSpinner) e.getSource()).getValue()).doubleValue();
+                    velocityCanvas.repaint();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -138,13 +161,13 @@ public class VelocityManagerVisualizer {
 
             // Relative other position
             graphics.setColor(Color.RED);
-            Index relativePosition = orcaLine.getRelativePosition().multiply(ZOOM).getPosition().add(middle);
-            int combinedRadius = (int) (orcaLine.getCombinedRadius() * ZOOM);
+            Index relativePosition = orcaLine.getRelativePosition().multiply(zoom).getPosition().add(middle);
+            int combinedRadius = (int) (orcaLine.getCombinedRadius() * zoom);
             graphics.drawArc(relativePosition.getX() - combinedRadius, relativePosition.getY() - combinedRadius, combinedRadius * 2, combinedRadius * 2, 0, 360);
 
             // Orca line
-            Index direction = orcaLine.getDirection().multiply(ZOOM).getPosition().add(middle);
-            Index point = orcaLine.getPoint().multiply(ZOOM).getPosition().add(middle);
+            Index direction = orcaLine.getDirection().multiply(zoom).getPosition().add(middle);
+            Index point = orcaLine.getPoint().multiply(zoom).getPosition().add(middle);
             Index lp1 = direction.rotateCounterClock(point, MathHelper.QUARTER_RADIANT);
             Index lp2 = direction.rotateCounterClock(point, MathHelper.THREE_QUARTER_RADIANT);
             Index lp3 = point.rotateCounterClock(lp1, -MathHelper.QUARTER_RADIANT);
@@ -156,12 +179,12 @@ public class VelocityManagerVisualizer {
         }
         // Velocity
         graphics.setColor(Color.BLUE);
-        Index velocity = velocityObstacleManager.getProtagonist().getVelocity().multiply(ZOOM).getPosition().add(middle);
+        Index velocity = velocityObstacleManager.getProtagonist().getVelocity().multiply(zoom).getPosition().add(middle);
         graphics.drawLine(middle.getX(), middle.getY(), velocity.getX(), velocity.getY());
         // Optimized velocity
         if (optimizedVelocity != null) {
             graphics.setColor(Color.MAGENTA);
-            Index relativeOptimizedVelocity = optimizedVelocity.multiply(ZOOM).getPosition().add(middle);
+            Index relativeOptimizedVelocity = optimizedVelocity.multiply(zoom).getPosition().add(middle);
             graphics.drawLine(middle.getX(), middle.getY(), relativeOptimizedVelocity.getX(), relativeOptimizedVelocity.getY());
         }
     }
@@ -170,8 +193,8 @@ public class VelocityManagerVisualizer {
         graphics.setColor(red);
 
         Index middle = new Index((int) (graphics.getClipBounds().getWidth() / 2), (int) (graphics.getClipBounds().getHeight() / 2));
-        Index truncatedCenter = orcaLine.getTruncationMiddle().multiply(ZOOM).getPosition().add(middle);
-        int truncatedRadius = (int) (orcaLine.getTruncationRadius() * ZOOM);
+        Index truncatedCenter = orcaLine.getTruncationMiddle().multiply(zoom).getPosition().add(middle);
+        int truncatedRadius = (int) (orcaLine.getTruncationRadius() * zoom);
 
         graphics.drawArc(truncatedCenter.getX() - truncatedRadius,
                 truncatedCenter.getY() - truncatedRadius,
@@ -180,7 +203,7 @@ public class VelocityManagerVisualizer {
                 0,
                 360);
 
-        Index relativeVelocity = orcaLine.getRelativeVelocity().multiply(ZOOM).getPosition().add(middle);
+        Index relativeVelocity = orcaLine.getRelativeVelocity().multiply(zoom).getPosition().add(middle);
         graphics.drawLine(middle.getX(), middle.getY(), relativeVelocity.getX(), relativeVelocity.getY());
 
     }
