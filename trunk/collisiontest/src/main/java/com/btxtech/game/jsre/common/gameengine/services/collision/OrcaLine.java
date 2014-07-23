@@ -41,8 +41,11 @@ public class OrcaLine {
             truncationMiddle = relativePosition.divide(VelocityObstacleManager.FORECAST_FACTOR);
             DecimalPosition truncationCenter2RelativeVelocity = relativeVelocity.sub(truncationMiddle);
             truncationRadius = combinedRadius / VelocityObstacleManager.FORECAST_FACTOR;
-            double truncationCenter2RelativeVelocityAngel = MathHelper.negateAngel(truncationMiddle.getAngleToNord(relativeVelocity) + MathHelper.HALF_RADIANT - baseAngel);
 
+            double a = truncationCenter2RelativeVelocity.getMagnitude();
+            double b = relativeVelocity.getMagnitude();
+            double c = truncationMiddle.getMagnitude();
+            double truncationCenter2RelativeVelocityAngel = Math.acos((a * a + c * c - b * b) / (2.0 * a * c));
 
             onTruncation = Math.abs(truncationCenter2RelativeVelocityAngel) < Math.abs(truncationCenter2LegAngel);
 
@@ -50,10 +53,10 @@ public class OrcaLine {
                 // Project on cut-off circle
                 double wLength = truncationCenter2RelativeVelocity.getMagnitude();
                 u = truncationCenter2RelativeVelocity.normalize(truncationRadius - wLength);
-                if(truncationMiddle.getDistance(relativeVelocity) < 0.01) {
-                    projectionOnVelocityObstacle = DecimalPosition.NULL.getPointWithDistance(truncationMiddle.getMagnitude() - truncationRadius,truncationMiddle, true);
-                    direction = DecimalPosition.NULL.getPointWithDistance(truncationMiddle.getMagnitude() - truncationRadius - DIRECTION_LENGTH,truncationMiddle, true);
-                }else{
+                if (truncationMiddle.getDistance(relativeVelocity) < 0.01) {
+                    projectionOnVelocityObstacle = DecimalPosition.NULL.getPointWithDistance(truncationMiddle.getMagnitude() - truncationRadius, truncationMiddle, true);
+                    direction = DecimalPosition.NULL.getPointWithDistance(truncationMiddle.getMagnitude() - truncationRadius - DIRECTION_LENGTH, truncationMiddle, true);
+                } else {
                     projectionOnVelocityObstacle = truncationMiddle.getPointWithDistance(truncationRadius, relativeVelocity, true);
                     direction = truncationMiddle.getPointWithDistance(truncationRadius + DIRECTION_LENGTH, relativeVelocity, true);
                 }
@@ -139,10 +142,10 @@ public class OrcaLine {
     }
 
     public boolean isViolated(DecimalPosition preferredVelocity) {
-        if(preferredVelocity.getDistance(point) < 0.01) {
+        if (preferredVelocity.getDistance(point) < 0.01) {
             return false;
         }
-        if(preferredVelocity.getDistance(direction) < 0.01) {
+        if (preferredVelocity.getDistance(direction) < 0.01) {
             return false;
         }
         double angelRelativeDirection = point.getAngleToNord(direction);
