@@ -36,7 +36,6 @@ public class OrcaLine {
         double baseAngel = MathHelper.negateAngel(relativePosition.getAngleToNorth());
         double truncationCenter2LegAngel = MathHelper.negateAngel(MathHelper.QUARTER_RADIANT - coneLegAngel);
 
-
         if (distance >= 0) {
             truncationMiddle = relativePosition.divide(VelocityObstacleManager.FORECAST_FACTOR);
             DecimalPosition truncationCenter2RelativeVelocity = relativeVelocity.sub(truncationMiddle);
