@@ -17,13 +17,13 @@ public class Frontal extends Scenario {
 
     @Override
     public void addItems() {
-        syncItem1 = createSyncItem(RADIUS, new Index(101, 100), "SyncItem 1", true);
+        syncItem1 = createSyncItem(RADIUS, new Index(100, 100), "SyncItem 1", true);
         syncItem2 = createSyncItem(RADIUS, new Index(400, 100), "SyncItem 2", false);
     }
 
     @Override
     public void start() throws NoBetterPathFoundException {
-        getMovingModel().getCollisionService().findPath(syncItem1, new Index(400, 101));
+        getMovingModel().getCollisionService().findPath(syncItem1, new Index(400, 100));
         getMovingModel().getCollisionService().findPath(syncItem2, new Index(100, 100));
     }
 
