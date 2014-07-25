@@ -63,6 +63,39 @@ public class TestVelocityObstacleManager {
         assertDecimalPosition(new DecimalPosition(-0.499565, -0.0208333), optimizedVelocity);
     }
 
+    @Test
+    public void frontalNoCollision() throws NoPreferredVelocityFoundException {
+        SyncItem protagonistMock = createMockSyncItem(10, new DecimalPosition(100.0, 100.0), new DecimalPosition(0.5, 0.0), new DecimalPosition(400.0, 100.0));
+        Collection<SyncItem> others = new ArrayList<>();
+        others.add(createMockSyncItem(10, new DecimalPosition(221.0, 100.0), new DecimalPosition(-0.5, 0.0), null));
+        VelocityObstacleManager velocityObstacleManager = createVelocityObstacleManager(protagonistMock, others);
+        Assert.assertTrue(velocityObstacleManager.getOrcaLines().isEmpty());
+        DecimalPosition optimizedVelocity = velocityObstacleManager.getOptimalVelocity();
+        assertDecimalPosition(new DecimalPosition(0.5, 0.0), optimizedVelocity);
+    }
+
+    @Test
+    public void frontal1() throws NoPreferredVelocityFoundException {
+        SyncItem protagonistMock = createMockSyncItem(10, new DecimalPosition(100.0, 100.0), new DecimalPosition(0.5, 0.0), new DecimalPosition(400.0, 100.0));
+        Collection<SyncItem> others = new ArrayList<>();
+        others.add(createMockSyncItem(10, new DecimalPosition(220.0, 100.0), new DecimalPosition(-0.5, 0.0), null));
+        VelocityObstacleManager velocityObstacleManager = createVelocityObstacleManager(protagonistMock, others);
+        DecimalPosition optimizedVelocity = velocityObstacleManager.getOptimalVelocity();
+        VelocityManagerVisualizer.startAndWaitForClose(velocityObstacleManager, optimizedVelocity);
+        // TODO assertDecimalPosition(new DecimalPosition(xxx, yyy), optimizedVelocity);
+    }
+
+    @Test
+    public void frontal2() throws NoPreferredVelocityFoundException {
+        SyncItem protagonistMock = createMockSyncItem(10, new DecimalPosition(400.0, 100.0), new DecimalPosition(-0.5, 0.0), new DecimalPosition(100.0, 100.0));
+        Collection<SyncItem> others = new ArrayList<>();
+        others.add(createMockSyncItem(10, new DecimalPosition(280.0, 100.0), new DecimalPosition(0.5, 0.0), null));
+        VelocityObstacleManager velocityObstacleManager = createVelocityObstacleManager(protagonistMock, others);
+        DecimalPosition optimizedVelocity = velocityObstacleManager.getOptimalVelocity();
+        VelocityManagerVisualizer.startAndWaitForClose(velocityObstacleManager, optimizedVelocity);
+        // TODO assertDecimalPosition(new DecimalPosition(xxx, yyy), optimizedVelocity);
+    }
+
     private VelocityObstacleManager createVelocityObstacleManager(SyncItem protagonist, Collection<SyncItem> others) {
         VelocityObstacleManager velocityObstacleManager = new VelocityObstacleManager(protagonist);
         for (SyncItem other : others) {
