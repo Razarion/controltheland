@@ -454,7 +454,7 @@
         </plugins>
     </build>
     <properties>
-        <wicket.version>6.9.1</wicket.version>
+        <wicket.version>7.17.0</wicket.version>
         <gwtVersion>2.6.0</gwtVersion>
         <hibernateVersion>4.0.0.Final</hibernateVersion>
         <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
