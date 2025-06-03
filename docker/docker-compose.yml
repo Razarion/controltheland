@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    build: ./mysql-custom
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: gamedb
+      MYSQL_USER: game
+      MYSQL_PASSWORD: userpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  web:
+    build: tomcat
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_NAME: gamedb
+      DB_USER: game
+      DB_PASS: userpass
+
+volumes:
+  db_data:
