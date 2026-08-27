@@ -456,7 +456,7 @@
     <properties>
         <wicket.version>6.9.1</wicket.version>
         <gwtVersion>2.6.0</gwtVersion>
-        <hibernateVersion>4.0.0.Final</hibernateVersion>
+        <hibernateVersion>5.3.20.Final</hibernateVersion>
         <org.springframework.version>3.1.0.RELEASE</org.springframework.version>
         <aspectj>1.6.10</aspectj>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
